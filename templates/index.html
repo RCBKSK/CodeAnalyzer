@@ -1,0 +1,3859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>{% block title %}HelenA QuantumRaid Bot - Command Center{% endblock %}</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HelenA QuantumRaid">
+    <meta name="description" content="HelenA QuantumRaid Bot - Advanced League of Kingdoms automation system">
+
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjM2I4MmY2IiByeD0iMjQiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0yMCAxNVY3YzAtMS4xLS45LTItMi0ySDZjLTEuMSAwLTIgLjktMiAydjhjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMnptLTIgMEg2VjdoMTJ2OHoiLz4KPHN2ZyB4PSI3IiB5PSI5IiB3aWR0aD0iMTAiIGhlaWdodD0iNiIgdmlld0JveD0iMCAwIDEwIDYiIGZpbGw9IndoaXRlIj4KPGNpcmNsZSBjeD0iMiIgY3k9IjMiIHI9IjEuNSIvPgo8Y2lyY2xlIGN4PSI4IiBjeT0iMyIgcj0iMS41Ii8+CjwvZz4KPC9zdmc+">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjM2I4MmY2IiByeD0iMjQiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0yMCAxNVY3YzAtMS4xLS45LTItMi0ySDZjLTEuMSAwLTIgLjktMiAydjhjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMnptLTIgMEg2VjdoMTJ2OHoiLz4KPHN2ZyB4PSI3IiB5PSI5IiB3aWR0aD0iMTAiIGhlaWdodD0iNiIgdmlld0JveD0iMCAwIDEwIDYiIGZpbGw9IndoaXRlIj4KPGNpcmNsZSBjeD0iMiIgY3k9IjMiIHI9IjEuNSIvPgo8Y2lyY2xlIGN4PSI4IiBjeT0iMyIgcj0iMS41Ii8+CjwvZz4KPC9zdmc+">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%),
+                url('/static/helena_1751952960287.jpg') center/cover no-repeat fixed;
+            color: #1e293b;
+            line-height: 1.5;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundFloat 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+            animation: slideInFromTop 0.8s ease-out;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes slideInFromTop {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .header .header-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 
+                0 4px 8px rgba(102, 126, 234, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            animation: floatIcon 2s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        .header .header-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            border-radius: 17px;
+            z-index: -1;
+            opacity: 0;
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-3px) rotate(5deg); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #64748b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: #f1f5f9;
+            color: #3b82f6;
+        }
+
+        .nav-brand {
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-brand:hover {
+            background: linear-gradient(135deg, #5a67d8, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        /* Fallback for browsers that don't support background-clip: text */
+        @supports not (-webkit-background-clip: text) {
+            .nav-brand {
+                color: #667eea;
+                background: none;
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            background: #f1f5f9;
+            color: #3b82f6;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInCard 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 16px 64px rgba(31, 38, 135, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideInCard {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-icon {
+            color: #3b82f6;
+        }
+
+        /* Alert cards */
+        .alert-card {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-card.blue {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border-color: #bfdbfe;
+        }
+
+        .alert-card.green {
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            border-color: #bbf7d0;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8, #667eea);
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+        }
+
+        .btn-outline:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Instance cards */
+        .instance-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .instance-card:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateX(4px);
+        }
+
+        .instance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .instance-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 16px;
+        }
+
+        .instance-details {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.running {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 
+                0 0 8px rgba(16, 185, 129, 0.2),
+                0 2px 4px rgba(16, 185, 129, 0.1);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(16, 185, 129, 0.1); }
+            50% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.3), 0 3px 6px rgba(16, 185, 129, 0.15); }
+        }
+
+        .status-badge.stopped {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        /* Grid layout */
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr 400px;
+        }
+
+        /* Stats section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 4px;
+        }
+
+        /* Notification badge */
+        .notification-badge {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+            margin-left: 6px;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Mobile Responsive Design */
+        @media (max-width: 1024px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-bar {
+                padding: 12px 20px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 8px;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                margin-bottom: 20px;
+            }
+
+            .nav-bar {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 1000;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .nav-link {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .header .header-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-item {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .instance-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .alert-card {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+                padding: 16px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-input, .form-select {
+                padding: 14px 16px;
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+
+            .card-title {
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+
+            /* Improved touch targets */
+            .nav-link, .btn, .form-input, .form-select {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 4px;
+            }
+
+            .card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .nav-bar {
+                padding: 12px 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item {
+                text-align: center;
+            }
+
+            .timezone-selector {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .timezone-selector select {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .instance-details {
+                font-size: 12px;
+            }
+
+            .status-badge {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+
+            /* Stack form elements vertically */
+            .grid-2 .form-group {
+                margin-bottom: 20px;
+            }
+
+            /* Improve modal on small screens */
+            .modal-header {
+                padding: 16px 20px;
+            }
+
+            .modal-title {
+                font-size: 16px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-footer {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+                margin: 0;
+            }
+        }
+
+        /* Landscape phone orientation */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .header {
+                padding: 12px 20px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .nav-bar {
+                padding: 8px 16px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn:hover, .nav-link:hover, .card:hover {
+                transform: none;
+            }
+
+            .btn:active {
+                transform: scale(0.98);
+            }
+
+            .card {
+                transition: box-shadow 0.2s;
+            }
+
+            .card:active {
+                box-shadow: 0 4px 12px rgba(31, 38, 135, 0.15);
+            }
+        }
+
+        /* Hide elements by default */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Performance optimizations */
+        * {
+            will-change: auto;
+        }
+
+        .card, .notification-item, .monster-card {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading skeleton for instant feedback */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Special styling for admin features */
+        .admin-section {
+            border-left: 4px solid #3b82f6;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 95vh;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(95vh - 140px);
+            flex: 1;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Dark mode toggle button */
+        .theme-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .theme-toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: #3b82f6;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        [data-theme="dark"] .theme-toggle-slider {
+            transform: translateX(20px);
+            background: #f59e0b;
+        }
+
+        .theme-toggle:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 576px) {
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                max-height: 98vh;
+            }
+
+            .modal-header {
+                padding: 16px 20px;
+            }
+
+            .modal-body {
+                max-height: calc(98vh - 120px);
+            }
+        }
+
+        @media (max-height: 600px) {
+            .modal-content {
+                margin: 1% auto;
+                max-height: 98vh;
+            }
+
+            .modal-body {
+                max-height: calc(98vh - 120px);
+            }
+        }
+    </style>
+</head>
+<body>
+    {% block content %}
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <a href="#" class="nav-brand">
+            <i class="fas fa-robot"></i> HelenA QuantumRaid Bot
+        </a>
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
+                <a href="/notifications" class="nav-link">
+                    <i class="fas fa-bell"></i> Notifications
+                    <span id="notification-badge" class="notification-badge hidden">0</span>
+                </a>
+                <div class="timezone-selector" style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-clock" style="color: #64748b;"></i>
+                    <select id="timezoneSelect" class="form-select" style="padding: 6px 8px; font-size: 12px; border: 1px solid #e2e8f0; border-radius: 6px; background: white;">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">Eastern</option>
+                        <option value="America/Chicago">Central</option>
+                        <option value="America/Denver">Mountain</option>
+                        <option value="America/Los_Angeles">Pacific</option>
+                        <option value="Europe/London">London</option>
+                        <option value="Europe/Paris">Paris</option>
+                        <option value="Europe/Berlin">Berlin</option>
+                        <option value="Asia/Tokyo">Tokyo</option>
+                        <option value="Asia/Shanghai">Shanghai</option>
+                        <option value="Asia/Kolkata">India</option>
+                        <option value="Australia/Sydney">Sydney</option>
+                        <option value="local">Local Time</option>
+                    </select>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode" style="width: 44px; height: 24px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; padding: 2px;">
+                    <div class="theme-toggle-slider" style="width: 20px; height: 20px; background: var(--accent-color); border-radius: 50%; transition: transform 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </div>
+                </div>
+                <a href="/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <div>
+                    <h1 style="margin-bottom: 8px;">
+                        <div class="header-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        Command Center
+                    </h1>
+                    <div id="welcomeMessage" style="color: #3b82f6; font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                        Welcome back, <span id="welcomeUsername">Loading...</span>! 👋
+                    </div>
+                    <p style="margin: 0;">Advanced League of Kingdoms automation system - Monitor and control your bot instances</p>
+                </div>
+                <div style="text-align: right; font-size: 14px; color: #64748b;">
+                    <div><strong>Status:</strong> <span style="color: #10b981;">Online</span></div>
+                    <div id="currentTime">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access Cards -->
+        <div class="alert-card blue">
+            <div>
+                <h3 style="margin: 0; color: #1e40af;">
+                    <i class="fas fa-bell"></i> Notifications Portal
+                </h3>
+                <p style="margin: 4px 0 0 0; color: #1e40af; opacity: 0.8;">Monitor your bot's activities and alerts</p>
+            </div>
+            <a href="/notifications" class="btn btn-outline">
+                <i class="fas fa-external-link-alt"></i> Open Portal
+            </a>
+        </div>
+
+        <div class="alert-card green">
+            <div>
+                <h3 style="margin: 0; color: #166534;">
+                    <i class="fas fa-cog"></i> Simple Configuration
+                </h3>
+                <p style="margin: 4px 0 0 0; color: #166534; opacity: 0.8;">Easy-to-use interface for bot configuration</p>
+            </div>
+            <a href="/simple-config" class="btn btn-outline" style="color: #166534; border-color: #166534;">
+                <i class="fas fa-external-link-alt"></i> Configure Bot
+            </a>
+        </div>
+
+
+
+        <div class="grid grid-3">
+            <!-- Main Control Panel -->
+            <div style="min-width: 0;">
+                <!-- Bot Control -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-play-circle"></i>
+                        Bot Control
+                    </h2>
+
+                    <div class="grid grid-2">
+                        <!-- Start Bot Form -->
+                        <div>
+                            <h3 style="font-size: 16px; margin-bottom: 20px; color: #374151;">Initialize New Instance</h3>
+
+                            <form id="startBotForm">
+                                <div class="form-group">
+                                    <label class="form-label">Account Name</label>
+                                    <input type="text" class="form-input" id="accountName" placeholder="Enter account name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Authentication Method</label>
+                                    <select class="form-select" id="authMethod">
+                                        <option value="env">Environment Variables</option>
+                                        <option value="email">Email/Password</option>
+                                        <option value="token">Token</option>
+                                    </select>
+                                </div>
+
+                                <!-- Email/Password Fields -->
+                                <div id="emailAuthFields" class="hidden">
+                                    <div class="form-group">
+                                        <input type="email" class="form-input" id="email" placeholder="Email">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-input" id="password" placeholder="Password">
+                                    </div>
+                                </div>
+
+                                <!-- Token Field -->
+                                <div id="tokenAuthField" class="hidden">
+                                    <div class="form-group">
+                                        <textarea class="form-input" id="token" rows="3" placeholder="Insert token..." style="resize: vertical;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Config File</label>
+                                    <select class="form-select" id="config_file" name="config_file" required>
+                                        <option value="">Select config file...</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Auto-Stop Duration (minutes, optional)</label>
+                                    <input type="number" class="form-input" id="autoStopDuration" placeholder="Enter duration in minutes" min="1" max="1440">
+                                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                                        Bot will automatically stop after this duration (max 24 hours)
+                                    </small>
+                                </div>
+
+
+
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-play"></i> Start Bot
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Status and Control -->
+                        <div>
+                            <h3 style="font-size: 16px; margin-bottom: 20px; color: #374151;">Bot Status</h3>
+
+                            <div id="statusContainer">
+                                <p style="color: #64748b;">Loading bot status...</p>
+                            </div>
+
+                            <button class="btn btn-danger hidden" id="stopAllBtn" style="width: 100%;">
+                                <i class="fas fa-stop"></i> Stop All Bots
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management (Admin Only) - Moved to Left Side -->
+                <div class="card admin-section hidden" id="userManagementCard">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-users"></i>
+                        User Management
+                    </h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="showAddUserModal()">
+                            <i class="fas fa-user-plus"></i> Add User
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadUsers()">
+                            <i class="fas fa-sync"></i> Refresh Users
+                        </button>
+                    </div>
+
+                    <div id="usersList">
+                        <p style="color: #64748b; font-size: 14px;">Loading users...</p>
+                    </div>
+                </div>
+
+                <!-- User Instance Management (Admin Only) -->
+                <div class="card admin-section hidden" id="userInstanceManagementCard">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-server"></i>
+                        User Instance Management
+                    </h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                        <select class="form-select" id="instanceUserSelect" onchange="loadUserInstances(this.value)">
+                            <option value="">Select user to manage instances...</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="showAddInstanceModal()" disabled id="addInstanceBtn">
+                            <i class="fas fa-plus"></i> Add Instance
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshUserInstanceList()" disabled id="refreshInstanceBtn">
+                            <i class="fas fa-sync"></i> Refresh Instances
+                        </button>
+                    </div>
+
+                    <div id="userInstancesList">
+                        <p style="color: #64748b; font-size: 14px;">Select a user to view their instances</p>
+                    </div>
+                </div>
+
+                <!-- Test Account Manager (Admin Only) - Moved to Left Side -->
+                <div class="card admin-section hidden" id="testAccountsCard">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-flask"></i>
+                        Test Account Manager
+                    </h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="createTestAccount()">
+                            <i class="fas fa-plus"></i> Create 4-Hour Test Account
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadTestAccounts()">
+                            <i class="fas fa-sync"></i> Refresh Test Accounts
+                        </button>
+                    </div>
+
+                    <div id="testAccountsList">
+                        <p style="color: #64748b; font-size: 14px;">Loading test accounts...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div style="min-width: 350px;">
+                <!-- System Status -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-info-circle"></i>
+                        System Status
+                    </h2>
+
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Current User</div>
+                            <div class="stat-value" id="currentUsername">Loading...</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Max Instances</div>
+                            <div class="stat-value" id="maxInstances">0</div>
+                        </div>
+                        <div class="stat-item admin-only-stat hidden" id="totalActiveStatCard">
+                            <div class="stat-label">Total Active Bots</div>
+                            <div class="stat-value" id="totalActive">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Your Bots</div>
+                            <div class="stat-value" id="userInstances">0</div>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">
+                        <strong>Last Sync:</strong> <span id="lastUpdate">Never</span>
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="refreshStatus()">
+                            <i class="fas fa-sync"></i> Refresh Status
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadConfig()">
+                            <i class="fas fa-download"></i> Download Config
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Dashboard (Admin Only) -->
+                <div class="card admin-section hidden" id="adminDashboardCard">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-shield-alt"></i>
+                        Admin Dashboard
+                    </h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="toggleAllInstancesView()">
+                            <i class="fas fa-eye"></i> <span id="toggleViewText">Show All Instances</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshStatus(true)">
+                            <i class="fas fa-sync"></i> Refresh All
+                        </button>
+                    </div>
+
+                    <div id="allInstancesContainer" class="hidden">
+                        <h4 style="margin-bottom: 16px; color: #374151;">All Running Instances</h4>
+                        <div id="allInstancesList">
+                            <p style="color: #64748b; font-size: 14px;">Loading all instances...</p>
+                        </div>
+                    </div>
+
+                     </div>
+
+                <!-- User Activity Monitor (Admin Only) -->
+                <div class="card admin-section hidden" id="userActivityCard">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-chart-line"></i>
+                        User Activity Monitor
+                    </h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="loadUserActivityData()">
+                            <i class="fas fa-sync"></i> Refresh Activity Data
+                        </button>
+                        <button class="btn btn-secondary" onclick="toggleActivityView()">
+                            <i class="fas fa-table"></i> <span id="activityViewToggleText">Show Detailed View</span>
+                        </button>
+                    </div>
+
+                    <div id="userActivitySummary">
+                        <p style="color: #64748b; font-size: 14px;">Loading user activity data...</p>
+                    </div>
+
+                    <div id="userActivityDetails" class="hidden">
+                        <h4 style="margin-bottom: 16px; color: #374151;">User Activity Details</h4>
+                        <div id="userActivityList">
+                            <p style="color: #64748b; font-size: 14px;">Loading detailed activity...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Monitoring (Super Admin Only) -->
+                <div class="card admin-section hidden" id="sessionMonitorCard">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-user-secret"></i>
+                        Session Monitor
+                    </h2>
+                    <div id="sessionMonitorContent">
+                        <p style="color: #64748b; font-size: 14px;">Loading session data...</p>
+                    </div>
+                </div>
+
+
+
+                <!-- Scheduling -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="card-icon fas fa-clock"></i>
+                        Scheduling
+                    </h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="showScheduleModal()">
+                            <i class="fas fa-plus"></i> Schedule Task
+                        </button>
+                        <button class="btn btn-secondary" onclick="showMaintenanceModal()">
+                            <i class="fas fa-tools"></i> Maintenance Mode
+                        </button>
+                    </div>
+
+                    <div id="scheduledTasks">
+                        <p style="color: #64748b; font-size: 14px;">No scheduled tasks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    <!-- User Instance Management Modal -->
+    <div id="addInstanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add User Instance</h3>
+                <button class="modal-close" onclick="hideAddInstanceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addInstanceForm">
+                    <input type="hidden" id="selectedUserForInstance" />
+                    <div class="form-group">
+                        <label class="form-label">Instance Name</label>
+                        <input type="text" class="form-input" id="newInstanceName" placeholder="e.g., Premium Package, Basic Plan" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="datetime-local" class="form-input" id="newInstanceStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Date</label>
+                        <input type="datetime-local" class="form-input" id="newInstanceEndDate" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideAddInstanceModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addUserInstance()">Add Instance</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="userDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="userDetailsTitle">User Details</h3>
+                <button class="modal-close" onclick="hideUserDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="userDetailsBody">
+                Loading...
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideUserDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New User</h3>
+                <button class="modal-close" onclick="hideAddUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="newUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="newPassword" value="defaultpass123">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Legacy Max Instances (fallback)</label>
+                        <input type="number" class="form-input" id="newMaxInstances" value="1" min="1">
+                        <small style="color: #64748b;">This is only used if no active instance purchases exist</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">User Role</label>
+                        <select class="form-select" id="newUserRole">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                            <option value="super_admin">Super Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Account Start Date (optional)</label>
+                        <input type="date" class="form-input" id="newStartDate">
+                        <small style="color: #64748b;">Leave empty for no restriction</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Account End Date (optional)</label>
+                        <input type="date" class="form-input" id="newEndDate">
+                        <small style="color: #64748b;">Leave empty for no restriction</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideAddUserModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addUser()">Add User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Summary Modal -->
+    <div id="configSummaryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Configuration Summary</h3>
+                <button class="modal-close" onclick="hideConfigSummaryModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="configSummaryBody">
+                Loading configuration summary...
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideConfigSummaryModal()">Cancel</button>
+                <button class="btn btn-primary" id="confirmStartBtn" onclick="confirmStartBot()">Start Bot</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Task Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Schedule Task</h3>
+                <button class="modal-close" onclick="hideScheduleModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="scheduleForm">
+                    <div class="form-group">
+                        <label class="form-label">Task Name</label>
+                        <input type="text" class="form-input" id="taskName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Task Type</label>
+                        <select class="form-select" id="taskType" required>
+                            <option value="start_bot">Start Bot</option>
+                            <option value="stop_bot">Stop Bot</option>
+                            <option value="restart_bot">Restart Bot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Schedule Time</label>
+                        <input type="datetime-local" class="form-input" id="scheduleTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Task Data (JSON, optional)</label>
+                        <textarea class="form-input" id="taskData" rows="3" placeholder='{"config_file": "config.json"}'></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideScheduleModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="scheduleTask()">Schedule Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maintenance Modal -->
+    <div id="maintenanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Maintenance Mode</h3>
+                <button class="modal-close" onclick="hideMaintenanceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="maintenanceForm">
+                    <div class="form-group">
+                        <label class="form-label">Maintenance Reason</label>
+                        <input type="text" class="form-input" id="maintenanceReason" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration (minutes, optional)</label>
+                        <input type="number" class="form-input" id="maintenanceDuration" min="1">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideMaintenanceModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="enableMaintenanceMode()">Enable Maintenance</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Reset User Password</h3>
+                <button class="modal-close" onclick="hideResetPasswordModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="resetPasswordForm">
+                    <input type="hidden" id="resetPasswordUsername" />
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="resetPasswordUsernameDisplay" readonly style="background: #f1f5f9;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-input" id="newPasswordInput" placeholder="Enter new password" required minlength="6">
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                            Password must be at least 6 characters long
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-input" id="confirmPasswordInput" placeholder="Confirm new password" required minlength="6">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideResetPasswordModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="resetUserPassword()">Reset Password</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var eventSource = null;
+        var isConnected = false;
+        var notificationCount = 0;
+        var browserNotificationsEnabled = false;
+        let currentConfig = {};
+        let currentConfigFile = '';
+        let statusRefreshTimeout = null;
+        let isRefreshing = false;
+        let statusCache = null;
+        let lastStatusUpdate = 0;
+        let userTimezone = 'UTC';
+
+        $(document).ready(function() {
+            setTimeout(function() {
+                loadConfigFiles();
+            }, 100);
+
+            // Force initial refresh and clear any stale data
+            statusCache = null;
+            lastStatusUpdate = 0;
+            refreshStatus(true);
+            setInterval(function() { refreshStatus(false); }, 120000);
+
+            // Add visibility change handler to refresh when page becomes visible
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    // Page became visible, force refresh to get latest data
+                    setTimeout(() => refreshStatus(true), 500);
+                }
+            });
+            loadUserInfo();
+            loadScheduledTasks();
+            setupNotificationBadge();
+            initializeTimezone();
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000); // Update time every second
+
+            // Initialize browser notifications
+            initializeBrowserNotifications();
+
+            // Request notification permission if not already granted and feature is enabled
+            if (!browserNotificationsEnabled) {
+                $('#enableBrowserNotificationsBtn').show(); // Assuming you add a button for this
+            } else {
+                $('#disableBrowserNotificationsBtn').show();
+            }
+
+            // Auth method change handler
+            $('#authMethod').change(function() {
+                const method = $(this).val();
+                $('#emailAuthFields').toggleClass('hidden', method !== 'email');
+                $('#tokenAuthField').toggleClass('hidden', method !== 'token');
+            });
+
+            // Start bot form handler
+            $('#startBotForm').submit(function(e) {
+                e.preventDefault();
+                startBot();
+            });
+
+            // Stop all button handler
+            $('#stopAllBtn').click(function() {
+                if (!confirm('Are you sure you want to stop ALL instances?')) {
+                    return;
+                }
+
+                const instanceIds = [];
+                $('.instance-card').each(function() {
+                    const button = $(this).find('button[onclick*="stopInstance"]');
+                    if (button.length) {
+                        const onclick = button.attr('onclick');
+                        const match = onclick.match(/stopInstance\('([^']+)'\)/);
+                        if (match) {
+                            instanceIds.push(match[1]);
+                        }
+                    }
+                });
+
+                if (instanceIds.length === 0) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/stop_bot',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({instance_ids: instanceIds}),
+                    success: function(response) {
+                        alert('All bots stopped successfully!');
+                        // Force immediate refresh by clearing cache and refreshing
+                        statusCache = null;
+                        lastStatusUpdate = 0;
+                        refreshStatus(true);
+
+                        // Schedule additional refreshes to ensure UI updates
+                        setTimeout(() => refreshStatus(true), 1000);
+                        setTimeout(() => refreshStatus(true), 3000);
+                    },
+                    error: function(xhr) {
+                        const error = xhr.responseJSON?.error || 'Failed to stop bots';
+                        alert('Error: ' + error);
+                    }
+                });
+            });
+        });
+
+        function loadConfigFiles() {
+            $.ajax({
+                url: '/api/config_files',
+                method: 'GET',
+                success: function(data) {
+                    if (data.error) {
+                        console.error('Error loading config files:', data.error);
+                        return;
+                    }
+
+                    const configSelect = document.getElementById('config_file');
+                    configSelect.innerHTML = '<option value="">Select configuration...</option>';
+
+                    data.config_files.forEach(file => {
+                        const option = document.createElement('option');
+                        option.value = file;
+                        option.textContent = file;
+                        if (file === 'config.json') {
+                            option.selected = true;
+                        }
+                        configSelect.appendChild(option);
+                    });
+                },
+                error: function() {
+                    alert('Failed to load configuration files');
+                }
+            });
+        }
+
+        let pendingBotData = null;
+
+        function startBot() {
+            const authMethod = $('#authMethod').val();
+            const configFile = $('#config_file').val();
+
+            if (!configFile) {
+                alert('Please select a configuration file');
+                return;
+            }
+
+            const data = {
+                account_name: $('#accountName').val() || 'Bot Instance',
+                config_file: configFile,
+                auth_method: authMethod
+            };
+
+            // Add auto-stop duration if specified
+            const autoStopDuration = $('#autoStopDuration').val();
+            if (autoStopDuration && autoStopDuration > 0) {
+                data.auto_stop_duration = parseInt(autoStopDuration);
+            }
+
+
+
+            if (authMethod === 'email') {
+                data.email = $('#email').val();
+                data.password = $('#password').val();
+
+                if (!data.email || !data.password) {
+                    alert('Please enter both email and password');
+                    return;
+                }
+            } else if (authMethod === 'token') {
+                data.token = $('#token').val();
+
+                if (!data.token) {
+                    alert('Please enter authentication token');
+                    return;
+                }
+            }
+
+            // Store data for later use and show configuration summary
+            pendingBotData = data;
+            showConfigurationSummary(configFile);
+        }
+
+        function showConfigurationSummary(configFile) {
+            const summaryBody = document.getElementById('configSummaryBody');
+            summaryBody.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="loading-spinner"></div> Loading configuration summary...</div>';
+
+            document.getElementById('configSummaryModal').style.display = 'block';
+
+            $.ajax({
+                url: '/api/config/summary',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ config_file: configFile }),
+                success: function(response) {
+                    if (response.success) {
+                        displayConfigurationSummary(response.summary);
+                    } else {
+                        summaryBody.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 20px;">Error: ${response.error}</div>`;
+                    }
+                },
+                error: function(xhr) {
+                    const error = xhr.responseJSON?.error || 'Failed to load configuration summary';
+                    summaryBody.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 20px;">Error: ${error}</div>`;
+                }
+            });
+        }
+
+        function displayConfigurationSummary(summary) {
+            const summaryBody = document.getElementById('configSummaryBody');
+
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #1e293b; margin-bottom: 12px;">
+                        <i class="fas fa-file"></i> Configuration: ${summary.config_file}
+                    </h4>
+                    <p style="color: #64748b; margin-bottom: 20px;">Review the enabled features before starting your bot:</p>
+                </div>
+            `;
+
+            // Rally Settings
+            if (summary.rally_settings && Object.keys(summary.rally_settings).length > 0) {
+                html += '<div style="margin-bottom: 20px;">';
+                html += '<h5 style="color: #3b82f6; margin-bottom: 12px;"><i class="fas fa-sword"></i> Rally Settings</h5>';
+
+                if (summary.rally_settings.rally_join) {
+                    const rj = summary.rally_settings.rally_join;
+                    html += `
+                        <div style="background: #f0f9ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #3b82f6;">
+                            <strong>Rally Join:</strong> ✅ Enabled<br>
+                            Max Marches: ${rj.max_marches} | Max Distance: ${rj.max_distance}<br>
+                            Monster Targets: ${rj.monsters_count}
+                        </div>
+                    `;
+                }
+
+                if (summary.rally_settings.rally_start) {
+                    const rs = summary.rally_settings.rally_start;
+                    html += `
+                        <div style="background: #f0f9ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #3b82f6;">
+                            <strong>Rally Start:</strong> ✅ Enabled<br>
+                            Max Marches: ${rs.max_marches} | Max Distance: ${rs.max_distance}<br>
+                            Monster Targets: ${rs.monsters_count}
+                        </div>
+                    `;
+                }
+                html += '</div>';
+            }
+
+            // Object Scanning
+            if (summary.object_scanning && summary.object_scanning.enabled) {
+                const os = summary.object_scanning;
+                html += '<div style="margin-bottom: 20px;">';
+                html += '<h5 style="color: #10b981; margin-bottom: 12px;"><i class="fas fa-search"></i> Object Scanning</h5>';
+                html += `
+                    <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981;">
+                        <strong>Status:</strong> ✅ Enabled<br>
+                        <strong>Scan Radius:</strong> ${os.radius} tiles<br>
+                        <strong>Total Objects:</strong> ${os.total_objects} | <strong>Enabled:</strong> ${os.enabled_objects.length}<br>
+                `;
+
+                if (os.enabled_objects.length > 0) {
+                    html += '<strong>Enabled Objects:</strong><br>';
+                    os.enabled_objects.forEach(obj => {
+                        html += `• ${obj.name} (Levels: ${obj.levels.join(', ')})<br>`;
+                    });
+                }
+
+                if (os.share_to_channels && os.share_to_channels.length > 0) {
+                    html += `<strong>Share to Channels:</strong> ${os.share_to_channels.join(', ')}<br>`;
+                }
+                html += '</div></div>';
+            }
+
+            // Jobs and Threads
+            if (summary.jobs_and_threads) {
+                const jt = summary.jobs_and_threads;
+                html += '<div style="margin-bottom: 20px;">';
+                html += '<h5 style="color: #8b5cf6; margin-bottom: 12px;"><i class="fas fa-cogs"></i> Jobs & Threads</h5>';
+
+                if (jt.jobs) {
+                    html += `
+                        <div style="background: #faf5ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #8b5cf6;">
+                            <strong>Jobs:</strong> ${jt.jobs.enabled}/${jt.jobs.total} enabled<br>
+                    `;
+                    if (jt.jobs.enabled_list.length > 0) {
+                        html += `<strong>Enabled:</strong> ${jt.jobs.enabled_list.join(', ')}<br>`;
+                    }
+                    html += '</div>';
+                }
+
+                if (jt.threads) {
+                    html += `
+                        <div style="background: #faf5ff; padding: 12px; border-radius: 8px; border-left: 4px solid #8b5cf6;">
+                            <strong>Threads:</strong> ${jt.threads.enabled}/${jt.threads.total} enabled<br>
+                    `;
+                    if (jt.threads.enabled_list.length > 0) {
+                        html += `<strong>Enabled:</strong> ${jt.threads.enabled_list.join(', ')}<br>`;
+                    }
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+
+            // Other Features
+            if (summary.other_features && Object.keys(summary.other_features).length > 0) {
+                html += '<div style="margin-bottom: 20px;">';
+                html += '<h5 style="color: #f59e0b; margin-bottom: 12px;"><i class="fas fa-star"></i> Other Features</h5>';
+
+                Object.entries(summary.other_features).forEach(([feature, config]) => {
+                    if (config.enabled) {
+                        let featureName = feature.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        html += `
+                            <div style="background: #fffbeb; padding: 10px; border-radius: 6px; margin-bottom: 6px; border-left: 3px solid #f59e0b;">
+                                <strong>${featureName}:</strong> ✅ Enabled
+                        `;
+
+                        if (feature === 'normal_monsters' && config.max_distance) {
+                            html += ` (Distance: ${config.max_distance}, Targets: ${config.monsters_count})`;
+                        } else if (feature === 'skills' && config.enabled_skills_count) {
+                            html += ` (${config.enabled_skills_count} skills)`;
+                        } else if (feature === 'buff_management' && config.enabled_buffs_count) {
+                            html += ` (${config.enabled_buffs_count} buffs)`;
+                        } else if (feature === 'discord' && config.webhooks_configured) {
+                            html += ` (${config.webhooks_configured} webhooks)`;
+                        } else if (feature === 'treasure' && config.page) {
+                            html += ` (Page: ${config.page})`;
+                        }
+
+                        html += '</div>';
+                    }
+                });
+                html += '</div>';
+            }
+
+            // Warning if no features enabled
+            const hasEnabledFeatures = (summary.rally_settings && Object.keys(summary.rally_settings).length > 0) ||
+                                     (summary.object_scanning && summary.object_scanning.enabled) ||
+                                     (summary.other_features && Object.keys(summary.other_features).length > 0);
+
+            if (!hasEnabledFeatures) {
+                html += `
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                        <h6 style="color: #dc2626; margin: 0 0 8px 0;"><i class="fas fa-exclamation-triangle"></i> Warning</h6>
+                        <p style="color: #dc2626; margin: 0;">No major features appear to be enabled in this configuration. The bot may have limited functionality.</p>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div style="background: #f8fafc; border-radius: 8px; padding: 16px; margin-top: 20px;">
+                    <p style="color: #64748b; margin: 0; text-align: center;">
+                        <i class="fas fa-info-circle"></i> 
+                        Review the above settings and click "Start Bot" to proceed, or "Cancel" to modify the configuration.
+                    </p>
+                </div>
+            `;
+
+            summaryBody.innerHTML = html;
+        }
+
+        function confirmStartBot() {
+            if (!pendingBotData) {
+                alert('No bot data available');
+                return;
+            }
+
+            const submitBtn = $('#confirmStartBtn');
+            const originalText = submitBtn.html();
+            submitBtn.html('<div class="loading-spinner"></div> Starting...').prop('disabled', true);
+
+            $.ajax({
+                url: '/api/start_bot',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(pendingBotData),
+                success: function(response) {
+                    hideConfigSummaryModal();
+                    alert('Bot started successfully!');
+                    $('#startBotForm')[0].reset();
+                    refreshStatus();
+                },
+                error: function(xhr) {
+                    const error = xhr.responseJSON?.error || 'Failed to start bot';
+                    alert('Error: ' + error);
+                },
+                complete: function() {
+                    submitBtn.html(originalText).prop('disabled', false);
+                    pendingBotData = null;
+                }
+            });
+        }
+
+        function hideConfigSummaryModal() {
+            document.getElementById('configSummaryModal').style.display = 'none';
+            pendingBotData = null;
+        }
+
+        function refreshStatus(force = false) {
+            if (isRefreshing) return;
+
+            const now = Date.now();
+            if (!force && statusCache && (now - lastStatusUpdate) < 10000) {
+                updateStatusDisplay(statusCache);
+                return;
+            }
+
+            if (statusRefreshTimeout) {
+                clearTimeout(statusRefreshTimeout);
+            }
+
+            statusRefreshTimeout = setTimeout(() => {
+                if (isRefreshing) return;
+                isRefreshing = true;
+
+                $.ajax({
+                    url: '/api/status',
+                    method: 'GET',
+                    timeout: 5000,
+                    cache: false,
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    },
+                    success: function(data) {
+                        // Validate response data
+                        if (!data || typeof data !== 'object') {
+                            console.error('Invalid status data received');
+                            $('#statusContainer').html('<p style="color: #ef4444;">Invalid data received</p>');
+                            return;
+                        }
+
+                        statusCache = data;
+                        lastStatusUpdate = Date.now();
+                        updateStatusDisplay(data);
+                        $('#lastUpdate').text(formatTimeInUserTimezone(new Date().toISOString()));
+                    },
+                    error: function(xhr, status, error) {
+                        if (xhr.status === 401) {
+                            // Session expired, redirect to login
+                            window.location.href = '/login';
+                            return;
+                        }
+                        console.error('Status refresh error:', error);
+                        $('#statusContainer').html('<p style="color: #ef4444;">Connection error - ' + (error || 'timeout') + '</p>');
+                    },
+                    complete: function() {
+                        isRefreshing = false;
+                    }
+                });
+            }, force ? 0 : 500);
+        }
+
+        function updateStatusDisplay(data) {
+            const container = $('#statusContainer');
+            const instances = data.user_processes;
+
+            $('#totalActive').text(data.total_active);
+            $('#userInstances').text(instances.length);
+            $('#lastUpdate').text(formatTimeInUserTimezone(new Date().toISOString()));
+
+            if (instances.length === 0) {
+                container.html('<p style="color: #64748b;">No active instances</p>');
+                $('#stopAllBtn').addClass('hidden');
+            } else {
+                let html = generateInstancesHTML(instances, true);
+                container.html(html);
+                $('#stopAllBtn').removeClass('hidden');
+            }
+
+            // Update admin all instances view if available
+            if (data.all_processes && document.getElementById('adminDashboardCard') && !document.getElementById('adminDashboardCard').classList.contains('hidden')) {
+                updateAllInstancesDisplay(data.all_processes);
+            }
+        }
+
+        function generateInstancesHTML(instances, showStopButton = true) {
+            let html = '';
+            const currentUser = $('#currentUsername').text();
+            const isCurrentUserAdmin = currentUser === 'admin'; // You might want to get this from user info API
+
+            instances.forEach(function(instance) {
+                var startTime = formatTimeInUserTimezone(instance.start_time);
+                var configFile = instance.config_file || 'config.json';
+                var autoStopInfo = '';
+                var username = instance.username || 'unknown';
+
+                if (instance.auto_stop_time) {
+                    var autoStopTime = formatTimeInUserTimezone(instance.auto_stop_time);
+                    var remainingMinutes = instance.remaining_minutes || 0;
+                    autoStopInfo = `<br>Auto-stop: ${autoStopTime} (${remainingMinutes} min remaining)`;
+                }
+
+
+
+                // Show stop button if explicitly requested AND (user owns instance OR user is admin)
+                const canStop = showStopButton && (instance.username === currentUser || isCurrentUserAdmin);
+
+                html += `
+                    <div class="instance-card">
+                        <div class="instance-header">
+                            <div>
+                                <div class="instance-name">${instance.name}</div>
+                                <div class="instance-details">
+                                    ${username !== 'unknown' ? `User: ${username}<br>` : ''}
+                                    Config: ${configFile}<br>
+                                    Started: ${startTime}${autoStopInfo}
+                                </div>
+                                <div style="margin-top: 8px;">
+                                    <span class="status-badge running">
+                                        <i class="fas fa-circle"></i> Active
+                                    </span>
+                                    ${instance.auto_stop_time ? `
+                                        <span class="status-badge pending" style="margin-left: 8px;">
+                                            <i class="fas fa-clock"></i> Auto-Stop
+                                        </span>
+                                    ` : ''}
+
+                                </div>
+                            </div>
+                            ${canStop ? `
+                                <button class="btn btn-danger" onclick="stopInstance('${instance.instance_id}')" style="flex-shrink: 0;">
+                                    <i class="fas fa-stop"></i> Stop
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        function updateAllInstancesDisplay(allInstances) {
+            const container = document.getElementById('allInstancesList');
+            if (!container) return;
+
+            if (allInstances.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; font-size: 14px;">No instances running</p>';
+                return;
+            }
+
+            // Group instances by user
+            const instancesByUser = {};
+            allInstances.forEach(instance => {
+                const username = instance.username || 'unknown';
+                if (!instancesByUser[username]) {
+                    instancesByUser[username] = [];
+                }
+                instancesByUser[username].push(instance);
+            });
+
+            let html = '';
+            for (const [username, instances] of Object.entries(instancesByUser)) {
+                html +=`
+                    <div style="margin-bottom: 20px;">
+                        <h5 style="color: #1e293b; margin-bottom: 12px; padding: 8px; background: #f1f5f9; border-radius: 6px;">
+                            <i class="fas fa-user"></i> ${username} (${instances.length} instance${instances.length > 1 ? 's' : ''})
+                        </h5>
+                        ${generateInstancesHTML(instances, true)}
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function toggleAllInstancesView() {
+            const container = document.getElementById('allInstancesContainer');
+            const toggleText = document.getElementById('toggleViewText');
+
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                toggleText.textContent = 'Hide All Instances';
+                refreshStatus(true); // Refresh to get latest data
+            } else {
+                container.classList.add('hidden');
+                toggleText.textContent = 'Show All Instances';
+            }
+        }
+
+        function stopInstance(instanceId) {
+            if (!confirm('Are you sure you want to stop this instance?')) {
+                return;
+            }
+
+            $.ajax({
+                url: '/api/stop_bot',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({instance_ids: [instanceId]}),
+                success: function(response) {
+                    alert('Instance stopped successfully!');
+                    // Force immediate refresh by clearing cache and refreshing
+                    statusCache = null;
+                    lastStatusUpdate = 0;
+                    refreshStatus(true);
+
+                    // Schedule additional refreshes to ensure UI updates
+                    setTimeout(() => refreshStatus(true), 1000);
+                    setTimeout(() => refreshStatus(true), 3000);
+                },
+                error: function(xhr) {
+                    const error = xhr.responseJSON?.error || 'Failed to stop instance';
+                    alert('Error: ' + error);
+                }
+            });
+        }
+
+        function downloadConfig() {
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentConfig, null, 2));
+            var downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "helena_config.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            document.body.removeChild(downloadAnchorNode);
+        }
+
+        function setupNotificationBadge() {
+            var badge = document.getElementById('notification-badge');
+            if (!badge) return; // Exit if badge element is not found
+
+            function connectEventSource() {
+                if (isConnected || eventSource) return;
+
+                try {
+                    eventSource = new EventSource('/api/notifications/stream');
+
+                    eventSource.onopen = function() {
+                        isConnected = true;
+                    };
+
+                    eventSource.onmessage = function(event) {
+                        try {
+                            var notification = JSON.parse(event.data);
+
+                            if (notification.type === 'heartbeat' || notification.type === 'connected') {
+                                return;
+                            }
+
+                            notificationCount++;
+                            updateNotificationBadge(notificationCount);
+                        } catch (error) {
+                            // Silently handle errors
+                        }
+                    };
+
+                    eventSource.onerror = function() {
+                        isConnected = false;
+                        if (eventSource) {
+                            eventSource.close();
+                            eventSource = null;
+                        }
+                    };
+                } catch (error) {
+                    isConnected = false;
+                }
+            }
+
+            if (window.location.pathname !== '/login') {
+                setTimeout(connectEventSource, 3000);
+            }
+
+            window.addEventListener('beforeunload', function() {
+                if (eventSource) {
+                    eventSource.close();
+                    eventSource = null;
+                }
+                isConnected = false;
+            });
+        }
+
+        function updateNotificationBadge(count) {
+            var badge = document.getElementById('notification-badge');
+            if (badge) {
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : count;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+        }
+
+        function loadUserInfo() {
+            fetch('/api/user_info')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.username) {
+                        // Safely update elements only if they exist
+                        const currentUsername = document.getElementById('currentUsername');
+                        if (currentUsername) currentUsername.textContent = data.username;
+
+                        const welcomeUsername = document.getElementById('welcomeUsername');
+                        if (welcomeUsername) welcomeUsername.textContent = data.username;
+
+                        const maxInstances = document.getElementById('maxInstances');
+                        if (maxInstances) maxInstances.textContent = data.max_instances;
+
+                        // Update welcome message based on user role
+                        const welcomeMsg = document.getElementById('welcomeMessage');
+                        if (welcomeMsg) {
+                            if (data.is_super_admin) {
+                                welcomeMsg.innerHTML = `Welcome back, <span style="color: #dc2626; font-weight: 700;">${data.username}</span>! 👑 <span style="font-size: 14px; color: #64748b;">(Super Administrator)</span>`;
+                            } else if (data.is_admin) {
+                                welcomeMsg.innerHTML = `Welcome back, <span style="color: #f59e0b; font-weight: 700;">${data.username}</span>! 🛡️ <span style="font-size: 14px; color: #64748b;">(Administrator)</span>`;
+                            } else if (data.role === 'test_user') {
+                                welcomeMsg.innerHTML = `Welcome, <span style="color: #8b5cf6; font-weight: 700;">${data.username}</span>! 🧪 <span style="font-size: 14px; color: #64748b;">(4-Hour Test Account)</span>`;
+                            } else {
+                                welcomeMsg.innerHTML = `Welcome back, <span style="color: #3b82f6; font-weight: 700;">${data.username}</span>! 👋`;
+                            }
+                        }
+
+                        if (data.timezone) {
+                            userTimezone = data.timezone;
+                            const timezoneSelect = document.getElementById('timezoneSelect');
+                            if (timezoneSelect) timezoneSelect.value = data.timezone;
+                        }
+
+                        // Show admin features based on role
+                        if (data.is_admin) {
+                            const adminDashboardCard = document.getElementById('adminDashboardCard');
+                            if (adminDashboardCard) adminDashboardCard.classList.remove('hidden');
+
+                            const userManagementCard = document.getElementById('userManagementCard');
+                            if (userManagementCard) userManagementCard.classList.remove('hidden');
+
+                            const userInstanceManagementCard = document.getElementById('userInstanceManagementCard');
+                            if (userInstanceManagementCard) userInstanceManagementCard.classList.remove('hidden');
+
+                            const testAccountsCard = document.getElementById('testAccountsCard');
+                            if (testAccountsCard) testAccountsCard.classList.remove('hidden');
+
+                            const userActivityCard = document.getElementById('userActivityCard');
+                            if (userActivityCard) {
+                                userActivityCard.classList.remove('hidden');
+                                loadUserActivityData(); // Load activity data for admins
+                            }
+
+                            // Show total active bots stat for admins
+                            const totalActiveStatCard = document.getElementById('totalActiveStatCard');
+                            if (totalActiveStatCard) totalActiveStatCard.classList.remove('hidden');
+
+                            loadUsers();
+                            loadTestAccounts();
+                        }
+
+                        // Show session monitor only for super admin
+                        if (data.is_super_admin) {
+                            const sessionMonitorCard = document.getElementById('sessionMonitorCard');
+                            if (sessionMonitorCard) {
+                                sessionMonitorCard.classList.remove('hidden');
+                                loadSessionMonitor(); // Load session data for super admin
+                            }
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading user info:', error));
+        }
+
+        function initializeTimezone() {
+            // Load user's timezone preference
+            fetch('/api/user_timezone')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.timezone) {
+                        userTimezone = data.timezone;
+                        document.getElementById('timezoneSelect').value = data.timezone;
+                    }
+                })
+                .catch(error => console.error('Error loading timezone preference:', error));
+
+            // Add timezone change event listener
+            document.getElementById('timezoneSelect').addEventListener('change', function() {
+                const selectedTimezone = this.value;
+                saveTimezonePreference(selectedTimezone);
+            });
+        }
+
+        function saveTimezonePreference(timezone) {
+            userTimezone = timezone;
+
+            fetch('/api/user_timezone', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({timezone: timezone})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Refresh all displayed times
+                    refreshStatus(true);
+                    loadScheduledTasks();
+                }
+            })
+            .catch(error => console.error('Error saving timezone preference:', error));
+        }
+
+        function formatTimeInUserTimezone(isoString) {
+            if (!isoString) return 'N/A';
+
+            try {
+                const date = new Date(isoString);
+
+                if (userTimezone === 'local') {
+                    return date.toLocaleString();
+                } else if (userTimezone === 'UTC') {
+                    return date.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+                } else {
+                    return date.toLocaleString('en-US', {
+                        timeZone: userTimezone,
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    }) + ` (${userTimezone.split('/').pop()})`;
+                }
+            } catch (error) {
+                console.error('Error formatting time:', error);
+                return isoString;
+            }
+        }
+
+        function loadUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(function(data) {
+                    if (data.users) {
+                        var container = document.getElementById('usersList');
+                        var html = '';
+
+                        // Also populate instance user select dropdown
+                        var instanceUserSelect = document.getElementById('instanceUserSelect');
+                        if (instanceUserSelect) {
+                            instanceUserSelect.innerHTML = '<option value="">Select user to manage instances...</option>';
+                            data.users.forEach(user => {
+                                const option = document.createElement('option');
+                                option.value = user.username;
+                                option.textContent = user.username;
+                                instanceUserSelect.appendChild(option);
+                            });
+                        }
+
+                        data.users.forEach(user => {
+                            // Format account status
+                            let statusBadge = '';
+                            let statusColor = '#10b981'; // green for active
+                            let statusText = 'Active';
+
+                            if (user.account_status === 'expired') {
+                                statusColor = '#ef4444'; // red for expired
+                                statusText = 'Expired';
+                            } else if (user.account_status === 'not_started') {
+                                statusColor = '#f59e0b'; // orange for not started
+                                statusText = 'Not Started';
+                            }
+
+                            if (user.days_remaining !== null && user.days_remaining !== undefined) {
+                                if (user.account_status === 'active') {
+                                    statusText += ` (${user.days_remaining} days left)`;
+                                } else if (user.account_status === 'not_started') {
+                                    statusText += ` (starts in ${Math.abs(user.days_remaining)} days)`;
+                                }
+                            }
+
+                            statusBadge = `<span class="status-badge" style="background: ${statusColor}; color: white; margin-left: 8px;">${statusText}</span>`;
+
+                            // Format dates
+                            const createdDate = user.created_date ? new Date(user.created_date).toLocaleDateString() : 'Unknown';
+                            const startDate = user.start_date ? new Date(user.start_date + 'T00:00:00').toLocaleDateString() : 'No restriction';
+                            const endDate = user.end_date ? new Date(user.end_date + 'T23:59:59').toLocaleDateString() : 'No restriction';
+
+                            html += `
+                                <div class="instance-card">
+                                    <div class="instance-header">
+                                        <div style="flex: 1;">
+                                            <div class="instance-name" style="display: flex; align-items: center; gap: 8px;">
+                                                ${user.username}
+                                                ${user.role !== 'user' ? `<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">${user.role.toUpperCase()}</span>` : ''}
+                                                ${statusBadge}
+                                            </div>
+                                            <div class="instance-details">
+                                                Max instances: ${user.max_instances}<br>
+                                                Active instances: ${user.active_instances || 0}/${user.total_instances || 0}<br>
+                                                Created: ${createdDate}<br>
+                                                Valid: ${startDate} to ${endDate}
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                                            <button class="btn btn-secondary" onclick="showUserDetailsModal('${user.username}')" style="padding: 6px 12px; font-size: 12px;">
+                                                <i class="fas fa-info-circle"></i> Details
+                                            </button>
+                                            <button class="btn btn-secondary" onclick="editUser('${user.username}', ${user.max_instances}, '${user.start_date || ''}', '${user.end_date || ''}')" style="padding: 6px 12px; font-size: 12px;">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-outline" onclick="showResetPasswordModal('${user.username}')" style="padding: 6px 12px; font-size: 12px; color: #f59e0b; border-color: #f59e0b;">
+                                                <i class="fas fa-key"></i> Reset Password
+                                            </button>
+                                            ${user.username !== 'admin' ? `
+                                                <button class="btn btn-danger" onclick="deleteUser('${user.username}')" style="padding: 6px 12px; font-size: 12px;">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        container.innerHTML = html || '<p style="color: #64748b; font-size: 14px;">No users found</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading users:', error);
+                    document.getElementById('usersList').innerHTML = '<p style="color: #ef4444; font-size: 14px;">Error loading users</p>';
+                });
+        }
+
+        function loadUserInstances(username) {
+            if (!username) {
+                document.getElementById('userInstancesList').innerHTML = '<p style="color: #64748b; font-size: 14px;">Select a user to view their instances</p>';
+                document.getElementById('addInstanceBtn').disabled = true;
+                document.getElementById('refreshInstanceBtn').disabled = true;
+                return;
+            }
+
+            document.getElementById('addInstanceBtn').disabled = false;
+            document.getElementById('refreshInstanceBtn').disabled = false;
+
+            // Show loading message
+            document.getElementById('userInstancesList').innerHTML = '<p style="color: #64748b; font-size: 14px;">Loading instances...</p>';
+
+            fetch(`/api/user_instances/${username}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(`Loaded instances for ${username}:`, data);
+                    if (data.instances !== undefined) {
+                        displayUserInstances(data.instances);
+                    } else {
+                        document.getElementById('userInstancesList').innerHTML = `<p style="color: #ef4444; font-size: 14px;">Error: ${data.error || 'Unknown error'}</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user instances:', error);
+                    document.getElementById('userInstancesList').innerHTML = `<p style="color: #ef4444; font-size: 14px;">Error loading instances: ${error.message}</p>`;
+                });
+        }
+
+        function displayUserInstances(instances) {
+            const container = document.getElementById('userInstancesList');
+
+            if (instances.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; font-size: 14px;">No instances found for this user</p>';
+                return;
+            }
+
+            let html = '';
+            const now = new Date();
+
+            instances.forEach((instance, index) => {
+                const startDate = new Date(instance.start_date);
+                const endDate = new Date(instance.end_date);
+                const createdDate = new Date(instance.created_date);
+
+                // Format dates for display
+                const startDateFormatted = formatTimeInUserTimezone(instance.start_date);
+                const endDateFormatted = formatTimeInUserTimezone(instance.end_date);
+                const createdDateFormatted = formatTimeInUserTimezone(instance.created_date);
+
+                // Check if instance is currently active based on dates
+                const isWithinDateRange = now >= startDate && now <= endDate;
+                const isActive = instance.status === 'active' && isWithinDateRange;
+
+                let statusColor = '#6b7280';
+                let statusText = 'Inactive';
+                let statusDetails = '';
+
+                if (instance.status === 'active') {
+                    if (now < startDate) {
+                        statusColor = '#f59e0b';
+                        statusText = 'Pending';
+                        const daysUntilStart = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24));
+                        statusDetails = `Starts in ${daysUntilStart} day${daysUntilStart !== 1 ? 's' : ''}`;
+                    } else if (now > endDate) {
+                        statusColor = '#ef4444';
+                        statusText = 'Expired';
+                        const daysExpired = Math.ceil((now - endDate) / (1000 * 60 * 60 * 24));
+                        statusDetails = `Expired ${daysExpired} day${daysExpired !== 1 ? 's' : ''} ago`;
+                    } else {
+                        statusColor = '#10b981';
+                        statusText = 'Active';
+                        const daysRemaining = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                        statusDetails = `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} remaining`;
+                    }
+                } else {
+                    statusText = 'Disabled';
+                    statusDetails = 'Manually disabled';
+                }
+
+                html += `
+                    <div class="instance-card" style="border-left: 4px solid ${statusColor};">
+                        <div class="instance-header">
+                            <div style="flex: 1;">
+                                <div class="instance-name" style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-server" style="color: ${statusColor};"></i>
+                                    ${instance.instance_name}
+                                    <span class="status-badge" style="background: ${statusColor}; color: white;">
+                                        ${statusText}
+                                    </span>
+                                </div>
+                                <div class="instance-details">
+                                    <strong>Period:</strong> ${startDateFormatted} → ${endDateFormatted}<br>
+                                    <strong>Created:</strong> ${createdDateFormatted}<br>
+                                    <strong>Status:</strong> ${statusDetails}<br>
+                                    <strong>Config Status:</strong> ${instance.status}
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <button class="btn btn-secondary" onclick="editUserInstance(${index})" style="padding: 6px 12px; font-size: 12px;">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteUserInstance(${index})" style="padding: 6px 12px; font-size: 12px;">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function refreshUserInstanceList() {
+            const selectedUser = document.getElementById('instanceUserSelect').value;
+            if (selectedUser) {
+                loadUserInstances(selectedUser);
+            }
+        }
+
+        function showAddInstanceModal() {
+            const selectedUser = document.getElementById('instanceUserSelect').value;
+            if (!selectedUser) {
+                alert('Please select a user first');
+                return;
+            }
+
+            document.getElementById('selectedUserForInstance').value = selectedUser;
+            document.getElementById('addInstanceModal').style.display = 'block';
+        }
+
+        function hideAddInstanceModal() {
+            document.getElementById('addInstanceModal').style.display = 'none';
+            document.getElementById('addInstanceForm').reset();
+        }
+
+        function addUserInstance() {
+            const selectedUser = document.getElementById('instanceUserSelect').value;
+            const instanceName = document.getElementById('newInstanceName').value;
+            const startDate = document.getElementById('newInstanceStartDate').value;
+            const endDate = document.getElementById('newInstanceEndDate').value;
+
+            if (!instanceName || !startDate || !endDate) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert('End date must be after start date');
+                return;
+            }
+
+            fetch(`/api/user_instances/${selectedUser}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    instance_name: instanceName,
+                    start_date: startDate,
+                    end_date: endDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Instance added successfully!');
+                    hideAddInstanceModal();
+                    loadUserInstances(selectedUser);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding instance:', error);
+                alert('Failed to add instance');
+            });
+        }
+
+        function editUserInstance(instanceIndex) {
+            const selectedUser = document.getElementById('instanceUserSelect').value;
+
+            // Get current instance data
+            fetch(`/api/user_instances/${selectedUser}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.instances && data.instances[instanceIndex]) {
+                        const instance = data.instances[instanceIndex];
+
+                        const newName = prompt('Edit instance name:', instance.instance_name);
+                        if (newName === null) return;
+
+                        const newStartDate = prompt('Edit start date (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS):', instance.start_date);
+                        if (newStartDate === null) return;
+
+                        const newEndDate = prompt('Edit end date (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS):', instance.end_date);
+                        if (newEndDate === null) return;
+
+                        const newStatus = prompt('Edit status (active/inactive):', instance.status);
+                        if (newStatus === null) return;
+
+                        if (new Date(newStartDate) >= new Date(newEndDate)) {
+                            alert('End date must be after start date');
+                            return;
+                        }
+
+                        fetch(`/api/user_instances/${selectedUser}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                instance_index: instanceIndex,
+                                instance_name: newName,
+                                start_date: newStartDate,
+                                end_date: newEndDate,
+                                status: newStatus
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Instance updated successfully!');
+                                loadUserInstances(selectedUser);
+                            } else {
+                                alert('Error: ' + data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error updating instance:', error);
+                            alert('Failed to update instance');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading instance data:', error);
+                    alert('Failed to load instance data');
+                });
+        }
+
+        function deleteUserInstance(instanceIndex) {
+            const selectedUser = document.getElementById('instanceUserSelect').value;
+
+            if (!confirm('Are you sure you want to delete this instance?')) {
+                return;
+            }
+
+            fetch(`/api/user_instances/${selectedUser}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    instance_index: instanceIndex
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Instance deleted successfully!');
+                    loadUserInstances(selectedUser);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting instance:', error);
+                alert('Failed to delete instance');
+            });
+        }
+
+        function loadScheduledTasks() {
+            fetch('/api/schedule/tasks')
+                .then(response => response.json())
+                .then(function(data) {
+                    var container = document.getElementById('scheduledTasks');
+                    var tasks = data.tasks;
+
+                    if (Object.keys(tasks).length === 0) {
+                        container.innerHTML = '<p style="color: #64748b; font-size: 14px;">No scheduled tasks</p>';
+                        return;
+                    }
+
+                    var html = '';
+                    for (var taskId in tasks) {
+                        var task = tasks[taskId];
+                        var scheduleTime = formatTimeInUserTimezone(task.schedule_time);
+                        html += `
+                            <div class="instance-card">
+                                <div class="instance-header">
+                                    <div>
+                                        <div class="instance-name">${task.task_name}</div>
+                                        <div class="instance-details">${task.task_type} - ${scheduleTime}</div>
+                                    </div>
+                                    <button class="btn btn-danger" onclick="deleteScheduledTask('${taskId}')" style="padding: 6px 12px;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    container.innerHTML = html;
+                })
+                .catch(error => console.error('Error loading scheduled tasks:', error));
+        }
+
+        // Modal functions
+        function showAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'block';
+        }
+
+        function hideAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+            document.getElementById('addUserForm').reset();
+        }
+
+        function showScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'block';
+        }
+
+        function hideScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'none';
+            document.getElementById('scheduleForm').reset();
+        }
+
+        function showMaintenanceModal() {
+            document.getElementById('maintenanceModal').style.display = 'block';
+        }
+
+        function hideMaintenanceModal() {
+            document.getElementById('maintenanceModal').style.display = 'none';
+            document.getElementById('maintenanceForm').reset();
+        }
+
+        function showResetPasswordModal(username) {
+            document.getElementById('resetPasswordUsername').value = username;
+            document.getElementById('resetPasswordUsernameDisplay').value = username;
+            document.getElementById('resetPasswordModal').style.display = 'block';
+        }
+
+        function hideResetPasswordModal() {
+            document.getElementById('resetPasswordModal').style.display = 'none';
+            document.getElementById('resetPasswordForm').reset();
+        }
+
+        function resetUserPassword() {
+            const username = document.getElementById('resetPasswordUsername').value;
+            const newPassword = document.getElementById('newPasswordInput').value;
+            const confirmPassword = document.getElementById('confirmPasswordInput').value;
+
+            if (!newPassword || !confirmPassword) {
+                alert('Please fill in both password fields');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters long');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to reset the password for user "${username}"?`)) {
+                return;
+            }
+
+            fetch(`/api/users/${username}/reset_password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    new_password: newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Password reset successfully for user "${username}"`);
+                    hideResetPasswordModal();
+                    loadUsers(); // Refresh the user list
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error resetting password:', error);
+                alert('Failed to reset password');
+            });
+        }
+
+        function addUser() {
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newPassword').value;
+            const maxInstances = parseInt(document.getElementById('newMaxInstances').value);
+            const role = document.getElementById('newUserRole').value;
+            const startDate = document.getElementById('newStartDate').value;
+            const endDate = document.getElementById('newEndDate').value;
+
+            if (!username) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+                alert('End date must be after start date');
+                return;
+            }
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'add',
+                    username: username,
+                    password: password,
+                    max_instances: maxInstances,
+                    role: role,
+                    start_date: startDate,
+                    end_date: endDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User added successfully!');
+                    hideAddUserModal();
+                    loadUsers();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding user:', error);
+                alert('Failed to add user');
+            });
+        }
+
+        function scheduleTask() {
+            const taskName = document.getElementById('taskName').value;
+            const taskType = document.getElementById('taskType').value;
+            const scheduleTime = document.getElementById('scheduleTime').value;
+            const taskData = document.getElementById('taskData').value;
+
+            if (!taskName || !taskType || !scheduleTime) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const data = {
+                task_name: taskName,
+                task_type: taskType,
+                schedule_time: scheduleTime
+            };
+
+            if (taskData) {
+                try {
+                    data.task_data = JSON.parse(taskData);
+                } catch (e) {
+                    alert('Invalid JSON in task data');
+                    return;
+                }
+            }
+
+            fetch('/api/schedule/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Task scheduled successfully!');
+                    hideScheduleModal();
+                    loadScheduledTasks();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error scheduling task:', error);
+                alert('Failed to schedule task');
+            });
+        }
+
+        function enableMaintenanceMode() {
+            const reason = document.getElementById('maintenanceReason').value;
+            const duration = document.getElementById('maintenanceDuration').value;
+
+            if (!reason) {
+                alert('Please provide a reason for maintenance');
+                return;
+            }
+
+            const data = {
+                enabled: true,
+                reason: reason,
+                duration: duration || null
+            };
+
+            fetch('/api/maintenance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Maintenance mode enabled!');
+                    hideMaintenanceModal();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error enabling maintenance mode:', error);
+                alert('Failed to enable maintenance mode');
+            });
+        }
+
+        function editUser(username, currentMax, currentStartDate, currentEndDate) {
+            // Create a modal or form for editing
+            const newMax = prompt(`Edit max instances for ${username}:`, currentMax);
+            if (newMax === null) return;
+
+            const newStartDate = prompt(`Edit start date for ${username} (YYYY-MM-DD, leave empty for no restriction):`, currentStartDate || '');
+            if (newStartDate === null) return;
+
+            const newEndDate = prompt(`Edit end date for ${username} (YYYY-MM-DD, leave empty for no restriction):`, currentEndDate || '');
+            if (newEndDate === null) return;
+
+            if (newStartDate && newEndDate && new Date(newStartDate) >= new Date(newEndDate)) {
+                alert('End date must be after start date');
+                return;
+            }
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'update',
+                    username: username,
+                    max_instances: parseInt(newMax),
+                    start_date: newStartDate,
+                    end_date: newEndDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User updated successfully!');
+                    loadUsers();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user:', error);
+                alert('Failed to update user');
+            });
+        }
+
+        function deleteUser(username) {
+            if (confirm(`Delete user ${username}?`)) {
+                fetch('/api/users/' + username, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User deleted successfully!');
+                        loadUsers();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting user:', error);
+                    alert('Failed to delete user');
+                });
+            }
+        }
+
+        function deleteScheduledTask(taskId) {
+            if (confirm('Delete this scheduled task?')) {
+                fetch(`/api/schedule/tasks/${taskId}`, {method: 'DELETE'})
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadScheduledTasks();
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting task:', error);
+                        alert('Failed to delete task');
+                    });
+            }
+        }
+
+        function showUserDetailsModal(username) {
+            // Fetch detailed user information
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    const user = data.users.find(u => u.username === username);
+                    if (!user) {
+                        alert('User not found');
+                        return;
+                    }
+
+                    const modal = document.getElementById('userDetailsModal');
+                    const modalBody = document.getElementById('userDetailsBody');
+
+                    // Format dates
+                    const createdDate = user.created_date ? formatTimeInUserTimezone(user.created_date) : 'Not set';
+                    const startDate = user.start_date ? formatTimeInUserTimezone(user.start_date + 'T00:00:00') : 'No restriction';
+                    const endDate = user.end_date ? formatTimeInUserTimezone(user.end_date + 'T23:59:59') : 'No restriction';
+
+                    let statusInfo = '';
+                    if (user.account_status === 'active') {
+                        statusInfo = '<span style="color: #10b981; font-weight: bold;">✓ Active</span>';
+                        if (user.days_remaining !== null) {
+                            statusInfo += ` (${user.days_remaining} days remaining)`;
+                        }
+                    } else if (user.account_status === 'expired') {
+                        statusInfo = '<span style="color: #ef4444; font-weight: bold;">✗ Expired</span>';
+                    } else if (user.account_status === 'not_started') {
+                        statusInfo = '<span style="color: #f59e0b; font-weight: bold;">⏳ Not Started</span>';
+                        if (user.days_remaining !== null) {
+                            statusInfo += ` (starts in ${Math.abs(user.days_remaining)} days)`;
+                        }
+                    }
+
+                    modalBody.innerHTML = `
+                        <div style="display: grid; gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label"><strong>Username</strong></label>
+                                <div style="padding: 8px; background: #f8fafc; border-radius: 6px;">${user.username}</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Role</strong></label>
+                                <div style="padding: 8px; background: #f8fafc; border-radius: 6px;">${user.role}</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Account Status</strong></label>
+                                <div style="padding: 8px; background: #f8fafc; border-radius: 6px;">${statusInfo}</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Maximum Instances</strong></label>
+                                <div style="padding: 8px; background: #f8fafc; border-radius: 6px;">${user.max_instances}</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Account Created</strong></label>
+                                <div style="padding: 8px; background: #f8fafc; border-radius: 6px;">${createdDate}</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Valid From</strong></label>
+                                <div style="padding: 8px; background: #f8fafc; border-radius: 6px;">${startDate}</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Valid Until</strong></label>
+                                <div style="padding: 8px; background: #f8fafc; border-radius: 6px;">${endDate}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('userDetailsTitle').textContent = `User Details - ${username}`;
+                    modal.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching user details:', error);
+                    alert('Failed to load user details');
+                });
+        }
+
+        function hideUserDetailsModal() {
+            document.getElementById('userDetailsModal').style.display = 'none';
+        }
+
+        function createTestAccount() {
+            if (!confirm('Create a new 4-hour temporary test account?')) {
+                return;
+            }
+
+            fetch('/api/temp_test_accounts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Test account created successfully!\n\nTest ID: ${data.test_id}\nPassword: ${data.password}\n\nExpires: ${new Date(data.expires_at).toLocaleString()}\n\nThe password is the same as the test ID. This account will automatically expire and clean up all instances in 4 hours.`);
+                    loadTestAccounts();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error creating test account:', error);
+                alert('Failed to create test account');
+            });
+        }
+
+        function loadTestAccounts() {
+            fetch('/api/temp_test_accounts')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.test_accounts) {
+                        const container = document.getElementById('testAccountsList');
+                        let html = '';
+
+                        if (data.test_accounts.length === 0) {
+                            html = '<p style="color: #64748b; font-size: 14px;">No active test accounts</p>';
+                        } else {
+                            data.test_accounts.forEach(account => {
+                                const expiresAt = new Date(account.expires_at);
+                                const remainingHours = account.remaining_hours;
+                                const statusColor = remainingHours > 2 ? '#10b981' : remainingHours > 1 ? '#f59e0b' : '#ef4444';
+
+                                html += `
+                                    <div class="instance-card" style="border-left: 4px solid ${statusColor};">
+                                        <div class="instance-header">
+                                            <div>
+                                                <div class="instance-name" style="display: flex; align-items: center; gap: 8px;">
+                                                    <i class="fas fa-flask" style="color: ${statusColor};"></i>
+                                                    ${account.test_id}
+                                                </div>
+                                                <div class="instance-details">
+                                                    Created: ${formatTimeInUserTimezone(account.created_at)}<br>
+                                                    Expires: ${formatTimeInUserTimezone(account.expires_at)}<br>
+                                                    Time left: ${remainingHours.toFixed(1)} hours<br>
+                                                    Used: ${account.used_count} time(s)<br>
+                                                    Active instances: ${account.active_instances}<br>
+                                                    Active sessions: ${account.active_sessions}
+                                                </div>
+                                                <div style="margin-top: 8px;">
+                                                    <span class="status-badge" style="background: ${statusColor}; color: white;">
+                                                        <i class="fas fa-clock"></i> ${remainingHours.toFixed(1)}h left
+                                                    </span>
+                                                    ${account.active_instances > 0 ? `
+                                                        <span class="status-badge running" style="margin-left: 8px;">
+                                                            <i class="fas fa-robot"></i> ${account.active_instances} bot(s)
+                                                        </span>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                                <button class="btn btn-secondary" onclick="copyTestCredentials('${account.test_id}')" style="padding: 6px 12px; font-size: 12px;">
+                                                    <i class="fas fa-copy"></i> Copy Credentials
+                                                </button>
+                                                <button class="btn btn-danger" onclick="deleteTestAccount('${account.test_id}')" style="padding: 6px 12px; font-size: 12px;">
+                                                    <i class="fas fa-trash"></i> Delete Now
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        }
+
+                        container.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading test accounts:', error);
+                    document.getElementById('testAccountsList').innerHTML = '<p style="color: #ef4444; font-size: 14px;">Error loading test accounts</p>';
+                });
+        }
+
+        function copyTestCredentials(testId) {
+            const credentials = `Test ID: ${testId}\nPassword: ${testId}`;
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(credentials).then(() => {
+                    alert('Test credentials copied to clipboard!');
+                }).catch(() => {
+                    prompt('Copy these credentials:', credentials);
+                });
+            } else {
+                prompt('Copy these credentials:', credentials);
+            }
+        }
+
+        function deleteTestAccount(testId) {
+            if (!confirm(`Delete test account ${testId}? This will immediately stop all running instances and remove the account.`)) {
+                return;
+            }
+
+            fetch('/api/temp_test_accounts', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({test_id: testId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Test account deleted successfully!');
+                    loadTestAccounts();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting test account:', error);
+                alert('Failed to delete test account');
+            });
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = formatTimeInUserTimezone(now.toISOString());
+            const element = document.getElementById('currentTime');
+            if (element) {
+                element.textContent = timeString;
+            }
+        }
+
+        // Auto-refresh scheduled tasks
+        setInterval(loadScheduledTasks, 120000);
+
+         function showAdminSections() {
+            $('.admin-section').removeClass('hidden');
+        }
+
+        function hideAdminSections() {
+            $('.admin-section').addClass('hidden');
+        }
+
+        function loadUserActivityData() {
+            $.get('/api/admin/user_activity_monitor')
+                .done(function(data) {
+                    // Update summary
+                    let summaryHtml = '<div style="margin-bottom: 20px;">';
+                    summaryHtml += '<div class="summary-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">';
+
+                    summaryHtml += '<div class="stat-card" style="background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 8px; text-align: center;">';
+                    summaryHtml += '<h4 style="color: #22c55e; margin: 0 0 5px 0; font-size: 14px;">Total Users</h4>';
+                    summaryHtml += `<p style="font-size: 20px; font-weight: bold; margin: 0;">${data.summary.total_users}</p>`;
+                    summaryHtml += '</div>';
+
+                    summaryHtml += '<div class="stat-card" style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 8px; text-align: center;">';
+                    summaryHtml += '<h4 style="color: #3b82f6; margin: 0 0 5px 0; font-size: 14px;">Active Today</h4>';
+                    summaryHtml += `<p style="font-size: 20px; font-weight: bold; margin: 0;">${data.summary.active_users_today}</p>`;
+                    summaryHtml += '</div>';
+
+                    summaryHtml += '<div class="stat-card" style="background: rgba(168, 85, 247, 0.1); padding: 15px; border-radius: 8px; text-align: center;">';
+                    summaryHtml += '<h4 style="color: #a855f7; margin: 0 0 5px 0; font-size: 14px;">Running Bots</h4>';
+                    summaryHtml += `<p style="font-size: 20px; font-weight: bold; margin: 0;">${data.summary.total_active_instances}</p>`;
+                    summaryHtml += '</div>';
+
+                    summaryHtml += '<div class="stat-card" style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 8px; text-align: center;">';
+                    summaryHtml += '<h4 style="color: #f59e0b; margin: 0 0 5px 0; font-size: 14px;">Notifications Today</h4>';
+                    summaryHtml += `<p style="font-size: 20px; font-weight: bold; margin: 0;">${data.summary.total_notifications_today}</p>`;
+                    summaryHtml += '</div>';
+
+                    summaryHtml += '</div>';
+
+                    if (data.summary.most_active_user) {
+                        summaryHtml += `<p style="color: #374151; font-size: 14px; background: #f9fafb; padding: 10px; border-radius: 6px; margin: 0;">
+                            🏆 Most active user today: <strong>${data.summary.most_active_user}</strong>
+                        </p>`;
+                    }
+
+                    summaryHtml += `<p style="color: #6b7280; font-size: 12px; margin-top: 10px;">Last updated: ${formatTimeInUserTimezone(data.summary.last_updated)}</p>`;
+                    summaryHtml += '</div>';
+
+                    $('#userActivitySummary').html(summaryHtml);
+
+                    // Generate detailed activity list
+                    generateUserActivityDetailView(data.user_activities);
+                })
+                .fail(function(xhr) {
+                    if (xhr.status === 403) {
+                        $('#userActivitySummary').html('<p style="color: #ef4444;">Access denied. Admin privileges required.</p>');
+                    } else {
+                        $('#userActivitySummary').html('<p style="color: #ef4444;">Error loading user activity data.</p>');
+                    }
+                });
+        }
+
+        function generateUserActivityDetailView(userActivities) {
+            let html = '';
+
+            // Sort users by total daily activity
+            const sortedUsers = Object.entries(userActivities).sort((a, b) => {
+                const aTotal = Object.values(a[1].daily_counters).reduce((sum, val) => sum + val, 0);
+                const bTotal = Object.values(b[1].daily_counters).reduce((sum, val) => sum + val, 0);
+                return bTotal - aTotal;
+            });
+
+            sortedUsers.forEach(([userId, activity]) => {
+                const dailyTotal = Object.values(activity.daily_counters).reduce((sum, val) => sum + val, 0);
+                const weeklyTotal = Object.values(activity.weekly_stats).reduce((sum, val) => sum + val, 0);
+                const monthlyTotal = Object.values(activity.monthly_stats).reduce((sum, val) => sum + val, 0);
+
+                html += '<div class="instance-card" style="margin-bottom: 15px;">';
+                html += '<div class="instance-header" style="flex-direction: column; align-items: stretch;">';
+
+                // User header
+                html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">';
+                html += `<div>`;
+                html += `<div class="instance-name" style="display: flex; align-items: center; gap: 8px;">`;
+                html += `<span>${activity.user_info.username}</span>`;
+                if (activity.user_info.role !== 'user') {
+                    html += `<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">${activity.user_info.role.toUpperCase()}</span>`;
+                }
+                html += `</div>`;
+                html += `<div class="instance-details">Max instances: ${activity.user_info.max_instances} | Active bots: ${activity.active_instances}</div>`;
+                html += `</div>`;
+
+                // Status badges
+                html += '<div style="display: flex; gap: 8px; flex-wrap: wrap;">';
+                if (activity.active_instances > 0) {
+                    html += `<span class="status-badge running"><i class="fas fa-robot"></i> ${activity.active_instances} Bot${activity.active_instances > 1 ? 's' : ''}</span>`;
+                }
+                if (dailyTotal > 0) {
+                    html += `<span class="status-badge" style="background: #10b981; color: white;"><i class="fas fa-chart-line"></i> ${dailyTotal} Today</span>`;
+                }
+                html += '</div>';
+                html += '</div>';
+
+                // Activity breakdown
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 12px;">';
+
+                // Daily stats
+                html += '<div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">';
+                html += '<h5 style="color: #374151; font-size: 12px; margin: 0 0 6px 0; font-weight: 600;">Today</h5>';
+                html += `<div style="font-size: 11px; color: #64748b;">`;
+                html += `Rally Join: ${activity.daily_counters.rally_join || 0}<br>`;
+                html += `Rally Start: ${activity.daily_counters.rally_start || 0}<br>`;
+                html += `Gathering: ${activity.daily_counters.gathering || 0}<br>`;
+                html += `Monster: ${activity.daily_counters.monster_attack || 0}<br>`;
+                html += `Objects: ${activity.daily_counters.object_scan || 0}`;
+                html += `</div>`;
+                html += '</div>';
+
+                // Weekly stats
+                html += '<div style="background: #f0f9ff; padding: 10px; border-radius: 6px; border: 1px solid #bae6fd;">';
+                html += '<h5 style="color: #0369a1; font-size: 12px; margin: 0 0 6px 0; font-weight: 600;">This Week</h5>';
+                html += `<div style="font-size: 11px; color: #0369a1;">`;
+                html += `Total: ${weeklyTotal}<br>`;
+                html += `Rally: ${(activity.weekly_stats.rally_join || 0) + (activity.weekly_stats.rally_start || 0)}<br>`;
+                html += `Gathering: ${activity.weekly_stats.gathering || 0}<br>`;
+                html += `Monster: ${activity.weekly_stats.monster_attack || 0}<br>`;
+                html += `Objects: ${activity.weekly_stats.object_scan || 0}`;
+                html += `</div>`;
+                html += '</div>';
+
+                // Monthly stats
+                html += '<div style="background: #ecfdf5; padding: 10px; border-radius: 6px; border: 1px solid #a7f3d0;">';
+                html += '<h5 style="color: #065f46; font-size: 12px; margin: 0 0 6px 0; font-weight: 600;">This Month</h5>';
+                html += `<div style="font-size: 11px; color: #065f46;">`;
+                html += `Total: ${monthlyTotal}<br>`;
+                html += `Rally: ${(activity.monthly_stats.rally_join || 0) + (activity.monthly_stats.rally_start || 0)}<br>`;
+                html += `Gathering: ${activity.monthly_stats.gathering || 0}<br>`;
+                html += `Monster: ${activity.monthly_stats.monster_attack || 0}<br>`;
+                html += `Objects: ${activity.monthly_stats.object_scan || 0}`;
+                html += `</div>`;
+                html += '</div>';
+
+                html += '</div>'; // End grid
+                html += '</div>'; // End instance header
+                html += '</div>'; // End card
+            });
+
+            $('#userActivityList').html(html || '<p style="color: #64748b;">No activity data available.</p>');
+        }
+
+        function toggleActivityView() {
+            $('#userActivitySummary').toggleClass('hidden');
+            $('#userActivityDetails').toggleClass('hidden');
+            $('#activityViewToggleText').text($('#userActivityDetails').hasClass('hidden') ? 'Show Detailed View' : 'Show Summary View');
+        }
+
+        function loadSessionMonitor() {
+            $.get('/api/admin/session_monitor')
+                .done(function(data) {
+                    let html = '<div style="margin-bottom: 20px;">';
+
+                    // Summary stats
+                    html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">';
+                    html += '<div style="background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 8px; text-align: center;">';
+                    html += '<h4 style="color: #22c55e; margin: 0 0 5px 0; font-size: 14px;">Active Sessions</h4>';
+                    html += `<p style="font-size: 20px; font-weight: bold; margin: 0;">${data.summary.total_active_sessions}</p>`;
+                    html += '</div>';
+                    html += '<div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 8px; text-align: center;">';
+                    html += '<h4 style="color: #3b82f6; margin: 0 0 5px 0; font-size: 14px;">Users with History</h4>';
+                    html += `<p style="font-size: 20px; font-weight: bold; margin: 0;">${data.summary.total_users_with_history}</p>`;
+                    html += '</div>';
+                    html += '<div style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 8px; text-align: center;">';
+                    html += '<h4 style="color: #ef4444; margin: 0 0 5px 0; font-size: 14px;">Failed Attempts Today</h4>';
+                    html += `<p style="font-size: 20px; font-weight: bold; margin: 0;">${data.summary.failed_attempts_today}</p>`;
+                    html += '</div>';
+                    html += '</div>';
+
+                    // Active Sessions Table
+                    if (data.sessions && data.sessions.length > 0) {
+                        html += '<h4 style="margin-bottom: 16px; color: #374151;">Active Sessions</h4>';
+                        html += '<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">';
+                        html += '<thead style="background-color: #f8fafc;"><tr>';
+                        html += '<th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">User</th>';
+                        html += '<th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">Role</th>';
+                        html += '<th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">Login Time</th>';
+                        html += '<th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">IP Address</th>';
+                        html += '<th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">Device</th>';
+                        html += '</tr></thead><tbody>';
+
+                        data.sessions.forEach(session => {
+                            const roleColor = session.user_role === 'super_admin' ? '#dc2626' : session.user_role === 'admin' ? '#f59e0b' : '#6b7280';
+                            html += '<tr>';
+                            html += `<td style="padding: 8px; border: 1px solid #e2e8f0;">${session.username}</td>`;
+                            html += `<td style="padding: 8px; border: 1px solid #e2e8f0; color: ${roleColor}; font-weight: bold;">${session.user_role}</td>`;
+                            html += `<td style="padding: 8px; border: 1px solid #e2e8f0;">${formatTimeInUserTimezone(session.login_time)}</td>`;
+                            html += `<td style="padding: 8px; border: 1px solid #e2e8f0;">${session.ip_address}</td>`;
+                            html += `<td style="padding: 8px; border: 1px solid #e2e8f0;">${session.device_type} (${session.browser})</td>`;
+                            html += '</tr>';
+                        });
+                        html += '</tbody></table>';
+                    } else {
+                        html += '<p style="color: #64748b;">No active sessions</p>';
+                    }
+
+                    // Recent Login History
+                    if (data.recent_logins && data.recent_logins.length > 0) {
+                        html += '<h4 style="margin-bottom: 16px; color: #374151;">Recent Login History</h4>';
+                        html += '<div style="max-height: 300px; overflow-y: auto;">';
+                        html += '<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">';
+                        html += '<thead style="background-color: #f8fafc;"><tr>';
+                        html += '<th style="padding: 6px; border: 1px solid #e2e8f0; text-align: left;">User</th>';
+                        html += '<th style="padding: 6px; border: 1px solid #e2e8f0; text-align: left;">Login Time</th>';
+                        html += '<th style="padding: 6px; border: 1px solid #e2e8f0; text-align: left;">Duration</th>';
+                        html += '<th style="padding: 6px; border: 1px solid #e2e8f0; text-align: left;">Status</th>';
+                        html += '</tr></thead><tbody>';
+
+                        data.recent_logins.forEach(login => {
+                            const statusColor = login.status === 'active' ? '#10b981' : '#6b7280';
+                            html += '<tr>';
+                            html += `<td style="padding: 6px; border: 1px solid #e2e8f0;">${login.username}</td>`;
+                            html += `<td style="padding: 6px; border: 1px solid #e2e8f0;">${formatTimeInUserTimezone(login.login_time)}</td>`;
+                            html += `<td style="padding: 6px; border: 1px solid #e2e8f0;">${login.session_duration}</td>`;
+                            html += `<td style="padding: 6px; border: 1px solid #e2e8f0; color: ${statusColor};">${login.status}</td>`;
+                            html += '</tr>';
+                        });
+                        html += '</tbody></table>';
+                        html += '</div>';
+                    }
+
+                    html += `<p style="color: #6b7280; font-size: 12px; margin-top: 10px;">Last updated: ${formatTimeInUserTimezone(data.summary.last_updated)}</p>`;
+                    html += '</div>';
+
+                    $('#sessionMonitorContent').html(html);
+                })
+                .fail(function(xhr) {
+                    let errorMsg = 'Error loading session data.';
+                    if (xhr.status === 403) {
+                        errorMsg = 'Access denied. Super admin privileges required.';
+                    }
+                    $('#sessionMonitorContent').html(`<p style="color: #ef4444;">${errorMsg}</p>`);
+                });
+        }
+    </script>
+    <script>
+        // Mobile menu toggle function
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('show');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.getElementById('navLinks');
+            const toggleBtn = document.querySelector('.mobile-menu-toggle');
+
+            if (!navLinks.contains(event.target) && !toggleBtn.contains(event.target)) {
+                navLinks.classList.remove('show');
+            }
+        });
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Initialize theme on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTheme);
+        } else {
+            initializeTheme();
+        }
+
+        // Make functions globally available
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+
+        // Browser Notification Functions
+        function initializeBrowserNotifications() {
+            if (!('Notification' in window)) {
+                console.warn('Browser does not support notifications.');
+                return;
+            }
+
+            // Check local storage for preference
+            const savedPreference = localStorage.getItem('browserNotificationsEnabled');
+            if (savedPreference === 'true') {
+                browserNotificationsEnabled = true;
+                // If granted, we are ready. If not, we'll prompt later.
+            }
+
+            // Update UI elements based on current permission status
+            updateNotificationUIAccordingToPermission();
+        }
+
+        function updateNotificationUIAccordingToPermission() {
+            const notificationPermission = Notification.permission;
+
+            if (notificationPermission === 'granted') {
+                browserNotificationsEnabled = true;
+                localStorage.setItem('browserNotificationsEnabled', 'true');
+                // Hide enable button, show disable button if they exist
+                // $('#enableBrowserNotificationsBtn').hide();
+                // $('#disableBrowserNotificationsBtn').show();
+            } else if (notificationPermission === 'denied') {
+                browserNotificationsEnabled = false;
+                localStorage.setItem('browserNotificationsEnabled', 'false');
+                // Hide both enable/disable, maybe show a message about needing to enable in browser settings
+                // $('#enableBrowserNotificationsBtn').hide();
+                // $('#disableBrowserNotificationsBtn').hide();
+                // $('#notificationPermissionDeniedMessage').show();
+            } else { // 'default' state
+                browserNotificationsEnabled = false; // Assume disabled until explicitly granted
+                localStorage.setItem('browserNotificationsEnabled', 'false');
+                // Show enable button
+                // $('#enableBrowserNotificationsBtn').show();
+                // $('#disableBrowserNotificationsBtn').hide();
+            }
+        }
+
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                updateNotificationUIAccordingToPermission();
+                if (permission === 'granted') {
+                    alert('Browser notifications enabled!');
+                    // You might want to show a sample notification here
+                    // showBrowserNotification('Notifications Enabled', 'You will now receive important alerts.');
+                } else {
+                    alert('Browser notifications are not enabled. You may need to enable them in your browser settings.');
+                }
+            });
+        }
+
+        function showBrowserNotification(title, message) {
+            if (!browserNotificationsEnabled || Notification.permission !== 'granted' || !document.hidden) {
+                return;
+            }
+
+            try {
+                const notification = new Notification(title, {
+                    body: message,
+                    icon: '/static/helena_1751952960287.jpg', // Use your app's icon
+                    badge: '/static/helena_1751952960287.jpg', // For Android
+                    tag: 'lokbot-notification', // Helps in grouping notifications
+                    requireInteraction: false // Auto-closes after a few seconds
+                });
+
+                notification.onclick = function() {
+                    window.focus(); // Bring the browser window to the front
+                    notification.close(); // Close the notification
+                };
+
+                // Automatically close notification after a timeout if it doesn't auto-close
+                setTimeout(() => {
+                    notification.close();
+                }, 5000); // 5 seconds
+            } catch (error) {
+                console.error('Error showing browser notification:', error);
+            }
+        }
+
+        function connectEventSource() {
+            if (isConnected || eventSource) {
+                // If already connected or connection is in progress, do nothing
+                return;
+            }
+
+            try {
+                eventSource = new EventSource('/api/notifications/stream');
+
+                eventSource.onopen = function() {
+                    isConnected = true;
+                    console.log('Notification stream connected.');
+                };
+
+                eventSource.onmessage = function(event) {
+                    try {
+                        var notification = JSON.parse(event.data);
+
+                        // Ignore heartbeats or connection messages
+                        if (notification.type === 'heartbeat' || notification.type === 'connected') {
+                            return;
+                        }
+
+                        // Increment in-app notification count
+                        notificationCount++;
+                        updateNotificationBadge(notificationCount);
+
+                        // Show browser notification if conditions are met
+                        if (notification.title && notification.message) {
+                            showBrowserNotification(notification.title, notification.message);
+                        }
+                    } catch (error) {
+                        console.error('Error parsing notification message:', error);
+                    }
+                };
+
+                eventSource.onerror = function() {
+                    isConnected = false;
+                    console.error('Notification stream error.');
+                    if (eventSource) {
+                        eventSource.close(); // Close the connection on error
+                        eventSource = null;
+                    }
+                    // Optionally, try to reconnect after a delay
+                    setTimeout(connectEventSource, 5000); // Reconnect after 5 seconds
+                };
+            } catch (error) {
+                isConnected = false;
+                console.error('Failed to create EventSource:', error);
+                // Optionally, try to reconnect after a delay
+                setTimeout(connectEventSource, 5000); // Reconnect after 5 seconds
+            }
+        }
+    </script>
+</body>
+</html>

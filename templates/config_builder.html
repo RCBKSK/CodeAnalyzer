@@ -1,0 +1,1402 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Configuration Builder - HelenA QuantumRaid Bot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .builder-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 24px;
+            min-height: 70vh;
+        }
+
+        /* Component Palette */
+        .component-palette {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .palette-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .component-category {
+            margin-bottom: 24px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .draggable-component {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: grab;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .draggable-component:hover {
+            background: #f1f5f9;
+            border-color: #3b82f6;
+            transform: translateX(4px);
+        }
+
+        .draggable-component:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .component-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #3b82f6;
+            color: white;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .component-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .component-desc {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .canvas-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .canvas-tools {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tool-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .tool-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .tool-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .canvas {
+            min-height: 500px;
+            background: 
+                radial-gradient(circle at 20px 20px, #e2e8f0 1px, transparent 1px),
+                radial-gradient(circle at 60px 60px, #e2e8f0 1px, transparent 1px);
+            background-size: 40px 40px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            position: relative;
+            overflow: auto;
+            transition: all 0.2s ease;
+        }
+
+        .canvas.dragover {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
+            box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .dropped-component {
+            position: absolute;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 120px;
+            cursor: move;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .dropped-component:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+        }
+
+        .dropped-component.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .component-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .component-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-btn {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 4px;
+            background: #f1f5f9;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #e2e8f0;
+            color: #3b82f6;
+        }
+
+        .action-btn.delete:hover {
+            background: #fecaca;
+            color: #dc2626;
+        }
+
+        /* Properties Panel */
+        .properties-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .properties-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .property-group {
+            margin-bottom: 20px;
+        }
+
+        .property-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .property-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .property-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .property-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .property-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #3b82f6;
+        }
+
+        .property-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .property-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #374151;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .canvas-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .builder-container {
+                grid-template-columns: 250px 1fr 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .builder-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .component-palette,
+            .properties-panel {
+                max-height: 300px;
+            }
+
+            .canvas {
+                min-height: 400px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .component-palette,
+            .canvas-area,
+            .properties-panel {
+                padding: 16px;
+            }
+
+            .canvas {
+                min-height: 300px;
+            }
+        }
+
+        /* Animation for drag feedback */
+        .drag-preview {
+            opacity: 0.7;
+            transform: rotate(5deg);
+            pointer-events: none;
+        }
+
+        .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #64748b;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: #3b82f6;
+            border-radius: 1px;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .zoom-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .config-preview {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #374151;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-drafting-compass"></i>
+                Visual Configuration Builder
+            </h1>
+            <p>Drag and drop components to build your bot configuration visually</p>
+        </div>
+
+        <div class="builder-container">
+            <!-- Component Palette -->
+            <div class="component-palette">
+                <div class="palette-title">
+                    <i class="fas fa-puzzle-piece"></i>
+                    Components
+                </div>
+
+                <div class="component-category">
+                    <div class="category-title">Rally Settings</div>
+                    <div class="draggable-component" draggable="true" data-type="rally-join" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-users"></i></div>
+                        <div>
+                            <div class="component-name">Rally Join</div>
+                            <div class="component-desc">Configure rally joining settings</div>
+                        </div>
+                    </div>
+                    <div class="draggable-component" draggable="true" data-type="rally-start" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-flag"></i></div>
+                        <div>
+                            <div class="component-name">Rally Start</div>
+                            <div class="component-desc">Configure rally starting settings</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-category">
+                    <div class="category-title">Combat</div>
+                    <div class="draggable-component" draggable="true" data-type="monster-attack" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-dragon"></i></div>
+                        <div>
+                            <div class="component-name">Monster Attack</div>
+                            <div class="component-desc">Configure monster hunting</div>
+                        </div>
+                    </div>
+                    <div class="draggable-component" draggable="true" data-type="troop-config" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <div class="component-name">Troop Config</div>
+                            <div class="component-desc">Configure troop compositions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-category">
+                    <div class="category-title">Economy</div>
+                    <div class="draggable-component" draggable="true" data-type="gathering" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-seedling"></i></div>
+                        <div>
+                            <div class="component-name">Gathering</div>
+                            <div class="component-desc">Configure resource gathering</div>
+                        </div>
+                    </div>
+                    <div class="draggable-component" draggable="true" data-type="building" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-building"></i></div>
+                        <div>
+                            <div class="component-name">Building</div>
+                            <div class="component-desc">Configure building upgrades</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-category">
+                    <div class="category-title">Automation</div>
+                    <div class="draggable-component" draggable="true" data-type="schedule" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <div class="component-name">Schedule</div>
+                            <div class="component-desc">Configure automation schedules</div>
+                        </div>
+                    </div>
+                    <div class="draggable-component" draggable="true" data-type="notifications" style="cursor: grab;">
+                        <div class="component-icon"><i class="fas fa-bell"></i></div>
+                        <div>
+                            <div class="component-name">Notifications</div>
+                            <div class="component-desc">Configure Discord webhooks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="canvas-area">
+                <div class="canvas-header">
+                    <div class="canvas-title">Configuration Canvas</div>
+                    <div class="canvas-tools">
+                        <button class="tool-btn active" data-tool="select">
+                            <i class="fas fa-mouse-pointer"></i> Select
+                        </button>
+                        <button class="tool-btn" data-tool="connect">
+                            <i class="fas fa-link"></i> Connect
+                        </button>
+                        <button class="tool-btn" data-tool="pan">
+                            <i class="fas fa-hand-paper"></i> Pan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="canvas" id="canvas">
+                    <div class="empty-state">
+                        <i class="fas fa-plus-circle"></i>
+                        <div>Drag components here to start building</div>
+                    </div>
+                </div>
+
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoom-out">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="zoom-btn" id="zoom-reset">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="zoom-btn" id="zoom-in">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="canvas-actions">
+                    <button class="btn btn-secondary" id="clear-canvas">
+                        <i class="fas fa-trash"></i> Clear Canvas
+                    </button>
+                    <button class="btn btn-primary" id="generate-config">
+                        <i class="fas fa-code"></i> Generate Config
+                    </button>
+                    <button class="btn btn-primary" id="save-config">
+                        <i class="fas fa-save"></i> Save Configuration
+                    </button>
+                </div>
+            </div>
+
+            <!-- Properties Panel -->
+            <div class="properties-panel">
+                <div class="properties-title">
+                    <i class="fas fa-sliders-h"></i>
+                    Properties
+                </div>
+
+                <div id="properties-content">
+                    <div style="text-align: center; color: #64748b; padding: 40px 20px;">
+                        <i class="fas fa-mouse-pointer" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></i>
+                        <p>Select a component to edit its properties</p>
+                    </div>
+                </div>
+
+                <div class="config-preview" id="config-preview">
+                    // Generated configuration will appear here
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ConfigBuilder {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.propertiesContent = document.getElementById('properties-content');
+                this.configPreview = document.getElementById('config-preview');
+                this.selectedComponent = null;
+                this.components = [];
+                this.connections = [];
+                this.zoomLevel = 1;
+                this.panOffset = { x: 0, y: 0 };
+                this.currentTool = 'select';
+                this.isDragging = false;
+                this.dragStartPos = { x: 0, y: 0 };
+                
+                this.initEventListeners();
+                this.updateConfigPreview();
+            }
+
+            initEventListeners() {
+                // Drag and drop from palette
+                document.querySelectorAll('.draggable-component').forEach(component => {
+                    component.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.effectAllowed = 'copy';
+                        e.dataTransfer.setData('text/plain', component.dataset.type);
+                        e.dataTransfer.setData('application/json', JSON.stringify({
+                            type: component.dataset.type,
+                            name: component.querySelector('.component-name').textContent
+                        }));
+                        component.classList.add('drag-preview');
+                        console.log('Drag started for:', component.dataset.type);
+                    });
+                    
+                    component.addEventListener('dragend', (e) => {
+                        component.classList.remove('drag-preview');
+                        console.log('Drag ended');
+                    });
+                });
+
+                // Canvas drag and drop
+                this.canvas.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.dataTransfer.dropEffect = 'copy';
+                    this.canvas.classList.add('dragover');
+                    console.log('Dragover on canvas');
+                });
+
+                this.canvas.addEventListener('dragenter', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.canvas.classList.add('dragover');
+                });
+
+                this.canvas.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Dragleave from canvas');
+                    // Only remove dragover if we're leaving the canvas completely
+                    if (!this.canvas.contains(e.relatedTarget)) {
+                        this.canvas.classList.remove('dragover');
+                        console.log('Removed dragover class');
+                    }
+                });
+
+                this.canvas.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.canvas.classList.remove('dragover');
+                    
+                    console.log('Drop event triggered');
+                    console.log('DataTransfer types:', e.dataTransfer.types);
+                    
+                    const componentType = e.dataTransfer.getData('text/plain');
+                    console.log('Drop detected:', componentType);
+                    console.log('Event target:', e.target);
+                    console.log('Canvas element:', this.canvas);
+                    
+                    if (!componentType) {
+                        console.error('No component type found in drop data');
+                        console.log('Available data types:', e.dataTransfer.types);
+                        return;
+                    }
+                    
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = Math.max(10, e.clientX - rect.left);
+                    const y = Math.max(10, e.clientY - rect.top);
+                    
+                    console.log('Canvas rect:', rect);
+                    console.log('Mouse position:', e.clientX, e.clientY);
+                    console.log('Calculated position:', x, y);
+                    console.log('Adding component at:', x, y);
+                    
+                    this.addComponent(componentType, x, y);
+                });
+
+                // Tool selection
+                document.querySelectorAll('.tool-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentTool = btn.dataset.tool;
+                    });
+                });
+
+                // Canvas actions
+                document.getElementById('clear-canvas').addEventListener('click', () => {
+                    this.clearCanvas();
+                });
+
+                document.getElementById('generate-config').addEventListener('click', () => {
+                    this.generateConfig();
+                });
+
+                document.getElementById('save-config').addEventListener('click', () => {
+                    this.saveConfiguration();
+                });
+
+                // Zoom controls
+                document.getElementById('zoom-in').addEventListener('click', () => {
+                    this.zoomLevel = Math.min(this.zoomLevel * 1.2, 3);
+                    this.updateCanvasTransform();
+                });
+
+                document.getElementById('zoom-out').addEventListener('click', () => {
+                    this.zoomLevel = Math.max(this.zoomLevel / 1.2, 0.3);
+                    this.updateCanvasTransform();
+                });
+
+                document.getElementById('zoom-reset').addEventListener('click', () => {
+                    this.zoomLevel = 1;
+                    this.panOffset = { x: 0, y: 0 };
+                    this.updateCanvasTransform();
+                });
+
+                // Canvas click for deselection
+                this.canvas.addEventListener('click', (e) => {
+                    if (e.target === this.canvas) {
+                        this.selectComponent(null);
+                    }
+                });
+            }
+
+            addComponent(type, x, y) {
+                try {
+                    console.log('addComponent called with:', { type, x, y });
+                    console.log('Canvas element exists:', !!this.canvas);
+                    console.log('Components array length before:', this.components.length);
+                    
+                    if (!type) {
+                        console.error('Component type is required');
+                        return;
+                    }
+
+                    const component = {
+                        id: Date.now() + Math.random(),
+                        type: type,
+                        x: x,
+                        y: y,
+                        config: this.getDefaultConfig(type)
+                    };
+
+                    console.log('Created component:', component);
+
+                    this.components.push(component);
+                    console.log('Components array length after:', this.components.length);
+                    
+                    this.renderComponent(component);
+                    this.updateConfigPreview();
+                    this.hideEmptyState();
+                    
+                    // Auto-select the newly added component
+                    setTimeout(() => {
+                        this.selectComponent(component);
+                    }, 100);
+                    
+                    console.log('Component added successfully');
+                    console.log('Canvas children count:', this.canvas.children.length);
+                } catch (error) {
+                    console.error('Error adding component:', error);
+                    console.error('Error stack:', error.stack);
+                }
+            }
+
+            getDefaultConfig(type) {
+                const configs = {
+                    'rally-join': {
+                        enabled: true,
+                        numMarch: 8,
+                        max_rally_distance: 500,
+                        level_based_troops: true,
+                        targets: []
+                    },
+                    'rally-start': {
+                        enabled: false,
+                        numMarch: 8,
+                        level_based_troops: true,
+                        targets: []
+                    },
+                    'monster-attack': {
+                        enabled: true,
+                        common_troops: [],
+                        targets: []
+                    },
+                    'troop-config': {
+                        troops: [],
+                        formations: []
+                    },
+                    'gathering': {
+                        enabled: true,
+                        resources: ['food', 'wood', 'stone', 'gold'],
+                        march_count: 5
+                    },
+                    'building': {
+                        enabled: false,
+                        buildings: [],
+                        priorities: []
+                    },
+                    'schedule': {
+                        enabled: false,
+                        tasks: [],
+                        intervals: []
+                    },
+                    'notifications': {
+                        enabled: true,
+                        webhook_url: '',
+                        events: []
+                    }
+                };
+
+                return configs[type] || {};
+            }
+
+            renderComponent(component) {
+                const element = document.createElement('div');
+                element.className = 'dropped-component';
+                element.style.left = component.x + 'px';
+                element.style.top = component.y + 'px';
+                element.dataset.componentId = component.id;
+
+                const icon = this.getComponentIcon(component.type);
+                const name = this.getComponentName(component.type);
+
+                element.innerHTML = `
+                    <div class="component-header">
+                        <div class="component-title">
+                            <i class="${icon}"></i> ${name}
+                        </div>
+                        <div class="component-actions">
+                            <button class="action-btn" onclick="configBuilder.editComponent('${component.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="configBuilder.deleteComponent('${component.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="component-status">
+                        ${component.config.enabled ? 'Enabled' : 'Disabled'}
+                    </div>
+                `;
+
+                // Make component draggable
+                this.makeDraggable(element);
+
+                // Add click handler
+                element.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.selectComponent(component);
+                });
+
+                this.canvas.appendChild(element);
+            }
+
+            makeDraggable(element) {
+                let isDragging = false;
+                let startX, startY;
+
+                element.addEventListener('mousedown', (e) => {
+                    if (this.currentTool !== 'select') return;
+                    
+                    isDragging = true;
+                    startX = e.clientX - element.offsetLeft;
+                    startY = e.clientY - element.offsetTop;
+                    element.style.cursor = 'grabbing';
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+
+                    const newX = e.clientX - startX;
+                    const newY = e.clientY - startY;
+
+                    element.style.left = newX + 'px';
+                    element.style.top = newY + 'px';
+
+                    // Update component position
+                    const component = this.components.find(c => c.id == element.dataset.componentId);
+                    if (component) {
+                        component.x = newX;
+                        component.y = newY;
+                    }
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        element.style.cursor = 'move';
+                    }
+                });
+            }
+
+            selectComponent(component) {
+                // Remove previous selection
+                document.querySelectorAll('.dropped-component').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                this.selectedComponent = component;
+
+                if (component) {
+                    // Highlight selected component
+                    const element = document.querySelector(`[data-component-id="${component.id}"]`);
+                    if (element) {
+                        element.classList.add('selected');
+                    }
+
+                    // Show properties
+                    this.showProperties(component);
+                } else {
+                    // Show empty state
+                    this.propertiesContent.innerHTML = `
+                        <div style="text-align: center; color: #64748b; padding: 40px 20px;">
+                            <i class="fas fa-mouse-pointer" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></i>
+                            <p>Select a component to edit its properties</p>
+                        </div>
+                    `;
+                }
+            }
+
+            showProperties(component) {
+                const properties = this.generatePropertyForm(component);
+                this.propertiesContent.innerHTML = properties;
+                this.bindPropertyEvents(component);
+            }
+
+            generatePropertyForm(component) {
+                const config = component.config;
+                const type = component.type;
+
+                let form = `<div class="property-group">
+                    <label class="property-label">Component Type</label>
+                    <input type="text" class="property-input" value="${this.getComponentName(type)}" readonly>
+                </div>`;
+
+                // Generate form based on component type
+                switch (type) {
+                    case 'rally-join':
+                    case 'rally-start':
+                        form += `
+                            <div class="property-group">
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="enabled" ${config.enabled ? 'checked' : ''}>
+                                    <label for="enabled">Enabled</label>
+                                </div>
+                            </div>
+                            <div class="property-group">
+                                <label class="property-label">Number of Marches</label>
+                                <input type="number" class="property-input" id="numMarch" value="${config.numMarch || 8}" min="1" max="10">
+                            </div>
+                            <div class="property-group">
+                                <label class="property-label">Max Rally Distance</label>
+                                <input type="number" class="property-input" id="max_rally_distance" value="${config.max_rally_distance || 500}" min="100" max="1000">
+                            </div>
+                            <div class="property-group">
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="level_based_troops" ${config.level_based_troops ? 'checked' : ''}>
+                                    <label for="level_based_troops">Level Based Troops</label>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+                    case 'monster-attack':
+                        form += `
+                            <div class="property-group">
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="enabled" ${config.enabled ? 'checked' : ''}>
+                                    <label for="enabled">Enabled</label>
+                                </div>
+                            </div>
+                            <div class="property-group">
+                                <label class="property-label">Target Monsters</label>
+                                <select class="property-select" id="target_monsters" multiple>
+                                    <option value="20200101">Orc</option>
+                                    <option value="20200102">Skeleton</option>
+                                    <option value="20200103">Golem</option>
+                                    <option value="20200104">Treasure Goblin</option>
+                                </select>
+                            </div>
+                        `;
+                        break;
+
+                    case 'gathering':
+                        form += `
+                            <div class="property-group">
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="enabled" ${config.enabled ? 'checked' : ''}>
+                                    <label for="enabled">Enabled</label>
+                                </div>
+                            </div>
+                            <div class="property-group">
+                                <label class="property-label">March Count</label>
+                                <input type="number" class="property-input" id="march_count" value="${config.march_count || 5}" min="1" max="10">
+                            </div>
+                            <div class="property-group">
+                                <label class="property-label">Resources</label>
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="food" ${config.resources?.includes('food') ? 'checked' : ''}>
+                                    <label for="food">Food</label>
+                                </div>
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="wood" ${config.resources?.includes('wood') ? 'checked' : ''}>
+                                    <label for="wood">Wood</label>
+                                </div>
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="stone" ${config.resources?.includes('stone') ? 'checked' : ''}>
+                                    <label for="stone">Stone</label>
+                                </div>
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="gold" ${config.resources?.includes('gold') ? 'checked' : ''}>
+                                    <label for="gold">Gold</label>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+                    case 'notifications':
+                        form += `
+                            <div class="property-group">
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="enabled" ${config.enabled ? 'checked' : ''}>
+                                    <label for="enabled">Enabled</label>
+                                </div>
+                            </div>
+                            <div class="property-group">
+                                <label class="property-label">Webhook URL</label>
+                                <input type="url" class="property-input" id="webhook_url" value="${config.webhook_url || ''}" placeholder="https://discord.com/api/webhooks/...">
+                            </div>
+                            <div class="property-group">
+                                <label class="property-label">Events</label>
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="rally_events" ${config.events?.includes('rally') ? 'checked' : ''}>
+                                    <label for="rally_events">Rally Events</label>
+                                </div>
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="monster_events" ${config.events?.includes('monster') ? 'checked' : ''}>
+                                    <label for="monster_events">Monster Events</label>
+                                </div>
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="gathering_events" ${config.events?.includes('gathering') ? 'checked' : ''}>
+                                    <label for="gathering_events">Gathering Events</label>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+                    default:
+                        form += `
+                            <div class="property-group">
+                                <div class="property-checkbox">
+                                    <input type="checkbox" id="enabled" ${config.enabled ? 'checked' : ''}>
+                                    <label for="enabled">Enabled</label>
+                                </div>
+                            </div>
+                        `;
+                }
+
+                return form;
+            }
+
+            bindPropertyEvents(component) {
+                const inputs = this.propertiesContent.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        this.updateComponentConfig(component, e.target);
+                    });
+                });
+            }
+
+            updateComponentConfig(component, input) {
+                const config = component.config;
+                const id = input.id;
+                const value = input.type === 'checkbox' ? input.checked : 
+                             input.type === 'number' ? Number(input.value) : input.value;
+
+                // Handle special cases
+                if (id === 'food' || id === 'wood' || id === 'stone' || id === 'gold') {
+                    if (!config.resources) config.resources = [];
+                    if (value) {
+                        if (!config.resources.includes(id)) {
+                            config.resources.push(id);
+                        }
+                    } else {
+                        config.resources = config.resources.filter(r => r !== id);
+                    }
+                } else if (id === 'rally_events' || id === 'monster_events' || id === 'gathering_events') {
+                    if (!config.events) config.events = [];
+                    const eventType = id.replace('_events', '');
+                    if (value) {
+                        if (!config.events.includes(eventType)) {
+                            config.events.push(eventType);
+                        }
+                    } else {
+                        config.events = config.events.filter(e => e !== eventType);
+                    }
+                } else {
+                    config[id] = value;
+                }
+
+                // Update component display
+                this.updateComponentDisplay(component);
+                this.updateConfigPreview();
+            }
+
+            updateComponentDisplay(component) {
+                const element = document.querySelector(`[data-component-id="${component.id}"]`);
+                if (element) {
+                    const statusElement = element.querySelector('.component-status');
+                    if (statusElement) {
+                        statusElement.textContent = component.config.enabled ? 'Enabled' : 'Disabled';
+                    }
+                }
+            }
+
+            editComponent(componentId) {
+                const component = this.components.find(c => c.id == componentId);
+                if (component) {
+                    this.selectComponent(component);
+                }
+            }
+
+            deleteComponent(componentId) {
+                const index = this.components.findIndex(c => c.id == componentId);
+                if (index > -1) {
+                    this.components.splice(index, 1);
+                    
+                    const element = document.querySelector(`[data-component-id="${componentId}"]`);
+                    if (element) {
+                        element.remove();
+                    }
+
+                    if (this.selectedComponent && this.selectedComponent.id == componentId) {
+                        this.selectComponent(null);
+                    }
+
+                    this.updateConfigPreview();
+                    this.showEmptyStateIfNeeded();
+                }
+            }
+
+            clearCanvas() {
+                if (confirm('Are you sure you want to clear the canvas?')) {
+                    this.components = [];
+                    this.connections = [];
+                    this.selectedComponent = null;
+                    
+                    document.querySelectorAll('.dropped-component').forEach(el => el.remove());
+                    document.querySelectorAll('.connection-line').forEach(el => el.remove());
+                    
+                    this.selectComponent(null);
+                    this.updateConfigPreview();
+                    this.showEmptyState();
+                }
+            }
+
+            generateConfig() {
+                const config = {
+                    main: {
+                        jobs: []
+                    },
+                    rally: {},
+                    discord: {
+                        enabled: false
+                    }
+                };
+
+                this.components.forEach(component => {
+                    switch (component.type) {
+                        case 'rally-join':
+                            config.rally.join = component.config;
+                            break;
+                        case 'rally-start':
+                            config.rally.start = component.config;
+                            break;
+                        case 'monster-attack':
+                            config.main.normal_monsters = component.config;
+                            break;
+                        case 'gathering':
+                            config.main.gathering = component.config;
+                            break;
+                        case 'notifications':
+                            config.discord = {
+                                enabled: component.config.enabled,
+                                webhook_url: component.config.webhook_url,
+                                events: component.config.events
+                            };
+                            break;
+                    }
+                });
+
+                return config;
+            }
+
+            updateConfigPreview() {
+                const config = this.generateConfig();
+                this.configPreview.textContent = JSON.stringify(config, null, 2);
+            }
+
+            async saveConfiguration() {
+                const config = this.generateConfig();
+                const filename = prompt('Enter configuration filename:', 'visual_config.json');
+                
+                if (!filename) return;
+
+                try {
+                    const response = await fetch('/api/config', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            config: config,
+                            config_file: filename
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Configuration saved successfully!');
+                    } else {
+                        alert('Error saving configuration: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Error saving configuration: ' + error.message);
+                }
+            }
+
+            getComponentIcon(type) {
+                const icons = {
+                    'rally-join': 'fas fa-users',
+                    'rally-start': 'fas fa-flag',
+                    'monster-attack': 'fas fa-dragon',
+                    'troop-config': 'fas fa-shield-alt',
+                    'gathering': 'fas fa-seedling',
+                    'building': 'fas fa-building',
+                    'schedule': 'fas fa-clock',
+                    'notifications': 'fas fa-bell'
+                };
+                return icons[type] || 'fas fa-cog';
+            }
+
+            getComponentName(type) {
+                const names = {
+                    'rally-join': 'Rally Join',
+                    'rally-start': 'Rally Start',
+                    'monster-attack': 'Monster Attack',
+                    'troop-config': 'Troop Config',
+                    'gathering': 'Gathering',
+                    'building': 'Building',
+                    'schedule': 'Schedule',
+                    'notifications': 'Notifications'
+                };
+                return names[type] || type;
+            }
+
+            updateCanvasTransform() {
+                this.canvas.style.transform = `scale(${this.zoomLevel}) translate(${this.panOffset.x}px, ${this.panOffset.y}px)`;
+            }
+
+            hideEmptyState() {
+                const emptyState = this.canvas.querySelector('.empty-state');
+                if (emptyState) {
+                    emptyState.style.display = 'none';
+                }
+            }
+
+            showEmptyState() {
+                const emptyState = this.canvas.querySelector('.empty-state');
+                if (emptyState) {
+                    emptyState.style.display = 'block';
+                }
+            }
+
+            showEmptyStateIfNeeded() {
+                if (this.components.length === 0) {
+                    this.showEmptyState();
+                }
+            }
+        }
+
+        // Initialize the config builder
+        const configBuilder = new ConfigBuilder();
+
+        // Back to main app
+        function goBack() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

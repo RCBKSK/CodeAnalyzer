@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>HelenA QuantumRaid Bot - Notifications</title>
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HelenA QuantumRaid">
+    <meta name="description" content="HelenA QuantumRaid Bot - Notifications Portal">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1e293b;
+            line-height: 1.5;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundFloat 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+            animation: slideInFromTop 0.8s ease-out;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes slideInFromTop {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+            background: #f1f5f9;
+            text-decoration: none;
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .stat-icon.gathering { color: #f59e0b; }
+        .stat-icon.rally { color: #3b82f6; }
+        .stat-icon.monster { color: #ef4444; }
+        .stat-icon.object { color: #8b5cf6; }
+
+        .march-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .march-status-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .march-status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .march-status-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .march-account-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .march-status-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .march-status-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .march-status-bar {
+            width: 60px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .march-status-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .march-status-fill.warning {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .march-status-fill.danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            color: #3b82f6;
+            border-color: #3b82f6;
+            background: white;
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .notifications-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .notifications-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .notifications-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .notifications-body {
+            padding: 24px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .notification-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .notification-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 2px 0 0 2px;
+        }
+
+        .notification-item.gathering::before { background: #f59e0b; }
+        .notification-item.rally_join::before { background: #3b82f6; }
+        .notification-item.rally_start::before { background: #8b5cf6; }
+        .notification-item.monster_attack::before { background: #ef4444; }
+        .notification-item.crystal_mine::before { background: #06b6d4; }
+        .notification-item.dragon_soul::before { background: #f97316; }
+        .notification-item.error::before { background: #ef4444; }
+        .notification-item.bot_start::before { background: #10b981; }
+        .notification-item.bot_stop::before { background: #64748b; }
+
+        .notification-item:hover {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .notification-item:hover::after {
+            left: 100%;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .notification-title {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-time {
+            color: #64748b;
+            font-size: 12px;
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .notification-message {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .notification-icon {
+            font-size: 18px;
+        }
+
+        .notification-icon.gathering { color: #f59e0b; }
+        .notification-icon.rally_join { color: #3b82f6; }
+        .notification-icon.rally_start { color: #8b5cf6; }
+        .notification-icon.monster_attack { color: #ef4444; }
+        .notification-icon.crystal_mine { color: #06b6d4; }
+        .notification-icon.dragon_soul { color: #f97316; }
+        .notification-icon.error { color: #ef4444; }
+        .notification-icon.bot_start { color: #10b981; }
+        .notification-icon.bot_stop { color: #64748b; }
+
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .connection-status.connected {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .connection-status.disconnected {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.connected { background: #10b981; }
+        .status-dot.disconnected { background: #ef4444; }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .loading-state {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e2e8f0;
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.6;
+        }
+
+        .empty-state h6 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Instance tabs and panels */
+        .instance-tab {
+            padding: 12px 20px;
+            border: 1px solid #e2e8f0;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            background: #f8fafc;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 14px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .instance-tab:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .instance-tab.active {
+            background: white;
+            color: #1e293b;
+            border-color: #3b82f6;
+            z-index: 1;
+        }
+
+        .instance-tab .notification-count {
+            background: #ef4444;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .instance-tab.active .notification-count {
+            background: #3b82f6;
+        }
+
+        .instance-panel {
+            display: none;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .instance-panel.active {
+            display: block;
+        }
+
+        .instance-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .instance-panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instance-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .instance-status.running {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .instance-status.stopped {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .notifications-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .header-controls {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .notification-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .connection-status {
+                bottom: 80px;
+                right: 10px;
+                left: 10px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 16px 12px;
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .notification-item {
+                padding: 12px;
+                margin-bottom: 8px;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Browser notification controls */
+        .browser-notifications-control {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .notification-permission-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .notification-permission-status.enabled {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+
+        .notification-permission-status.disabled {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+
+        .notification-permission-status.blocked {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #ef4444;
+        }
+
+        .btn-info {
+            background: #06b6d4;
+            color: white;
+            border: 1px solid #06b6d4;
+        }
+
+        .btn-info:hover {
+            background: #0891b2;
+            border-color: #0891b2;
+        }
+
+        @media (max-width: 768px) {
+            .browser-notifications-control {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                margin-bottom: 8px;
+            }
+
+            .notification-permission-status {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-bell"></i> Notifications</h1>
+                <p>Real-time bot activity and system alerts</p>
+            </div>
+            <div class="header-actions">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/simple-config">
+                    <i class="fas fa-cog"></i> Configuration
+                </a>
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i> Daily Statistics
+            </h2>
+            <div class="stats-grid" id="dailyStats">
+                <div class="stat-card">
+                    <i class="fas fa-truck stat-icon gathering"></i>
+                    <span class="stat-number" id="gatheringCount">0</span>
+                    <span class="stat-label">Resource Operations</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users stat-icon rally"></i>
+                    <span class="stat-number" id="rallyJoinCount">0</span>
+                    <span class="stat-label">Rally Joins</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-flag stat-icon rally"></i>
+                    <span class="stat-number" id="rallyStartCount">0</span>
+                    <span class="stat-label">Rally Starts</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-dragon stat-icon monster"></i>
+                    <span class="stat-number" id="monsterAttackCount">0</span>
+                    <span class="stat-label">Monster Attacks</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-gem stat-icon object"></i>
+                    <span class="stat-number" id="objectScanCount">0</span>
+                    <span class="stat-label">Objects Found</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2 class="section-title">
+                <i class="fas fa-route"></i> March Status
+            </h2>
+            <div id="marchStatusContainer">
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <span>Loading march status...</span>
+                </div>
+            </div>
+        </div>
+        <div class="filter-section">
+            <h2 class="section-title">
+                <i class="fas fa-filter"></i> Notification View Options
+            </h2>
+            <div style="margin-bottom: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="color: #64748b; font-weight: 500;">View Mode:</label>
+                    <select id="viewModeSelect" style="padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; color: #1e293b; font-family: 'Inter', sans-serif;">
+                        <option value="unified">Unified View (All Together)</option>
+                        <option value="separated">Separated by Instance</option>
+                    </select>
+                </div>
+                <div id="accountFilterContainer" style="display: flex; align-items: center; gap: 8px;">
+                    <label style="color: #64748b; font-weight: 500;">Account:</label>
+                    <select id="accountSelect" style="padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; color: #1e293b; font-family: 'Inter', sans-serif;">
+                        <option value="all">All Accounts</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-globe"></i> All Notifications
+                </button>
+                <button class="filter-btn" data-filter="gathering">
+                    <i class="fas fa-truck"></i> Resource Operations
+                </button>
+                <button class="filter-btn" data-filter="rally_join">
+                    <i class="fas fa-users"></i> Rally Joins
+                </button>
+                <button class="filter-btn" data-filter="rally_start">
+                    <i class="fas fa-flag"></i> Rally Starts
+                </button>
+                <button class="filter-btn" data-filter="monster_attack">
+                    <i class="fas fa-dragon"></i> Monster Attacks
+                </button>
+                <button class="filter-btn" data-filter="crystal_mine">
+                    <i class="fas fa-gem"></i> Crystal Mines
+                </button>
+                <button class="filter-btn" data-filter="dragon_soul">
+                    <i class="fas fa-fire"></i> Dragon Souls
+                </button>
+                <button class="filter-btn" data-filter="error">
+                    <i class="fas fa-exclamation-triangle"></i> System Alerts
+                </button>
+            </div>
+        </div>
+        <!-- Unified View -->
+        <div class="notifications-section" id="unifiedNotificationsSection">
+            <div class="notifications-header">
+                <h2><i class="fas fa-list"></i> Unified Notification Stream</h2>
+                <div class="header-controls">
+                    <div class="browser-notifications-control" style="margin-right: 12px;">
+                        <span id="notificationPermissionStatus" class="notification-permission-status"></span>
+                        <button id="enableBrowserNotifications" class="btn btn-info btn-sm" onclick="requestNotificationPermission()" style="margin-left: 8px;">
+                            <i class="fas fa-bell"></i> Enable Browser Notifications
+                        </button>
+                    </div>
+                    <span id="notificationStats" style="color: #64748b; font-size: 12px; margin-right: 12px;"></span>
+                    <button class="btn btn-secondary" onclick="clearNotifications()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                    <button class="btn btn-primary" onclick="refreshNotifications()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="notifications-body" id="notificationsList">
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <span>Loading notifications...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Separated View -->
+        <div class="notifications-section hidden" id="separatedNotificationsSection">
+            <div class="notifications-header">
+                <h2><i class="fas fa-layer-group"></i> Instance-Based Notifications</h2>
+                <div class="header-controls">
+                    <span id="notificationStats" style="color: #64748b; font-size: 12px; margin-right: 12px;"></span>
+                    <button class="btn btn-secondary" onclick="clearNotifications()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                    <button class="btn btn-primary" onclick="refreshNotifications()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div id="instanceTabsContainer" style="padding: 0 24px; border-bottom: 1px solid #e2e8f0;">
+                <div id="instanceTabs" style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 1px;">
+                    <!-- Tabs will be populated dynamically -->
+                </div>
+            </div>
+            <div id="instancePanelsContainer" style="padding: 24px;">
+                <!-- Instance panels will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+    <div class="connection-status" id="connectionStatus">
+        <div class="status-dot disconnected"></div>
+        <span class="status-text">Connecting...</span>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let eventSource = null;
+        let notifications = [];
+        let currentFilter = 'all';
+        let currentAccount = 'all';
+        let availableAccounts = [];
+        let currentViewMode = 'unified';
+        let activeInstanceTab = null;
+        let instanceNotifications = {}; // account_name -> notifications array
+        let dailyCounters = {
+            gathering: 0,
+            rally_join: 0,
+            rally_start: 0,
+            monster_attack: 0,
+            object_scan: 0
+        };
+
+        function refreshNotifications() {
+            loadNotificationHistory();
+            loadDailyCounters();
+            loadMarchStatus();
+			updateNotificationStats();
+        }
+
+        function clearNotifications() {
+            if (confirm('Clear all notification logs?')) {
+                $.ajax({
+                    url: '/api/notifications/clear',
+                    method: 'POST',
+                    success: function(data) {
+                        if (data.success) {
+                            notifications = [];
+                            showEmptyState();
+							updateNotificationStats();
+
+                            console.log('Notifications cleared successfully');
+                        } else {
+                            alert('Failed to clear notifications: ' + (data.error || 'Unknown error'));
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error clearing notifications:', xhr);
+                        alert('Failed to clear notifications. Please try again.');
+                    }
+                });
+            }
+        }
+
+        function loadNotificationHistory() {
+            console.log('Loading notification history for account:', currentAccount);
+            $.ajax({
+                url: '/api/notifications/history',
+                method: 'GET',
+                data: { account: currentAccount },
+                success: function(data) {
+                    console.log('Notification history response:', data);
+                    if (data.notifications && data.notifications.length > 0) {
+                        notifications = data.notifications;
+                        availableAccounts = data.available_accounts || [];
+
+                        availableAccounts.sort((a, b) => {
+                            if (a === 'General') return -1;
+                            if (b === 'General') return 1;
+                            return a.localeCompare(b);
+                        });
+
+                        updateAccountSelect();
+                        filterNotifications();
+						updateNotificationStats();
+                    } else {
+                        notifications = [];
+                        availableAccounts = [];
+                        showEmptyState();
+						updateNotificationStats();
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error loading notification history', xhr);
+                    notifications = [];
+                    availableAccounts = [];
+                    showEmptyState();
+					updateNotificationStats();
+                }
+            });
+        }
+
+        function loadDailyCounters() {
+            $.ajax({
+                url: '/api/daily_counters',
+                method: 'GET',
+                success: function(data) {
+                    if (data.counters) {
+                        dailyCounters = data.counters;
+                        updateStatistics();
+						updateNotificationStats();
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error loading daily counters', xhr);
+                }
+            });
+        }
+
+        function loadMarchStatus() {
+            $.ajax({
+                url: '/api/march_status',
+                method: 'GET',
+                success: function(data) {
+                    if (data.success && data.march_status) {
+                        displayMarchStatus(data.march_status);
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error loading march status', xhr);
+                }
+            });
+        }
+
+        function displayMarchStatus(marchData) {
+            const container = $('#marchStatusContainer');
+
+            if (!marchData || marchData.length === 0) {
+                container.html(`
+                    <div class="empty-state">
+                        <i class="fas fa-route"></i>
+                        <h6>No Active Bots</h6>
+                        <p>No bot instances are currently running</p>
+                    </div>
+                `);
+                return;
+            }
+
+            let html = '<div class="march-status-grid">';
+
+            marchData.forEach(bot => {
+                // Use real march data from the bot instance
+                const usedMarches = bot.current_marches || 0;
+                // Get max marches from config, fallback to 8 only if not available
+                let maxMarches = bot.max_marches;
+                
+                // If max_marches is 0 or undefined, try to get from config or use default
+                if (!maxMarches || maxMarches === 0) {
+                    console.warn(`No max_marches configured for ${bot.account_name}, using default of 8`);
+                    maxMarches = 8;
+                }
+                
+                const percentage = maxMarches > 0 ? (usedMarches / maxMarches) * 100 : 0;
+
+                let fillClass = '';
+                if (percentage > 80) fillClass = 'danger';
+                else if (percentage > 60) fillClass = 'warning';
+
+                // Get last update time if available
+                const lastUpdate = bot.last_updated ? new Date(bot.last_updated * 1000).toLocaleTimeString() : 'Unknown';
+                
+                // Show config source info
+                const configInfo = bot.config_source ? ` (from ${bot.config_source})` : '';
+                
+                html += `
+                    <div class="march-status-card">
+                        <div class="march-status-info">
+                            <div class="march-account-name">${bot.account_name}${configInfo}</div>
+                            <div class="march-status-label">March Capacity</div>
+                            <div class="march-status-bar">
+                                <div class="march-status-fill ${fillClass}" style="width: ${percentage}%"></div>
+                            </div>
+                            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">
+                                Updated: ${lastUpdate}
+                                ${maxMarches === 8 && !bot.max_marches ? ' (default)' : ''}
+                            </div>
+                        </div>
+                        <div class="march-status-value">
+                            ${usedMarches}/${maxMarches}
+                            <i class="fas fa-route"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.html(html);
+        }
+
+        function updateAccountSelect() {
+            const accountSelect = $('#accountSelect');
+            const currentValue = accountSelect.val();
+
+            accountSelect.empty();
+            accountSelect.append('<option value="all">All Accounts</option>');
+
+            availableAccounts.forEach(account => {
+                accountSelect.append(`<option value="${account}">${account}</option>`);
+            });
+
+            if (availableAccounts.includes(currentValue) || currentValue === 'all') {
+                accountSelect.val(currentValue);
+            }
+        }
+
+        function addNotification(notification) {
+            const isDuplicate = notifications.some(existing => 
+                existing.id === notification.id || 
+                (existing.message === notification.message && 
+                 existing.type === notification.type && 
+                 Math.abs(new Date(existing.timestamp) - new Date(notification.timestamp)) < 5000)
+            );
+
+            if (!isDuplicate) {
+                notifications.unshift(notification); 
+
+                // Show browser notification for new notifications
+                if (notification.type !== 'heartbeat' && notification.type !== 'connected') {
+                    const notificationData = {
+                        type: notification.type,
+                        timestamp: notification.timestamp,
+                        account_name: notification.account_name || 'General'
+                    };
+                    
+                    showBrowserNotification(
+                        notification.title || 'Bot Activity',
+                        notification.message || 'New activity detected',
+                        null,
+                        notificationData
+                    );
+                }
+
+                if (notification.type === 'gathering') {
+                    dailyCounters.gathering++;
+                    updateStatistics();
+					updateNotificationStats();
+                } else if (notification.type === 'rally_join') {
+                    dailyCounters.rally_join++;
+                    updateStatistics();
+					updateNotificationStats();
+                } else if (notification.type === 'rally_start') {
+                    dailyCounters.rally_start++;
+                    updateStatistics();
+					updateNotificationStats();
+                } else if (notification.type === 'monster_attack') {
+                    dailyCounters.monster_attack++;
+                    updateStatistics();
+					updateNotificationStats();
+                } else if (notification.type in ['crystal_mine', 'dragon_soul', 'object_scan']) {
+                    dailyCounters.object_scan++;
+                    updateStatistics();
+					updateNotificationStats();
+                }
+
+                if (notification.account_name && !availableAccounts.includes(notification.account_name)) {
+                    availableAccounts.push(notification.account_name);
+                    availableAccounts.sort((a, b) => {
+                        if (a === 'General') return -1;
+                        if (b === 'General') return 1;
+                        return a.localeCompare(b);
+                    });
+                    updateAccountSelect();
+                }
+
+                if (notifications.length > 100) {
+                    notifications = notifications.slice(0, 100);
+                }
+
+                // Update appropriate view
+                if (currentViewMode === 'unified') {
+                    filterNotifications();
+                } else {
+                    // Update separated view
+                    const accountName = notification.account_name || 'General';
+                    if (!instanceNotifications[accountName]) {
+                        instanceNotifications[accountName] = [];
+                    }
+                    instanceNotifications[accountName].unshift(notification);
+
+                    // Keep only last 50 notifications per instance
+                    if (instanceNotifications[accountName].length > 50) {
+                        instanceNotifications[accountName] = instanceNotifications[accountName].slice(0, 50);
+                    }
+
+                    // Refresh tabs and current panel
+                    createInstanceTabs();
+                    if (activeInstanceTab === accountName) {
+                        updateSeparatedView();
+                    }
+                }
+            }
+        }
+
+        function updateStatistics() {
+            $('#gatheringCount').text(dailyCounters.gathering);
+            $('#rallyJoinCount').text(dailyCounters.rally_join);
+            $('#rallyStartCount').text(dailyCounters.rally_start);
+            $('#monsterAttackCount').text(dailyCounters.monster_attack);
+            $('#objectScanCount').text(dailyCounters.object_scan);
+        }
+
+		function updateNotificationStats() {
+			const total = notifications.length;
+			const today = notifications.filter(n => isToday(n.timestamp)).length;
+			$('#notificationStats').text(`${today} / ${total} Notifications Today`);
+		}
+
+		function isToday(timestamp) {
+			const today = new Date();
+			const date = new Date(timestamp);
+			return date.getDate() === today.getDate() &&
+				   date.getMonth() === today.getMonth() &&
+				   date.getFullYear() === today.getFullYear();
+		}
+
+        function displayNotifications(notificationList) {
+            const container = $('#notificationsList');
+
+            if (notificationList.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            const sortedNotifications = notificationList.sort((a, b) => {
+                try {
+                    const timestampA = new Date(a.timestamp);
+                    const timestampB = new Date(b.timestamp);
+                    return timestampB - timestampA;
+                } catch (error) {
+                    return 0;
+                }
+            });
+
+            let html = '';
+            sortedNotifications.forEach((notification, index) => {
+                const timeString = formatTime(notification.timestamp);
+                const icon = getNotificationIcon(notification.type);
+                const instanceBadge = notification.account_name && notification.account_name !== 'General' && notification.account_name !== 'System'
+                    ? `<span style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; margin-left: 10px; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4); letter-spacing: 0.5px;">${notification.account_name}</span>` 
+                    : '';
+                const instanceInfo = notification.instance_id && notification.instance_id !== 'general' && notification.instance_id.includes('_')
+                    ? `<span style="background: #e5e7eb; color: #374151; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-left: 6px; font-family: 'Courier New', monospace;" title="Instance ID: ${notification.instance_id}">ID:${notification.instance_id.split('_').pop()}</span>` 
+                    : '';
+
+                html += `
+                    <div class="notification-item ${notification.type}" 
+                         data-type="${notification.type}" 
+                         data-account="${notification.account_name || 'General'}"
+                         data-instance="${notification.instance_id || 'general'}"
+                         data-id="${notification.id || index}"
+                         data-timestamp="${notification.timestamp}">
+                        <div class="notification-header">
+                            <h6 class="notification-title">
+                                <span class="notification-icon ${notification.type}">${icon}</span>
+                                ${notification.title}
+                                ${instanceBadge}
+                                ${instanceInfo}
+                            </h6>
+                            <span class="notification-time">${timeString}</span>
+                        </div>
+                        <p class="notification-message">${notification.message}</p>
+                    </div>
+                `;
+            });
+
+            container.html(html);
+
+            $('.notification-item').each(function(index) {
+                $(this).css('animation-delay', (index * 0.03) + 's');
+                $(this).css('animation', 'slideInRight 0.3s ease-out forwards');
+            });
+        }
+
+        function showEmptyState() {
+            const container = $('#notificationsList');
+            let message = 'No notifications found';
+            let icon = 'fas fa-bell';
+
+            if (currentFilter !== 'all') {
+                const filterName = $('.filter-btn[data-filter="' + currentFilter + '"]').text().trim();
+                message = `No ${filterName.toLowerCase()} found`;
+                icon = $('.filter-btn[data-filter="' + currentFilter + '"] i').attr('class');
+            }
+
+            container.html(`
+                <div class="empty-state">
+                    <i class="${icon}"></i>
+                    <h6>No Notifications</h6>
+                    <p>${message}</p>
+                    <small>Notifications will appear here when bot activities occur...</small>
+                </div>
+            `);
+        }
+
+        function getNotificationIcon(type) {
+            const icons = {
+                'gathering': '<i class="fas fa-truck"></i>',
+                'rally_join': '<i class="fas fa-users"></i>',
+                'rally_start': '<i class="fas fa-flag"></i>',
+                'monster_attack': '<i class="fas fa-dragon"></i>',
+                'crystal_mine': '<i class="fas fa-gem"></i>',
+                'dragon_soul': '<i class="fas fa-fire"></i>',
+                'error': '<i class="fas fa-exclamation-triangle"></i>',
+                'bot_start': '<i class="fas fa-play"></i>',
+                'bot_stop': '<i class="fas fa-stop"></i>',
+                'object_scan': '<i class="fas fa-search"></i>',
+                'scheduled_task': '<i class="fas fa-clock"></i>',
+                'maintenance': '<i class="fas fa-wrench"></i>'
+            };
+            return icons[type] || '<i class="fas fa-info-circle"></i>';
+        }
+
+        function setupFilterButtons() {
+            $('.filter-btn').click(function() {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+                currentFilter = $(this).data('filter');
+                if (currentViewMode === 'unified') {
+                    filterNotifications();
+                } else {
+                    updateSeparatedView();
+                }
+            });
+
+            $('#accountSelect').change(function() {
+                currentAccount = $(this).val();
+                loadNotificationHistory();
+            });
+
+            $('#viewModeSelect').change(function() {
+                currentViewMode = $(this).val();
+                toggleViewMode();
+            });
+        }
+
+        function toggleViewMode() {
+            if (currentViewMode === 'unified') {
+                $('#unifiedNotificationsSection').removeClass('hidden');
+                $('#separatedNotificationsSection').addClass('hidden');
+                $('#accountFilterContainer').show();
+                filterNotifications();
+            } else {
+                $('#unifiedNotificationsSection').addClass('hidden');
+                $('#separatedNotificationsSection').removeClass('hidden');
+                $('#accountFilterContainer').hide();
+                setupSeparatedView();
+            }
+        }
+
+        function setupSeparatedView() {
+            // Group notifications by account/instance
+            instanceNotifications = {};
+            notifications.forEach(notification => {
+                const accountName = notification.account_name || 'General';
+                if (!instanceNotifications[accountName]) {
+                    instanceNotifications[accountName] = [];
+                }
+                instanceNotifications[accountName].push(notification);
+            });
+
+            // Ensure we have at least some test data if no notifications exist
+            if (Object.keys(instanceNotifications).length === 0) {
+                instanceNotifications['General'] = [{
+                    type: 'bot_start',
+                    title: 'Welcome to Instance-Based View',
+                    message: 'Instance notifications will appear here when bot activities occur.',
+                    timestamp: new Date().toISOString(),
+                    account_name: 'General',
+                    instance_id: 'general',
+                    id: 'welcome_instance_' + Date.now()
+                }];
+            }
+
+            // Create tabs for each instance
+            createInstanceTabs();
+            createInstancePanels();
+        }
+
+        function createInstanceTabs() {
+            const tabsContainer = $('#instanceTabs');
+            tabsContainer.empty();
+
+            const accountNames = Object.keys(instanceNotifications).sort((a, b) => {
+                if (a === 'General') return -1;
+                if (b === 'General') return 1;
+                return a.localeCompare(b);
+            });
+
+            console.log('Creating tabs for accounts:', accountNames);
+
+            accountNames.forEach((accountName, index) => {
+                const notifCount = instanceNotifications[accountName].length;
+                const isActive = index === 0;
+
+                const tab = $(`
+                    <div class="instance-tab ${isActive ? 'active' : ''}" data-account="${accountName}">
+                        <i class="fas ${getInstanceIcon(accountName)}"></i>
+                        <span>${accountName}</span>
+                        <span class="notification-count">${notifCount}</span>
+                    </div>
+                `);
+
+                tab.click(function() {
+                    $('.instance-tab').removeClass('active');
+                    $(this).addClass('active');
+                    activeInstanceTab = accountName;
+                    showInstancePanel(accountName);
+                });
+
+                tabsContainer.append(tab);
+            });
+
+            if (accountNames.length > 0) {
+                activeInstanceTab = accountNames[0];
+                showInstancePanel(activeInstanceTab);
+            }
+        }
+
+        function getInstanceIcon(accountName) {
+            if (accountName === 'General' || accountName === 'System') {
+                return 'fa-cog';
+            }
+            return 'fa-robot';
+        }
+
+        function createInstancePanels() {
+            const panelsContainer = $('#instancePanelsContainer');
+            panelsContainer.empty();
+
+            console.log('Creating panels for instances:', Object.keys(instanceNotifications));
+
+            Object.keys(instanceNotifications).forEach(accountName => {
+                const sanitizedName = accountName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+                const panel = $(`
+                    <div class="instance-panel" id="panel-${sanitizedName}" style="display: none;">
+                        <div class="instance-panel-header">
+                            <div class="instance-panel-title">
+                                <i class="fas ${getInstanceIcon(accountName)}"></i>
+                                ${accountName}
+                                <span class="instance-status running">Active</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary" onclick="clearInstanceNotifications('${accountName}')">
+                                    <i class="fas fa-trash"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div class="instance-notifications" id="notifications-${sanitizedName}">
+                            <!-- Notifications will be populated here -->
+                        </div>
+                    </div>
+                `);
+
+                panelsContainer.append(panel);
+            });
+        }
+
+        function showInstancePanel(accountName) {
+            // Hide all panels first
+            $('.instance-panel').hide().removeClass('active');
+            
+            // Show the selected panel
+            const sanitizedName = accountName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+            const targetPanel = $(`#panel-${sanitizedName}`);
+            
+            if (targetPanel.length > 0) {
+                targetPanel.show().addClass('active');
+                
+                // Filter and display notifications for this instance
+                const instanceNotifs = instanceNotifications[accountName] || [];
+                const filtered = currentFilter === 'all' 
+                    ? instanceNotifs 
+                    : instanceNotifs.filter(n => n.type === currentFilter);
+
+                console.log(`Showing panel for ${accountName}, ${filtered.length} notifications`);
+                displayInstanceNotifications(accountName, filtered);
+            } else {
+                console.error(`Panel not found for account: ${accountName}, sanitized: ${sanitizedName}`);
+            }
+        }
+
+        function displayInstanceNotifications(accountName, notifications) {
+            const sanitizedName = accountName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+            const container = $(`#notifications-${sanitizedName}`);
+
+            if (container.length === 0) {
+                console.error(`Container not found for account: ${accountName}, sanitized: ${sanitizedName}`);
+                return;
+            }
+
+            if (notifications.length === 0) {
+                container.html(`
+                    <div class="empty-state">
+                        <i class="fas fa-bell"></i>
+                        <h6>No Notifications</h6>
+                        <p>No notifications found for ${accountName}</p>
+                        <small>Bot activities for this instance will appear here...</small>
+                    </div>
+                `);
+                return;
+            }
+
+            const sortedNotifications = notifications.sort((a, b) => {
+                try {
+                    const timestampA = new Date(a.timestamp);
+                    const timestampB = new Date(b.timestamp);
+                    return timestampB - timestampA;
+                } catch (error) {
+                    return 0;
+                }
+            });
+
+            let html = '';
+            sortedNotifications.forEach((notification, index) => {
+                const timeString = formatTime(notification.timestamp);
+                const icon = getNotificationIcon(notification.type);
+
+                html += `
+                    <div class="notification-item ${notification.type}" 
+                         data-type="${notification.type}" 
+                         data-account="${notification.account_name || 'General'}"
+                         data-instance="${notification.instance_id || 'general'}"
+                         data-id="${notification.id || index}"
+                         data-timestamp="${notification.timestamp}">
+                        <div class="notification-header">
+                            <h6 class="notification-title">
+                                <span class="notification-icon ${notification.type}">${icon}</span>
+                                ${notification.title}
+                            </h6>
+                            <span class="notification-time">${timeString}</span>
+                        </div>
+                        <p class="notification-message">${notification.message}</p>
+                    </div>
+                `;
+            });
+
+            container.html(html);
+            console.log(`Displayed ${sortedNotifications.length} notifications for ${accountName}`);
+
+            // Add animation
+            container.find('.notification-item').each(function(index) {
+                $(this).css('animation-delay', (index * 0.03) + 's');
+                $(this).css('animation', 'slideInRight 0.3s ease-out forwards');
+            });
+        }
+
+        function updateSeparatedView() {
+            if (currentViewMode === 'separated' && activeInstanceTab) {
+                const filtered = currentFilter === 'all' 
+                    ? instanceNotifications[activeInstanceTab] || []
+                    : (instanceNotifications[activeInstanceTab] || []).filter(n => n.type === currentFilter);
+
+                displayInstanceNotifications(activeInstanceTab, filtered);
+            }
+        }
+
+        function clearInstanceNotifications(accountName) {
+            if (confirm(`Clear all notifications for ${accountName}?`)) {
+                // Remove from instanceNotifications
+                if (instanceNotifications[accountName]) {
+                   delete instanceNotifications[accountName];
+                }
+
+                // Remove from main notifications array
+                notifications = notifications.filter(n => (n.account_name || 'General') !== accountName);
+
+                // Update display
+                setupSeparatedView();
+				updateNotificationStats();
+
+                console.log(`Cleared notifications for ${accountName}`);
+            }
+        }
+
+        function filterNotifications() {
+            const filtered = currentFilter === 'all' 
+                ? notifications 
+                : notifications.filter(n => n.type === currentFilter);
+
+            displayNotifications(filtered);
+			updateNotificationStats();
+        }
+
+        function setupEventSource() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource('/api/notifications/stream');
+
+            eventSource.onopen = function() {
+                updateConnectionStatus(true);
+                console.log('Notification stream connection established');
+            };
+
+            eventSource.onmessage = function(event) {
+                try {
+                    const notification = JSON.parse(event.data);
+                    console.log('Received notification:', notification);
+
+                    if (notification.type === 'heartbeat' || notification.type === 'connected') {
+                        updateConnectionStatus(true);
+                        return;
+                    }
+
+                    addNotification(notification);
+					updateNotificationStats();
+                } catch (error) {
+                    console.error('Error parsing notification', error, event.data);
+                }
+            };
+
+            eventSource.onerror = function(event) {
+                updateConnectionStatus(false);
+                console.error('Notification stream connection failed', event);
+
+                setTimeout(() => {
+                    if (eventSource.readyState === EventSource.CLOSED) {
+                        console.log('Attempting to reconnect notification stream...');
+                        setupEventSource();
+                    }
+                }, 5000);
+            };
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusElement = $('#connectionStatus');
+            const dotElement = statusElement.find('.status-dot');
+            const textElement = statusElement.find('.status-text');
+
+            if (connected) {
+                statusElement.removeClass('disconnected').addClass('connected');
+                dotElement.removeClass('disconnected').addClass('connected');
+                textElement.text('Connected');
+            } else {
+                statusElement.removeClass('connected').addClass('disconnected');
+                dotElement.removeClass('connected').addClass('disconnected');
+                textElement.text('Disconnected');
+            }
+        }
+
+        function loadUserTimezone() {
+            // This function currently does nothing, but is included for potential future use
+        }
+
+        function formatTime(timestamp) {
+            try {
+                const date = new Date(timestamp);
+
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            } catch (error) {
+                console.error('Error formatting time', error);
+                return 'Invalid Time';
+            }
+        }
+
+        // Browser notification support
+        let browserNotificationsEnabled = false;
+
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(function(permission) {
+                        if (permission === 'granted') {
+                            browserNotificationsEnabled = true;
+                            localStorage.setItem('browserNotificationsEnabled', 'true');
+                            updateNotificationPermissionUI();
+                            showBrowserNotification('Browser Notifications Enabled', 'You will now receive browser notifications for bot activities!');
+                        } else {
+                            localStorage.setItem('browserNotificationsEnabled', 'false');
+                            updateNotificationPermissionUI();
+                        }
+                    });
+                } else if (Notification.permission === 'granted') {
+                    browserNotificationsEnabled = true;
+                    localStorage.setItem('browserNotificationsEnabled', 'true');
+                    updateNotificationPermissionUI();
+                } else {
+                    localStorage.setItem('browserNotificationsEnabled', 'false');
+                    updateNotificationPermissionUI();
+                }
+            }
+        }
+
+        function showBrowserNotification(title, message, icon = null, data = null) {
+            if (!browserNotificationsEnabled || Notification.permission !== 'granted') {
+                return;
+            }
+
+            // Don't show browser notifications if the page is visible
+            if (!document.hidden) {
+                return;
+            }
+
+            const options = {
+                body: message,
+                icon: icon || '/static/helena_1751952960287.jpg',
+                badge: '/static/helena_1751952960287.jpg',
+                tag: 'lokbot-notification',
+                requireInteraction: false,
+                silent: false,
+                data: data
+            };
+
+            try {
+                const notification = new Notification(title, options);
+                
+                notification.onclick = function() {
+                    window.focus();
+                    notification.close();
+                };
+
+                // Auto close after 5 seconds
+                setTimeout(() => {
+                    notification.close();
+                }, 5000);
+
+            } catch (error) {
+                console.error('Error showing browser notification:', error);
+            }
+        }
+
+        function updateNotificationPermissionUI() {
+            const permissionStatus = document.getElementById('notificationPermissionStatus');
+            const enableButton = document.getElementById('enableBrowserNotifications');
+            
+            if (permissionStatus && enableButton) {
+                if (Notification.permission === 'granted') {
+                    permissionStatus.textContent = 'Browser notifications are enabled';
+                    permissionStatus.className = 'notification-permission-status enabled';
+                    enableButton.style.display = 'none';
+                } else if (Notification.permission === 'denied') {
+                    permissionStatus.textContent = 'Browser notifications are blocked. Please enable them in your browser settings.';
+                    permissionStatus.className = 'notification-permission-status blocked';
+                    enableButton.style.display = 'none';
+                } else {
+                    permissionStatus.textContent = 'Browser notifications are not enabled';
+                    permissionStatus.className = 'notification-permission-status disabled';
+                    enableButton.style.display = 'inline-block';
+                }
+            }
+        }
+
+        function initializeBrowserNotifications() {
+            // Check if browser notifications are supported
+            if (!('Notification' in window)) {
+                console.log('This browser does not support browser notifications');
+                return;
+            }
+
+            // Check saved preference
+            const saved = localStorage.getItem('browserNotificationsEnabled');
+            if (saved === 'true' && Notification.permission === 'granted') {
+                browserNotificationsEnabled = true;
+            }
+
+            updateNotificationPermissionUI();
+        }
+
+        $(document).ready(function() {
+            console.log('Notifications page initialized');
+            initializeBrowserNotifications();
+            loadDailyCounters();
+            loadUserTimezone();
+            setupFilterButtons();
+            loadMarchStatus();
+
+            loadNotificationHistory();
+            setTimeout(setupEventSource, 1000);
+
+            setInterval(loadMarchStatus, 600000);
+			setInterval(updateNotificationStats, 60000);
+        });
+
+        window.refreshNotifications = refreshNotifications;
+        window.clearNotifications = clearNotifications;
+        window.requestNotificationPermission = requestNotificationPermission;
+        window.showBrowserNotification = showBrowserNotification;
+    </script>
+</body>
+</html>

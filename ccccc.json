@@ -1,0 +1,92 @@
+{
+  "discord": {
+    "enabled": false,
+    "rally_webhook_url": "",
+    "webhook_url": ""
+  },
+  "main": {
+    "jobs": [],
+    "normal_monsters": {
+      "common_troops": [],
+      "enabled": false,
+      "targets": []
+    },
+    "object_scanning": {
+      "enable_gathering": false,
+      "enable_monster_attack": false,
+      "enabled": false,
+      "max_marches": 10,
+      "monster_attack": {
+        "enabled": false
+      },
+      "objects": {}
+    },
+    "threads": []
+  },
+  "rally": {
+    "join": {
+      "enabled": true,
+      "level_based_troops": true,
+      "numMarch": 10,
+      "targets": [
+        {
+          "monster_code": 20200201,
+          "monster_name": "Deathkar",
+          "level_ranges": [
+            {
+              "min_level": 1,
+              "max_level": 10,
+              "troops": [
+                {
+                  "code": 50100106,
+                  "name": "Paladin (Tier 6 Infantry)",
+                  "fixed_amounts": [
+                    10000,
+                    15000,
+                    20000
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "max_rally_distance": 500
+    },
+    "start": {
+      "enabled": false,
+      "level_based_troops": true,
+      "numMarch": 6,
+      "targets": []
+    }
+  },
+  "toggles": {
+    "features": {
+      "discord": false,
+      "enable_gathering": false,
+      "enable_monster_attack": false,
+      "notify_discord": false,
+      "object_scanning": false,
+      "rally_join": false,
+      "rally_start": false
+    },
+    "jobs": {
+      "alliance_farmer": false,
+      "caravan_farmer": false,
+      "harvester": false,
+      "hospital_recover": false,
+      "mail_claim": false,
+      "socf_thread": false,
+      "use_resource_in_item_list": false,
+      "vip_chest_claim": false,
+      "wall_repair": false
+    },
+    "threads": {
+      "academy_farmer_thread": false,
+      "building_farmer_thread": false,
+      "free_chest_farmer_thread": false,
+      "quest_monitor_thread": false,
+      "train_troop_thread": false
+    }
+  }
+}

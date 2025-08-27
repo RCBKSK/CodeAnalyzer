@@ -1,0 +1,69 @@
+{
+  "toggles": {
+    "jobs": {
+      "hospital_recover": false,
+      "wall_repair": false,
+      "alliance_farmer": false,
+      "mail_claim": false,
+      "caravan_farmer": false,
+      "use_resource_in_item_list": false,
+      "vip_chest_claim": false,
+      "harvester": false,
+      "socf_thread": false
+    },
+    "threads": {
+      "free_chest_farmer_thread": false,
+      "quest_monitor_thread": false,
+      "building_farmer_thread": false,
+      "academy_farmer_thread": false,
+      "train_troop_thread": false
+    },
+    "features": {
+      "object_scanning": false,
+      "notify_discord": false,
+      "enable_gathering": false,
+      "enable_monster_attack": false,
+      "rally_join": false,
+      "rally_start": false,
+      "discord": false
+    }
+  },
+  "main": {
+    "jobs": [],
+    "threads": [],
+    "normal_monsters": {
+      "enabled": false,
+      "common_troops": [],
+      "targets": []
+    },
+    "object_scanning": {
+      "enabled": false,
+      "max_marches": 10,
+      "enable_gathering": false,
+      "enable_monster_attack": false,
+      "objects": {},
+      "monster_attack": {
+        "enabled": false
+      }
+    }
+  },
+  "rally": {
+    "join": {
+      "enabled": false,
+      "numMarch": 8,
+      "level_based_troops": true,
+      "targets": []
+    },
+    "start": {
+      "enabled": false,
+      "numMarch": 6,
+      "level_based_troops": true,
+      "targets": []
+    }
+  },
+  "discord": {
+    "enabled": false,
+    "webhook_url": "",
+    "rally_webhook_url": ""
+  }
+}

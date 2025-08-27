@@ -1,0 +1,18 @@
+services:
+- type: web
+  name: lokbot-webapp
+  runtime: python
+  buildCommand: pip install -r requirements.txt
+  startCommand: python web_app.py
+  envVars:
+    - key: LOK_EMAIL
+      sync: false
+    - key: LOK_PASSWORD
+      sync: false
+    - key: PYTHONUNBUFFERED
+      value: "1"
+    - key: PORT
+      value: "5000"
+  plan: free
+  healthCheckPath: /login
+  healthCheckTimeout: 10

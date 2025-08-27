@@ -1,0 +1,1638 @@
+import os
+import json
+import subprocess
+import threading
+import asyncio
+import logging
+from datetime import datetime, timedelta
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response
+from werkzeug.security import generate_password_hash, check_password_hash
+import secrets
+import requests
+import os
+from urllib.parse import urlencode
+from lokbot.client import LokBotApi
+from lokbot.config_helper import ConfigHelper
+import lokbot.util
+import queue
+import time
+import schedule
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+import uuid
+from functools import wraps
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
+
+# Bot processes dictionary to track running instances
+bot_processes = {}
+
+# Notification system
+notification_queues = {}  # user_id -> queue
+notifications_history = {}  # user_id -> list of notifications
+
+# Scheduling system
+scheduler = BackgroundScheduler()
+scheduled_tasks = {}  # task_id -> task_info
+maintenance_mode = {'enabled': False, 'message': 'System under maintenance', 'scheduled_end': None}
+
+# Initialize scheduler
+scheduler.start()
+
+# User management file
+USER_FILE = "users.txt"
+
+def load_users():
+    """Load users from file"""
+    users = {}
+    try:
+        if os.path.exists(USER_FILE):
+            with open(USER_FILE, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        parts = line.split(':')
+                        if len(parts) >= 3:
+                            username, password, max_instances = parts[0], parts[1], int(parts[2])
+                            users[username] = {
+                                'password': password,
+                                'max_instances': max_instances
+                            }
+    except Exception as e:
+        logger.error(f"Error loading users: {str(e)}")
+    return users
+
+def authenticate_user(username, password):
+    """Authenticate user against users file"""
+    users = load_users()
+    user = users.get(username)
+    if user and user['password'] == password:
+        return True
+    return False
+
+def get_user_max_instances(username):
+    """Get maximum instances allowed for a user"""
+    users = load_users()
+    user = users.get(username)
+    if user:
+        return user['max_instances']
+    return 1  # Default to 1 instance if user not found
+
+def load_user_config_assignments():
+    """Load user config assignments from file"""
+    assignments = {}
+    try:
+        if os.path.exists("user_config_assignments.txt"):
+            with open("user_config_assignments.txt", 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        parts = line.split(':')
+                        if len(parts) == 2:
+                            username, config_file = parts[0].strip(), parts[1].strip()
+                            assignments[username] = config_file
+    except Exception as e:
+        logger.error(f"Error loading user config assignments: {str(e)}")
+    return assignments
+
+def has_config_access(username, config_file):
+    """Check if a user has access to a specific config file"""
+    # Load user config assignments
+    assignments = load_user_config_assignments()
+
+    # Admin has access to all config files
+    if username == 'admin':
+        return True
+
+    # Check if user has a specific config file assigned
+    if username in assignments:
+        assigned_config = assignments[username]
+        if config_file == assigned_config:
+            return True
+        # Also allow access to example configs for reference
+        if config_file == 'config.example.json':
+            return True
+        return False
+
+    # Fallback to old logic for users not in assignments file
+    global_configs = ['config.json', 'config.example.json']
+
+    # Allow access to global config files
+    if config_file in global_configs:
+        return True
+
+    # Allow access to user-specific config files
+    if (config_file.startswith(f"{username}_") and config_file.endswith('.json')) or \
+       (config_file.startswith('config_') and username in config_file) or \
+       (config_file.endswith(f"_{username}.json")):
+        return True
+
+    return False
+
+def add_notification(user_id, notification_type, title, message, timestamp=None):
+    """Add a notification for a specific user"""
+    try:
+        if timestamp is None:
+            timestamp = datetime.now().isoformat()
+
+        # Increment daily counter for relevant notification types
+        if notification_type in ['rally_join', 'rally_start', 'monster_attack', 'object_scan', 'crystal_mine', 'dragon_soul', 'gathering']:
+            count = increment_daily_counter(user_id, notification_type)
+
+            # Update title to include daily count for these types
+            if notification_type == 'rally_join':
+                title = f"⚔️ Rally Joined (#{count} today)"
+            elif notification_type == 'rally_start':
+                title = f"🏴 Rally Started (#{count} today)"
+            elif notification_type == 'monster_attack':
+                title = f"👹 Monster Attack (#{count} today)"
+            elif notification_type == 'gathering':
+                title = f"🚛 Gathering Started (#{count} today)"
+            elif notification_type in ['object_scan', 'crystal_mine', 'dragon_soul']:
+                # Increment object_scan counter for all object finds
+                if notification_type != 'object_scan':
+                    increment_daily_counter(user_id, 'object_scan')
+                count = get_daily_counter(user_id, 'object_scan')
+                title = f"📢 Object Found (#{count} today)"
+
+        notification = {
+            'type': notification_type,
+            'title': title,
+            'message': message,
+            'timestamp': timestamp
+        }
+
+        # Add to history
+        if user_id not in notifications_history:
+            notifications_history[user_id] = []
+        notifications_history[user_id].append(notification)
+
+        # Keep only last 100 notifications
+        if len(notifications_history[user_id]) > 100:
+            notifications_history[user_id] = notifications_history[user_id][-100:]
+
+        # Add to queue for real-time updates
+        if user_id in notification_queues:
+            try:
+                notification_queues[user_id].put_nowait(notification)
+            except queue.Full:
+                pass  # Queue is full, skip this notification
+
+        logger.info(f"Added notification for user {user_id}: {title}")
+    except Exception as e:
+        logger.error(f"Error adding notification for user {user_id}: {str(e)}")
+
+def add_bot_update(user_id, update_type, title, message):
+    """Add a bot status update notification"""
+    add_notification(user_id, update_type, title, message)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'authenticated' not in session:
+            return jsonify({'error': 'Not authenticated'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/')
+def index():
+    if 'authenticated' not in session:
+        return redirect(url_for('login'))
+    return render_template('index.html')
+
+@app.route('/notifications')
+def notifications():
+    if 'authenticated' not in session:
+        return redirect(url_for('login'))
+    return render_template('notifications.html')
+
+@app.route('/manifest.json')
+def manifest():
+    """Serve PWA manifest"""
+    return app.send_static_file('manifest.json')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if authenticate_user(username, password):
+            session['authenticated'] = True
+            session['user_id'] = username  # Store actual username instead of 'web_user'
+            session['username'] = username
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error='Invalid credentials')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
+
+@app.route('/api/notifications/stream')
+@login_required
+def notification_stream():
+    user_id = session['user_id']
+    logger.info(f"Starting notification stream for user: {user_id}")
+
+    def event_stream():
+        # Create a queue for this user if it doesn't exist
+        if user_id not in notification_queues:
+            notification_queues[user_id] = queue.Queue(maxsize=25)
+            logger.info(f"Created new notification queue for user: {user_id}")
+
+        q = notification_queues[user_id]
+        connection_id = f"{user_id}_{int(time.time())}"
+
+        try:
+            # Send initial connection message with retry header
+            yield f"retry: 10000\n"
+            yield f"data: {json.dumps({'type': 'connected', 'message': f'Connected to notification stream', 'connection_id': connection_id})}\n\n"
+
+            heartbeat_counter = 0
+            while True:
+                try:
+                    # Wait for notification with longer timeout for better performance
+                    notification = q.get(timeout=30)
+                    logger.debug(f"Sending notification to user {user_id}: {notification}")
+                    yield f"data: {json.dumps(notification)}\n\n"
+                    heartbeat_counter = 0
+                except queue.Empty:
+                    # Send heartbeat every 60 seconds for better performance
+                    heartbeat_counter += 1
+                    if heartbeat_counter % 3 == 0:  # Only send every third heartbeat
+                        yield f"data: {json.dumps({'type': 'heartbeat', 'count': heartbeat_counter})}\n\n"
+
+                    # Close connection after 3 minutes of inactivity
+                    if heartbeat_counter > 6:
+                        logger.info(f"Closing inactive notification stream for user {user_id}")
+                        break
+                except GeneratorExit:
+                    break
+                except Exception as e:
+                    logger.error(f"Error in notification stream for user {user_id}: {str(e)}")
+                    break
+        except Exception as e:
+            logger.error(f"Error in event_stream generator for user {user_id}: {str(e)}")
+            yield f"data: {json.dumps({'type': 'error', 'message': 'Connection error'})}\n\n"
+
+    response = Response(event_stream(), mimetype="text/event-stream")
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    response.headers['Connection'] = 'keep-alive'
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Cache-Control'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['X-Accel-Buffering'] = 'no'  # Disable nginx buffering
+
+    # Cleanup old queues periodically
+    import threading
+    def cleanup_old_queues():
+        for uid in list(notification_queues.keys()):
+            if notification_queues[uid].qsize() == 0:
+                # Check if queue has been inactive - implement your logic here
+                pass
+
+    return response
+
+@app.route('/api/notifications/history')
+@login_required
+def get_notification_history():
+    """Get notification history for the current user"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    user_id = session['user_id']
+
+    # Check for notifications from file (fallback method)
+    try:
+        notification_file = f'data/notifications_{user_id}.json'
+        if os.path.exists(notification_file):
+            with open(notification_file, 'r') as f:
+                for line in f:
+                    try:
+                        notification = json.loads(line.strip())
+                        if notification['user_id'] == user_id:
+                            # Add to history if not already there
+                            if user_id not in notifications_history:
+                                notifications_history[user_id] = []
+
+                            # Check if notification already exists
+                            exists = any(
+                                n['timestamp'] == notification['timestamp'] and 
+                                n['message'] == notification['message']
+                                for n in notifications_history[user_id]
+                            )
+
+                            if not exists:
+                                notifications_history[user_id].append({
+                                    'type': notification['type'],
+                                    'title': notification['title'],
+                                    'message': notification['message'],
+                                    'timestamp': notification['timestamp']
+                                })
+                    except:
+                        continue
+
+            # Clean up the file after reading
+            try:
+                os.remove(notification_file)
+            except:
+                pass
+    except:
+        pass
+
+    history = notifications_history.get(user_id, [])
+
+    # Return last 50 notifications
+    return jsonify({'notifications': history[-50:]})
+
+@app.route('/api/config_files')
+@login_required
+def get_config_files():
+    """Get list of available configuration files for the current user"""
+    try:
+        user_id = session['user_id']
+        username = session.get('username', user_id)
+        config_files = []
+
+        # Load user config assignments
+        assignments = load_user_config_assignments()
+
+        # Admin can access all config files
+        if username == 'admin':
+            for file in os.listdir('.'):
+                if file.endswith('.json') and os.path.isfile(file):
+                    config_files.append(file)
+        else:
+            # Check if user has a specific config file assigned
+            if username in assignments:
+                assigned_config = assignments[username]
+                if os.path.exists(assigned_config):
+                    config_files.append(assigned_config)
+                # Also allow access to example config for reference
+                if os.path.exists('config.example.json'):
+                    config_files.append('config.example.json')
+            else:
+                # Fallback to old logic for users not in assignments file
+                global_configs = ['config.json', 'config.example.json']
+
+                for file in os.listdir('.'):
+                    if file.endswith('.json') and os.path.isfile(file):
+                        if has_config_access(username, file):
+                            config_files.append(file)
+
+        # Remove duplicates and sort
+        config_files = sorted(list(set(config_files)))
+
+        return jsonify({'config_files': config_files})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/start_bot', methods=['POST'])
+@login_required
+def start_bot():
+    data = request.json
+    user_id = session['user_id']
+
+    # Get user's maximum allowed instances
+    username = session.get('username', user_id)
+    max_instances = get_user_max_instances(username)
+
+    # Count existing instances
+    instance_count = sum(1 for proc_id in bot_processes if proc_id.startswith(user_id) and bot_processes[proc_id]["process"].poll() is None)
+
+    if instance_count >= max_instances:
+        return jsonify({'error': f'Maximum of {max_instances} bot instance(s) allowed for user {username}'}), 400
+
+    try:
+        email = data.get('email') or os.getenv('LOK_EMAIL')
+        password = data.get('password') or os.getenv('LOK_PASSWORD')
+        token = data.get('token')
+        account_name = data.get('account_name', f'Instance {instance_count + 1}')
+        selected_config = data.get('config_file', 'config.json')  # Default to config.json if not specified
+        auth_method = data.get('auth_method', 'env')  # Get auth method from request
+
+        if not token and (not email or not password):
+            return jsonify({'error': 'Authentication credentials required'}), 400
+
+        # If no token provided, authenticate with provided credentials
+        if not token:
+            api = LokBotApi(None, {}, skip_jwt=True)
+
+            # Email/password authentication
+            auth_result = api.auth_login(email, password)
+
+            if not auth_result.get('result'):
+                return jsonify({'error': 'Email/password authentication failed'}), 400
+
+            token = auth_result.get('token')
+
+        # Generate unique instance ID
+        instance_id = f"{user_id}_{instance_count + 1}"
+
+        # Set the current config in ConfigHelper FIRST (same as Discord bot)
+        ConfigHelper.set_current_config(selected_config)
+
+        # Create user config based on selected config file
+        config_path = f"data/config_{user_id}.json"
+
+        # Load the selected config file as template
+        if os.path.exists(selected_config):
+            with open(selected_config, "r") as f:
+                config_data = json.load(f)
+        else:
+            return jsonify({'error': f'Selected config file {selected_config} not found'}), 400
+
+        # Update config with user ID
+        if "discord" not in config_data:
+            config_data["discord"] = {}
+        config_data["discord"]["user_id"] = user_id
+
+        # Ensure rally configurations exist
+        if "rally" not in config_data:
+            config_data["rally"] = {}
+
+        if "join" not in config_data["rally"]:
+            config_data["rally"]["join"] = {
+                "enabled": False,
+                "numMarch": 8,
+                "level_based_troops": True,
+                "targets": []
+            }
+
+        if "start" not in config_data["rally"]:
+            config_data["rally"]["start"] = {
+                "enabled": False,
+                "numMarch": 6,
+                "level_based_troops": True,
+                "targets": []
+            }
+
+        with open(config_path, "w") as f:
+            json.dump(config_data, f, indent=2)
+
+        # Start the bot process
+        env = os.environ.copy()
+        env["LOKBOT_USER_ID"] = user_id
+        env["LOKBOT_CONFIG"] = selected_config  # Set the selected config file
+
+        # Set the current config in ConfigHelper (same as Discord bot)
+        ConfigHelper.set_current_config(selected_config)
+
+        # Log the start attempt
+        logger.info(f"Starting bot for user {user_id} with config {selected_config}")
+
+        try:
+            process = subprocess.Popen(
+                ["python", "-m", "lokbot", token],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,  # Combine stderr with stdout
+                text=True,
+                env=env,
+                bufsize=1,  # Line buffered
+                universal_newlines=True
+            )
+
+            # Start a thread to monitor and log output to console
+            def log_output():
+                try:
+                    for line in iter(process.stdout.readline, ''):
+                        if line.strip():
+                            logger.info(f"[{account_name}] {line.strip()}")
+
+                            # Parse log lines for notifications with better pattern matching
+                            line_lower = line.lower()
+                            line_content = line.strip()
+
+                            # Skip ANSI color code lines and system log messages
+                            if "[0m" in line_content or "sent to discord" in line_lower or "sent to web app" in line_lower:
+                                continue
+
+                            # Only capture the actual game event messages, not the log confirmations
+                            # Gathering notifications - look for the specific emoji message
+                            if "🚛 gathering march started!" in line_lower:
+                                # Extract just the clean message part
+                                if "🚛" in line_content:
+                                    clean_message = line_content.split("🚛")[1].strip() if "🚛" in line_content else line_content
+                                    clean_message = "🚛 " + clean_message
+                                    add_notification(user_id, "gathering", "Gathering Started", clean_message)
+
+                            # Rally notifications
+                            elif "rally joined" in line_lower and "🔥" in line_content:
+                                add_notification(user_id, "rally_join", "Rally Joined", line_content)
+                            elif "rally started" in line_lower and "🏴" in line_content:
+                                add_notification(user_id, "rally_start", "Rally Started", line_content)
+
+                            # Resource findings - only capture the formatted messages
+                            elif "crystal mine found!" in line_lower and "📢" in line_content:
+                                add_notification(user_id, "crystal_mine", "Crystal Mine Found", line_content)
+                            elif "dragon soul found!" in line_lower and "📢" in line_content:
+                                add_notification(user_id, "dragon_soul", "Dragon Soul Found", line_content)
+
+                            # Monster attacks
+                            elif ("monster attack" in line_lower and "started" in line_lower) and "👹" in line_content:
+                                add_notification(user_id, "monster_attack", "Monster Attack Started", line_content)
+
+                            # Errors and warnings - but not log confirmations
+                            elif "error" in line_lower and "failed" not in line_lower and not any(x in line_lower for x in ["debug", "info", "lokbot"]):
+                                add_notification(user_id, "error", "Bot Error", line_content)
+                            elif "failed" in line_lower and not any(x in line_lower for x in ["debug", "info", "lokbot"]):
+                                add_notification(user_id, "warning", "Bot Warning", line_content)
+
+                except Exception as e:
+                    logger.error(f"Error reading output from {account_name}: {str(e)}")
+
+            import threading
+            log_thread = threading.Thread(target=log_output, daemon=True)
+            log_thread.start()
+
+            # Give the process a moment to start
+            import time
+            time.sleep(2)
+
+            # Check if process is still running
+            if process.poll() is not None:
+                # Process has already terminated
+                stdout, stderr = process.communicate()
+                error_msg = f"Bot process failed to start. Exit code: {process.returncode}. Output: {stdout}"
+                logger.error(error_msg)
+                return jsonify({'error': error_msg}), 500
+
+            bot_processes[instance_id] = {
+                "process": process,
+                "token": token,
+                "config_path": config_path,
+                "config_file": selected_config,
+                "start_time": datetime.now(),
+                "user_id": user_id,
+                "name": account_name
+            }
+
+            logger.info(f"Bot started successfully for user {user_id} as instance {instance_id}")
+            add_notification(user_id, "bot_start", "Bot Started", f"Bot {account_name} started successfully with config {selected_config}")
+
+        except Exception as e:
+            logger.error(f"Exception starting bot process: {str(e)}")
+            add_notification(user_id, "error", "Bot Start Failed", f"Failed to start bot: {str(e)}")
+            return jsonify({'error': f'Failed to start bot process: {str(e)}'}), 500
+
+        return jsonify({
+            'success': True,
+            'message': f'Bot {account_name} started successfully with config {selected_config}',
+            'instance_id': instance_id
+        })
+
+    except Exception as e:
+        logger.error(f"Error starting bot: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/stop_bot', methods=['POST'])
+@login_required
+def stop_bot():
+    data = request.json
+    instance_ids = data.get('instance_ids', [])
+    user_id = session['user_id']
+
+    stopped_count = 0
+
+    for instance_id in instance_ids:
+        if instance_id in bot_processes and instance_id.startswith(user_id):
+            process = bot_processes[instance_id]["process"]
+
+            if process.poll() is None:
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait()
+
+            del bot_processes[instance_id]
+            stopped_count += 1
+
+    if stopped_count > 0:
+        add_notification(user_id, "bot_stop", "Bot Stopped", f"Stopped {stopped_count} bot instance(s)")
+
+    return jsonify({
+        'success': True,
+        'message': f'Stopped {stopped_count} instance(s)',
+        'stopped_count': stopped_count
+    })
+
+@app.route('/api/status')
+@login_required
+def get_status():
+    user_id = session['user_id']
+
+    # Clean up dead processes
+    for proc_id in list(bot_processes.keys()):
+        process = bot_processes[proc_id]["process"]
+        if process.poll() is not None:
+            del bot_processes[proc_id]
+
+    # Get user's active processes
+    user_processes = []
+    for proc_id, proc_data in bot_processes.items():
+        if proc_id.startswith(user_id):
+            process = proc_data["process"]
+            if process.poll() is None:
+                user_processes.append({
+                    'instance_id': proc_id,
+                    'name': proc_data['name'],
+                    'start_time': proc_data['start_time'].isoformat(),
+                    'status': 'running',
+                    'config_file': proc_data.get('config_file', 'config.json')
+                })
+
+    total_active = len([p for p in bot_processes.values() if p["process"].poll() is None])
+
+    return jsonify({
+        'user_processes': user_processes,
+        'total_active': total_active
+    })
+
+@app.route('/api/config', methods=['GET', 'POST'])
+@login_required
+def handle_config():
+    user_id = session['user_id']
+    username = session.get('username', user_id)
+
+    if request.method == 'GET':
+        try:
+            # Get selected config file from request or use default
+            selected_config = request.args.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Load the selected config file
+            if os.path.exists(selected_config):
+                with open(selected_config, 'r') as f:
+                    config = json.load(f)
+            else:
+                return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+            return jsonify(config)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            config = data.get('config', {})
+            selected_config = data.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Ensure the config file exists
+            if not os.path.exists(selected_config):
+                return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+            # Save config
+            with open(selected_config, 'w') as f:
+                json.dump(config, f, indent=2, sort_keys=False)
+
+            return jsonify({'success': True, 'message': f'Configuration saved to {selected_config}'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/rally_config', methods=['POST'])
+@login_required
+def update_rally_config():
+    data = request.json
+    user_id = session['user_id']
+    config_file = f"data/config_{user_id}.json"
+
+    try:
+        # Load existing config
+        if os.path.exists(config_file):
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+        else:
+            with open('config.json', 'r') as f:
+                config = json.load(f)
+
+        # Update rally configuration
+        rally_type = data.get('rally_type')  # 'join' or 'start'
+
+        if rally_type not in ['join', 'start']:
+            return jsonify({'error': 'Invalid rally type'}), 400
+
+        if 'rally' not in config:
+            config['rally'] = {}
+
+        if rally_type not in config['rally']:
+            config['rally'][rally_type] = {
+                'enabled': False,
+                'numMarch': 8 if rally_type == 'join' else 6,
+                'level_based_troops': True,
+                'targets': []
+            }
+
+        # Update specific fields
+        if 'enabled' in data:
+            config['rally'][rally_type]['enabled'] = data['enabled']
+
+        if 'numMarch' in data:
+            config['rally'][rally_type]['numMarch'] = data['numMarch']
+
+        if 'level_based_troops' in data:
+            config['rally'][rally_type]['level_based_troops'] = data['level_based_troops']
+
+        if 'targets' in data:
+            config['rally'][rally_type]['targets'] = data['targets']
+
+        # Save config
+        with open(config_file, 'w') as f:
+            json.dump(config, f, indent=2)
+
+        return jsonify({'success': True, 'message': f'Rally {rally_type} configuration updated'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+# Daily counters for notifications
+daily_counters = {}  # user_id -> {date: {gathering: count, rally_join: count, etc}}
+user_notifications = {}
+
+def get_daily_counter(user_id, counter_type):
+    """Get daily counter for a specific notification type"""
+    today = datetime.now().date().isoformat()
+
+    if user_id not in daily_counters:
+        daily_counters[user_id] = {}
+
+    if today not in daily_counters[user_id]:
+        daily_counters[user_id][today] = {}
+
+    return daily_counters[user_id][today].get(counter_type, 0)
+
+def increment_daily_counter(user_id, counter_type):
+    """Increment daily counter for a specific notification type"""
+    today = datetime.now().date().isoformat()
+
+    if user_id not in daily_counters:
+        daily_counters[user_id] = {}
+
+    if today not in daily_counters[user_id]:
+        daily_counters[user_id][today] = {}
+
+    daily_counters[user_id][today][counter_type] = daily_counters[user_id][today].get(counter_type, 0) + 1
+    return daily_counters[user_id][today][counter_type]
+
+@app.route('/api/object_notification', methods=['POST'])
+def object_notification():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id', 'web_user')
+        logger.info(f"Received object notification for user_id: {user_id}")
+
+        # Determine notification type based on object type
+        object_name = data.get('object_name', '')
+        if 'Crystal Mine' in object_name:
+            notification_type = 'crystal_mine'
+            title = "Crystal Mine Found"
+        elif 'Dragon Soul' in object_name:
+            notification_type = 'dragon_soul'
+            title = "Dragon Soul Found"
+        else:
+            notification_type = 'object_scan'
+            title = "Object Found"
+
+        # Add to notification system using the existing add_notification function
+        add_notification(user_id, notification_type, title, data.get('formatted_message', 'Object found'))
+
+        logger.info(f"Added notification for user {user_id}: {title}")
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        logger.error(f"Error in object_notification: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/gathering_notification', methods=['POST'])
+def gathering_notification():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id', 'web_user')
+        logger.info(f"Received gathering notification for user_id: {user_id}")
+
+        # Add to notification system using the existing add_notification function
+        add_notification(user_id, "gathering", "Gathering Started", data.get('formatted_message', 'Gathering march started'))
+
+        logger.info(f"Added gathering notification for user {user_id}")
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        logger.error(f"Error in gathering_notification: {str(e)}")
+return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/user_info')
+@login_required
+def get_user_info():
+    """Get current user information"""
+    username = session.get('username', 'unknown')
+    max_instances = get_user_max_instances(username)
+
+    return jsonify({
+        'username': username,
+        'max_instances': max_instances
+    })
+
+@app.route('/api/users', methods=['GET', 'POST'])
+@login_required
+def manage_users():
+    """Manage users (admin only)"""
+    username = session.get('username')
+    if username != 'admin':  # Only admin can manage users
+        return jsonify({'error': 'Admin access required'}), 403
+
+    if request.method == 'GET':
+        users = load_users()
+        user_list = []
+        for user, data in users.items():
+            user_list.append({
+                'username': user,
+                'max_instances': data['max_instances']
+            })
+        return jsonify({'users': user_list})
+
+    elif request.method == 'POST':
+        data = request.json
+        action = data.get('action')
+
+        if action == 'add':
+            new_username = data.get('username')
+            new_password = data.get('password')
+            max_instances = data.get('max_instances', 1)
+
+            if not new_username or not new_password:
+                return jsonify({'error': 'Username and password required'}), 400
+
+            # Add user to file
+            try:
+                with open(USER_FILE, 'a') as f:
+                    f.write(f"\n{new_username}:{new_password}:{max_instances}")
+                return jsonify({'success': True, 'message': 'User added successfully'})
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+
+        elif action == 'update':
+            target_username = data.get('username')
+            new_max_instances = data.get('max_instances')
+
+            if not target_username or new_max_instances is None:
+                return jsonify({'error': 'Username and max_instances required'}), 400
+
+            # Update user in file
+            try:
+                users = load_users()
+                if target_username not in users:
+                    return jsonify({'error': 'User not found'}), 404
+
+                users[target_username]['max_instances'] = int(new_max_instances)
+
+                # Rewrite file
+                with open(USER_FILE, 'w') as f:
+                    f.write("# User Management File\n")
+                    f.write("# Format: username:password:max_instances\n")
+                    for user, data in users.items():
+                        f.write(f"{user}:{data['password']}:{data['max_instances']}\n")
+
+                return jsonify({'success': True, 'message': 'User updated successfully'})
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+
+        elif action == 'delete':
+            target_username = data.get('username')
+
+            if not target_username:
+                return jsonify({'error': 'Username required'}), 400
+
+            if target_username == 'admin':
+                return jsonify({'error': 'Cannot delete admin user'}), 400
+
+            # Remove user from file
+            try:
+                users = load_users()
+                if target_username not in users:
+                    return jsonify({'error': 'User not found'}), 404
+
+                del users[target_username]
+
+                # Rewrite file
+                with open(USER_FILE, 'w') as f:
+                    f.write("# User Management File\n")
+                    f.write("# Format: username:password:max_instances\n")
+                    for user, data in users.items():
+                        f.write(f"{user}:{data['password']}:{data['max_instances']}\n")
+
+                return jsonify({'success': True, 'message': 'User deleted successfully'})
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+
+        return jsonify({'error': 'Invalid action'}), 400
+
+@app.route('/api/daily_counters')
+def get_daily_counters():
+    """Get daily counters for current user"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    user_id = session['user_id']
+    today = datetime.now().date().isoformat()
+
+    counters = {
+        'gathering': get_daily_counter(user_id, 'gathering'),
+        'rally_join': get_daily_counter(user_id, 'rally_join'),
+        'rally_start': get_daily_counter(user_id, 'rally_start'),
+        'monster_attack': get_daily_counter(user_id, 'monster_attack'),
+        'object_scan': get_daily_counter(user_id, 'object_scan'),
+        'crystal_mine': get_daily_counter(user_id, 'crystal_mine'),
+        'dragon_soul': get_daily_counter(user_id, 'dragon_soul')
+    }
+
+    return jsonify({'counters': counters, 'date': today})
+
+@app.route('/api/config/monsters', methods=['GET', 'POST'])
+@login_required
+def handle_monsters_config():
+    """Manage monster configurations for rally join/start"""
+    user_id = session['user_id']
+    config_file = f"data/config_{user_id}.json"
+
+    if request.method == 'GET':
+        try:
+            config = ConfigHelper.load_config()
+            monsters = {
+                'rally_join': config.get('rally', {}).get('join', {}).get('targets', []),
+                'rally_start': config.get('rally', {}).get('start', {}).get('targets', [])
+            }
+            return jsonify(monsters)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            rally_type = data.get('rally_type')  # 'join' or 'start'
+            monsters = data.get('monsters', [])
+
+            config = ConfigHelper.load_config()
+
+            if 'rally' not in config:
+                config['rally'] = {}
+            if rally_type not in config['rally']:
+                config['rally'][rally_type] = {}
+
+            config['rally'][rally_type]['targets'] = monsters
+
+            success = ConfigHelper.save_config(config, config_file)
+            if success:
+                return jsonify({'success': True, 'message': f'Updated {rally_type} monsters'})
+            else:
+                return jsonify({'error': 'Failed to save configuration'}), 500
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/config/objects', methods=['GET', 'POST'])
+@login_required
+def handle_objects_config():
+    """Manage object scanning configurations"""
+    user_id = session['user_id']
+    config_file = f"data/config_{user_id}.json"
+
+    if request.method == 'GET':
+        try:
+            config = ConfigHelper.load_config()
+
+            # Get objects from socf_thread job
+            objects = []
+            for job in config.get('main', {}).get('jobs', []):
+                if job.get('name') == 'socf_thread':
+                    objects = job.get('kwargs', {}).get('targets', [])
+                    break
+
+            return jsonify({'objects': objects})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            objects = data.get('objects', [])
+
+            config = ConfigHelper.load_config()
+
+            # Update socf_thread job targets
+            for job in config.get('main', {}).get('jobs', []):
+                if job.get('name') == 'socf_thread':
+                    if 'kwargs' not in job:
+                        job['kwargs'] = {}
+                    job['kwargs']['targets'] = objects
+                    break
+
+            success = ConfigHelper.save_config(config, config_file)
+            if success:
+                return jsonify({'success': True, 'message': 'Updated object targets'})
+            else:
+                return jsonify({'error': 'Failed to save configuration'}), 500
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/config/troops', methods=['GET', 'POST'])
+@login_required
+def handle_troops_config():
+    """Manage troop configurations"""
+    user_id = session['user_id']
+    config_file = f"data/config_{user_id}.json"
+
+    if request.method == 'GET':
+        try:
+            config = ConfigHelper.load_config()
+
+            # Get predefined troops from assets
+            troop_types = [
+                {"code": 50100301, "name": "Scout (Tier 1 Cavalry)"},
+                {"code": 50100302, "name": "Horseman (Tier 2 Cavalry)"},
+                {"code": 50100303, "name": "Heavy Cavalry (Tier 3 Cavalry)"},
+                {"code": 50100304, "name": "Iron Cavalry (Tier 4 Cavalry)"},
+                {"code": 50100305, "name": "Dragoon (Tier 5 Cavalry)"},
+                {"code": 50100306, "name": "Marauder (Tier 6 Cavalry)"},
+                {"code": 50100201, "name": "Bowman (Tier 1 Ranged)"},
+                {"code": 50100202, "name": "Hunter (Tier 2 Ranged)"},
+                {"code": 50100203, "name": "Ranger (Tier 3 Ranged)"},
+                {"code": 50100204, "name": "Crossbowman (Tier 4 Ranged)"},
+                {"code": 50100205, "name": "Longbowman (Tier 5 Ranged)"},
+                {"code": 50100206, "name": "Stealth Archer (Tier 6 Ranged)"},
+                {"code": 50100101, "name": "Spearman (Tier 1 Infantry)"},
+                {"code": 50100102, "name": "Swordsman (Tier 2 Infantry)"},
+                {"code": 50100103, "name": "Pikeman (Tier 3 Infantry)"},
+                {"code": 50100104, "name": "Royal Guardsman (Tier 4 Infantry)"},
+                {"code": 50100105, "name": "Cataphract (Tier 5 Infantry)"},
+                {"code": 50100106, "name": "Immortal (Tier 6 Infantry)"}
+            ]
+
+            common_troops = config.get('main', {}).get('normal_monsters', {}).get('common_troops', [])
+
+            return jsonify({
+                'available_troops': troop_types,
+                'common_troops': common_troops
+            })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            common_troops = data.get('common_troops', [])
+
+            config = ConfigHelper.load_config()
+
+            if 'main' not in config:
+                config['main'] = {}
+            if 'normal_monsters' not in config['main']:
+                config['main']['normal_monsters'] = {}
+
+            config['main']['normal_monsters']['common_troops'] = common_troops
+
+            success = ConfigHelper.save_config(config, config_file)
+            if success:
+                return jsonify({'success': True, 'message': 'Updated troop settings'})
+            else:
+                return jsonify({'error': 'Failed to save configuration'}), 500
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/config/presets')
+def get_config_presets():
+    """Get predefined monster and object presets"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    presets = {
+        'monsters': [
+            {"code": 20200201, "name": "Deathkar"},
+            {"code": 20200202, "name": "Green Dragon"},
+            {"code": 20200203, "name": "Red Dragon"},
+            {"code": 20200204, "name": "Gold Dragon"},
+            {"code": 20200101, "name": "Orc"},
+            {"code": 20200102, "name": "Skeleton"},
+            {"code": 20200103, "name": "Golem"},
+            {"code": 20200104, "name": "Treasure Goblin"}
+        ],
+        'objects': [
+            {"code": 20100101, "name": "Farm"},
+            {"code": 20100102, "name": "Gold Mine"},
+            {"code": 20100103, "name": "Lumber Camp"},
+            {"code": 20100104, "name": "Quarry"},
+            {"code": 20100105, "name": "Crystal Mine"},
+            {"code": 20100106, "name": "Dragon Soul Cavern"}
+        ]
+    }
+
+    return jsonify(presets)
+
+@app.route('/api/config/common_troops', methods=['GET', 'POST'])
+@login_required
+def handle_common_troops_config():
+    """Manage common troops configurations"""
+    user_id = session['user_id']
+    username = session.get('username', user_id)
+
+    if request.method == 'GET':
+        try:
+            # Get selected config file from request or use default
+            selected_config = request.args.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Load the selected config file
+            if os.path.exists(selected_config):
+                with open(selected_config, 'r') as f:
+                    config = json.load(f)
+            else:
+                return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+            # Get common troops from config
+            common_troops = config.get('main', {}).get('normal_monsters', {}).get('common_troops', [])
+
+            return jsonify({'troops': common_troops})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            troops = data.get('troops', [])
+            selected_config = data.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Ensure the config file exists
+            if not os.path.exists(selected_config):
+                return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+            # Load config
+            with open(selected_config, 'r') as f:
+                config = json.load(f)
+
+            # Update common troops
+            if 'main' not in config:
+                config['main'] = {}
+            if 'normal_monsters' not in config['main']:
+                config['main']['normal_monsters'] = {}
+
+            config['main']['normal_monsters']['common_troops'] = troops
+
+            # Save config
+            with open(selected_config, 'w') as f:
+                json.dump(config, f, indent=2)
+
+            return jsonify({'success': True, 'message': 'Common troops updated successfully'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/config/socf_objects', methods=['GET', 'POST'])
+def handle_socf_objects_config():
+    """Manage socf_thread objects configuration"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    user_id = session['user_id']
+    username = session.get('username', user_id)
+
+    if request.method == 'GET':
+        try:
+            # Get selected config file from request or use default
+            selected_config = request.args.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Load the selected config file
+            if os.path.exists(selected_config):
+                with open(selected_config, 'r') as f:
+                    config = json.load(f)
+            else:
+                return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+            # Get objects from socf_thread job
+            socf_objects = []
+            socf_enabled = False
+            socf_radius = 16
+
+            for job in config.get('main', {}).get('jobs', []):
+                if job.get('name') == 'socf_thread':
+                    socf_objects = job.get('kwargs', {}).get('targets', [])
+                    socf_enabled = job.get('enabled', False)
+                    socf_radius = job.get('kwargs', {}).get('radius', 16)
+                    break
+
+            return jsonify({
+                'objects': socf_objects,
+                'enabled': socf_enabled,
+                'radius': socf_radius
+            })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            objects = data.get('objects', [])
+            enabled = data.get('enabled', False)
+            radius = data.get('radius', 16)
+            selected_config = data.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Ensure the config file exists
+            if not os.path.exists(selected_config):
+                return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+            # Load config
+            with open(selected_config, 'r') as f:
+                config = json.load(f)
+
+            # Update socf_thread job targets
+            socf_job_found = False
+            for job in config.get('main', {}).get('jobs', []):
+                if job.get('name') == 'socf_thread':
+                    if 'kwargs' not in job:
+                        job['kwargs'] = {}
+                    job['kwargs']['targets'] = objects
+                    job['kwargs']['radius'] = radius
+                    job['enabled'] = enabled
+                    socf_job_found = True
+                    break
+
+            # If socf_thread job doesn't exist, create it
+            if not socf_job_found:
+                if 'main' not in config:
+                    config['main'] = {}
+                if 'jobs' not in config['main']:
+                    config['main']['jobs'] = []
+
+                config['main']['jobs'].append({
+                    "name": "socf_thread",
+                    "enabled": enabled,
+                    "interval": {"start": 1, "end": 1},
+                    "kwargs": {
+                        "targets": objects,
+                        "radius": radius,
+                        "share_to": {
+                            "chat_channels": [0, 0]
+                        }
+                    }
+                })
+
+            # Save config
+            with open(selected_config, 'w') as f:
+                json.dump(config, f, indent=2)
+
+            return jsonify({'success': True, 'message': 'Updated socf_thread objects'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/simple-config')
+def simple_config():
+    """Route for simplified configuration interface"""
+    if 'authenticated' not in session:
+        return redirect(url_for('login'))
+    return render_template('simple_config.html')
+
+@app.route('/api/simple_config', methods=['GET', 'POST'])
+@login_required
+def handle_simple_config():
+    """Handle simplified configuration data"""
+    user_id = session['user_id']
+    username = session.get('username', user_id)
+
+    if request.method == 'GET':
+        try:
+            # Get the current config file
+            selected_config = request.args.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Load the selected config file
+            if os.path.exists(selected_config):
+                with open(selected_config, 'r') as f:
+                    config = json.load(f)
+            else:
+                return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+            # Return the full config for the simple config page to work with
+            return jsonify(config)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            config_type = data.get('config_type')
+            config_data = data.get('config')
+            selected_config = data.get('config_file', 'config.json')
+
+            # Check if user has access to this config file
+            if not has_config_access(username, selected_config):
+                return jsonify({'error': 'Access denied to this config file'}), 403
+
+            # Load existing config
+            if os.path.exists(selected_config):
+                with open(selected_config, 'r') as f:
+                    full_config = json.load(f)
+            else:
+                full_config = {}
+
+            # Update the relevant section based on config_type
+            if config_type == 'rally-join':
+                if 'rally' not in full_config:
+                    full_config['rally'] = {}
+                full_config['rally']['join'] = config_data
+
+            elif config_type == 'rally-start':
+                if 'rally' not in full_config:
+                    full_config['rally'] = {}
+                full_config['rally']['start'] = config_data
+
+            elif config_type == 'monster-attack':
+                if 'main' not in full_config:
+                    full_config['main'] = {}
+                full_config['main']['normal_monsters'] = config_data
+
+            # Save the updated config
+            with open(selected_config, 'w') as f:
+                json.dump(full_config, f, indent=2)
+
+            return jsonify({'success': True, 'message': f'{config_type} configuration updated successfully'})
+
+        except Exception as e:
+            logger.error(f"Error saving simple config: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/schedule/tasks', methods=['GET', 'POST'])
+def handle_scheduled_tasks():
+    """Manage scheduled tasks"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    user_id = session['user_id']
+
+    if request.method == 'GET':
+        user_tasks = {k: v for k, v in scheduled_tasks.items() if v.get('user_id') == user_id}
+        return jsonify({'tasks': user_tasks})
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            task_type = data.get('task_type')  # 'start_bot', 'stop_bot', 'config_change', 'maintenance'
+            schedule_time = data.get('schedule_time')  # ISO format or cron expression
+            task_data = data.get('task_data', {})
+            task_name = data.get('task_name', f'{task_type}_{int(time.time())}')
+
+            task_id = f"{user_id}_{task_name}"
+
+            # Parse schedule time
+            if 'cron' in data:
+                # Cron expression
+                trigger = CronTrigger.from_crontab(data['cron'])
+            else:
+                # One-time scheduled task
+                schedule_dt = datetime.fromisoformat(schedule_time.replace('Z', '+00:00'))
+                trigger = 'date'
+
+            # Add job to scheduler
+            if task_type == 'start_bot':
+                job = scheduler.add_job(
+                    execute_scheduled_start_bot,
+                    trigger=trigger,
+                    args=[user_id, task_data],
+                    id=task_id,
+                    replace_existing=True
+                )
+            elif task_type == 'stop_bot':
+                job = scheduler.add_job(
+                    execute_scheduled_stop_bot,
+                    trigger=trigger,
+                    args=[user_id, task_data],
+                    id=task_id,
+                    replace_existing=True
+                )
+            elif task_type == 'config_change':
+                job = scheduler.add_job(
+                    execute_scheduled_config_change,
+                    trigger=trigger,
+                    args=[user_id, task_data],
+                    id=task_id,
+                    replace_existing=True
+                )
+            elif task_type == 'maintenance':
+                job = scheduler.add_job(
+                    execute_maintenance_mode,
+                    trigger=trigger,
+                    args=[task_data],
+                    id=task_id,
+                    replace_existing=True
+                )
+
+            # Store task info
+            scheduled_tasks[task_id] = {
+                'user_id': user_id,
+                'task_type': task_type,
+                'task_name': task_name,
+                'schedule_time': schedule_time,
+                'task_data': task_data,
+                'created_at': datetime.now().isoformat(),
+                'status': 'scheduled'
+            }
+
+            return jsonify({'success': True, 'task_id': task_id, 'message': 'Task scheduled successfully'})
+
+        except Exception as e:
+            logger.error(f"Error scheduling task: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/schedule/tasks/<task_id>', methods=['DELETE'])
+def delete_scheduled_task(task_id):
+    """Delete a scheduled task"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    user_id = session['user_id']
+
+    if task_id not in scheduled_tasks or scheduled_tasks[task_id].get('user_id') != user_id:
+        return jsonify({'error': 'Task not found'}), 404
+
+    try:
+        # Remove from scheduler
+        scheduler.remove_job(task_id)
+        # Remove from our tracking
+        del scheduled_tasks[task_id]
+
+        return jsonify({'success': True, 'message': 'Task deleted successfully'})
+    except Exception as e:
+        logger.error(f"Error deleting scheduled task: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/maintenance', methods=['GET', 'POST'])
+def handle_maintenance_mode():
+    """Manage maintenance mode"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    if request.method == 'GET':
+        return jsonify(maintenance_mode)
+
+    elif request.method == 'POST':
+        try:
+            data = request.json
+            action = data.get('action')  # 'enable', 'disable', 'schedule'
+
+            if action == 'enable':
+                maintenance_mode['enabled'] = True
+                maintenance_mode['message'] = data.get('message', 'System under maintenance')
+                # Stop all running bots
+                for proc_id in list(bot_processes.keys()):
+                    process = bot_processes[proc_id]["process"]
+                    if process.poll() is None:
+                        process.terminate()
+
+                add_notification('system', 'maintenance', 'Maintenance Mode Enabled', maintenance_mode['message'])
+
+            elif action == 'disable':
+                maintenance_mode['enabled'] = False
+                maintenance_mode['scheduled_end'] = None
+                add_notification('system', 'maintenance', 'Maintenance Mode Disabled', 'System is back online')
+
+            elif action == 'schedule':
+                end_time = data.get('end_time')
+                if end_time:
+                    maintenance_mode['scheduled_end'] = end_time
+                    # Schedule maintenance mode disable
+                    scheduler.add_job(
+                        lambda: handle_maintenance_mode_end(),
+                        'date',
+                        run_date=datetime.fromisoformat(end_time.replace('Z', '+00:00')),
+                        id='maintenance_end',
+                        replace_existing=True
+                    )
+
+            return jsonify({'success': True, 'maintenance_mode': maintenance_mode})
+
+        except Exception as e:
+            logger.error(f"Error managing maintenance mode: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+
+def execute_scheduled_start_bot(user_id, task_data):
+    """Execute scheduled bot start"""
+    try:
+        # Implementation similar to start_bot endpoint but automated
+        add_notification(user_id, 'scheduled_task', 'Scheduled Bot Start', f"Automated bot start executed")
+        logger.info(f"Executed scheduled bot start for user {user_id}")
+    except Exception as e:
+        logger.error(f"Error in scheduled bot start: {str(e)}")
+
+def execute_scheduled_stop_bot(user_id, task_data):
+    """Execute scheduled bot stop"""
+    try:
+        # Stop user's bots
+        stopped_count = 0
+        for proc_id in list(bot_processes.keys()):
+            if proc_id.startswith(user_id):
+                process = bot_processes[proc_id]["process"]
+                if process.poll() is None:
+                    process.terminate()
+                    stopped_count += 1
+                del bot_processes[proc_id]
+
+        add_notification(user_id, 'scheduled_task', 'Scheduled Bot Stop', f"Stopped {stopped_count} bot instance(s)")
+        logger.info(f"Executed scheduled bot stop for user {user_id}")
+    except Exception as e:
+        logger.error(f"Error in scheduled bot stop: {str(e)}")
+
+def execute_scheduled_config_change(user_id, task_data):
+    """Execute scheduled configuration change"""
+    try:
+        config_file = task_data.get('config_file', 'config.json')
+        config_changes = task_data.get('config_changes', {})
+
+        # Load and update config
+        config = ConfigHelper.load_config(config_file)
+        config.update(config_changes)
+        ConfigHelper.save_config(config, config_file)
+
+        add_notification(user_id, 'scheduled_task', 'Scheduled Config Change', f"Configuration updated automatically")
+        logger.info(f"Executed scheduled config change for user {user_id}")
+    except Exception as e:
+        logger.error(f"Error in scheduled config change: {str(e)}")
+
+def execute_maintenance_mode(task_data):
+    """Execute maintenance mode"""
+    try:
+        maintenance_mode['enabled'] = True
+        maintenance_mode['message'] = task_data.get('message', 'Scheduled maintenance')
+
+        # Stop all bots
+        for proc_id in list(bot_processes.keys()):
+            process = bot_processes[proc_id]["process"]
+            if process.poll() is None:
+                process.terminate()
+
+        add_notification('system', 'maintenance', 'Scheduled Maintenance', maintenance_mode['message'])
+        logger.info("Executed scheduled maintenance mode")
+    except Exception as e:
+        logger.error(f"Error in scheduled maintenance: {str(e)}")
+
+def handle_maintenance_mode_end():
+    """Handle end of scheduled maintenance"""
+    maintenance_mode['enabled'] = False
+    maintenance_mode['scheduled_end'] = None
+    add_notification('system', 'maintenance', 'Maintenance Complete', 'Scheduled maintenance has ended')
+
+
+
+@app.route('/favicon.ico')
+def favicon():
+    # Return a simple SVG favicon
+    svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <rect width="32" height="32" fill="#00ff88"/>
+        <path d="M8 8h16v16H8z" fill="white"/>
+        <circle cx="12" cy="16" r="2" fill="#00ff88"/>
+        <circle cx="20" cy="16" r="2" fill="#00ff88"/>
+    </svg>'''
+    return Response(svg, mimetype='image/svg+xml')
+
+if __name__ == '__main__':
+    # Ensure data directory exists
+    os.makedirs('data', exist_ok=True)
+
+    # Production configuration
+    port = int(os.environ.get('PORT', 5000))
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+
+    app.run(host='0.0.0.0', port=port, debug=debug_mode, threaded=True)

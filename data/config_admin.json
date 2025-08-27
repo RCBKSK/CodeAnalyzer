@@ -1,0 +1,681 @@
+{
+  "discord": {
+    "chat_webhook_url": "",
+    "crystal_mine_level1_webhook_url": "",
+    "custom_webhook_url": "",
+    "dragon_soul_level2plus_webhook_url": "",
+    "enable_chat_monitoring": true,
+    "enabled": true,
+    "gathering_webhook_url": "https://discord.com/api/webhooks/1382222250085715979/WUAEuoIYDHap-_9QIoNcJNbsZUVEpb8eo8JpJ7byxVu-TJognkf2zGPiroAJTJwIl1KS",
+    "level2plus_webhook_url": "",
+    "level3plus_webhook_url": "",
+    "monster_webhook_url": "",
+    "occupied_resources_webhook_url": "",
+    "rally_webhook_url": "https://discord.com/api/webhooks/1382222437302665216/GxHbosuQZKqNthfWAP8XsHXFS5APhGsd4r-boZT7JsgspGCLDaBLzwiZrVMRhQZJfeJ9",
+    "webhook_url": "",
+    "user_id": "admin"
+  },
+  "main": {
+    "jobs": [
+      {
+        "enabled": true,
+        "interval": {
+          "end": 1800,
+          "start": 1200
+        },
+        "name": "hospital_recover"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "end": 90,
+          "start": 30
+        },
+        "name": "wall_repair"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "end": 200,
+          "start": 120
+        },
+        "kwargs": {
+          "gift_claim": true,
+          "help_all": true,
+          "research_donate": true,
+          "shop_auto_buy_item_code_list": [
+            10101008
+          ]
+        },
+        "name": "alliance_farmer"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "end": 200,
+          "start": 120
+        },
+        "name": "mail_claim"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "end": 200,
+          "start": 120
+        },
+        "name": "caravan_farmer"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "end": 200,
+          "start": 120
+        },
+        "name": "use_resource_in_item_list"
+      },
+      {
+        "enabled": true,
+        "interval": {
+          "end": 200,
+          "start": 120
+        },
+        "name": "vip_chest_claim"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "end": 20,
+          "start": 10
+        },
+        "name": "harvester"
+      },
+      {
+        "enabled": true,
+        "interval": {
+          "end": 1,
+          "start": 1
+        },
+        "kwargs": {
+          "radius": 16,
+          "share_to": {
+            "chat_channels": [
+              0,
+              0
+            ]
+          },
+          "targets": [
+            {
+              "code": 20100105,
+              "name": "Crystal Mine",
+              "level": [
+                1
+              ],
+              "enabled": true
+            }
+          ]
+        },
+        "name": "socf_thread"
+      }
+    ],
+    "normal_monsters": {
+      "common_troops": [
+        {
+          "code": 50100301,
+          "max_amount": 200,
+          "min_amount": 100,
+          "name": "Scout (Tier 1 Cavalry)"
+        },
+        {
+          "code": 50100303,
+          "max_amount": 0,
+          "min_amount": 0,
+          "name": "Heavy Cavalry (Tier 3 Cavalry)"
+        },
+        {
+          "code": 50100304,
+          "max_amount": 0,
+          "min_amount": 0,
+          "name": "Iron Cavalry (Tier 4 Cavalry)"
+        },
+        {
+          "code": 50100305,
+          "max_amount": 0,
+          "min_amount": 0,
+          "name": "Dragoon (Tier 5 Cavalry)"
+        },
+        {
+          "code": 50100306,
+          "max_amount": 0,
+          "min_amount": 0,
+          "name": "Marauder (Tier 6 Cavalry)"
+        }
+      ],
+      "enabled": false,
+      "targets": [
+        {
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
+          "monster_code": 20200103,
+          "monster_name": "Golem"
+        },
+        {
+          "level_ranges": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "monster_code": 20200104,
+          "monster_name": "Treasure Goblin"
+        },
+        {
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
+          "monster_code": 20200101,
+          "monster_name": "Orc"
+        },
+        {
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
+          "monster_code": 20200102,
+          "monster_name": "Skeleton"
+        }
+      ]
+    },
+    "object_scanning": {
+      "enable_gathering": true,
+      "enable_monster_attack": false,
+      "enabled": true,
+      "max_marches": 6,
+      "monster_attack": {
+        "enabled": false
+      },
+      "monster_distance_check": {
+        "enabled": false,
+        "max_distance": 250
+      },
+      "notify_discord": false,
+      "objects": {}
+    },
+    "skills": {
+      "enabled": true,
+      "skills": [
+        {
+          "code": 10001,
+          "enabled": true
+        },
+        {
+          "code": 10002,
+          "enabled": true
+        }
+      ]
+    },
+    "threads": [
+      {
+        "enabled": true,
+        "name": "free_chest_farmer_thread"
+      },
+      {
+        "enabled": false,
+        "name": "quest_monitor_thread"
+      },
+      {
+        "enabled": false,
+        "kwargs": {
+          "speedup": true
+        },
+        "name": "building_farmer_thread"
+      },
+      {
+        "enabled": false,
+        "kwargs": {
+          "speedup": true,
+          "to_max_level": false
+        },
+        "name": "academy_farmer_thread"
+      },
+      {
+        "enabled": false,
+        "kwargs": {
+          "interval": 3600,
+          "speedup": true,
+          "troop_code": 50100101
+        },
+        "name": "train_troop_thread"
+      }
+    ],
+    "treasure": {
+      "enabled": false,
+      "page": 1
+    }
+  },
+  "rally": {
+    "join": {
+      "enabled": false,
+      "level_based_troops": true,
+      "max_rally_distance": 500,
+      "numMarch": 8,
+      "targets": [
+        {
+          "monster_code": 20200201,
+          "monster_name": "Deathkar",
+          "level_ranges": [
+            {
+              "min_level": 1,
+              "max_level": 6,
+              "troops": [
+                {
+                  "code": 50100304,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)",
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ]
+                },
+                {
+                  "code": 50100305,
+                  "name": "Dragoon (Tier 5 Cavalry)",
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ]
+                },
+                {
+                  "code": 50100306,
+                  "name": "Marauder (Tier 6 Cavalry)",
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "monster_code": 20200203,
+          "monster_name": "Red Dragon",
+          "level_ranges": [
+            {
+              "min_level": 1,
+              "max_level": 3,
+              "troops": [
+                {
+                  "code": 50100302,
+                  "name": "Horseman (Tier 2 Cavalry)",
+                  "fixed_amounts": [
+                    15000,
+                    15000
+                  ]
+                },
+                {
+                  "code": 50100303,
+                  "name": "Heavy Cavalry (Tier 3 Cavalry)",
+                  "fixed_amounts": [
+                    20000,
+                    20000
+                  ]
+                },
+                {
+                  "code": 50100304,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)",
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ]
+                },
+                {
+                  "code": 50100305,
+                  "name": "Dragoon (Tier 5 Cavalry)",
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ]
+                },
+                {
+                  "code": 50100306,
+                  "name": "Marauder (Tier 6 Cavalry)",
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "monster_code": 20200202,
+          "monster_name": "Green Dragon",
+          "level_ranges": [
+            {
+              "min_level": 1,
+              "max_level": 3,
+              "troops": [
+                {
+                  "code": 50100302,
+                  "name": "Horseman (Tier 2 Cavalry)",
+                  "fixed_amounts": [
+                    15000,
+                    15000
+                  ]
+                },
+                {
+                  "code": 50100303,
+                  "name": "Heavy Cavalry (Tier 3 Cavalry)",
+                  "fixed_amounts": [
+                    20000,
+                    20000
+                  ]
+                },
+                {
+                  "code": 50100304,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)",
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ]
+                },
+                {
+                  "code": 50100305,
+                  "name": "Dragoon (Tier 5 Cavalry)",
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ]
+                },
+                {
+                  "code": 50100306,
+                  "name": "Marauder (Tier 6 Cavalry)",
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "monster_code": 20200204,
+          "monster_name": "Gold Dragon",
+          "level_ranges": [
+            {
+              "min_level": 1,
+              "max_level": 3,
+              "troops": [
+                {
+                  "code": 50100302,
+                  "name": "Horseman (Tier 2 Cavalry)",
+                  "fixed_amounts": [
+                    15000,
+                    15000
+                  ]
+                },
+                {
+                  "code": 50100303,
+                  "name": "Heavy Cavalry (Tier 3 Cavalry)",
+                  "fixed_amounts": [
+                    20000,
+                    20000
+                  ]
+                },
+                {
+                  "code": 50100304,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)",
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ]
+                },
+                {
+                  "code": 50100305,
+                  "name": "Dragoon (Tier 5 Cavalry)",
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ]
+                },
+                {
+                  "code": 50100306,
+                  "name": "Marauder (Tier 6 Cavalry)",
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "start": {
+      "enabled": false,
+      "level_based_troops": true,
+      "numMarch": 8,
+      "targets": [
+        {
+          "level_ranges": [
+            {
+              "max_level": 6,
+              "message": "Deathkar Rally",
+              "min_level": 1,
+              "rally_time": 5,
+              "troops": [
+                {
+                  "code": 50100302,
+                  "max_amount": 25000,
+                  "min_amount": 15000,
+                  "name": "Horseman (Tier 2 Cavalry)"
+                },
+                {
+                  "code": 50100303,
+                  "max_amount": 30000,
+                  "min_amount": 20000,
+                  "name": "Heavy Cavalry (Tier 3 Cavalry)"
+                },
+                {
+                  "code": 50100304,
+                  "max_amount": 40000,
+                  "min_amount": 30000,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)"
+                },
+                {
+                  "code": 50100305,
+                  "max_amount": 70000,
+                  "min_amount": 50000,
+                  "name": "Dragoon (Tier 5 Cavalry)"
+                },
+                {
+                  "code": 50100306,
+                  "max_amount": 80000,
+                  "min_amount": 60000,
+                  "name": "Marauder (Tier 6 Cavalry)"
+                }
+              ]
+            }
+          ],
+          "monster_code": 20200201,
+          "monster_name": "Deathkar"
+        },
+        {
+          "level_ranges": [
+            {
+              "max_level": 3,
+              "message": "Green Dragon Rally",
+              "min_level": 1,
+              "rally_time": 5,
+              "troops": [
+                {
+                  "code": 50100302,
+                  "max_amount": 25000,
+                  "min_amount": 15000,
+                  "name": "Horseman (Tier 2 Cavalry)"
+                },
+                {
+                  "code": 50100303,
+                  "max_amount": 30000,
+                  "min_amount": 20000,
+                  "name": "Heavy Cavalry (Tier 3 Cavalry)"
+                },
+                {
+                  "code": 50100304,
+                  "max_amount": 40000,
+                  "min_amount": 30000,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)"
+                },
+                {
+                  "code": 50100305,
+                  "max_amount": 70000,
+                  "min_amount": 50000,
+                  "name": "Dragoon (Tier 5 Cavalry)"
+                },
+                {
+                  "code": 50100306,
+                  "max_amount": 80000,
+                  "min_amount": 60000,
+                  "name": "Marauder (Tier 6 Cavalry)"
+                }
+              ]
+            }
+          ],
+          "monster_code": 20200202,
+          "monster_name": "Green Dragon"
+        },
+        {
+          "level_ranges": [
+            {
+              "max_level": 3,
+              "message": "Red Dragon Rally",
+              "min_level": 1,
+              "rally_time": 5,
+              "troops": [
+                {
+                  "code": 50100302,
+                  "max_amount": 25000,
+                  "min_amount": 15000,
+                  "name": "Horseman (Tier 2 Cavalry)"
+                },
+                {
+                  "code": 50100303,
+                  "max_amount": 30000,
+                  "min_amount": 20000,
+                  "name": "Heavy Cavalry (Tier 3 Cavalry)"
+                },
+                {
+                  "code": 50100304,
+                  "max_amount": 40000,
+                  "min_amount": 30000,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)"
+                },
+                {
+                  "code": 50100305,
+                  "max_amount": 70000,
+                  "min_amount": 50000,
+                  "name": "Dragoon (Tier 5 Cavalry)"
+                },
+                {
+                  "code": 50100306,
+                  "max_amount": 80000,
+                  "min_amount": 60000,
+                  "name": "Marauder (Tier 6 Cavalry)"
+                }
+              ]
+            }
+          ],
+          "monster_code": 20200203,
+          "monster_name": "Red Dragon"
+        },
+        {
+          "level_ranges": [
+            {
+              "max_level": 3,
+              "message": "Gold Dragon Rally",
+              "min_level": 1,
+              "rally_time": 5,
+              "troops": [
+                {
+                  "code": 50100302,
+                  "max_amount": 25000,
+                  "min_amount": 15000,
+                  "name": "Horseman (Tier 2 Cavalry)"
+                },
+                {
+                  "code": 50100303,
+                  "max_amount": 30000,
+                  "min_amount": 20000,
+                  "name": "Heavy Cavalry (Tier 3 Cavalry)"
+                },
+                {
+                  "code": 50100304,
+                  "max_amount": 40000,
+                  "min_amount": 30000,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)"
+                },
+                {
+                  "code": 50100305,
+                  "max_amount": 70000,
+                  "min_amount": 50000,
+                  "name": "Dragoon (Tier 5 Cavalry)"
+                },
+                {
+                  "code": 50100306,
+                  "max_amount": 80000,
+                  "min_amount": 60000,
+                  "name": "Marauder (Tier 6 Cavalry)"
+                }
+              ]
+            }
+          ],
+          "monster_code": 20200204,
+          "monster_name": "Gold Dragon"
+        }
+      ]
+    }
+  },
+  "socketio": {
+    "debug": false,
+    "engineio_logging": false
+  },
+  "toggles": {
+    "features": {
+      "chat_monitoring": true,
+      "discord": true,
+      "enable_chat_monitoring": true,
+      "enable_gathering": true,
+      "enable_monster_attack": false,
+      "notify_discord": true,
+      "object_scanning": true,
+      "rally_join": false,
+      "rally_start": false
+    },
+    "jobs": {
+      "alliance_farmer": true,
+      "caravan_farmer": true,
+      "harvester": false,
+      "hospital_recover": true,
+      "mail_claim": false,
+      "socf_thread": true,
+      "use_resource_in_item_list": false,
+      "vip_chest_claim": true,
+      "wall_repair": false
+    },
+    "threads": {
+      "academy_farmer_thread": false,
+      "building_farmer_thread": false,
+      "free_chest_farmer_thread": true,
+      "quest_monitor_thread": true,
+      "train_troop_thread": false
+    }
+  }
+}

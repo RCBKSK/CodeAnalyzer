@@ -1,0 +1,103 @@
+INFO:__main__:[Chaotic] Exception in thread Thread-205 (_handle_eio_message):
+INFO:__main__:[Chaotic] Traceback (most recent call last):
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+INFO:__main__:[Chaotic] self.run()
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/threading.py", line 982, in run
+INFO:__main__:[Chaotic] self._target(*self._args, **self._kwargs)
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/socketio/client.py", line 621, in _handle_eio_message
+INFO:__main__:[Chaotic] self._handle_event(pkt.namespace, pkt.id, pkt.data)
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/socketio/client.py", line 505, in _handle_event
+INFO:__main__:[Chaotic] r = self._trigger_event(data[0], namespace, *data[1:])
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/socketio/client.py", line 555, in _trigger_event
+INFO:__main__:[Chaotic] return self.handlers[namespace][event](*args)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/lokbot/farmer.py", line 2707, in on_field_objects
+INFO:__main__:[Chaotic] self._on_field_objects_monster(each_obj)
+INFO:__main__:[Chaotic] File "/home/container/lokbot/farmer.py", line 1109, in _on_field_objects_monster
+INFO:__main__:[Chaotic] march_info = self.api.field_march_info({
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/lokbot/client.py", line 705, in field_march_info
+INFO:__main__:[Chaotic] return self.post('field/march/info', data)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[Chaotic] return self(f, *args, **kw)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[Chaotic] do = self.iter(retry_state=retry_state)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[Chaotic] return fut.result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[Chaotic] return self.__get_result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[Chaotic] raise self._exception
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[Chaotic] result = fn(*args, **kwargs)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[Chaotic] return self(f, *args, **kw)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[Chaotic] do = self.iter(retry_state=retry_state)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[Chaotic] return fut.result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[Chaotic] return self.__get_result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[Chaotic] raise self._exception
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[Chaotic] result = fn(*args, **kwargs)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[Chaotic] return self(f, *args, **kw)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[Chaotic] do = self.iter(retry_state=retry_state)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[Chaotic] return fut.result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[Chaotic] return self.__get_result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[Chaotic] raise self._exception
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[Chaotic] result = fn(*args, **kwargs)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[Chaotic] return self(f, *args, **kw)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[Chaotic] do = self.iter(retry_state=retry_state)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[Chaotic] return fut.result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[Chaotic] return self.__get_result()
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[Chaotic] raise self._exception
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[Chaotic] result = fn(*args, **kwargs)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/.local/lib/python3.11/site-packages/ratelimit/decorators.py", line 80, in wrapper
+INFO:__main__:[Chaotic] return func(*args, **kargs)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/lokbot/client.py", line 111, in post
+INFO:__main__:[Chaotic] json_response = self.b64xor_dec(response.text)
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/home/container/lokbot/client.py", line 66, in b64xor_dec
+INFO:__main__:[Chaotic] return json.loads(self.xor(base64.b64decode(s)))
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] File "/usr/local/lib/python3.11/json/__init__.py", line 341, in loads
+INFO:__main__:[Chaotic] s = s.decode(detect_encoding(s), 'surrogatepass')
+INFO:__main__:[Chaotic] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[Chaotic] UnicodeDecodeError: 'utf-8' codec can't 

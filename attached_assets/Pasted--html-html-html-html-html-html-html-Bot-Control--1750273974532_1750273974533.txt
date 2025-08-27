@@ -1,0 +1,128 @@
+``` ```html
+``` ```html ``` ```html
+``` ```html ``` ```html
+``` ```html
+``` ```html
+ Bot Control
+``` ```html
+``` ```html
+``` ```html ``` ```html
+``` ```html
+``` ```html
+Start New Bot Instance
+``` ```html
+``` ```html
+``` ```html Account Name ``` ```html
+My Bot Instance
+``` ```html
+``` ```html ``` ```html ``` ```html
+``` ```html Authentication Method ``` ```html
+Use Environment Variables
+``` ```html
+``` ```html ``` ```html ``` ```html ``` ```html ``` ```html ``` ```html ``` ```html ``` ```html ``` ```html
+``` ```html Configuration File ``` ```html
+Select a configuration file...
+``` ```html Choose which configuration template to use for this bot instance ``` ```html
+``` ```html ``` ```html  ``` ```html
+``` ```html
+``` ```html ``` ```html ``` ```html
+``` ```html
+Running Instances
+``` ```html
+``` ```html
+Loading...
+
+``` ```html
+``` ```html ``` ```html ``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html ``` ```html ``` ```html
+``` ```html
+``` ```html
+ Configuration
+``` ```html
+``` ```html
+``` ```html
+``` ```html ``` ```html
+``` ```html
+``` ```html
+ Rally Join Settings
+``` ```html
+``` ```html ``` ```html ``` ```html Enable Rally Join ``` ```html ``` ```html
+``` ```html
+``` ```html Number of Marches ``` ```html
+8
+``` ```html
+``` ```html
+``` ```html ``` ```html ``` ```html Level Based Troops ``` ```html ``` ```html
+``` ```html  ``` ```html
+``` ```html ``` ```html
+``` ```html
+ Rally Start Settings
+``` ```html
+``` ```html ``` ```html ``` ```html Enable Rally Start ``` ```html ``` ```html
+``` ```html
+``` ```html Number of Marches ``` ```html
+6
+``` ```html
+``` ```html
+``` ```html ``` ```html ``` ```html Level Based Troops ``` ```html ``` ```html
+``` ```html  ``` ```html
+``` ```html
+``` ```html ``` ```html ``` ```html
+``` ```html
+``` ```html
+ Discord Settings
+``` ```html
+``` ```html ``` ```html ``` ```html Enable Discord Integration ``` ```html ``` ```html
+``` ```html
+``` ```html Webhook URL ``` ```html
+Discord webhook URL
+``` ```html
+``` ```html
+``` ```html ``` ```html
+``` ```html
+ Game Settings
+``` ```html
+``` ```html ``` ```html ``` ```html Enable Object Scanning ``` ```html ``` ```html
+``` ```html
+``` ```html ``` ```html ``` ```html Enable Monster Attack ``` ```html ``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html ``` ```html
+``` ```html  ``` ```html  ``` ```html
+``` ```html
+``` ```html
+``` ```html ``` ```html ``` ```html
+``` ```html
+``` ```html
+``` ```html
+ System Status
+``` ```html
+``` ```html
+``` ```html
+``` ```html
+Total Active Bots: 0
+
+``` ```html
+Your Instances: 0
+
+``` ```html
+Last Update: Never
+
+``` ```html
+``` ```html ``` ```html
+``` ```html ``` ```html
+Quick Actions
+``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html
+``` ```html ``` ```html

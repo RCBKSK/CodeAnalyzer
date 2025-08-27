@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelenA QuantumRaid Bot - Quantum Access Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #0a0a0a 100%);
+            --bg-card: rgba(15, 25, 50, 0.95);
+            --border-color: rgba(0, 255, 255, 0.3);
+            --text-primary: #00ffff;
+            --text-secondary: #ffffff;
+            --input-bg: rgba(0, 20, 40, 0.8);
+            --input-border: rgba(0, 255, 255, 0.3);
+            --btn-bg: linear-gradient(45deg, #00ffff, #0080ff);
+            --btn-text: #000;
+            --alert-bg: rgba(255, 0, 100, 0.2);
+            --alert-border: rgba(255, 0, 100, 0.5);
+            --alert-text: #ff6b9d;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #cbd5e1 50%, #94a3b8 75%, #f8fafc 100%);
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --border-color: rgba(59, 130, 246, 0.3);
+            --text-primary: #3b82f6;
+            --text-secondary: #1e293b;
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --input-border: rgba(59, 130, 246, 0.3);
+            --btn-bg: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            --btn-text: #ffffff;
+            --alert-bg: rgba(239, 68, 68, 0.1);
+            --alert-border: rgba(239, 68, 68, 0.3);
+            --alert-text: #dc2626;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Enhanced background with character */
+        .quantum-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(26, 26, 46, 0.8) 50%, rgba(10, 10, 10, 0.9) 100%),
+                url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCADIAMgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2aiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==') right center/contain no-repeat;
+            background-attachment: fixed;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 2px;
+            height: 2px;
+            animation: simpleFloat 8s linear infinite;
+        }
+
+        .particle:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            top: 60%;
+            left: 80%;
+            animation-delay: 4s;
+        }
+
+        .particle:nth-child(3) {
+            top: 80%;
+            left: 30%;
+            animation-delay: 6s;
+        }
+
+        @keyframes simpleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+        }
+
+        /* Main container with character panel */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-height: 800px) {
+            .login-container {
+                align-items: flex-start;
+                padding-top: 40px;
+            }
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("{{ url_for('static', filename='helena_1751952960287.jpg') }}") left center/contain no-repeat,
+            url("{{ url_for('static', filename='helena_1751952960287.jpg') }}") right center/contain no-repeat;
+            opacity: 0.05;
+            filter: blur(1px);
+            transition: all 0.5s ease;
+            z-index: -1;
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("{{ url_for('static', filename='helena_1751952960287.jpg') }}") left center/contain no-repeat;
+            opacity: 0.05;
+            filter: blur(1px) scaleX(-1);
+            transition: all 0.5s ease;
+            z-index: -1;
+        }
+
+        .login-container:hover::before {
+            opacity: 0.15;
+            filter: blur(0px);
+        }
+
+        .login-container:hover::after {
+            opacity: 0.15;
+            filter: blur(0px) scaleX(-1);
+        }
+
+        .character-panel {
+            position: fixed;
+            right: -200px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 400px;
+            background: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCADIAMgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2aiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==') center/cover no-repeat;
+            opacity: 0.3;
+            transition: all 0.5s ease;
+            z-index: 0;
+            filter: blur(1px);
+        }
+
+        .character-panel:hover {
+            right: -100px;
+            opacity: 0.6;
+            filter: blur(0px);
+        }
+
+        @media (max-width: 1200px) {
+            .character-panel {
+                display: none;
+            }
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 0 30px var(--border-color);
+            position: relative;
+        }
+
+        /* Header */
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            color: #00ffff;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .character-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem;
+            border: 4px solid #00ffff;
+            box-shadow:
+                0 0 30px rgba(0, 255, 255, 0.5),
+                0 0 60px rgba(0, 128, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            padding: 3px;
+            position: relative;
+            animation: avatarGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes avatarGlow {
+            0% {
+                box-shadow:
+                    0 0 30px rgba(0, 255, 255, 0.5),
+                    0 0 60px rgba(0, 128, 255, 0.3),
+                    inset 0 0 20px rgba(0, 255, 255, 0.1);
+            }
+
+            100% {
+                box-shadow:
+                    0 0 50px rgba(0, 255, 255, 0.8),
+                    0 0 80px rgba(0, 128, 255, 0.5),
+                    inset 0 0 30px rgba(0, 255, 255, 0.2);
+            }
+        }
+
+        .character-avatar::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: conic-gradient(from 0deg, #00ffff, #0080ff, #0040ff, #00ffff);
+            border-radius: 50%;
+            z-index: -1;
+            animation: avatarRotate 4s linear infinite;
+        }
+
+        @keyframes avatarRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .character-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center top;
+            filter: brightness(1.1) contrast(1.2);
+            transition: all 0.3s ease;
+        }
+
+        .character-avatar:hover img {
+            filter: brightness(1.3) contrast(1.3);
+            transform: scale(1.05);
+        }
+
+        .app-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            text-shadow: 0 0 20px var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .app-subtitle {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 300;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* Error alert */
+        .quantum-alert {
+            background: rgba(255, 0, 100, 0.2);
+            border: 1px solid rgba(255, 0, 100, 0.5);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #ff6b9d;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: #00ffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+        }
+
+        /* Login button */
+        .quantum-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .quantum-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .quantum-btn:hover::before {
+            left: 100%;
+        }
+
+        .quantum-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .quantum-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Default credentials */
+        .default-creds {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .default-creds i {
+            color: #00ffff;
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+                border-radius: 15px;
+            }
+
+            .app-title {
+                font-size: 1.5rem;
+            }
+
+            .logo-icon {
+                font-size: 3rem;
+            }
+
+            .form-input {
+                padding: 0.9rem 1rem;
+                font-size: 16px;
+                /* Prevent zoom on iOS */
+            }
+
+            .quantum-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 10px;
+            }
+
+            .login-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .app-title {
+                font-size: 1.3rem;
+                letter-spacing: 1px;
+            }
+
+            .logo-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .quantum-btn {
+            background: linear-gradient(45deg, #333, #555);
+            color: #999;
+        }
+
+        .loading .quantum-btn::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Discord Community Section */
+        .quantum-community {
+            margin: 1.5rem 0;
+            background: rgba(0, 15, 30, 0.9);
+            border: 1px solid rgba(114, 137, 218, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quantum-community::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(114, 137, 218, 0.1), transparent);
+            animation: discordShimmer 3s infinite;
+        }
+
+        @keyframes discordShimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .community-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            color: #7289da;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .community-header i {
+            font-size: 1.4rem;
+            margin-right: 0.5rem;
+            animation: discordPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes discordPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .community-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+        }
+
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #7289da, #5865f2);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(114, 137, 218, 0.3);
+        }
+
+        .discord-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(114, 137, 218, 0.5);
+            background: linear-gradient(45deg, #5865f2, #4752c4);
+        }
+
+        .discord-btn i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .discord-btn .quantum-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .discord-btn .quantum-particles .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: particleFloat 2s infinite ease-in-out;
+        }
+
+        .discord-btn .quantum-particles .particle:nth-child(1) {
+            top: 20%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .discord-btn .quantum-particles .particle:nth-child(2) {
+            top: 60%;
+            right: 25%;
+            animation-delay: 0.7s;
+        }
+
+        .discord-btn .quantum-particles .particle:nth-child(3) {
+            bottom: 25%;
+            left: 60%;
+            animation-delay: 1.4s;
+        }
+
+        @keyframes particleFloat {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: translateY(0) scale(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1);
+            }
+        }
+
+        .community-benefits {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
+        }
+
+        .benefit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+        }
+
+        .benefit i {
+            color: #7289da;
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .benefit span {
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Light theme adjustments for Discord section */
+        [data-theme="light"] .quantum-community {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(114, 137, 218, 0.4);
+        }
+
+        [data-theme="light"] .community-description {
+            color: rgba(30, 41, 59, 0.8);
+        }
+
+        [data-theme="light"] .benefit {
+            color: rgba(30, 41, 59, 0.7);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 15px;
+                min-height: auto;
+            }
+
+            .login-card {
+                margin: 10px 0;
+                max-height: none;
+            }
+
+            .quantum-community {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .community-benefits {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .benefit {
+                flex-direction: row;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .discord-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .character-avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .app-title {
+                font-size: 1.8rem;
+            }
+
+            .quantum-community {
+                padding: 1rem;
+            }
+
+            .community-description {
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Theme toggle styles */
+        .theme-toggle {
+            position: relative;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .theme-toggle-slider {
+            background: var(--text-primary);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-card);
+            box-shadow: 0 0 10px var(--text-primary);
+        }
+
+        [data-theme="light"] .theme-toggle-slider {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="quantum-bg">
+        <div class="grid-overlay"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div style="position: absolute; top: -1rem; right: -1rem;">
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode"
+                        style="width: 40px; height: 20px;">
+                        <div class="theme-toggle-slider" style="width: 16px; height: 16px; font-size: 8px;">
+                            <i class="fas fa-moon" id="theme-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="character-avatar">
+                    <img src="{{ url_for('static', filename='helena_1751952960287.jpg') }}"
+                        alt="HelenA - Quantum Warrior"
+                        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3c3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNzAiIGN5PSI3MCIgcj0iNzAiIGZpbGw9InVybCgjZ3JhZGllbnQpIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwZmZmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwODBmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjx0ZXh0IHg9IjcwIiB5PSI4MCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCI+SDwvdGV4dD48L3N2Zz4='" />
+                </div>
+                <h1 class="app-title">HelenA QuantumRaid Bot</h1>
+                <p class="app-subtitle">Quantum Access Portal</p>
+            </div>
+
+            {% if error %}
+            <div class="quantum-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Quantum ID
+                    </label>
+                    <input type="text" class="form-input" id="username" name="username"
+                        placeholder="Enter your quantum identifier" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Access Key
+                    </label>
+                    <input type="password" class="form-input" id="password" name="password"
+                        placeholder="Enter your access key" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="quantum-btn" id="loginBtn">
+                    <i class="fas fa-rocket"></i> Initialize Quantum Link
+                </button>
+
+                <!-- Discord Community Link -->
+                <div class="quantum-community">
+                    <div class="community-header">
+                        <i class="fab fa-discord"></i>
+                        <span>Join the Quantum Collective</span>
+                    </div>
+                    <p class="community-description">
+                        Connect with fellow quantum raiders, get real-time support, and access exclusive strategies in
+                        our Discord dimension.
+                    </p>
+                    <a href="https://discord.gg/FhWUypbMxR" target="_blank" class="discord-btn">
+                        <i class="fab fa-discord"></i>
+                        <span>Enter Discord Portal</span>
+                        <div class="quantum-particles">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div>
+                    </a>
+                    <div class="community-benefits">
+                        <div class="benefit">
+                            <i class="fas fa-bolt"></i>
+                            <span>Instant Support</span>
+                        </div>
+                        <div class="benefit">
+                            <i class="fas fa-users"></i>
+                            <span>Active Community</span>
+                        </div>
+                        <div class="benefit">
+                            <i class="fas fa-star"></i>
+                            <span>Exclusive Tips</span>
+                        </div>
+                    </div>
+                </div>
+
+
+            </form>
+
+
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Form submission with loading state
+        document.getElementById('loginForm').addEventListener('submit', function () {
+            const form = this;
+            const btn = document.getElementById('loginBtn');
+
+            form.classList.add('loading');
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Establishing Connection';
+        });
+
+        // Initialize everything on load
+        document.addEventListener('DOMContentLoaded', function () {
+            initTheme();
+
+            // Create only 3 simple particles
+            const bg = document.querySelector('.quantum-bg');
+            if (bg) {
+                for (let i = 0; i < 3; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = i * 2 + 's';
+                    bg.appendChild(particle);
+                }
+            }
+        });
+
+        // Initialize theme immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initTheme);
+        } else {
+            initTheme();
+        }
+
+        // Make toggleTheme globally available
+        window.toggleTheme = toggleTheme;
+    </script>
+</body>
+
+</html>

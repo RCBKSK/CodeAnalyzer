@@ -1,0 +1,6 @@
+# User Management File
+# Format: username:password:max_instances:role:start_date:end_date:created_date
+admin:password:3:admin:None:None:2025-08-21T10:53:53.488338
+RCBK:Nikitha123@:1:super_admin:None:None:2025-08-21T10:53:53.488343
+Test:password:1:user:None:None:2025-08-21T10:53:53.488346
+Test3:qwerty:1:user:2025-07-11:2025-08-11:2025-07-11T10

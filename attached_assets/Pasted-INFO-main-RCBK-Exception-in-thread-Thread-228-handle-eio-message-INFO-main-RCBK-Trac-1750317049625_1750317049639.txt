@@ -1,0 +1,118 @@
+INFO:__main__:[RCBK] Exception in thread Thread-228 (_handle_eio_message):
+INFO:__main__:[RCBK] Traceback (most recent call last):
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+INFO:__main__:[RCBK] self.run()
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/threading.py", line 1012, in run
+INFO:__main__:[RCBK] self._target(*self._args, **self._kwargs)
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/socketio/client.py", line 621, in _handle_eio_message
+INFO:__main__:[RCBK] self._handle_event(pkt.namespace, pkt.id, pkt.data)
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/socketio/client.py", line 505, in _handle_event
+INFO:__main__:[RCBK] r = self._trigger_event(data[0], namespace, *data[1:])
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/socketio/client.py", line 555, in _trigger_event
+INFO:__main__:[RCBK] return self.handlers[namespace][event](*args)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/lokbot/farmer.py", line 2555, in on_field_objects
+INFO:__main__:[RCBK] self._on_field_objects_gather(each_obj)
+INFO:__main__:[RCBK] File "/home/runner/workspace/lokbot/farmer.py", line 977, in _on_field_objects_gather
+INFO:__main__:[RCBK] self._start_march(to_loc, march_troops, MARCH_TYPE_GATHER)
+INFO:__main__:[RCBK] File "/home/runner/workspace/lokbot/farmer.py", line 685, in _start_march
+INFO:__main__:[RCBK] res = self.api.field_march_start(data)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[RCBK] return self(f, *args, **kw)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[RCBK] do = self.iter(retry_state=retry_state)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[RCBK] return fut.result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[RCBK] return self.__get_result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[RCBK] raise self._exception
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[RCBK] result = fn(*args, **kwargs)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/ratelimit/decorators.py", line 80, in wrapper
+INFO:__main__:[RCBK] return func(*args, **kargs)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/lokbot/client.py", line 711, in field_march_start
+INFO:__main__:[RCBK] return self.post('field/march/start', data)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[RCBK] return self(f, *args, **kw)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[RCBK] do = self.iter(retry_state=retry_state)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[RCBK] return fut.result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[RCBK] return self.__get_result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[RCBK] raise self._exception
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[RCBK] result = fn(*args, **kwargs)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[RCBK] return self(f, *args, **kw)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[RCBK] do = self.iter(retry_state=retry_state)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[RCBK] return fut.result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[RCBK] return self.__get_result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[RCBK] raise self._exception
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[RCBK] result = fn(*args, **kwargs)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[RCBK] return self(f, *args, **kw)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[RCBK] do = self.iter(retry_state=retry_state)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[RCBK] return fut.result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[RCBK] return self.__get_result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[RCBK] raise self._exception
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[RCBK] result = fn(*args, **kwargs)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[RCBK] return self(f, *args, **kw)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[RCBK] do = self.iter(retry_state=retry_state)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[RCBK] return fut.result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[RCBK] return self.__get_result()
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/nix/store/nb21sc3npfc8gvazwnrjxpvb5d48jysx-python3-3.12.7/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[RCBK] raise self._exception
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[RCBK] result = fn(*args, **kwargs)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/ratelimit/decorators.py", line 80, in wrapper
+INFO:__main__:[RCBK] return func(*args, **kargs)
+INFO:__main__:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[RCBK] File "/home/runner/workspace/lokbot/client.py", line 157, in post
+INFO:__main__:[RCBK] raise OtherException(code)
+INFO:__main__:[RCBK] lokbot.exceptions.OtherException: full_task

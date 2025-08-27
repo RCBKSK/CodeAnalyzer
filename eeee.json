@@ -1,0 +1,463 @@
+{
+  "buff_management": {
+    "enabled": true,
+    "buffs": [
+      {
+        "name": "Food Production Boost",
+        "enabled": true,
+        "min_duration_minutes": 20,
+        "item_codes": [
+          10102001,
+          10102002
+        ]
+      },
+      {
+        "name": "Wood Production Boost",
+        "enabled": true,
+        "min_duration_minutes": 20,
+        "item_codes": [
+          10102003,
+          10102004
+        ]
+      },
+      {
+        "name": "Stone Production Boost",
+        "enabled": true,
+        "min_duration_minutes": 20,
+        "item_codes": [
+          10102005,
+          10102006
+        ]
+      },
+      {
+        "name": "Gold Production Boost",
+        "enabled": true,
+        "min_duration_minutes": 20,
+        "item_codes": [
+          10102007,
+          10102008
+        ]
+      },
+      {
+        "name": "Gathering Speed Boost",
+        "enabled": true,
+        "min_duration_minutes": 20,
+        "item_codes": [
+          10102009,
+          10102010
+        ]
+      },
+      {
+        "name": "Kingdom Shield",
+        "enabled": true,
+        "min_duration_minutes": 20,
+        "item_codes": [
+          10102026,
+          10102027
+        ]
+      },
+      {
+        "name": "Anti Spying Shield",
+        "enabled": true,
+        "min_duration_minutes": 20,
+        "item_codes": [
+          10102021,
+          10102022
+        ]
+      }
+    ]
+  },
+  "discord": {
+    "enabled": true,
+    "enable_chat_monitoring": true,
+    "webhook_url": "",
+    "chat_webhook_url": "",
+    "crystal_mine_level1_webhook_url": "",
+    "custom_webhook_url": "",
+    "dragon_soul_level2plus_webhook_url": "",
+    "gathering_webhook_url": "",
+    "level2plus_webhook_url": "",
+    "level3plus_webhook_url": "",
+    "monster_webhook_url": "",
+    "occupied_resources_webhook_url": "",
+    "rally_webhook_url": ""
+  },
+  "main": {
+    "jobs": [
+      {
+        "enabled": true,
+        "interval": {
+          "start": 1200,
+          "end": 1800
+        },
+        "name": "hospital_recover"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "start": 30,
+          "end": 90
+        },
+        "name": "wall_repair"
+      },
+      {
+        "enabled": true,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "kwargs": {
+          "gift_claim": true,
+          "help_all": true,
+          "research_donate": true,
+          "shop_auto_buy_item_code_list": [
+            10101008
+          ]
+        },
+        "name": "alliance_farmer"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "name": "mail_claim"
+      },
+      {
+        "enabled": true,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "name": "caravan_farmer"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "name": "use_resource_in_item_list"
+      },
+      {
+        "enabled": true,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "name": "vip_chest_claim"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "start": 10,
+          "end": 20
+        },
+        "name": "harvester"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "start": 1,
+          "end": 1
+        },
+        "kwargs": {
+          "radius": 16,
+          "share_to": {
+            "chat_channels": [
+              0,
+              0
+            ]
+          },
+          "targets": [
+            {
+              "code": 20100106,
+              "enabled": false,
+              "level": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "name": "Dragon Soul Cavern"
+            },
+            {
+              "code": 20100101,
+              "enabled": false,
+              "level": [
+                7,
+                8,
+                9,
+                10
+              ],
+              "name": "Farm"
+            },
+            {
+              "code": 20100102,
+              "enabled": false,
+              "level": [
+                7,
+                8,
+                9,
+                10
+              ],
+              "name": "Gold Mine"
+            },
+            {
+              "code": 20100103,
+              "enabled": false,
+              "level": [
+                7,
+                8,
+                9,
+                10
+              ],
+              "name": "Lumber Camp"
+            },
+            {
+              "code": 20100104,
+              "enabled": false,
+              "level": [
+                7,
+                8,
+                9,
+                10
+              ],
+              "name": "Quarry"
+            },
+            {
+              "code": 20200103,
+              "enabled": false,
+              "level": [
+                1,
+                2,
+                3
+              ],
+              "name": "Golem"
+            },
+            {
+              "code": 20200301,
+              "enabled": false,
+              "level": [
+                1,
+                2,
+                3
+              ],
+              "name": "Orc"
+            },
+            {
+              "code": 20200302,
+              "enabled": false,
+              "level": [
+                1,
+                2,
+                3
+              ],
+              "name": "Skeleton"
+            },
+            {
+              "code": 20200201,
+              "enabled": false,
+              "level": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "name": "Deathkar"
+            },
+            {
+              "code": 20100105,
+              "enabled": true,
+              "level": [
+                2,
+                3,
+                4
+              ],
+              "name": "Crystal Mine"
+            }
+          ]
+        },
+        "name": "socf_thread"
+      }
+    ],
+    "normal_monsters": {
+      "enabled": false,
+      "max_distance": 200,
+      "common_troops": [
+        {
+          "code": 50100304,
+          "name": "Iron Cavalry (Tier 4 Cavalry)",
+          "amount": 0
+        },
+        {
+          "code": 50100305,
+          "name": "Dragoon (Tier 5 Cavalry)",
+          "amount": 0
+        },
+        {
+          "code": 50100306,
+          "name": "Marauder (Tier 6 Cavalry)",
+          "amount": 0
+        }
+      ],
+      "targets": [
+        {
+          "monster_code": 20200103,
+          "monster_name": "Golem",
+          "level_ranges": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "monster_code": 20200104,
+          "monster_name": "Treasure Goblin",
+          "level_ranges": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "monster_code": 20200101,
+          "monster_name": "Orc",
+          "level_ranges": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "monster_code": 20200102,
+          "monster_name": "Skeleton",
+          "level_ranges": [
+            1,
+            2,
+            3
+          ]
+        }
+      ]
+    },
+    "object_scanning": {
+      "enabled": false,
+      "enable_gathering": false,
+      "enable_monster_attack": false,
+      "notify_discord": false,
+      "max_marches": 10,
+      "monster_attack": {
+        "enabled": false
+      },
+      "monster_distance_check": {
+        "enabled": false,
+        "max_distance": 250
+      },
+      "objects": {}
+    },
+    "skills": {
+      "enabled": true,
+      "skills": [
+        {
+          "code": 10001,
+          "enabled": true
+        },
+        {
+          "code": 10002,
+          "enabled": true
+        }
+      ]
+    },
+    "threads": [
+      {
+        "enabled": true,
+        "name": "free_chest_farmer_thread"
+      },
+      {
+        "enabled": true,
+        "name": "quest_monitor_thread"
+      },
+      {
+        "enabled": false,
+        "name": "building_farmer_thread",
+        "kwargs": {
+          "speedup": true
+        }
+      },
+      {
+        "enabled": false,
+        "name": "academy_farmer_thread",
+        "kwargs": {
+          "speedup": true,
+          "to_max_level": false
+        }
+      },
+      {
+        "enabled": false,
+        "name": "train_troop_thread",
+        "kwargs": {
+          "interval": 3600,
+          "speedup": true,
+          "troop_code": 50100101
+        }
+      }
+    ],
+    "treasure": {
+      "enabled": false,
+      "page": 1
+    }
+  },
+  "rally": {
+    "join": {
+      "enabled": false,
+      "numMarch": 8,
+      "max_rally_distance": 500,
+      "level_based_troops": true,
+      "targets": []
+    },
+    "start": {
+      "enabled": false,
+      "numMarch": 6,
+      "max_rally_distance": 500,
+      "level_based_troops": true,
+      "targets": []
+    }
+  },
+  "socketio": {
+    "debug": false,
+    "engineio_logging": false
+  },
+  "toggles": {
+    "features": {
+      "chat_monitoring": true,
+      "discord": true,
+      "enable_chat_monitoring": true,
+      "enable_gathering": false,
+      "enable_monster_attack": false,
+      "notify_discord": false,
+      "object_scanning": false,
+      "rally_join": false,
+      "rally_start": false
+    },
+    "jobs": {
+      "alliance_farmer": true,
+      "caravan_farmer": true,
+      "harvester": false,
+      "hospital_recover": true,
+      "mail_claim": false,
+      "socf_thread": false,
+      "use_resource_in_item_list": false,
+      "vip_chest_claim": true,
+      "wall_repair": false
+    },
+    "threads": {
+      "academy_farmer_thread": false,
+      "building_farmer_thread": false,
+      "free_chest_farmer_thread": true,
+      "quest_monitor_thread": true,
+      "train_troop_thread": false
+    }
+  }
+}

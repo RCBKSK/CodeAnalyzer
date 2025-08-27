@@ -1,0 +1,46 @@
+
+{
+  "gathering": {
+    "enabled": true,
+    "max_marches": 10,
+    "max_distance": 250,
+    "targets": [
+      {
+        "resource_code": 20100101,
+        "resource_name": "Farm",
+        "levels": [7, 8, 9, 10],
+        "enabled": true
+      },
+      {
+        "resource_code": 20100102,
+        "resource_name": "Gold Mine",
+        "levels": [7, 8, 9, 10],
+        "enabled": true
+      },
+      {
+        "resource_code": 20100103,
+        "resource_name": "Lumber Camp",
+        "levels": [7, 8, 9, 10],
+        "enabled": true
+      },
+      {
+        "resource_code": 20100104,
+        "resource_name": "Quarry",
+        "levels": [7, 8, 9, 10],
+        "enabled": true
+      },
+      {
+        "resource_code": 20100105,
+        "resource_name": "Crystal Mine",
+        "levels": [2, 3, 4],
+        "enabled": true
+      },
+      {
+        "resource_code": 20100106,
+        "resource_name": "Dragon Soul Cavern",
+        "levels": [2, 3, 4, 5],
+        "enabled": false
+      }
+    ]
+  }
+}

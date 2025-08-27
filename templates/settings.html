@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - League of Kingdoms Bot{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-cog me-2"></i>
+                    Bot Configuration
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_settings') }}">
+                    <!-- Game Credentials -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-info mb-3">
+                                <i class="fas fa-key me-2"></i>
+                                Game Credentials
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <label for="game_url" class="form-label">Game URL</label>
+                            <input type="url" class="form-control" id="game_url" name="game_url" 
+                                   value="{{ config.game_url or '' }}" required>
+                            <div class="form-text">The URL where League of Kingdoms is accessible</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Username/Email</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   value="{{ config.username or '' }}" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   value="{{ config.password or '' }}" required>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Automation Features -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-info mb-3">
+                                <i class="fas fa-robot me-2"></i>
+                                Automation Features
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="auto_collect_resources" 
+                                       name="auto_collect_resources" {% if config.auto_collect_resources %}checked{% endif %}>
+                                <label class="form-check-label" for="auto_collect_resources">
+                                    Auto Collect Resources
+                                </label>
+                            </div>
+                            <small class="text-muted">Automatically collect resources from buildings</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="auto_train_troops" 
+                                       name="auto_train_troops" {% if config.auto_train_troops %}checked{% endif %}>
+                                <label class="form-check-label" for="auto_train_troops">
+                                    Auto Train Troops
+                                </label>
+                            </div>
+                            <small class="text-muted">Automatically train troops when resources allow</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="auto_upgrade_buildings" 
+                                       name="auto_upgrade_buildings" {% if config.auto_upgrade_buildings %}checked{% endif %}>
+                                <label class="form-check-label" for="auto_upgrade_buildings">
+                                    Auto Upgrade Buildings
+                                </label>
+                            </div>
+                            <small class="text-muted">Automatically upgrade available buildings</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="auto_alliance_help" 
+                                       name="auto_alliance_help" {% if config.auto_alliance_help %}checked{% endif %}>
+                                <label class="form-check-label" for="auto_alliance_help">
+                                    Auto Alliance Help
+                                </label>
+                            </div>
+                            <small class="text-muted">Automatically help alliance members</small>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Timing Configuration -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-info mb-3">
+                                <i class="fas fa-clock me-2"></i>
+                                Timing Configuration
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="resource_collection_interval" class="form-label">
+                                Resource Collection Interval (seconds)
+                            </label>
+                            <input type="number" class="form-control" id="resource_collection_interval" 
+                                   name="resource_collection_interval" min="60" max="3600" 
+                                   value="{{ config.resource_collection_interval or 300 }}">
+                            <small class="text-muted">How often to check for resources (60-3600 seconds)</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="troop_training_interval" class="form-label">
+                                Troop Training Interval (seconds)
+                            </label>
+                            <input type="number" class="form-control" id="troop_training_interval" 
+                                   name="troop_training_interval" min="300" max="7200" 
+                                   value="{{ config.troop_training_interval or 600 }}">
+                            <small class="text-muted">How often to check for troop training (300-7200 seconds)</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="building_check_interval" class="form-label">
+                                Building Check Interval (seconds)
+                            </label>
+                            <input type="number" class="form-control" id="building_check_interval" 
+                                   name="building_check_interval" min="600" max="7200" 
+                                   value="{{ config.building_check_interval or 1800 }}">
+                            <small class="text-muted">How often to check for building upgrades (600-7200 seconds)</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="alliance_help_interval" class="form-label">
+                                Alliance Help Interval (seconds)
+                            </label>
+                            <input type="number" class="form-control" id="alliance_help_interval" 
+                                   name="alliance_help_interval" min="300" max="3600" 
+                                   value="{{ config.alliance_help_interval or 900 }}">
+                            <small class="text-muted">How often to help alliance members (300-3600 seconds)</small>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Advanced Settings -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-info mb-3">
+                                <i class="fas fa-tools me-2"></i>
+                                Advanced Settings
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="headless_mode" 
+                                       name="headless_mode" {% if config.headless_mode %}checked{% endif %}>
+                                <label class="form-check-label" for="headless_mode">
+                                    Headless Mode
+                                </label>
+                            </div>
+                            <small class="text-muted">Run browser in headless mode (recommended for performance)</small>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    Save Settings
+                                </button>
+                                
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                                    <i class="fas fa-times me-2"></i>
+                                    Cancel
+                                </a>
+                                
+                                <button type="button" class="btn btn-outline-warning ms-auto" onclick="resetToDefaults()">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Reset to Defaults
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Configuration Tips -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Configuration Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">Resource Collection</h6>
+                        <ul class="small">
+                            <li>Set shorter intervals (5-10 minutes) for active farming</li>
+                            <li>Longer intervals save on system resources</li>
+                        </ul>
+                        
+                        <h6 class="text-success">Troop Training</h6>
+                        <ul class="small">
+                            <li>10-15 minute intervals work well for most scenarios</li>
+                            <li>Consider your resource generation rate</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">Building Upgrades</h6>
+                        <ul class="small">
+                            <li>30-60 minute intervals prevent resource waste</li>
+                            <li>Upgrades require significant resources</li>
+                        </ul>
+                        
+                        <h6 class="text-success">Alliance Help</h6>
+                        <ul class="small">
+                            <li>15-30 minute intervals maintain good alliance relations</li>
+                            <li>Too frequent checking may be unnecessary</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function resetToDefaults() {
+    if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
+        // Reset form to default values
+        document.getElementById('game_url').value = 'https://www.leagueofkingdoms.com/';
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('auto_collect_resources').checked = true;
+        document.getElementById('auto_train_troops').checked = true;
+        document.getElementById('auto_upgrade_buildings').checked = true;
+        document.getElementById('auto_alliance_help').checked = true;
+        document.getElementById('resource_collection_interval').value = 300;
+        document.getElementById('troop_training_interval').value = 600;
+        document.getElementById('building_check_interval').value = 1800;
+        document.getElementById('alliance_help_interval').value = 900;
+        document.getElementById('headless_mode').checked = true;
+    }
+}
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const gameUrl = document.getElementById('game_url').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    if (!gameUrl || !username || !password) {
+        e.preventDefault();
+        alert('Please fill in all required fields (Game URL, Username, and Password).');
+        return;
+    }
+    
+    // Validate intervals
+    const intervals = [
+        { field: 'resource_collection_interval', min: 60, max: 3600 },
+        { field: 'troop_training_interval', min: 300, max: 7200 },
+        { field: 'building_check_interval', min: 600, max: 7200 },
+        { field: 'alliance_help_interval', min: 300, max: 3600 }
+    ];
+    
+    for (let interval of intervals) {
+        const value = parseInt(document.getElementById(interval.field).value);
+        if (value < interval.min || value > interval.max) {
+            e.preventDefault();
+            alert(`${interval.field.replace('_', ' ')} must be between ${interval.min} and ${interval.max} seconds.`);
+            return;
+        }
+    }
+});
+</script>
+{% endblock %}

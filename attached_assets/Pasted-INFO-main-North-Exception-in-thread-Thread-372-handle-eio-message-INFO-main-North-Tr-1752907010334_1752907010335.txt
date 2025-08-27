@@ -1,0 +1,118 @@
+INFO:__main__:[North] Exception in thread Thread-372 (_handle_eio_message):
+INFO:__main__:[North] Traceback (most recent call last):
+INFO:__main__:[North] File "/usr/local/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+INFO:__main__:[North] self.run()
+INFO:__main__:[North] File "/usr/local/lib/python3.11/threading.py", line 982, in run
+INFO:__main__:[North] self._target(*self._args, **self._kwargs)
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/socketio/client.py", line 621, in _handle_eio_message
+INFO:__main__:[North] self._handle_event(pkt.namespace, pkt.id, pkt.data)
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/socketio/client.py", line 505, in _handle_event
+INFO:__main__:[North] r = self._trigger_event(data[0], namespace, *data[1:])
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/socketio/client.py", line 555, in _trigger_event
+INFO:__main__:[North] return self.handlers[namespace][event](*args)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/lokbot/farmer.py", line 2800, in on_field_objects
+INFO:__main__:[North] self._on_field_objects_gather(each_obj)
+INFO:__main__:[North] File "/home/container/lokbot/farmer.py", line 1127, in _on_field_objects_gather
+INFO:__main__:[North] self._start_march(to_loc, march_troops, MARCH_TYPE_GATHER)
+INFO:__main__:[North] File "/home/container/lokbot/farmer.py", line 778, in _start_march
+INFO:__main__:[North] res = self.api.field_march_start(data)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[North] return self(f, *args, **kw)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[North] do = self.iter(retry_state=retry_state)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[North] return fut.result()
+INFO:__main__:[North] ^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[North] return self.__get_result()
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[North] raise self._exception
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[North] result = fn(*args, **kwargs)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/ratelimit/decorators.py", line 80, in wrapper
+INFO:__main__:[North] return func(*args, **kargs)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/lokbot/client.py", line 713, in field_march_start
+INFO:__main__:[North] return self.post('field/march/start', data)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[North] return self(f, *args, **kw)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[North] do = self.iter(retry_state=retry_state)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[North] return fut.result()
+INFO:__main__:[North] ^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[North] return self.__get_result()
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[North] raise self._exception
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[North] result = fn(*args, **kwargs)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[North] return self(f, *args, **kw)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[North] do = self.iter(retry_state=retry_state)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[North] return fut.result()
+INFO:__main__:[North] ^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[North] return self.__get_result()
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[North] raise self._exception
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[North] result = fn(*args, **kwargs)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[North] return self(f, *args, **kw)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[North] do = self.iter(retry_state=retry_state)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[North] return fut.result()
+INFO:__main__:[North] ^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[North] return self.__get_result()
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[North] raise self._exception
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[North] result = fn(*args, **kwargs)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 289, in wrapped_f
+INFO:__main__:[North] return self(f, *args, **kw)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 379, in __call__
+INFO:__main__:[North] do = self.iter(retry_state=retry_state)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 314, in iter
+INFO:__main__:[North] return fut.result()
+INFO:__main__:[North] ^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+INFO:__main__:[North] return self.__get_result()
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+INFO:__main__:[North] raise self._exception
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/tenacity/__init__.py", line 382, in __call__
+INFO:__main__:[North] result = fn(*args, **kwargs)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/.local/lib/python3.11/site-packages/ratelimit/decorators.py", line 80, in wrapper
+INFO:__main__:[North] return func(*args, **kargs)
+INFO:__main__:[North] ^^^^^^^^^^^^^^^^^^^^
+INFO:__main__:[North] File "/home/container/lokbot/client.py", line 155, in post
+INFO:__main__:[North] raise NotOnlineException()
+INFO:__main__:[North] lokbot.exceptions.NotOnlineException

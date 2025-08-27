@@ -1,0 +1,56 @@
+
+{
+  "monster_attack": {
+    "enabled": false,
+    "max_distance": 200,
+    "troops": [
+      {
+        "code": 50100301,
+        "name": "Scout (Tier 1 Cavalry)",
+        "amount": 150
+      },
+      {
+        "code": 50100303,
+        "name": "Heavy Cavalry (Tier 3 Cavalry)",
+        "amount": 0
+      },
+      {
+        "code": 50100304,
+        "name": "Iron Cavalry (Tier 4 Cavalry)",
+        "amount": 0
+      },
+      {
+        "code": 50100305,
+        "name": "Dragoon (Tier 5 Cavalry)",
+        "amount": 0
+      },
+      {
+        "code": 50100306,
+        "name": "Marauder (Tier 6 Cavalry)",
+        "amount": 0
+      }
+    ],
+    "targets": [
+      {
+        "monster_code": 20200103,
+        "monster_name": "Golem",
+        "levels": [1, 2, 3]
+      },
+      {
+        "monster_code": 20200104,
+        "monster_name": "Treasure Goblin",
+        "levels": [1, 2, 3, 4]
+      },
+      {
+        "monster_code": 20200101,
+        "monster_name": "Orc",
+        "levels": [1, 2, 3]
+      },
+      {
+        "monster_code": 20200102,
+        "monster_name": "Skeleton",
+        "levels": [1, 2, 3]
+      }
+    ]
+  }
+}

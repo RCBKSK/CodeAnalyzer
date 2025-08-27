@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Logs - League of Kingdoms Bot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Bot Activity Logs
+                </h4>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="toggleAutoRefresh()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        <span id="refresh-btn-text">Auto Refresh: Off</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshLogs()">
+                        <i class="fas fa-refresh me-1"></i>
+                        Refresh Now
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Log Controls -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="log-filter" placeholder="Filter logs...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterByLevel('INFO')">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Info
+                            </button>
+                            <button type="button" class="btn btn-outline-warning btn-sm" onclick="filterByLevel('WARNING')">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                Warnings
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="filterByLevel('ERROR')">
+                                <i class="fas fa-times-circle me-1"></i>
+                                Errors
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="clearFilter()">
+                                <i class="fas fa-times me-1"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log Display -->
+                <div class="log-container border rounded p-3" style="height: 600px; overflow-y: auto; background-color: var(--bs-dark);">
+                    {% if logs %}
+                        <div id="log-entries">
+                            {% for log in logs %}
+                                <div class="log-entry mb-1" data-original="{{ log.strip() }}">
+                                    <pre class="mb-0 text-light font-monospace small">{{ log.strip() }}</pre>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <h5>No Logs Available</h5>
+                            <p>Start the bot to begin generating logs</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Log Statistics -->
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-info mb-0" id="total-logs">{{ logs|length or 0 }}</h5>
+                            <small class="text-muted">Total Entries</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-success mb-0" id="info-logs">0</h5>
+                            <small class="text-muted">Info</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-warning mb-0" id="warning-logs">0</h5>
+                            <small class="text-muted">Warnings</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-danger mb-0" id="error-logs">0</h5>
+                            <small class="text-muted">Errors</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export/Download Options -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-download me-2"></i>
+                    Export Logs
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Download logs for offline analysis or backup purposes.</p>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" onclick="downloadLogs('txt')">
+                        <i class="fas fa-file-alt me-2"></i>
+                        Download as TXT
+                    </button>
+                    <button type="button" class="btn btn-outline-success" onclick="copyToClipboard()">
+                        <i class="fas fa-copy me-2"></i>
+                        Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let autoRefreshInterval = null;
+let allLogEntries = [];
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    // Store all log entries for filtering
+    const logEntries = document.querySelectorAll('.log-entry');
+    logEntries.forEach(entry => {
+        allLogEntries.push(entry.dataset.original);
+    });
+    
+    // Update statistics
+    updateLogStatistics();
+    
+    // Setup filter
+    document.getElementById('log-filter').addEventListener('input', function() {
+        filterLogs(this.value);
+    });
+    
+    // Auto-scroll to bottom
+    const logContainer = document.querySelector('.log-container');
+    logContainer.scrollTop = logContainer.scrollHeight;
+});
+
+function updateLogStatistics() {
+    let infoCount = 0, warningCount = 0, errorCount = 0;
+    
+    allLogEntries.forEach(log => {
+        if (log.includes('INFO')) infoCount++;
+        else if (log.includes('WARNING')) warningCount++;
+        else if (log.includes('ERROR')) errorCount++;
+    });
+    
+    document.getElementById('total-logs').textContent = allLogEntries.length;
+    document.getElementById('info-logs').textContent = infoCount;
+    document.getElementById('warning-logs').textContent = warningCount;
+    document.getElementById('error-logs').textContent = errorCount;
+}
+
+function filterLogs(searchTerm) {
+    const logEntries = document.querySelectorAll('.log-entry');
+    
+    logEntries.forEach(entry => {
+        const logText = entry.dataset.original.toLowerCase();
+        const shouldShow = logText.includes(searchTerm.toLowerCase());
+        entry.style.display = shouldShow ? 'block' : 'none';
+    });
+}
+
+function filterByLevel(level) {
+    document.getElementById('log-filter').value = level;
+    filterLogs(level);
+}
+
+function clearFilter() {
+    document.getElementById('log-filter').value = '';
+    filterLogs('');
+}
+
+function toggleAutoRefresh() {
+    const btnText = document.getElementById('refresh-btn-text');
+    
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        btnText.textContent = 'Auto Refresh: Off';
+    } else {
+        autoRefreshInterval = setInterval(refreshLogs, 10000); // Every 10 seconds
+        btnText.textContent = 'Auto Refresh: On';
+    }
+}
+
+function refreshLogs() {
+    fetch('/api/logs')
+        .then(response => response.json())
+        .then(data => {
+            if (data.logs && data.logs.length > 0) {
+                const logContainer = document.getElementById('log-entries');
+                
+                // Clear existing logs
+                logContainer.innerHTML = '';
+                allLogEntries = [];
+                
+                // Add new logs
+                data.logs.forEach(log => {
+                    allLogEntries.push(log.trim());
+                    
+                    const logEntry = document.createElement('div');
+                    logEntry.className = 'log-entry mb-1';
+                    logEntry.dataset.original = log.trim();
+                    logEntry.innerHTML = '<pre class="mb-0 text-light font-monospace small">' + log.trim() + '</pre>';
+                    logContainer.appendChild(logEntry);
+                });
+                
+                // Update statistics
+                updateLogStatistics();
+                
+                // Apply current filter
+                const currentFilter = document.getElementById('log-filter').value;
+                if (currentFilter) {
+                    filterLogs(currentFilter);
+                }
+                
+                // Auto-scroll to bottom
+                const logContainer = document.querySelector('.log-container');
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing logs:', error);
+        });
+}
+
+function downloadLogs(format) {
+    const logText = allLogEntries.join('\n');
+    const blob = new Blob([logText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'lok-bot-logs-' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.txt';
+    
+    document.body.appendChild(a);
+    a.click();
+    
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+function copyToClipboard() {
+    const logText = allLogEntries.join('\n');
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(logText).then(() => {
+            // Show success message
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-outline-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-success');
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy logs:', err);
+            alert('Failed to copy logs to clipboard');
+        });
+    } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = logText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            alert('Logs copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy logs:', err);
+            alert('Failed to copy logs to clipboard');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+}
+
+// Color-code log levels
+document.addEventListener('DOMContentLoaded', function() {
+    const logEntries = document.querySelectorAll('.log-entry pre');
+    
+    logEntries.forEach(entry => {
+        const text = entry.textContent;
+        
+        if (text.includes('ERROR')) {
+            entry.classList.add('text-danger');
+        } else if (text.includes('WARNING')) {
+            entry.classList.add('text-warning');
+        } else if (text.includes('INFO')) {
+            entry.classList.add('text-info');
+        } else if (text.includes('DEBUG')) {
+            entry.classList.add('text-secondary');
+        }
+    });
+});
+</script>
+{% endblock %}

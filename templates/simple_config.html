@@ -1,0 +1,4291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HelenA QuantumRaid Bot - Simple Config{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: white;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --accent-color: #60a5fa;
+            --success-color: #34d399;
+            --danger-color: #f87171;
+            --warning-color: #fbbf24;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundFloat 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundFloat {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .config-section {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow:
+                0 8px 32px rgba(31, 38, 135, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInCard 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .config-section:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 16px 64px rgba(31, 38, 135, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideInCard {
+            0% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .monster-card {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monster-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .monster-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .monster-card:hover::before {
+            left: 100%;
+        }
+
+        .monster-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .monster-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+        }
+
+        .monster-name {
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 16px;
+        }
+
+        .level-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input-field {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .troops-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .troops-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .troops-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .dropdown-field {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            min-width: 120px;
+        }
+
+        .troop-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .troop-select {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .troop-amount {
+            width: 80px;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .fixed-amounts-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .fixed-amounts-input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8, #667eea);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        /* Add staggered animations for config sections */
+        .config-section:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .config-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .config-section:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .config-section:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .distance-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .distance-input {
+            width: 100px;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .unit-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .save-section {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .toggle-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.toggle-slider {
+            background-color: #3b82f6;
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+
+
+        .job-item,
+        .thread-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .job-name,
+        .thread-name {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .job-description,
+        .thread-description {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .header>div {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 16px;
+            }
+
+            .header>div>div:last-child {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                overflow-x: auto;
+            }
+
+            .header select,
+            .header button {
+                width: 100%;
+                margin-bottom: 8px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .level-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .troop-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .distance-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+
+
+            .job-item,
+            .thread-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+
+            .config-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .monster-card {
+                padding: 16px;
+            }
+
+            .save-section {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification.info {
+            background-color: #3498db;
+        }
+
+        .notification.warning {
+            background-color: #f39c12;
+        }
+
+        .notification.error {
+            background-color: #e74c3c;
+        }
+
+        .notification.success {
+            background-color: #27ae60;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Mobile touch improvements */
+        @media (max-width: 768px) {
+            .btn {
+                min-height: 44px;
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+
+            .input-field,
+            .dropdown-field {
+                min-height: 44px;
+                font-size: 16px;
+            }
+
+            .toggle-switch {
+                width: 52px;
+                height: 28px;
+            }
+
+            .toggle-slider:before {
+                height: 22px;
+                width: 22px;
+                left: 3px;
+                bottom: 3px;
+            }
+
+            input:checked+.toggle-slider:before {
+                transform: translateX(24px);
+            }
+
+            .monster-checkbox {
+                width: 22px;
+                height: 22px;
+            }
+
+            .tab {
+                min-height: 44px;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1><i class="fas fa-cog"></i> Bot Configuration</h1>
+                    <p>Configure your bot settings with a simple and clean interface</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode"
+                        style="width: 44px; height: 24px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; padding: 2px;">
+                        <div class="theme-toggle-slider"
+                            style="width: 20px; height: 20px; background: var(--accent-color); border-radius: 50%; transition: transform 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">
+                            <i class="fas fa-moon" id="theme-icon"></i>
+                        </div>
+                    </div>
+                    <a href="/" class="nav-link"
+                        style="color: var(--text-secondary); text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; gap: 6px; border: 1px solid var(--border-color);">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <label for="config-file-select" style="font-weight: 500; color: #374151;">Config File:</label>
+                    <select id="config-file-select" class="dropdown-field">
+                        <option value="">Select a config file</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="loadSelectedConfig()" id="load-config-btn" disabled>
+                        <i class="fas fa-download"></i> Load
+                    </button>
+                    <button class="btn btn-secondary" onclick="showCreateConfigModal()">
+                        <i class="fas fa-plus"></i> New Config
+                    </button>
+                    <button class="btn btn-secondary" onclick="showRenameConfigModal()" id="rename-config-btn" disabled>
+                        <i class="fas fa-edit"></i> Rename
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteCurrentConfig()" id="delete-config-btn" disabled>
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Config Type Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('rally-join')">
+                <i class="fas fa-users"></i> Rally Join
+            </button>
+            <button class="tab" onclick="switchTab('rally-start')">
+                <i class="fas fa-flag"></i> Rally Start
+            </button>
+            <button class="tab" onclick="switchTab('monster-attack')">
+                <i class="fas fa-dragon"></i> Monster Attack
+            </button>
+            <button class="tab" onclick="switchTab('socf-objects')">
+                <i class="fas fa-search"></i> Object Scanning
+            </button>
+            <button class="tab" onclick="switchTab('buff-management')">
+                <i class="fas fa-magic"></i> Buff Management
+            </button>
+            <button class="tab" onclick="switchTab('skills')">
+                <i class="fas fa-bolt"></i> Skills
+            </button>
+            <button class="tab" onclick="switchTab('treasure')">
+                <i class="fas fa-gem"></i> Treasure
+            </button>
+            <button class="tab" onclick="switchTab('dsavip')">
+                <i class="fas fa-crown"></i> DSA VIP
+            </button>
+            <button class="tab" onclick="switchTab('settings')">
+                <i class="fas fa-cog"></i> Jobs & Threads
+            </button>
+        </div>
+
+        <!-- Rally Join Configuration -->
+        <div id="rally-join" class="tab-content active">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    Rally Join Configuration
+                </h2>
+
+                <!-- Enable/Disable Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="rally-join-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Rally Join</span>
+                </div>
+
+                <!-- Number of Marches -->
+                <div class="distance-section">
+                    <span class="troops-title">Number of Marches</span>
+                    <input type="number" id="rally-join-marches" class="distance-input" value="8" min="1" max="10">
+                    <span class="unit-label">marches</span>
+                </div>
+
+                <!-- Monster Cards -->
+                <div id="rally-join-monsters">
+                    <!-- Monster cards will be loaded here -->
+                </div>
+
+                <!-- Max Rally Distance -->
+                <div class="distance-section">
+                    <span class="troops-title">Max Rally Distance</span>
+                    <input type="number" id="rally-join-distance" class="distance-input" value="500" min="1">
+                    <span class="unit-label">km</span>
+                </div>
+
+                <!-- Add New Monster -->
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+                    <select id="rally-join-monster-select" class="dropdown-field" style="flex: 1;">
+                        <option value="">Select a monster to add</option>
+                        <option value="20200201_Deathkar">Deathkar</option>
+                        <option value="20200202_Green Dragon">Green Dragon</option>
+                        <option value="20200203_Red Dragon">Red Dragon</option>
+                        <option value="20200204_Gold Dragon">Gold Dragon</option>
+                        <option value="20200205_Magdar">Magdar</option>
+                        <option value="20200206_Pantagruel">Pantagruel</option>
+                        <option value="20200207_Gargantua">Gargantua</option>
+                        <option value="20200101_Orc">Orc</option>
+                        <option value="20200102_Skeleton">Skeleton</option>
+                        <option value="20200103_Golem">Golem</option>
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+                        <option value="20700405_Ogre">Ogre</option>
+                        <option value="20700406_Wolf">Wolf</option>
+                        <option value="20700407_Cyclops">Cyclops</option>
+                        <option value="20700506_Spartoi">Spartoi</option>
+                        <option value="20800401_BF Orc">BF Orc</option>
+                        <option value="20800402_BF Skeleton">BF Skeleton</option>
+                        <option value="20800403_BF Golem">BF Golem</option>
+                        <option value="20800404_BF Treasure Goblin">BF Treasure Goblin</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addSelectedMonster('rally-join')">
+                        <i class="fas fa-plus"></i>
+                        Add Monster
+                    </button>
+                </div>
+
+                <!-- Save Section -->
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('rally-join')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rally Start Configuration -->
+        <div id="rally-start" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-flag"></i>
+                    Rally Start Configuration
+                </h2>
+
+                <!-- Enable/Disable Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="rally-start-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Rally Start</span>
+                </div>
+
+                <!-- Number of Marches -->
+                <div class="distance-section">
+                    <span class="troops-title">Number of Marches</span>
+                    <input type="number" id="rally-start-marches" class="distance-input" value="6" min="1" max="10">
+                    <span class="unit-label">marches</span>
+                </div>
+
+                <div id="rally-start-monsters">
+                    <!-- Monster cards will be loaded here -->
+                </div>
+
+                <!-- Max Rally Distance -->
+                <div class="distance-section">
+                    <span class="troops-title">Max Rally Distance</span>
+                    <input type="number" id="rally-start-distance" class="distance-input" value="500" min="1">
+                    <span class="unit-label">km</span>
+                </div>
+
+                <!-- Add New Monster -->
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+                    <select id="rally-start-monster-select" class="dropdown-field" style="flex: 1;">
+                        <option value="">Select a monster to add</option>
+                        <option value="20200201_Deathkar">Deathkar</option>
+                        <option value="20200202_Green Dragon">Green Dragon</option>
+                        <option value="20200203_Red Dragon">Red Dragon</option>
+                        <option value="20200204_Gold Dragon">Gold Dragon</option>
+                        <option value="20200205_Magdar">Magdar</option>
+                        <option value="20200206_Pantagruel">Pantagruel</option>
+                        <option value="20200207_Gargantua">Gargantua</option>
+                        <option value="20200101_Orc">Orc</option>
+                        <option value="20200102_Skeleton">Skeleton</option>
+                        <option value="20200103_Golem">Golem</option>
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+                        <option value="20700405_Ogre">Ogre</option>
+                        <option value="20700406_Wolf">Wolf</option>
+                        <option value="20700407_Cyclops">Cyclops</option>
+                        <option value="20700506_Spartoi">Spartoi</option>
+                        <option value="20800401_BF Orc">BF Orc</option>
+                        <option value="20800402_BF Skeleton">BF Skeleton</option>
+                        <option value="20800403_BF Golem">BF Golem</option>
+                        <option value="20800404_BF Treasure Goblin">BF Treasure Goblin</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addSelectedMonster('rally-start')">
+                        <i class="fas fa-plus"></i>
+                        Add Monster
+                    </button>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('rally-start')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monster Attack Configuration -->
+        <div id="monster-attack" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-dragon"></i>
+                    Monster Attack Configuration
+                </h2>
+
+                <!-- Enable/Disable Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="monster-attack-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Monster Attack</span>
+                </div>
+
+                <div id="monster-attack-monsters">
+                    <!-- Monster cards will be loaded here -->
+                </div>
+
+                <!-- Max Attack Distance -->
+                <div class="distance-section">
+                    <span class="troops-title">Max Attack Distance</span>
+                    <input type="number" id="monster-attack-distance" class="distance-input" value="200" min="1">
+                    <span class="unit-label">km</span>
+                </div>
+
+                <!-- Add New Monster -->
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+                    <select id="monster-attack-monster-select" class="dropdown-field" style="flex: 1;">
+                        <option value="">Select a monster to add</option>
+                        <option value="20200201_Deathkar">Deathkar</option>
+                        <option value="20200202_Green Dragon">Green Dragon</option>
+                        <option value="20200203_Red Dragon">Red Dragon</option>
+                        <option value="20200204_Gold Dragon">Gold Dragon</option>
+                        <option value="20200205_Magdar">Magdar</option>
+                        <option value="20200206_Pantagruel">Pantagruel</option>
+                        <option value="20200207_Gargantua">Gargantua</option>
+                        <option value="20200101_Orc">Orc</option>
+                        <option value="20200102_Skeleton">Skeleton</option>
+                        <option value="20200103_Golem">Golem</option>
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+                        <option value="20700405_Ogre">Ogre</option>
+                        <option value="20700406_Wolf">Wolf</option>
+                        <option value="20700407_Cyclops">Cyclops</option>
+                        <option value="20700506_Spartoi">Spartoi</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addSelectedMonster('monster-attack')">
+                        <i class="fas fa-plus"></i>
+                        Add Monster
+                    </button>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('monster-attack')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOCF Objects Configuration -->
+        <div id="socf-objects" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-search"></i>
+                    Object Scanning Configuration
+                </h2>
+
+                <!-- Enable/Disable Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="socf-objects-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Object Scanning</span>
+                </div>
+
+                <!-- Enable Gathering Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="socf-gathering-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Gathering</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Automatically gather resources when found during object scanning
+                    </small>
+                </div>
+
+                <div id="socf-objects-list">
+                    <!-- Object cards will be loaded here -->
+                </div>
+
+                <!-- Max Marches -->
+                <div class="distance-section">
+                    <span class="troops-title">Max Marches</span>
+                    <input type="number" id="socf-objects-max-marches" class="distance-input" value="10" min="1"
+                        max="20">
+                    <span class="unit-label">marches</span>
+                </div>
+
+                <!-- Scan Radius -->
+                <div class="distance-section">
+                    <span class="troops-title">Scan Radius</span>
+                    <input type="number" id="socf-objects-radius" class="distance-input" value="16" min="1" max="50"
+                        disabled readonly>
+                    <span class="unit-label">tiles</span>
+                </div>
+
+                <!-- Add New Object -->
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+                    <select id="socf-object-select" class="dropdown-field" style="flex: 1;">
+                        <option value="">Select an object to add</option>
+                        <option value="20100105_Crystal Mine">Crystal Mine</option>
+                        <option value="20100106_Dragon Soul Cavern">Dragon Soul Cavern</option>
+                        <option value="20100101_Farm">Farm</option>
+                        <option value="20100102_Gold Mine">Gold Mine</option>
+                        <option value="20100103_Lumber Camp">Lumber Camp</option>
+                        <option value="20100104_Quarry">Quarry</option>
+                        <option value="20200103_Golem">Golem</option>
+                        <option value="20200101_Orc">Orc</option>
+                        <option value="20200102_Skeleton">Skeleton</option>
+                        <option value="20200201_Deathkar">Deathkar</option>
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addSelectedSocfObject()">
+                        <i class="fas fa-plus"></i>
+                        Add Object
+                    </button>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('socf-objects')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buff Management Configuration -->
+        <div id="buff-management" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-magic"></i>
+                    Buff Management Configuration
+                </h2>
+
+                <!-- Enable/Disable Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="buff-management-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Automatic Buff Management</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Automatically activates buffs when they expire based on minimum duration settings
+                    </small>
+                </div>
+
+                <div id="buff-management-list">
+                    <!-- Buff cards will be loaded here -->
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('buff-management')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Configuration -->
+        <div id="skills" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    Skills Configuration
+                </h2>
+
+                <!-- Enable/Disable Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="skills-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Skills</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Automatically use skills during gameplay
+                    </small>
+                </div>
+
+                <div id="skills-list">
+                    <!-- Skills will be loaded here -->
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('skills')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treasure Configuration -->
+        <div id="treasure" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-gem"></i>
+                    Treasure Configuration
+                </h2>
+
+                <!-- Enable/Disable Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="treasure-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Treasure Hunt</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Automatically hunt for treasures
+                    </small>
+                </div>
+
+                <!-- Treasure Page Selection -->
+                <div class="distance-section">
+                    <span class="troops-title">Treasure Page</span>
+                    <select id="treasure-page" class="dropdown-field">
+                        <option value="0">Page 0</option>
+                        <option value="1">Page 1</option>
+                        <option value="2">Page 2</option>
+                        <option value="3">Page 3</option>
+                    </select>
+                    <span class="unit-label">treasure page</span>
+                </div>
+
+                <!-- Treasure Skin Change -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="treasure-skin-change-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Skin Change</span>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Item ID</span>
+                    <input type="text" id="treasure-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
+                    <span class="unit-label">item id</span>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Change Interval</span>
+                    <input type="number" id="treasure-skin-change-interval" class="distance-input" value="60" min="1">
+                    <span class="unit-label">minutes</span>
+                </div>
+
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('treasure')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DSA VIP Configuration -->
+        <div id="dsavip" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-crown"></i>
+                    DSA VIP Configuration
+                </h2>
+
+                <!-- DSA VIP Chest Claim Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="dsavip-chest-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable DSA VIP Chest Claim</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Automatically claim DSA VIP daily chest rewards
+                    </small>
+                </div>
+
+                <!-- DSA VIP Chest Claim Job Configuration -->
+                <div class="job-item">
+                    <div>
+                        <div class="job-name">DSA VIP Chest Claim Job</div>
+                        <div class="job-description">Periodic job to claim DSA VIP chest rewards</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="dsavip-job-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('dsavip')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings (Jobs & Threads) Configuration -->
+        <div id="settings" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-cog"></i>
+                    Jobs & Threads Configuration
+                </h2>
+
+                <!-- Jobs Section -->
+                <div style="margin-bottom: 32px;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
+                        <i class="fas fa-tasks"></i> Jobs
+                    </h3>
+                    <div id="jobs-list">
+                        <!-- Job toggles will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Alliance Farmer Features Section -->
+                <div style="margin-bottom: 32px;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
+                        <i class="fas fa-users"></i> Alliance Farmer Features
+                    </h3>
+                    <div id="alliance-farmer-features">
+                        <!-- Alliance farmer feature toggles will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Threads Section -->
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
+                        <i class="fas fa-code-branch"></i> Threads
+                    </h3>
+                    <div id="threads-list">
+                        <!-- Thread toggles will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('settings')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Config Modal -->
+    <div id="create-config-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+        <div
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 500px; box-sizing: border-box; max-height: 90vh; overflow-y: auto;">
+            <h3 style="margin: 0 0 20px 0; color: #1e293b;">Create New Config File</h3>
+
+            <div class="input-group" style="margin-bottom: 16px;">
+                <label class="input-label">Config File Name:</label>
+                <input type="text" id="new-config-name" class="input-field" placeholder="e.g., config_gathering.json"
+                    style="width: 100%; box-sizing: border-box;">
+                <small style="color: #64748b; font-size: 12px;">File will be saved with .json extension if not
+                    provided</small>
+            </div>
+
+            <div class="input-group" style="margin-bottom: 20px;">
+                <label class="input-label">Template:</label>
+                <select id="template-select" class="dropdown-field" style="width: 100%; box-sizing: border-box;">
+                    <option value="complete_template">Complete Template (Recommended)</option>
+                    <option value="">Empty config</option>
+                    <option value="config.json">Copy from config.json</option>
+                    <option value="config.example.json">Copy from config.example.json</option>
+                </select>
+                <small style="color: #64748b; font-size: 12px;">Complete Template includes all current config.json
+                    features</small>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="hideCreateConfigModal()"
+                    style="flex: 1; min-width: 120px;">Cancel</button>
+                <button class="btn btn-primary" onclick="createNewConfig()" style="flex: 1; min-width: 120px;">
+                    <i class="fas fa-plus"></i> Create Config
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Config Modal -->
+    <div id="rename-config-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+        <div
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 500px; box-sizing: border-box; max-height: 90vh; overflow-y: auto;">
+            <h3 style="margin: 0 0 20px 0; color: #1e293b;">Rename Config File</h3>
+
+            <div class="input-group" style="margin-bottom: 16px;">
+                <label class="input-label">Current Name:</label>
+                <input type="text" id="current-config-name" class="input-field" readonly
+                    style="width: 100%; box-sizing: border-box; background: #f1f5f9;">
+            </div>
+
+            <div class="input-group" style="margin-bottom: 20px;">
+                <label class="input-label">New Name:</label>
+                <input type="text" id="rename-config-name" class="input-field" placeholder="Enter new config file name"
+                    style="width: 100%; box-sizing: border-box;">
+                <small style="color: #64748b; font-size: 12px;">Spaces and special characters are allowed. File will be
+                    saved with .json extension if not provided</small>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="hideRenameConfigModal()"
+                    style="flex: 1; min-width: 120px;">Cancel</button>
+                <button class="btn btn-primary" onclick="renameConfig()" style="flex: 1; min-width: 120px;">
+                    <i class="fas fa-edit"></i> Rename Config
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Global variables
+        let currentConfigFile = '';
+        let fullConfigData = {};  // Store the complete config file structure
+        let configLoaded = false;
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            if (!configLoaded) {
+                alert('Please select and load a config file first');
+                return;
+            }
+
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Dark mode functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            const slider = document.querySelector('.theme-toggle-slider');
+            if (icon && slider) {
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                slider.style.transform = theme === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Make functions globally available
+        window.switchTab = switchTab;
+        window.toggleTheme = toggleTheme;
+        window.showCreateConfigModal = showCreateConfigModal;
+        window.hideCreateConfigModal = hideCreateConfigModal;
+        window.showRenameConfigModal = showRenameConfigModal;
+        window.hideRenameConfigModal = hideRenameConfigModal;
+        window.createNewConfig = createNewConfig;
+        window.renameConfig = renameConfig;
+        window.loadSelectedConfig = loadSelectedConfig;
+        window.deleteCurrentConfig = deleteCurrentConfig;
+
+        // Load initial configuration when page loads
+        $(document).ready(function () {
+            initTheme();
+            loadConfigFiles();
+            // Disable tabs initially
+            disableConfigTabs();
+        });
+
+        function loadConfigFiles() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: '/api/config_files',
+                    method: 'GET',
+                    timeout: 15000,
+                    cache: false,
+                    success: function (response) {
+                        const configSelect = $('#config-file-select');
+                        configSelect.empty();
+                        configSelect.append('<option value="">Select a config file</option>');
+
+                        if (response && response.config_files && Array.isArray(response.config_files)) {
+                            response.config_files.forEach(file => {
+                                configSelect.append(`<option value="${file}">${file}</option>`);
+                            });
+                            console.log(`Loaded ${response.config_files.length} config files`);
+                        } else {
+                            console.warn('Invalid response format for config files');
+                        }
+
+                        // Enable change event listener (remove previous listeners first)
+                        configSelect.off('change.configLoader');
+                        configSelect.on('change.configLoader', function () {
+                            onConfigFileSelectionChange();
+                        });
+
+                        resolve(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Failed to load configuration files:', status, error);
+                        showNotification('Failed to load configuration files', 'error');
+                        reject(error);
+                    }
+                });
+            });
+        }
+
+        function onConfigFileSelectionChange() {
+            const selectedFile = document.getElementById('config-file-select').value;
+            const loadBtn = document.getElementById('load-config-btn');
+            const deleteBtn = document.getElementById('delete-config-btn');
+            const renameBtn = document.getElementById('rename-config-btn');
+
+            if (selectedFile) {
+                loadBtn.disabled = false;
+                deleteBtn.disabled = false;
+                renameBtn.disabled = false;
+                updateDeleteButtonState();
+                updateRenameButtonState();
+            } else {
+                loadBtn.disabled = true;
+                deleteBtn.disabled = true;
+                renameBtn.disabled = true;
+            }
+        }
+
+        function onConfigFileChange() {
+            onConfigFileSelectionChange();
+        }
+
+        function loadSelectedConfig() {
+            const selectedFile = document.getElementById('config-file-select').value;
+            if (!selectedFile) {
+                alert('Please select a config file first');
+                return;
+            }
+
+            currentConfigFile = selectedFile;
+            loadExistingConfig();
+        }
+
+        function disableConfigTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.style.opacity = '0.5';
+                tab.style.pointerEvents = 'none';
+            });
+        }
+
+        function enableConfigTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.style.opacity = '1';
+                tab.style.pointerEvents = 'auto';
+            });
+        }
+
+        function updateDeleteButtonState() {
+            const deleteBtn = document.getElementById('delete-config-btn');
+            const configSelect = document.getElementById('config-file-select');
+            const selectedFile = configSelect.value;
+
+            // Disable delete button for essential config files
+            const protectedFiles = ['config.json', 'config.example.json'];
+            deleteBtn.disabled = protectedFiles.includes(selectedFile);
+
+            if (deleteBtn.disabled) {
+                deleteBtn.style.opacity = '0.5';
+                deleteBtn.title = 'Cannot delete essential config files';
+            } else {
+                deleteBtn.style.opacity = '1';
+                deleteBtn.title = 'Delete this config file';
+            }
+        }
+
+        function updateRenameButtonState() {
+            const renameBtn = document.getElementById('rename-config-btn');
+            const configSelect = document.getElementById('config-file-select');
+            const selectedFile = configSelect.value;
+
+            // Disable rename button for essential config files
+            const protectedFiles = ['config.json', 'config.example.json'];
+            renameBtn.disabled = protectedFiles.includes(selectedFile);
+
+            if (renameBtn.disabled) {
+                renameBtn.style.opacity = '0.5';
+                renameBtn.title = 'Cannot rename essential config files';
+            } else {
+                renameBtn.style.opacity = '1';
+                renameBtn.title = 'Rename this config file';
+            }
+        }
+
+        function showCreateConfigModal() {
+            document.getElementById('create-config-modal').style.display = 'block';
+            document.getElementById('new-config-name').focus();
+        }
+
+        // Make all modal functions globally accessible
+        function showCreateConfigModal() {
+            document.getElementById('create-config-modal').style.display = 'block';
+            document.getElementById('new-config-name').focus();
+        }
+
+        function hideCreateConfigModal() {
+            document.getElementById('create-config-modal').style.display = 'none';
+            document.getElementById('new-config-name').value = '';
+            document.getElementById('template-select').value = '';
+        }
+
+        function createNewConfig() {
+            const configName = document.getElementById('new-config-name').value.trim();
+            const templateFile = document.getElementById('template-select').value;
+
+            if (!configName) {
+                showNotification('Please enter a config file name', 'warning');
+                return;
+            }
+
+            // Add .json extension if not present
+            const fileName = configName.endsWith('.json') ? configName : configName + '.json';
+
+            // Allow spaces and more characters in filenames
+            const invalidChars = /[<>:"/\\|?*\x00-\x1F]/;
+            if (invalidChars.test(fileName)) {
+                showNotification('Invalid filename. Cannot contain: < > : " / \\ | ? * or control characters.', 'error');
+                return;
+            }
+
+            // Check if file already exists
+            const existingFiles = Array.from(document.getElementById('config-file-select').options).map(opt => opt.value);
+            if (existingFiles.includes(fileName)) {
+                if (!confirm(`Config file "${fileName}" already exists. Do you want to overwrite it?`)) {
+                    return;
+                }
+            }
+
+            const createBtn = event.target;
+            const originalText = createBtn.innerHTML;
+            createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            createBtn.disabled = true;
+
+            // Handle complete template option
+            if (templateFile === 'complete_template') {
+                console.log(`Creating config ${fileName} with complete hardcoded template`);
+                const completeConfig = getDefaultConfig();
+                if (validateConfigStructure(completeConfig)) {
+                    saveNewConfigWithRetry(fileName, completeConfig, createBtn, originalText, 5);
+                } else {
+                    console.error('Complete template validation failed');
+                    createBtn.innerHTML = originalText;
+                    createBtn.disabled = false;
+                    showNotification('Failed to create complete template structure', 'error');
+                }
+            } else if (templateFile && templateFile !== '') {
+                console.log(`Creating config ${fileName} from template ${templateFile}`);
+                loadTemplateWithRetry(templateFile, fileName, createBtn, originalText, 5);
+            } else {
+                console.log(`Creating config ${fileName} with default structure`);
+                const defaultConfig = getDefaultConfig();
+                if (validateConfigStructure(defaultConfig)) {
+                    saveNewConfigWithRetry(fileName, defaultConfig, createBtn, originalText, 5);
+                } else {
+                    console.error('Default config validation failed');
+                    createBtn.innerHTML = originalText;
+                    createBtn.disabled = false;
+                    showNotification('Failed to create default config structure', 'error');
+                }
+            }
+        }
+
+        function showRenameConfigModal() {
+            const selectedFile = document.getElementById('config-file-select').value;
+            if (!selectedFile) {
+                showNotification('Please select a config file first', 'warning');
+                return;
+            }
+
+            const protectedFiles = ['config.json', 'config.example.json'];
+            if (protectedFiles.includes(selectedFile)) {
+                showNotification('Cannot rename essential config files', 'error');
+                return;
+            }
+
+            document.getElementById('current-config-name').value = selectedFile;
+            document.getElementById('rename-config-name').value = selectedFile;
+            document.getElementById('rename-config-modal').style.display = 'block';
+            document.getElementById('rename-config-name').focus();
+            document.getElementById('rename-config-name').select();
+        }
+
+        function hideRenameConfigModal() {
+            document.getElementById('rename-config-modal').style.display = 'none';
+            document.getElementById('current-config-name').value = '';
+            document.getElementById('rename-config-name').value = '';
+        }
+
+        function renameConfig() {
+            const currentName = document.getElementById('current-config-name').value;
+            const newName = document.getElementById('rename-config-name').value.trim();
+
+            if (!newName) {
+                showNotification('Please enter a new config file name', 'warning');
+                return;
+            }
+
+            // Add .json extension if not present
+            const fileName = newName.endsWith('.json') ? newName : newName + '.json';
+
+            // Allow spaces and more characters in filenames
+            const invalidChars = /[<>:"/\\|?*\x00-\x1F]/;
+            if (invalidChars.test(fileName)) {
+                showNotification('Invalid filename. Cannot contain: < > : " / \\ | ? * or control characters.', 'error');
+                return;
+            }
+
+            if (currentName === fileName) {
+                showNotification('New name is the same as current name', 'warning');
+                return;
+            }
+
+            // Check if new file already exists
+            const existingFiles = Array.from(document.getElementById('config-file-select').options).map(opt => opt.value);
+            if (existingFiles.includes(fileName)) {
+                if (!confirm(`Config file "${fileName}" already exists. Do you want to overwrite it?`)) {
+                    return;
+                }
+            }
+
+            const renameBtn = event.target;
+            const originalText = renameBtn.innerHTML;
+            renameBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Renaming...';
+            renameBtn.disabled = true;
+
+            $.ajax({
+                url: '/api/config/rename',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    current_name: currentName,
+                    new_name: fileName
+                }),
+                success: function (response) {
+                    showNotification(`Config file renamed to '${fileName}' successfully!`, 'success');
+                    hideRenameConfigModal();
+
+                    // Refresh config files list
+                    loadConfigFiles().then(() => {
+                        // Select the renamed file
+                        setTimeout(() => {
+                            const selectElement = document.getElementById('config-file-select');
+                            if (selectElement) {
+                                selectElement.value = fileName;
+                                onConfigFileSelectionChange();
+
+                                // Update current config file if it was loaded
+                                if (currentConfigFile === currentName) {
+                                    currentConfigFile = fileName;
+                                }
+                            }
+                        }, 500);
+                    });
+                },
+                error: function (xhr) {
+                    const errorMsg = xhr.responseJSON?.error || 'Unknown error';
+                    showNotification(`Error renaming config file: ${errorMsg}`, 'error');
+                },
+                complete: function () {
+                    renameBtn.innerHTML = originalText;
+                    renameBtn.disabled = false;
+                }
+            });
+        }
+
+        // Expose functions to global window object
+        window.showCreateConfigModal = showCreateConfigModal;
+        window.hideCreateConfigModal = hideCreateConfigModal;
+        window.createNewConfig = createNewConfig;
+
+        function loadTemplateWithRetry(templateFile, fileName, createBtn, originalText, maxRetries) {
+            let currentRetry = 0;
+
+            function attemptLoad() {
+                currentRetry++;
+                console.log(`Attempting to load template ${templateFile} (attempt ${currentRetry}/${maxRetries})`);
+
+                // Update button to show progress
+                createBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Loading template... (${currentRetry}/${maxRetries})`;
+
+                $.ajax({
+                    url: '/api/config',
+                    method: 'GET',
+                    data: {
+                        config_file: templateFile,
+                        timestamp: Date.now() // Prevent caching
+                    },
+                    timeout: 20000, // Increased timeout
+                    cache: false,
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    },
+                    success: function (templateConfig) {
+                        console.log(`Template ${templateFile} loaded, validating structure...`);
+
+                        if (validateConfigStructure(templateConfig)) {
+                            console.log(`Template validation successful for ${templateFile} on attempt ${currentRetry}`);
+
+                            // Deep clone the config to prevent reference issues
+                            let clonedConfig;
+                            try {
+                                clonedConfig = JSON.parse(JSON.stringify(templateConfig));
+
+                                // Verify the clone is valid
+                                if (!validateConfigStructure(clonedConfig)) {
+                                    throw new Error('Config clone validation failed');
+                                }
+
+                                console.log(`Template ${templateFile} successfully cloned and validated`);
+                                saveNewConfigWithRetry(fileName, clonedConfig, createBtn, originalText, 5);
+
+                            } catch (cloneError) {
+                                console.error(`Config cloning failed: ${cloneError.message}`);
+                                if (currentRetry < maxRetries) {
+                                    setTimeout(attemptLoad, 2000 * currentRetry);
+                                } else {
+                                    console.warn('Template cloning failed, falling back to default config');
+                                    showNotification(`Template cloning failed. Creating with default configuration.`, 'warning');
+                                    const defaultConfig = getDefaultConfig();
+                                    saveNewConfigWithRetry(fileName, defaultConfig, createBtn, originalText, 5);
+                                }
+                            }
+                        } else {
+                            console.error(`Template validation failed for ${templateFile} on attempt ${currentRetry}`);
+                            if (currentRetry < maxRetries) {
+                                setTimeout(attemptLoad, 2000 * currentRetry);
+                            } else {
+                                console.warn('All template validation attempts failed, using default config');
+                                showNotification(`Template ${templateFile} validation failed after ${maxRetries} attempts. Creating with default configuration.`, 'warning');
+                                const defaultConfig = getDefaultConfig();
+                                saveNewConfigWithRetry(fileName, defaultConfig, createBtn, originalText, 5);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        const errorMsg = xhr.responseJSON?.error || `${status}: ${error}`;
+                        console.error(`Template load attempt ${currentRetry} failed: ${errorMsg}`);
+
+                        if (currentRetry < maxRetries) {
+                            console.log(`Retrying template load in ${2 * currentRetry} seconds...`);
+                            setTimeout(attemptLoad, 2000 * currentRetry);
+                        } else {
+                            console.error('All template load attempts failed, using default config');
+                            showNotification(`Failed to load template ${templateFile}. Creating with default configuration.`, 'error');
+                            const defaultConfig = getDefaultConfig();
+                            saveNewConfigWithRetry(fileName, defaultConfig, createBtn, originalText, 5);
+                        }
+                    }
+                });
+            }
+
+            attemptLoad();
+        }
+
+        function validateConfigStructure(config) {
+            if (!config || typeof config !== 'object') {
+                console.error('Config validation failed: not an object');
+                return false;
+            }
+
+            // Test JSON serialization
+            try {
+                const serialized = JSON.stringify(config);
+                if (!serialized || serialized === '{}') {
+                    console.error('Config validation failed: empty after serialization');
+                    return false;
+                }
+
+                // Test deserialization
+                const deserialized = JSON.parse(serialized);
+                if (!deserialized || typeof deserialized !== 'object') {
+                    console.error('Config validation failed: deserialization failed');
+                    return false;
+                }
+            } catch (e) {
+                console.error('Config validation failed: JSON serialization error:', e);
+                return false;
+            }
+
+            // Ensure essential top-level sections exist
+            const requiredSections = ['main', 'rally', 'discord'];
+            let sectionsAdded = false;
+
+            for (const section of requiredSections) {
+                if (!config.hasOwnProperty(section)) {
+                    console.log(`Adding missing required section: ${section}`);
+                    config[section] = {};
+                    sectionsAdded = true;
+                }
+            }
+
+            // Ensure main section has proper structure
+            if (!config.main || typeof config.main !== 'object') {
+                config.main = {};
+                sectionsAdded = true;
+            }
+
+            if (!config.main.jobs || !Array.isArray(config.main.jobs)) {
+                config.main.jobs = [];
+                sectionsAdded = true;
+            }
+
+            if (!config.main.threads || !Array.isArray(config.main.threads)) {
+                config.main.threads = [];
+                sectionsAdded = true;
+            }
+
+            // Ensure rally section has proper structure
+            if (!config.rally || typeof config.rally !== 'object') {
+                config.rally = {};
+                sectionsAdded = true;
+            }
+
+            if (!config.rally.join) {
+                config.rally.join = {
+                    enabled: false,
+                    numMarch: 8,
+                    level_based_troops: true,
+                    targets: []
+                };
+                sectionsAdded = true;
+            }
+
+            if (!config.rally.start) {
+                config.rally.start = {
+                    enabled: false,
+                    numMarch: 6,
+                    level_based_troops: true,
+                    targets: []
+                };
+                sectionsAdded = true;
+            }
+
+            // Ensure discord section exists
+            if (!config.discord || typeof config.discord !== 'object') {
+                config.discord = {
+                    enabled: false,
+                    webhook_url: "",
+                    rally_webhook_url: ""
+                };
+                sectionsAdded = true;
+            }
+
+            if (sectionsAdded) {
+                console.log('Config structure validation: added missing sections');
+            }
+
+            // Final validation: test serialization again after modifications
+            try {
+                const finalSerialized = JSON.stringify(config);
+                if (!finalSerialized || finalSerialized.length < 50) { // Very basic sanity check
+                    console.error('Config validation failed: final serialization too short');
+                    return false;
+                }
+            } catch (e) {
+                console.error('Config validation failed: final serialization error:', e);
+                return false;
+            }
+
+            console.log('Config structure validation: passed');
+            return true;
+        }
+
+
+        function getDefaultConfig() {
+            return {
+                "buff_management": {
+                    "enabled": true,
+                    "buffs": [
+                        {"name": "Food Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102001, 10102002]},
+                        {"name": "Wood Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102003, 10102004]},
+                        {"name": "Stone Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102005, 10102006]},
+                        {"name": "Gold Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102007, 10102008]},
+                        {"name": "Gathering Speed Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102009, 10102010]},
+                        {"name": "Kingdom Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102026, 10102027]},
+                        {"name": "Anti Spying Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102021, 10102022]}
+                    ]
+                },
+                "discord": {
+                    "enabled": true,
+                    "enable_chat_monitoring": true,
+                    "webhook_url": "",
+                    "chat_webhook_url": "",
+                    "crystal_mine_level1_webhook_url": "",
+                    "custom_webhook_url": "",
+                    "dragon_soul_level2plus_webhook_url": "",
+                    "gathering_webhook_url": "",
+                    "level2plus_webhook_url": "",
+                    "level3plus_webhook_url": "",
+                    "monster_webhook_url": "",
+                    "occupied_resources_webhook_url": "",
+                    "rally_webhook_url": ""
+                },
+                "main": {
+                    "jobs": [
+                        {"enabled": true, "interval": {"start": 1200, "end": 1800}, "name": "hospital_recover"},
+                        {"enabled": false, "interval": {"start": 30, "end": 90}, "name": "wall_repair"},
+                        {
+                            "enabled": true,
+                            "interval": {"start": 120, "end": 200},
+                            "kwargs": {
+                                "gift_claim": true,
+                                "help_all": true,
+                                "research_donate": true,
+                                "shop_auto_buy_item_code_list": [10101008]
+                            },
+                            "name": "alliance_farmer"
+                        },
+                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "mail_claim"},
+                        {"enabled": true, "interval": {"start": 120, "end": 200}, "name": "caravan_farmer"},
+                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "use_resource_in_item_list"},
+                        {"enabled": true, "interval": {"start": 120, "end": 200}, "name": "vip_chest_claim"},
+                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "dsavip_chest_claim"},
+                        {"enabled": false, "interval": {"start": 10, "end": 20}, "name": "harvester"},
+                        {
+                            "enabled": false,
+                            "interval": {"start": 1, "end": 1},
+                            "kwargs": {
+                                "radius": 16,
+                                "share_to": {"chat_channels": [0, 0]},
+                                "targets": [
+                                    {"code": 20100106, "enabled": false, "level": [2, 3, 4, 5], "name": "Dragon Soul Cavern"},
+                                    {"code": 20100101, "enabled": false, "level": [7, 8, 9, 10], "name": "Farm"},
+                                    {"code": 20100102, "enabled": false, "level": [7, 8, 9, 10], "name": "Gold Mine"},
+                                    {"code": 20100103, "enabled": false, "level": [7, 8, 9, 10], "name": "Lumber Camp"},
+                                    {"code": 20100104, "enabled": false, "level": [7, 8, 9, 10], "name": "Quarry"},
+                                    {"code": 20200103, "enabled": false, "level": [1, 2, 3], "name": "Golem"},
+                                    {"code": 20200301, "enabled": false, "level": [1, 2, 3], "name": "Orc"},
+                                    {"code": 20200302, "enabled": false, "level": [1, 2, 3], "name": "Skeleton"},
+                                    {"code": 20200201, "enabled": false, "level": [1, 2, 3, 4], "name": "Deathkar"},
+                                    {"code": 20100105, "enabled": true, "level": [2, 3, 4], "name": "Crystal Mine"}
+                                ]
+                            },
+                            "name": "socf_thread"
+                        }
+                    ],
+                    "normal_monsters": {
+                        "enabled": false,
+                        "max_distance": 200,
+                        "common_troops": [
+                            {"code": 50100304, "name": "Iron Cavalry (Tier 4 Cavalry)", "amount": 0},
+                            {"code": 50100305, "name": "Dragoon (Tier 5 Cavalry)", "amount": 0},
+                            {"code": 50100306, "name": "Marauder (Tier 6 Cavalry)", "amount": 0}
+                        ],
+                        "targets": [
+                            {"monster_code": 20200103, "monster_name": "Golem", "level_ranges": [1, 2, 3]},
+                            {"monster_code": 20200104, "monster_name": "Treasure Goblin", "level_ranges": [1, 2, 3, 4]},
+                            {"monster_code": 20200101, "monster_name": "Orc", "level_ranges": [1, 2, 3]},
+                            {"monster_code": 20200102, "monster_name": "Skeleton", "level_ranges": [1, 2, 3]}
+                        ]
+                    },
+                    "object_scanning": {
+                        "enabled": false,
+                        "enable_gathering": false,
+                        "enable_monster_attack": false,
+                        "notify_discord": false,
+                        "max_marches": 10,
+                        "monster_attack": {"enabled": false},
+                        "monster_distance_check": {"enabled": false, "max_distance": 250},
+                        "objects": {}
+                    },
+                    "skills": {
+                        "enabled": true,
+                        "skills": [{"code": 10001, "enabled": true}, {"code": 10002, "enabled": true}]
+                    },
+                    "threads": [
+                        {"enabled": true, "name": "free_chest_farmer_thread"},
+                        {"enabled": true, "name": "quest_monitor_thread"},
+                        {"enabled": false, "name": "building_farmer_thread", "kwargs": {"speedup": true}},
+                        {"enabled": false, "name": "academy_farmer_thread", "kwargs": {"speedup": true, "to_max_level": false}},
+                        {
+                            "enabled": false,
+                            "name": "train_troop_thread",
+                            "kwargs": {"interval": 3600, "speedup": true, "troop_code": 50100101}
+                        }
+                    ],
+                    "treasure": {"enabled": false, "page": 1}
+                },
+                "rally": {
+                    "join": {
+                        "enabled": false,
+                        "numMarch": 8,
+                        "max_rally_distance": 500,
+                        "level_based_troops": true,
+                        "targets": []
+                    },
+                    "start": {
+                        "enabled": false,
+                        "numMarch": 6,
+                        "max_rally_distance": 500,
+                        "level_based_troops": true,
+                        "targets": []
+                    }
+                },
+                "socketio": {
+                    "debug": false,
+                    "engineio_logging": false
+                },
+                "toggles": {
+                    "features": {
+                        "chat_monitoring": true,
+                        "discord": true,
+                        "enable_chat_monitoring": true,
+                        "enable_gathering": false,
+                        "enable_monster_attack": false,
+                        "notify_discord": false,
+                        "object_scanning": false,
+                        "rally_join": false,
+                        "rally_start": false
+                    },
+                    "jobs": {
+                        "alliance_farmer": true,
+                        "caravan_farmer": true,
+                        "dsavip_chest_claim": false,
+                        "harvester": false,
+                        "hospital_recover": true,
+                        "mail_claim": false,
+                        "socf_thread": false,
+                        "use_resource_in_item_list": false,
+                        "vip_chest_claim": true,
+                        "wall_repair": false
+                    },
+                    "threads": {
+                        "academy_farmer_thread": false,
+                        "building_farmer_thread": false,
+                        "free_chest_farmer_thread": true,
+                        "quest_monitor_thread": true,
+                        "train_troop_thread": false
+                    }
+                }
+            };
+        }
+
+
+        function saveNewConfigWithRetry(fileName, configData, createBtn, originalText, maxRetries) {
+            let currentRetry = 0;
+
+            function attemptSave() {
+                currentRetry++;
+                console.log(`Attempting to save config ${fileName} (attempt ${currentRetry}/${maxRetries})`);
+
+                // Update button to show progress
+                createBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving... (${currentRetry}/${maxRetries})`;
+
+                // Validate config data before saving
+                if (!validateConfigStructure(configData)) {
+                    console.error('Config validation failed before save, using default');
+                    configData = getDefaultConfig();
+                    if (!validateConfigStructure(configData)) {
+                        console.error('Default config validation also failed');
+                        createBtn.innerHTML = originalText;
+                        createBtn.disabled = false;
+                        showNotification('Critical error: unable to create valid config structure', 'error');
+                        return;
+                    }
+                }
+
+                // Create a verified copy of the config
+                let verifiedConfig;
+                try {
+                    // Deep clone and verify
+                    verifiedConfig = JSON.parse(JSON.stringify(configData));
+                    if (!validateConfigStructure(verifiedConfig)) {
+                        throw new Error('Config verification failed after clone');
+                    }
+                } catch (e) {
+                    console.error(`Config verification failed: ${e.message}`);
+                    if (currentRetry < maxRetries) {
+                        setTimeout(attemptSave, 3000 * currentRetry);
+                        return;
+                    } else {
+                        createBtn.innerHTML = originalText;
+                        createBtn.disabled = false;
+                        showNotification('Failed to verify config structure', 'error');
+                        return;
+                    }
+                }
+
+                // Prepare request data
+                const requestData = {
+                    config: verifiedConfig,
+                    config_file: fileName,
+                    timestamp: Date.now(),
+                    validation_checksum: btoa(JSON.stringify(verifiedConfig)).slice(0, 20) // Simple checksum
+                };
+
+                console.log(`Saving config ${fileName} with ${Object.keys(verifiedConfig).length} top-level sections`);
+
+                $.ajax({
+                    url: '/api/config',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(requestData),
+                    timeout: 30000, // Increased timeout
+                    cache: false,
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    },
+                    success: function (response) {
+                        console.log(`Config save response received for ${fileName} on attempt ${currentRetry}`);
+
+                        // Verify the response
+                        if (response && response.success) {
+                            console.log(`Config file '${fileName}' created successfully`);
+                            showNotification(`Config file '${fileName}' created successfully!`, 'success');
+                            hideCreateConfigModal();
+
+                            // Verify the file was created by reloading config list
+                            loadConfigFiles().then(() => {
+                                // Set timeout to allow list to populate
+                                setTimeout(() => {
+                                    const selectElement = document.getElementById('config-file-select');
+                                    if (selectElement) {
+                                        // Check if the new file appears in the list
+                                        const option = Array.from(selectElement.options).find(opt => opt.value === fileName);
+                                        if (option) {
+                                            selectElement.value = fileName;
+                                            onConfigFileSelectionChange();
+                                            console.log(`Successfully selected new config file ${fileName}`);
+                                        } else {
+                                            console.warn(`New config file ${fileName} not found in list, will retry...`);
+                                            // Retry loading the list
+                                            setTimeout(() => loadConfigFiles(), 2000);
+                                        }
+                                    }
+                                }, 1500);
+                            }).catch(error => {
+                                console.error('Error reloading config files:', error);
+                                showNotification('Config created but failed to refresh file list', 'warning');
+                            });
+                        } else {
+                            const errorMsg = response?.error || 'Invalid response format';
+                            throw new Error(errorMsg);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        const errorMsg = xhr.responseJSON?.error || `${status}: ${error}` || 'Unknown error';
+                        console.error(`Save attempt ${currentRetry} failed: ${errorMsg}`);
+
+                        if (currentRetry < maxRetries) {
+                            console.log(`Retrying save in ${3 * currentRetry} seconds...`);
+                            setTimeout(attemptSave, 3000 * currentRetry); // Longer intervals
+                        } else {
+                            console.error('All save attempts failed');
+                            showNotification(`Failed to create config file after ${maxRetries} attempts: ${errorMsg}`, 'error');
+                            createBtn.innerHTML = originalText;
+                            createBtn.disabled = false;
+                        }
+                    },
+                    complete: function () {
+                        if (currentRetry >= maxRetries) {
+                            createBtn.innerHTML = originalText;
+                            createBtn.disabled = false;
+                        }
+                    }
+                });
+            }
+
+            attemptSave();
+        }
+
+        function getDefaultConfig() {
+            return {
+                "buff_management": {
+                    "enabled": true,
+                    "buffs": [
+                        {"name": "Food Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102001, 10102002]},
+                        {"name": "Wood Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102003, 10102004]},
+                        {"name": "Stone Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102005, 10102006]},
+                        {"name": "Gold Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102007, 10102008]},
+                        {"name": "Gathering Speed Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102009, 10102010]},
+                        {"name": "Kingdom Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102026, 10102027]},
+                        {"name": "Anti Spying Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102021, 10102022]}
+                    ]
+                },
+                "discord": {
+                    "enabled": true,
+                    "enable_chat_monitoring": true,
+                    "webhook_url": "",
+                    "chat_webhook_url": "",
+                    "crystal_mine_level1_webhook_url": "",
+                    "custom_webhook_url": "",
+                    "dragon_soul_level2plus_webhook_url": "",
+                    "gathering_webhook_url": "",
+                    "level2plus_webhook_url": "",
+                    "level3plus_webhook_url": "",
+                    "monster_webhook_url": "",
+                    "occupied_resources_webhook_url": "",
+                    "rally_webhook_url": ""
+                },
+                "main": {
+                    "jobs": [
+                        {"enabled": true, "interval": {"start": 1200, "end": 1800}, "name": "hospital_recover"},
+                        {"enabled": false, "interval": {"start": 30, "end": 90}, "name": "wall_repair"},
+                        {
+                            "enabled": true,
+                            "interval": {"start": 120, "end": 200},
+                            "kwargs": {
+                                "gift_claim": true,
+                                "help_all": true,
+                                "research_donate": true,
+                                "shop_auto_buy_item_code_list": [10101008]
+                            },
+                            "name": "alliance_farmer"
+                        },
+                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "mail_claim"},
+                        {"enabled": true, "interval": {"start": 120, "end": 200}, "name": "caravan_farmer"},
+                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "use_resource_in_item_list"},
+                        {"enabled": true, "interval": {"start": 120, "end": 200}, "name": "vip_chest_claim"},
+                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "dsavip_chest_claim"},
+                        {"enabled": false, "interval": {"start": 10, "end": 20}, "name": "harvester"},
+                        {
+                            "enabled": false,
+                            "interval": {"start": 1, "end": 1},
+                            "kwargs": {
+                                "radius": 16,
+                                "share_to": {"chat_channels": [0, 0]},
+                                "targets": [
+                                    {"code": 20100106, "enabled": false, "level": [2, 3, 4, 5], "name": "Dragon Soul Cavern"},
+                                    {"code": 20100101, "enabled": false, "level": [7, 8, 9, 10], "name": "Farm"},
+                                    {"code": 20100102, "enabled": false, "level": [7, 8, 9, 10], "name": "Gold Mine"},
+                                    {"code": 20100103, "enabled": false, "level": [7, 8, 9, 10], "name": "Lumber Camp"},
+                                    {"code": 20100104, "enabled": false, "level": [7, 8, 9, 10], "name": "Quarry"},
+                                    {"code": 20200103, "enabled": false, "level": [1, 2, 3], "name": "Golem"},
+                                    {"code": 20200301, "enabled": false, "level": [1, 2, 3], "name": "Orc"},
+                                    {"code": 20200302, "enabled": false, "level": [1, 2, 3], "name": "Skeleton"},
+                                    {"code": 20200201, "enabled": false, "level": [1, 2, 3, 4], "name": "Deathkar"},
+                                    {"code": 20100105, "enabled": true, "level": [2, 3, 4], "name": "Crystal Mine"}
+                                ]
+                            },
+                            "name": "socf_thread"
+                        }
+                    ],
+                    "normal_monsters": {
+                        "enabled": false,
+                        "max_distance": 200,
+                        "common_troops": [
+                            {"code": 50100304, "name": "Iron Cavalry (Tier 4 Cavalry)", "amount": 0},
+                            {"code": 50100305, "name": "Dragoon (Tier 5 Cavalry)", "amount": 0},
+                            {"code": 50100306, "name": "Marauder (Tier 6 Cavalry)", "amount": 0}
+                        ],
+                        "targets": [
+                            {"monster_code": 20200103, "monster_name": "Golem", "level_ranges": [1, 2, 3]},
+                            {"monster_code": 20200104, "monster_name": "Treasure Goblin", "level_ranges": [1, 2, 3, 4]},
+                            {"monster_code": 20200101, "monster_name": "Orc", "level_ranges": [1, 2, 3]},
+                            {"monster_code": 20200102, "monster_name": "Skeleton", "level_ranges": [1, 2, 3]}
+                        ]
+                    },
+                    "object_scanning": {
+                        "enabled": false,
+                        "enable_gathering": false,
+                        "enable_monster_attack": false,
+                        "notify_discord": false,
+                        "max_marches": 10,
+                        "monster_attack": {"enabled": false},
+                        "monster_distance_check": {"enabled": false, "max_distance": 250},
+                        "objects": {}
+                    },
+                    "skills": {
+                        "enabled": true,
+                        "skills": [{"code": 10001, "enabled": true}, {"code": 10002, "enabled": true}]
+                    },
+                    "threads": [
+                        {"enabled": true, "name": "free_chest_farmer_thread"},
+                        {"enabled": true, "name": "quest_monitor_thread"},
+                        {"enabled": false, "name": "building_farmer_thread", "kwargs": {"speedup": true}},
+                        {"enabled": false, "name": "academy_farmer_thread", "kwargs": {"speedup": true, "to_max_level": false}},
+                        {
+                            "enabled": false,
+                            "name": "train_troop_thread",
+                            "kwargs": {"interval": 3600, "speedup": true, "troop_code": 50100101}
+                        }
+                    ],
+                    "treasure": {"enabled": false, "page": 1}
+                },
+                "rally": {
+                    "join": {
+                        "enabled": false,
+                        "numMarch": 8,
+                        "max_rally_distance": 500,
+                        "level_based_troops": true,
+                        "targets": []
+                    },
+                    "start": {
+                        "enabled": false,
+                        "numMarch": 6,
+                        "max_rally_distance": 500,
+                        "level_based_troops": true,
+                        "targets": []
+                    }
+                },
+                "socketio": {
+                    "debug": false,
+                    "engineio_logging": false
+                },
+                "toggles": {
+                    "features": {
+                        "chat_monitoring": true,
+                        "discord": true,
+                        "enable_chat_monitoring": true,
+                        "enable_gathering": false,
+                        "enable_monster_attack": false,
+                        "notify_discord": false,
+                        "object_scanning": false,
+                        "rally_join": false,
+                        "rally_start": false
+                    },
+                    "jobs": {
+                        "alliance_farmer": true,
+                        "caravan_farmer": true,
+                        "dsavip_chest_claim": false,
+                        "harvester": false,
+                        "hospital_recover": true,
+                        "mail_claim": false,
+                        "socf_thread": false,
+                        "use_resource_in_item_list": false,
+                        "vip_chest_claim": true,
+                        "wall_repair": false
+                    },
+                    "threads": {
+                        "academy_farmer_thread": false,
+                        "building_farmer_thread": false,
+                        "free_chest_farmer_thread": true,
+                        "quest_monitor_thread": true,
+                        "train_troop_thread": false
+                    }
+                }
+            };
+        }
+
+
+        function deleteCurrentConfig() {
+            const configSelect = document.getElementById('config-file-select');
+            const selectedFile = configSelect.value;
+
+            if (!selectedFile) {
+                alert('Please select a config file first');
+                return;
+            }
+
+            // Double check protection
+            const protectedFiles = ['config.json', 'config.example.json'];
+            if (protectedFiles.includes(selectedFile)) {
+                alert('Cannot delete essential config files');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete '${selectedFile}'? This action cannot be undone.`)) {
+                return;
+            }
+
+            $.ajax({
+                url: '/api/config/delete',
+                method: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    config_file: selectedFile
+                }),
+                success: function (response) {
+                    alert(`Config file '${selectedFile}' deleted successfully!`);
+
+                    // Reset interface
+                    configLoaded = false;
+                    currentConfigFile = '';
+                    fullConfigData = {};
+                    disableConfigTabs();
+
+                    // Clear all tab contents
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+
+                    // Refresh config files list
+                    loadConfigFiles();
+                },
+                error: function (xhr) {
+                    alert('Error deleting config file: ' + (xhr.responseJSON?.error || 'Unknown error'));
+                }
+            });
+        }
+
+
+
+        function loadExistingConfig() {
+            // Show loading state
+            const loadBtn = document.getElementById('load-config-btn');
+            const originalText = loadBtn.innerHTML;
+            loadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            loadBtn.disabled = true;
+
+            // Load the complete config file first
+            $.ajax({
+                url: '/api/config',
+                method: 'GET',
+                data: {config_file: currentConfigFile},
+                success: function (response) {
+                    fullConfigData = response;  // Store the complete config
+                    configLoaded = true;
+
+                    // Enable tabs and select first tab
+                    enableConfigTabs();
+                    document.querySelector('.tab').classList.add('active');
+                    document.getElementById('rally-join').classList.add('active');
+
+                    // Populate the simplified interface
+                    populateRallyJoinConfig(response.rally?.join || {});
+                    populateRallyStartConfig(response.rally?.start || {});
+                    populateMonsterAttackConfig(response.main?.normal_monsters || {});
+                    populateSocfObjectsConfig(response.main?.jobs || []);
+                    populateBuffManagementConfig(response.buff_management || {});
+                    populateSkillsConfig(response.main?.skills || {});
+                    populateTreasureConfig(response.main?.treasure || {});
+                    populateDsavipConfig(response.main?.jobs || []);
+                    populateSettingsConfig(response.main?.jobs || [], response.main?.threads || []);
+
+                    alert(`Configuration file '${currentConfigFile}' loaded successfully!`);
+                },
+                error: function (xhr) {
+                    console.error('Error loading configuration:', xhr);
+                    alert('Error loading configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
+                    configLoaded = false;
+                },
+                complete: function () {
+                    loadBtn.innerHTML = originalText;
+                    loadBtn.disabled = false;
+                }
+            });
+        }
+
+        function populateRallyJoinConfig(config) {
+            console.log('Loading rally-join config:', config);
+
+            // Set enabled state
+            document.getElementById('rally-join-enabled').checked = config.enabled || false;
+
+            // Set number of marches
+            const marchesInput = document.getElementById('rally-join-marches');
+            if (config.numMarch) {
+                marchesInput.value = config.numMarch;
+            }
+
+            // Set distance (look for max_rally_distance in the config)
+            const distanceInput = document.getElementById('rally-join-distance');
+            if (config.max_rally_distance) {
+                distanceInput.value = config.max_rally_distance;
+            }
+
+            // Clear and populate monsters
+            const container = document.getElementById('rally-join-monsters');
+            container.innerHTML = '';
+
+            if (config.targets && config.targets.length > 0) {
+                config.targets.forEach(monster => {
+                    const card = createMonsterCardFromConfig(monster, 'rally-join');
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function populateRallyStartConfig(config) {
+            console.log('Loading rally-start config:', config);
+
+            // Set enabled state
+            document.getElementById('rally-start-enabled').checked = config.enabled || false;
+
+            // Set number of marches
+            const marchesInput = document.getElementById('rally-start-marches');
+            if (config.numMarch) {
+                marchesInput.value = config.numMarch;
+            }
+
+            // Set distance
+            const distanceInput = document.getElementById('rally-start-distance');
+            if (config.max_rally_distance) {
+                distanceInput.value = config.max_rally_distance;
+            }
+
+            // Clear and populate monsters
+            const container = document.getElementById('rally-start-monsters');
+            container.innerHTML = '';
+
+            if (config.targets && config.targets.length > 0) {
+                config.targets.forEach(monster => {
+                    const card = createMonsterCardFromConfig(monster, 'rally-start');
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function populateMonsterAttackConfig(config) {
+            console.log('Loading monster-attack config:', config);
+
+            // Set enabled state
+            document.getElementById('monster-attack-enabled').checked = config.enabled || false;
+
+            // Set distance
+            const distanceInput = document.getElementById('monster-attack-distance');
+            if (config.max_distance) {
+                distanceInput.value = config.max_distance;
+            }
+
+            // Clear and populate monsters
+            const container = document.getElementById('monster-attack-monsters');
+            container.innerHTML = '';
+
+            if (config.targets && config.targets.length > 0) {
+                config.targets.forEach(monster => {
+                    // Convert monster attack format to standard format for UI
+                    const standardMonster = {
+                        monster_code: monster.monster_code,
+                        monster_name: monster.monster_name,
+                        level_ranges: [{
+                            min_level: Array.isArray(monster.level_ranges) ? Math.min(...monster.level_ranges) : 1,
+                            max_level: Array.isArray(monster.level_ranges) ? Math.max(...monster.level_ranges) : 10,
+                            troops: []
+                        }]
+                    };
+                    const card = createMonsterCardFromConfig(standardMonster, 'monster-attack');
+                    container.appendChild(card);
+                });
+            }
+
+            // Load common troops section
+            const commonTroopsContainer = document.createElement('div');
+            commonTroopsContainer.innerHTML = `
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
+                        <i class="fas fa-users"></i> Common Troops Configuration
+                    </h3>
+                    <div id="common-troops-list"></div>
+                    <button class="btn btn-primary" onclick="addCommonTroop()">
+                        <i class="fas fa-plus"></i> Add Troop
+                    </button>
+                </div>
+            `;
+            container.appendChild(commonTroopsContainer);
+
+            // Populate common troops
+            const commonTroopsList = document.getElementById('common-troops-list');
+            if (config.common_troops && config.common_troops.length > 0) {
+                config.common_troops.forEach(troop => {
+                    const troopItem = createCommonTroopItem(troop);
+                    commonTroopsList.appendChild(troopItem);
+                });
+            }
+        }
+
+        function createMonsterCardFromConfig(monster, configType) {
+            const card = document.createElement('div');
+            card.className = 'monster-card';
+
+            const monsterName = monster.monster_name || 'Unknown Monster';
+            const levelRange = monster.level_ranges && monster.level_ranges.length > 0 ? monster.level_ranges[0] : {min_level: 1, max_level: 10, troops: []};
+
+            card.innerHTML = `
+                <div class="monster-header">
+                    <input type="checkbox" class="monster-checkbox" checked data-monster-code="${monster.monster_code}">
+                    <span class="monster-name">${monsterName}</span>
+                    <button class="btn btn-danger" onclick="removeMonsterCard(this)" style="margin-left: auto;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+
+                <div class="level-inputs">
+                    <div class="input-group">
+                        <label class="input-label">Min Level:</label>
+                        <input type="number" class="input-field min-level" value="${levelRange.min_level || 1}" min="1" max="50">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Max Level:</label>
+                        <input type="number" class="input-field max-level" value="${levelRange.max_level || 10}" min="1" max="50">
+                    </div>
+                </div>
+
+                <div class="troops-section">
+                    <div class="troops-header">
+                        <span class="troops-title">Troops to be Used</span>
+                        <select class="dropdown-field">
+                            <option>Custom</option>
+                            <option>Default</option>
+                            <option>Preset 1</option>
+                        </select>
+                    </div>
+
+                    <div class="troops-list">
+                        <!-- Troops will be populated here -->
+                    </div>
+
+                    <button class="btn btn-primary" onclick="addTroopToCard(this)">
+                        <i class="fas fa-plus"></i>
+                        Add Other Troop
+                    </button>
+                </div>
+            `;
+
+            // Populate troops
+            const troopsContainer = card.querySelector('.troops-list');
+            if (levelRange.troops && levelRange.troops.length > 0) {
+                levelRange.troops.forEach(troop => {
+                    const troopItem = document.createElement('div');
+                    troopItem.className = 'troop-item';
+
+                    // Handle both old min/max format and new fixed_amounts format
+                    let fixedAmounts = troop.fixed_amounts || [];
+                    if (fixedAmounts.length === 0 && (troop.min_amount || troop.max_amount)) {
+                        // Convert old format to new format
+                        fixedAmounts = [troop.min_amount || 0, troop.max_amount || 0].filter(amt => amt > 0);
+                    }
+
+                    troopItem.innerHTML = `
+                        <select class="troop-select" data-troop-code="${troop.code}">
+                            <option value="${troop.code}" selected>${troop.name || getTroopNameByCode(troop.code)}</option>
+                            <!-- Tier 6 Troops -->
+                            <option value="50100106">Paladin (Tier 6 Infantry)</option>
+                            <option value="50100107">Destroyer (Tier 6 Infantry)</option>
+                            <option value="50100206">Marksman (Tier 6 Ranged)</option>
+                            <option value="50100207">Musketeer (Tier 6 Ranged)</option>
+                            <option value="50100306">Marauder (Tier 6 Cavalry)</option>
+                            <option value="50100307">Valkyrie (Tier 6 Cavalry)</option>
+                            <!-- Tier 5 Troops -->
+                            <option value="50100105">Crusader (Tier 5 Infantry)</option>
+                            <option value="50100205">Sniper (Tier 5 Ranged)</option>
+                            <option value="50100305">Dragoon (Tier 5 Cavalry)</option>
+                            <!-- Tier 4 Troops -->
+                            <option value="50100104">Guardian (Tier 4 Infantry)</option>
+                            <option value="50100204">Crossbow Man (Tier 4 Ranged)</option>
+                            <option value="50100304">Iron Cavalry (Tier 4 Cavalry)</option>
+                            <!-- Tier 3 Troops -->
+                            <option value="50100103">Knight (Tier 3 Infantry)</option>
+                            <option value="50100203">Ranger (Tier 3 Ranged)</option>
+                            <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
+                        </select>
+                        <div class="fixed-amounts-container">
+                            <label class="input-label">Fixed Amounts (comma-separated):</label>
+                            <input type="text" class="fixed-amounts-input" value="${fixedAmounts.join(', ')}" placeholder="e.g., 10000, 15000, 20000">
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                                Bot will randomly select one amount from the list
+                            </small>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeTroopItem(this)">Remove</button>
+                    `;
+                    troopsContainer.appendChild(troopItem);
+                });
+            }
+
+            return card;
+        }
+
+        function getTroopNameByCode(code) {
+            const troopNames = {
+                // Tier 6 Troops
+                50100106: 'Paladin (Tier 6 Infantry)',
+                50100107: 'Destroyer (Tier 6 Infantry)',
+                50100206: 'Marksman (Tier 6 Ranged)',
+                50100207: 'Musketeer (Tier 6 Ranged)',
+                50100306: 'Marauder (Tier 6 Cavalry)',
+                50100307: 'Valkyrie (Tier 6 Cavalry)',
+                // Tier 5 Troops
+                50100105: 'Crusader (Tier 5 Infantry)',
+                50100205: 'Sniper (Tier 5 Ranged)',
+                50100305: 'Dragoon (Tier 5 Cavalry)',
+                // Tier 4 Troops
+                50100104: 'Guardian (Tier 4 Infantry)',
+                50100204: 'Crossbow Man (Tier 4 Ranged)',
+                50100304: 'Iron Cavalry (Tier 4 Cavalry)',
+                // Tier 3 Troops
+                50100103: 'Knight (Tier 3 Infantry)',
+                50100203: 'Ranger (Tier 3 Ranged)',
+                50100303: 'Heavy Cavalry (Tier 3 Cavalry)',
+                // Legacy support for older configurations
+                50100302: 'Horseman (Tier 2 Cavalry)',
+                50100301: 'Scout (Tier 1 Cavalry)',
+                50100202: 'Longbow Man (Tier 2 Ranged)',
+                50100201: 'Hunter (Tier 1 Ranged)',
+                50100102: 'Warrior (Tier 2 Infantry)',
+                50100101: 'Fighter (Tier 1 Infantry)'
+            };
+            return troopNames[code] || `Troop ${code}`;
+        }
+
+        // Add selected monster functionality
+        function addSelectedMonster(configType) {
+            const selectElement = document.getElementById(`${configType}-monster-select`);
+            const selectedValue = selectElement.value;
+
+            if (!selectedValue) {
+                alert('Please select a monster to add');
+                return;
+            }
+
+            const [monsterCode, monsterName] = selectedValue.split('_');
+            const container = document.getElementById(`${configType}-monsters`);
+
+            // Check if monster already exists
+            const existingMonsters = container.querySelectorAll('.monster-checkbox');
+            for (let checkbox of existingMonsters) {
+                if (checkbox.dataset.monsterCode === monsterCode) {
+                    alert(`${monsterName} is already configured`);
+                    return;
+                }
+            }
+
+            const monsterCard = createEmptyMonsterCard(monsterName, configType, parseInt(monsterCode));
+            container.appendChild(monsterCard);
+
+            // Reset select
+            selectElement.value = '';
+        }
+
+        // Add new monster functionality (keeping for backwards compatibility)
+        function addNewMonster(configType) {
+            const container = document.getElementById(`${configType}-monsters`);
+            const monsterCard = createEmptyMonsterCard('New Monster', configType);
+            container.appendChild(monsterCard);
+        }
+
+        function createEmptyMonsterCard(monsterName, configType, monsterCode = 20200201) {
+            const card = document.createElement('div');
+            card.className = 'monster-card';
+            card.innerHTML = `
+                <div class="monster-header">
+                    <input type="checkbox" class="monster-checkbox" checked data-monster-code="${monsterCode}">
+                    <input type="text" class="monster-name" value="${monsterName}" style="background: transparent; border: none; font-weight: 500; font-size: 16px;">
+                    <button class="btn btn-danger" onclick="removeMonsterCard(this)" style="margin-left: auto;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+
+                <div class="level-inputs">
+                    <div class="input-group">
+                        <label class="input-label">Min Level:</label>
+                        <input type="number" class="input-field min-level" value="1" min="1" max="50">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Max Level:</label>
+                        <input type="number" class="input-field max-level" value="10" min="1" max="50">
+                    </div>
+                </div>
+
+                <div class="troops-section">
+                    <div class="troops-header">
+                        <span class="troops-title">Troops to be Used</span>
+                        <select class="dropdown-field">
+                            <option>Custom</option>
+                            <option>Default</option>
+                            <option>Preset 1</option>
+                        </select>
+                    </div>
+
+                    <div class="troops-list">
+                        <!-- Troops will be added here -->
+                    </div>
+
+                    <button class="btn btn-primary" onclick="addTroopToCard(this)">
+                        <i class="fas fa-plus"></i>
+                        Add Other Troop
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Remove monster card
+        function removeMonsterCard(button) {
+            if (confirm('Are you sure you want to remove this monster configuration?')) {
+                button.closest('.monster-card').remove();
+            }
+        }
+
+        // Add troop to specific card
+        function addTroopToCard(button) {
+            const troopsContainer = button.previousElementSibling;
+            const troopItem = document.createElement('div');
+            troopItem.className = 'troop-item';
+            troopItem.innerHTML = `
+                <select class="troop-select">
+                    <!-- Tier 6 Troops -->
+                    <option value="50100106">Paladin (Tier 6 Infantry)</option>
+                    <option value="50100107">Destroyer (Tier 6 Infantry)</option>
+                    <option value="50100206">Marksman (Tier 6 Ranged)</option>
+                    <option value="50100207">Musketeer (Tier 6 Ranged)</option>
+                    <option value="50100306">Marauder (Tier 6 Cavalry)</option>
+                    <option value="50100307">Valkyrie (Tier 6 Cavalry)</option>
+                    <!-- Tier 5 Troops -->
+                    <option value="50100105">Crusader (Tier 5 Infantry)</option>
+                    <option value="50100205">Sniper (Tier 5 Ranged)</option>
+                    <option value="50100305">Dragoon (Tier 5 Cavalry)</option>
+                    <!-- Tier 4 Troops -->
+                    <option value="50100104">Guardian (Tier 4 Infantry)</option>
+                    <option value="50100204">Crossbow Man (Tier 4 Ranged)</option>
+                    <option value="50100304">Iron Cavalry (Tier 4 Cavalry)</option>
+                    <!-- Tier 3 Troops -->
+                    <option value="50100103">Knight (Tier 3 Infantry)</option>
+                    <option value="50100203">Ranger (Tier 3 Ranged)</option>
+                    <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
+                </select>
+                <div class="fixed-amounts-container">
+                    <label class="input-label">Fixed Amounts (comma-separated):</label>
+                    <input type="text" class="fixed-amounts-input" value="10000, 15000, 20000" placeholder="e.g., 10000, 15000, 20000">
+                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                        Bot will randomly select one amount from the list
+                    </small>
+                </div>
+                <button class="btn btn-danger" onclick="removeTroopItem(this)">Remove</button>
+            `;
+            troopsContainer.appendChild(troopItem);
+        }
+
+        // Remove troop item
+        function removeTroopItem(button) {
+            button.closest('.troop-item').remove();
+        }
+
+        // Save configuration
+        function saveConfig(configType) {
+            console.log(`Saving config for: ${configType}`);
+
+            const configFile = document.getElementById('config-file-select').value;
+            console.log(`Using config file: ${configFile}`);
+
+            // Get the full config data first
+            if (!fullConfigData) {
+                alert('No config data loaded. Please refresh the page.');
+                return;
+            }
+
+            // Ensure toggles structure exists
+            if (!fullConfigData.toggles) {
+                fullConfigData.toggles = {
+                    features: {},
+                    jobs: {},
+                    threads: {}
+                };
+            }
+
+            if (configType === 'rally-join') {
+                if (!fullConfigData.rally) fullConfigData.rally = {};
+                if (!fullConfigData.rally.join) {
+                    fullConfigData.rally.join = {
+                        enabled: false,
+                        numMarch: 8,
+                        level_based_troops: true,
+                        targets: []
+                    };
+                }
+
+                // Update enabled state
+                const rallyJoinEnabled = document.getElementById('rally-join-enabled').checked;
+                fullConfigData.rally.join.enabled = rallyJoinEnabled;
+
+                // Sync to toggles structure
+                fullConfigData.toggles.features.rally_join = rallyJoinEnabled;
+
+                // If rally join is enabled, disable conflicting features
+                if (rallyJoinEnabled) {
+                    // Disable rally start
+                    if (!fullConfigData.rally.start) {
+                        fullConfigData.rally.start = {
+                            enabled: false,
+                            numMarch: 6,
+                            level_based_troops: true,
+                            targets: []
+                        };
+                    }
+                    fullConfigData.rally.start.enabled = false;
+                    fullConfigData.toggles.features.rally_start = false;
+
+                    // Disable object scanning (socf_thread)
+                    if (fullConfigData.main && fullConfigData.main.jobs) {
+                        fullConfigData.main.jobs.forEach(job => {
+                            if (job.name === 'socf_thread') {
+                                job.enabled = false;
+                                fullConfigData.toggles.jobs.socf_thread = false;
+                            }
+                        });
+                    }
+
+                    // Update main.object_scanning.enabled if it exists
+                    if (fullConfigData.main && fullConfigData.main.object_scanning) {
+                        fullConfigData.main.object_scanning.enabled = false;
+                        fullConfigData.toggles.features.object_scanning = false;
+                    }
+
+                    // Update UI to reflect the changes immediately
+                    const rallyStartToggle = document.getElementById('rally-start-enabled');
+                    const socfToggle = document.getElementById('socf-objects-enabled');
+
+                    if (rallyStartToggle) {
+                        rallyStartToggle.checked = false;
+                    }
+                    if (socfToggle) {
+                        socfToggle.checked = false;
+                    }
+
+                    // Show notification to user
+                    showNotification('Rally Join enabled - Rally Start and Object Scanning have been automatically disabled to prevent conflicts.', 'warning');
+                }
+
+                // Update number of marches
+                const marches = parseInt(document.getElementById('rally-join-marches').value);
+                if (marches) {
+                    fullConfigData.rally.join.numMarch = marches;
+                }
+
+                // Update distance - keep existing structure
+                const distance = parseInt(document.getElementById('rally-join-distance').value);
+                if (distance) {
+                    fullConfigData.rally.join.max_rally_distance = distance;
+                }
+
+                // Update targets
+                fullConfigData.rally.join.targets = collectMonstersFromUI('rally-join');
+
+            } else if (configType === 'rally-start') {
+                if (!fullConfigData.rally) fullConfigData.rally = {};
+                if (!fullConfigData.rally.start) {
+                    fullConfigData.rally.start = {
+                        enabled: false,
+                        numMarch: 6,
+                        level_based_troops: true,
+                        targets: []
+                    };
+                }
+
+                // Update enabled state
+                const rallyStartEnabled = document.getElementById('rally-start-enabled').checked;
+                fullConfigData.rally.start.enabled = rallyStartEnabled;
+
+                // Sync to toggles structure
+                fullConfigData.toggles.features.rally_start = rallyStartEnabled;
+
+                // If rally start is enabled, disable conflicting features
+                if (rallyStartEnabled) {
+                    // Disable rally join
+                    if (!fullConfigData.rally.join) {
+                        fullConfigData.rally.join = {
+                            enabled: false,
+                            numMarch: 8,
+                            level_based_troops: true,
+                            targets: []
+                        };
+                    }
+                    fullConfigData.rally.join.enabled = false;
+                    fullConfigData.toggles.features.rally_join = false;
+
+                    // Disable object scanning (socf_thread)
+                    if (fullConfigData.main && fullConfigData.main.jobs) {
+                        fullConfigData.main.jobs.forEach(job => {
+                            if (job.name === 'socf_thread') {
+                                job.enabled = false;
+                                fullConfigData.toggles.jobs.socf_thread = false;
+                            }
+                        });
+                    }
+
+                    // Update main.object_scanning.enabled if it exists
+                    if (fullConfigData.main && fullConfigData.main.object_scanning) {
+                        fullConfigData.main.object_scanning.enabled = false;
+                        fullConfigData.toggles.features.object_scanning = false;
+                    }
+
+                    // Update UI to reflect the changes immediately
+                    const rallyJoinToggle = document.getElementById('rally-join-enabled');
+                    const socfToggle = document.getElementById('socf-objects-enabled');
+
+                    if (rallyJoinToggle) {
+                        rallyJoinToggle.checked = false;
+                    }
+                    if (socfToggle) {
+                        socfToggle.checked = false;
+                    }
+
+                    // Show notification to user
+                    showNotification('Rally Start enabled - Rally Join and Object Scanning have been automatically disabled to prevent conflicts.', 'warning');
+                }
+
+                // Update number of marches
+                const marches = parseInt(document.getElementById('rally-start-marches').value);
+                if (marches) {
+                    fullConfigData.rally.start.numMarch = marches;
+                }
+
+                // Update distance
+                const distance = parseInt(document.getElementById('rally-start-distance').value);
+                if (distance) {
+                    fullConfigData.rally.start.max_rally_distance = distance;
+                }
+
+                // Update targets
+                fullConfigData.rally.start.targets = collectMonstersFromUI('rally-start');
+
+            } else if (configType === 'monster-attack') {
+                if (!fullConfigData.main) fullConfigData.main = {};
+                if (!fullConfigData.main.normal_monsters) {
+                    fullConfigData.main.normal_monsters = {
+                        enabled: false, "common_troops": [],
+                        "targets": []
+                    };
+                }
+
+                // Ensure object_scanning section exists
+                if (!fullConfigData.main.object_scanning) {
+                    fullConfigData.main.object_scanning = {
+                        "enabled": false,
+                        "max_marches": 10,
+                        "notify_discord": false,
+                        "enable_gathering": false,
+                        "enable_monster_attack": false,
+                        "objects": {},
+                        "monster_attack": {
+                            "enabled": false
+                        }
+                    };
+                }
+
+                // Ensure toggles structure exists
+                if (!fullConfigData.toggles) fullConfigData.toggles = {};
+                if (!fullConfigData.toggles.features) fullConfigData.toggles.features = {};
+
+                // Get the enabled state from UI
+                const isEnabled = document.getElementById('monster-attack-enabled').checked;
+
+                // Update ALL 4 locations for Monster Attack toggle
+                // 1. toggles.features.enable_monster_attack
+                fullConfigData.toggles.features.enable_monster_attack = isEnabled;
+
+                // 2. main.object_scanning.enable_monster_attack
+                fullConfigData.main.object_scanning.enable_monster_attack = isEnabled;
+
+                // 3. main.object_scanning.monster_attack.enabled
+                fullConfigData.main.object_scanning.monster_attack.enabled = isEnabled;
+
+                // 4. main.normal_monsters.enabled
+                fullConfigData.main.normal_monsters.enabled = isEnabled;
+
+                // Update distance
+                const distance = parseInt(document.getElementById('monster-attack-distance').value);
+                if (distance) {
+                    fullConfigData.main.normal_monsters.max_distance = distance;
+                }
+
+                // Update targets
+                fullConfigData.main.normal_monsters.targets = collectMonsterAttackTargetsFromUI();
+
+                // Update common troops
+                fullConfigData.main.normal_monsters.common_troops = collectCommonTroopsFromUI();
+
+            } else if (configType === 'socf-objects') {
+                if (!fullConfigData.main) fullConfigData.main = {};
+                if (!fullConfigData.main.jobs) fullConfigData.main.jobs = [];
+
+                // Ensure object_scanning section exists
+                if (!fullConfigData.main.object_scanning) {
+                    fullConfigData.main.object_scanning = {
+                        "enabled": false,
+                        "max_marches": 10,
+                        "notify_discord": false,
+                        "enable_gathering": false,
+                        "enable_monster_attack": false,
+                        "objects": {}
+                    };
+                }
+
+                // Find or create socf_thread job
+                let socfJob = fullConfigData.main.jobs.find(job => job.name === 'socf_thread');
+                if (!socfJob) {
+                    socfJob = {
+                        "name": 'socf_thread',
+                        "enabled": false,
+                        "interval": {"start": 1, "end": 1},
+                        "kwargs": {
+                            "targets": [],
+                            "radius": 16,
+                            "share_to": {"chat_channels": [0, 0]}
+                        }
+                    };
+                    fullConfigData.main.jobs.push(socfJob);
+                }
+
+                // Update enabled state
+                const socfEnabled = document.getElementById('socf-objects-enabled').checked;
+                socfJob.enabled = socfEnabled;
+                fullConfigData.main.object_scanning.enabled = socfEnabled;
+
+                // Sync to toggles structure
+                fullConfigData.toggles.jobs.socf_thread = socfEnabled;
+                fullConfigData.toggles.features.object_scanning = socfEnabled;
+
+                // Update gathering enabled state
+                const gatheringEnabled = document.getElementById('socf-gathering-enabled').checked;
+                fullConfigData.main.object_scanning.enable_gathering = gatheringEnabled;
+
+                // Sync to toggles structure
+                fullConfigData.toggles.features.enable_gathering = gatheringEnabled;
+
+                // If SOCF is enabled, disable rally features
+                if (socfEnabled) {
+                    // Disable rally join
+                    if (!fullConfigData.rally) fullConfigData.rally = {};
+                    if (!fullConfigData.rally.join) {
+                        fullConfigData.rally.join = {
+                            "enabled": false,
+                            "numMarch": 8,
+                            "level_based_troops": true,
+                            "targets": []
+                        };
+                    }
+                    fullConfigData.rally.join.enabled = false;
+                    fullConfigData.toggles.features.rally_join = false;
+
+                    // Disable rally start
+                    if (!fullConfigData.rally.start) {
+                        fullConfigData.rally.start = {
+                            "enabled": false,
+                            "numMarch": 6,
+                            "level_based_troops": true,
+                            "targets": []
+                        };
+                    }
+                    fullConfigData.rally.start.enabled = false;
+                    fullConfigData.toggles.features.rally_start = false;
+
+                    // Update UI to reflect the changes immediately
+                    const rallyJoinToggle = document.getElementById('rally-join-enabled');
+                    const rallyStartToggle = document.getElementById('rally-start-enabled');
+
+                    if (rallyJoinToggle) {
+                        rallyJoinToggle.checked = false;
+                    }
+                    if (rallyStartToggle) {
+                        rallyStartToggle.checked = false;
+                    }
+
+                    // Show notification to user
+                    showNotification('Object Scanning enabled - Rally Join and Rally Start have been automatically disabled to prevent conflicts.', 'warning');
+                }
+
+                // Update max marches
+                const maxMarches = parseInt(document.getElementById('socf-objects-max-marches').value);
+                if (maxMarches) {
+                    fullConfigData.main.object_scanning.max_marches = maxMarches;
+                }
+
+                // Update radius
+                const radius = parseInt(document.getElementById('socf-objects-radius').value);
+                if (radius) {
+                    socfJob.kwargs.radius = radius;
+                }
+
+                // Update targets
+                socfJob.kwargs.targets = collectSocfObjectsFromUI();
+
+            } else if (configType === 'buff-management') {
+                if (!fullConfigData.buff_management) {
+                    fullConfigData.buff_management = {
+                        "enabled": false,
+                        "buffs": []
+                    };
+                }
+
+                // Update enabled state
+                const buffEnabled = document.getElementById('buff-management-enabled').checked;
+                fullConfigData.buff_management.enabled = buffEnabled;
+
+                // Sync to toggles structure
+                fullConfigData.toggles.features.buff_management = buffEnabled;
+
+                // Update buffs
+                fullConfigData.buff_management.buffs = collectBuffManagementFromUI();
+
+            } else if (configType === 'skills') {
+                const skillsEnabled = document.getElementById('skills-enabled').checked;
+                const skillCheckboxes = document.querySelectorAll('#skills-list input[type="checkbox"][data-skill-code]');
+
+                const skillsConfig = [];
+                skillCheckboxes.forEach(checkbox => {
+                    const skillCode = parseInt(checkbox.dataset.skillCode);
+                    const enabled = checkbox.checked;
+                    if (!isNaN(skillCode)) {
+                        skillsConfig.push({
+                            code: skillCode,
+                            enabled: enabled
+                        });
+                    }
+                });
+
+                // Ensure main.skills structure exists
+                if (!fullConfigData.main) {
+                    fullConfigData.main = {};
+                }
+
+                fullConfigData.main.skills = {
+                    enabled: skillsEnabled,
+                    skills: skillsConfig
+                };
+
+                console.log('Skills config being saved:', fullConfigData.main.skills);
+
+            } else if (configType === 'treasure') {
+                if (!fullConfigData.main) fullConfigData.main = {};
+                if (!fullConfigData.main.treasure) {
+                    fullConfigData.main.treasure = {
+                        "enabled": false,
+                        "page": 1
+                    };
+                }
+
+                // Update enabled state
+                const treasureEnabled = document.getElementById('treasure-enabled').checked;
+                fullConfigData.main.treasure.enabled = treasureEnabled;
+
+                // Sync to toggles structure
+                fullConfigData.toggles.features.treasure = treasureEnabled;
+
+                // Update treasure page
+                const treasurePageSelect = document.getElementById('treasure-page');
+                fullConfigData.main.treasure.page = parseInt(treasurePageSelect.value);
+
+                // Update skin change settings
+                const skinChangeEnabled = document.getElementById('treasure-skin-change-enabled').checked;
+                fullConfigData.main.treasure.skin_change_enabled = skinChangeEnabled;
+
+                const skinItemId = document.getElementById('treasure-skin-item-id').value;
+                fullConfigData.main.treasure.skin_item_id = skinItemId;
+
+                const skinChangeInterval = parseInt(document.getElementById('treasure-skin-change-interval').value);
+                if (skinChangeInterval) {
+                    fullConfigData.main.treasure.skin_change_interval = skinChangeInterval;
+                }
+
+
+            } else if (configType === 'dsavip') {
+                const dsavipChestEnabled = document.getElementById('dsavip-chest-enabled').checked;
+                const dsavipJobEnabled = document.getElementById('dsavip-job-enabled').checked;
+
+                // Ensure main structure exists
+                if (!fullConfigData.main) {
+                    fullConfigData.main = {};
+                }
+                if (!fullConfigData.main.jobs) {
+                    fullConfigData.main.jobs = [];
+                }
+
+                // Update or add DSA VIP job in jobs array
+                let dsavipJob = fullConfigData.main.jobs.find(job => job.name === 'dsavip_chest_claim');
+                if (dsavipJob) {
+                    dsavipJob.enabled = dsavipJobEnabled;
+                } else {
+                    fullConfigData.main.jobs.push({
+                        enabled: dsavipJobEnabled,
+                        interval: {
+                            start: 120,
+                            end: 200
+                        },
+                        name: 'dsavip_chest_claim'
+                    });
+                }
+
+                // Update toggles section if it exists
+                if (!fullConfigData.toggles) {
+                    fullConfigData.toggles = {};
+                }
+                if (!fullConfigData.toggles.jobs) {
+                    fullConfigData.toggles.jobs = {};
+                }
+                fullConfigData.toggles.jobs.dsavip_chest_claim = dsavipJobEnabled;
+
+                console.log('DSA VIP config being saved:', {
+                    dsavipChestEnabled,
+                    dsavipJobEnabled,
+                    dsavipJob
+                });
+
+            } else if (configType === 'settings') {
+                if (!fullConfigData.main) {
+                    fullConfigData.main = {};
+                }
+                if (!fullConfigData.main.jobs) {
+                    fullConfigData.main.jobs = [];
+                }
+
+                // Update jobs based on form state
+                for (const job of fullConfigData.main.jobs) {
+                    const jobCheckbox = document.getElementById(`job-${job.name}`);
+                    if (jobCheckbox) {
+                        job.enabled = jobCheckbox.checked;
+                    }
+                }
+
+                // Update alliance farmer features
+                const allianceFarmerJob = fullConfigData.main.jobs.find(job => job.name === 'alliance_farmer');
+                if (allianceFarmerJob && allianceFarmerJob.kwargs) {
+                    const giftClaimCheckbox = document.getElementById('alliance-gift-claim');
+                    const helpAllCheckbox = document.getElementById('alliance-help-all');
+                    const researchDonateCheckbox = document.getElementById('alliance-research-donate');
+
+                    if (giftClaimCheckbox) allianceFarmerJob.kwargs.gift_claim = giftClaimCheckbox.checked;
+                    if (helpAllCheckbox) allianceFarmerJob.kwargs.help_all = helpAllCheckbox.checked;
+                    if (researchDonateCheckbox) allianceFarmerJob.kwargs.research_donate = researchDonateCheckbox.checked;
+                }
+
+                // Update threads based on form state
+                if (!fullConfigData.main.threads) {
+                    fullConfigData.main.threads = [];
+                }
+
+                for (const thread of fullConfigData.main.threads) {
+                    const threadCheckbox = document.getElementById(`thread-${thread.name}`);
+                    if (threadCheckbox) {
+                        thread.enabled = threadCheckbox.checked;
+                    }
+                }
+            }
+
+            // Show saving state
+            const saveBtn = event.target;
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+
+            $.ajax({
+                url: '/api/config',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "config": fullConfigData,
+                    "config_file": configFile
+                }),
+                success: function (response) {
+                    alert(`Configuration file '${configFile}' saved successfully!`);
+                },
+                error: function (xhr) {
+                    alert('Error saving configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
+                },
+                complete: function () {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
+                }
+            });
+        }
+
+        function collectSocfObjectsFromUI() {
+            const container = document.getElementById('socf-objects-list');
+            const objects = [];
+
+            container.querySelectorAll('.monster-card').forEach(card => {
+                const checkbox = card.querySelector('.monster-checkbox');
+                if (!checkbox.checked) return;
+
+                const nameElement = card.querySelector('.monster-name');
+                const levelsInput = card.querySelector('.levels-input');
+
+                const name = nameElement.textContent || 'Unknown Object';
+                const code = parseInt(checkbox.dataset.objectCode) || 20100105;
+
+                // Parse levels
+                let levels = [];
+                if (levelsInput.value.trim()) {
+                    levels = levelsInput.value.split(',').map(l => parseInt(l.trim())).filter(l => !isNaN(l));
+                }
+
+                objects.push({
+                    "code": code,
+                    "name": name,
+                    "level": levels,
+                    "enabled": true
+                });
+            });
+
+            return objects;
+        }
+
+        function collectMonstersFromUI(configType) {
+            const container = document.getElementById(`${configType}-monsters`);
+            const monsters = [];
+
+            container.querySelectorAll('.monster-card').forEach(card => {
+                const checkbox = card.querySelector('.monster-checkbox');
+                if (!checkbox.checked) return;
+
+                const monsterNameElement = card.querySelector('.monster-name');
+                const monsterName = monsterNameElement.value || monsterNameElement.textContent;
+                const monsterCode = parseInt(checkbox.dataset.monsterCode) || getMonsterCodeByName(monsterName);
+                const minLevel = parseInt(card.querySelector('.min-level').value) || 1;
+                const maxLevel = parseInt(card.querySelector('.max-level').value) || 10;
+
+                const levelRange = {
+                    "min_level": minLevel,
+                    "max_level": maxLevel,
+                    "troops": []
+                };
+
+                // Add additional fields for rally-start
+                if (configType === 'rally-start') {
+                    levelRange.rally_time = 5;
+                    levelRange.message = `${monsterName} Rally`;
+                }
+
+                const monster = {
+                    "monster_code": monsterCode,
+                    "monster_name": monsterName,
+                    "level_ranges": [levelRange]
+                };
+
+                // Collect troops using fixed_amounts
+                card.querySelectorAll('.troop-item').forEach(troopItem => {
+                    const troopSelect = troopItem.querySelector('.troop-select');
+                    const fixedAmountsInput = troopItem.querySelector('.fixed-amounts-input');
+
+                    if (troopSelect.value && fixedAmountsInput.value.trim()) {
+                        const troopCode = parseInt(troopSelect.value);
+
+                        // Parse comma-separated fixed amounts
+                        const fixedAmounts = fixedAmountsInput.value
+                            .split(',')
+                            .map(amount => parseInt(amount.trim()))
+                            .filter(amount => !isNaN(amount) && amount > 0);
+
+                        if (fixedAmounts.length > 0) {
+                            levelRange.troops.push({
+                                "code": troopCode,
+                                "name": troopSelect.options[troopSelect.selectedIndex].text,
+                                "fixed_amounts": fixedAmounts
+                            });
+                        }
+                    }
+                });
+
+                monsters.push(monster);
+            });
+
+            return monsters;
+        }
+
+        function collectMonsterAttackTargetsFromUI() {
+            const container = document.getElementById('monster-attack-monsters');
+            const monsters = [];
+
+            container.querySelectorAll('.monster-card').forEach(card => {
+                const checkbox = card.querySelector('.monster-checkbox');
+                if (!checkbox.checked) return;
+
+                const monsterNameElement = card.querySelector('.monster-name');
+                const monsterName = monsterNameElement.value || monsterNameElement.textContent;
+                const monsterCode = parseInt(checkbox.dataset.monsterCode) || getMonsterCodeByName(monsterName);
+                const minLevel = parseInt(card.querySelector('.min-level').value) || 1;
+                const maxLevel = parseInt(card.querySelector('.max-level').value) || 10;
+
+                // Create level ranges array for monster attack (different structure)
+                const levelRanges = [];
+                for (let level = minLevel; level <= maxLevel; level++) {
+                    levelRanges.push(level);
+                }
+
+                const monster = {
+                    "monster_code": monsterCode,
+                    "monster_name": monsterName,
+                    "level_ranges": levelRanges
+                };
+
+                monsters.push(monster);
+            });
+
+            return monsters;
+        }
+
+        function collectCommonTroopsFromUI() {
+            const commonTroopsList = document.getElementById('common-troops-list');
+            const troops = [];
+
+            if (commonTroopsList) {
+                commonTroopsList.querySelectorAll('.troop-item').forEach(troopItem => {
+                    const troopSelect = troopItem.querySelector('.troop-select');
+                    const amountInput = troopItem.querySelector('.troop-amount-input');
+
+                    if (troopSelect.value && amountInput.value !== '') {
+                        const troopCode = parseInt(troopSelect.value);
+                        const amount = parseInt(amountInput.value) || 0;
+
+                        troops.push({
+                            "code": troopCode,
+                            "name": troopSelect.options[troopSelect.selectedIndex].text,
+                            "amount": amount
+                        });
+                    }
+                });
+            }
+
+            return troops;
+        }
+
+        function getMonsterCodeByName(monsterName) {
+            const codes = {
+                'Deathkar': 20200201,
+                'Green Dragon': 20200202,
+                'Red Dragon': 20200203,
+                'Gold Dragon': 20200204,
+                'Magdar': 20200205,
+                'Orc': 20200101,
+                'Skeleton': 20200102,
+                'Golem': 20200103,
+                'Treasure Goblin': 20200104,
+                'Spartoi': 20700506,
+                'Ogre': 20700405,
+                'BF Orc': 20800401,
+                'BF Skeleton': 20800402,
+                'BF Golem': 20800403,
+                'BF Treasure Goblin': 20800404
+            };
+            return codes[monsterName] || 20200201;
+        }
+
+        function populateSocfObjectsConfig(jobs) {
+            console.log('Loading SOCF objects config:', jobs);
+
+            // Find socf_thread job
+            const socfJob = jobs.find(job => job.name === 'socf_thread');
+
+            // Set enabled state
+            document.getElementById('socf-objects-enabled').checked = socfJob?.enabled || false;
+
+            // Set gathering enabled state from main.object_scanning.enable_gathering
+            const gatheringEnabled = fullConfigData.main?.object_scanning?.enable_gathering || false;
+            document.getElementById('socf-gathering-enabled').checked = gatheringEnabled;
+
+            // Set max marches from main.object_scanning.max_marches
+            const maxMarchesInput = document.getElementById('socf-objects-max-marches');
+            if (fullConfigData.main?.object_scanning?.max_marches) {
+                maxMarchesInput.value = fullConfigData.main.object_scanning.max_marches;
+            }
+
+            // Set radius
+            const radiusInput = document.getElementById('socf-objects-radius');
+            if (socfJob?.kwargs?.radius) {
+                radiusInput.value = socfJob.kwargs.radius;
+            }
+
+            // Clear and populate objects
+            const container = document.getElementById('socf-objects-list');
+            container.innerHTML = '';
+
+            // Define default objects to show
+            const defaultObjects = [
+                { code: 20100105, name: "Crystal Mine", level: [1, 2, 3, 4, 5], enabled: true },
+                { code: 20100106, name: "Dragon Soul Cavern", level: [1, 2, 3, 4, 5], enabled: true }
+            ];
+
+            // If we have existing targets, use those; otherwise show default objects
+            let objectsToShow = [];
+            if (socfJob?.kwargs?.targets && socfJob.kwargs.targets.length > 0) {
+                objectsToShow = socfJob.kwargs.targets;
+            } else {
+                // Show only Crystal Mine and Dragon Soul Cavern by default
+                objectsToShow = defaultObjects;
+            }
+
+            objectsToShow.forEach(target => {
+                const card = createSocfObjectCard(target);
+                container.appendChild(card);
+            });
+
+            // If no objects were shown, add the two default objects
+            if (objectsToShow.length === 0) {
+                defaultObjects.forEach(defaultObject => {
+                    const card = createSocfObjectCard(defaultObject);
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function populateBuffManagementConfig(buffConfig) {
+            console.log('Loading buff management config:', buffConfig);
+
+            // Set enabled state
+            document.getElementById('buff-management-enabled').checked = buffConfig?.enabled || false;
+
+            // Clear and populate buffs
+            const container = document.getElementById('buff-management-list');
+            container.innerHTML = '';
+
+            // Define the ONLY allowed buff types (no old buffs)
+            const allowedBuffTypes = [
+                "Food Production Boost",
+                "Wood Production Boost",
+                "Stone Production Boost",
+                "Gold Production Boost",
+                "Gathering Speed Boost",
+                "Kingdom Shield",
+                "Anti Spying Shield"
+            ];
+
+            const specifiedBuffs = [
+                {
+                    "name": "Food Production Boost",
+                    "item_codes": [10102001, 10102002],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Wood Production Boost",
+                    "item_codes": [10102003, 10102004],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Stone Production Boost",
+                    "item_codes": [10102005, 10102006],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Gold Production Boost",
+                    "item_codes": [10102007, 10102008],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Gathering Speed Boost",
+                    "item_codes": [10102009, 10102010],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Kingdom Shield",
+                    "item_codes": [10102026, 10102027],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Anti Spying Shield",
+                    "item_codes": [10102021, 10102022],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                }
+            ];
+
+            if (buffConfig?.buffs && buffConfig.buffs.length > 0) {
+                // Only show buffs that are in our allowed list
+                buffConfig.buffs.forEach(buff => {
+                    if (allowedBuffTypes.includes(buff.name)) {
+                        const card = createBuffCard(buff);
+                        container.appendChild(card);
+                    }
+                });
+
+                // Add any missing specified buffs that weren't in the config
+                specifiedBuffs.forEach(specifiedBuff => {
+                    const existingBuff = buffConfig.buffs.find(b => b.name === specifiedBuff.name);
+                    if (!existingBuff) {
+                        const card = createBuffCard(specifiedBuff);
+                        container.appendChild(card);
+                    }
+                });
+            } else {
+                // Add all specified buff types if none exist
+                specifiedBuffs.forEach(buff => {
+                    const card = createBuffCard(buff);
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function createBuffCard(buff) {
+            const card = document.createElement('div');
+            card.className = 'monster-card';
+
+            card.innerHTML = `
+                <div class="monster-header">
+                    <input type="checkbox" class="monster-checkbox" ${buff.enabled ? 'checked' : ''} data-buff-name="${buff.name}">
+                    <span class="monster-name">${buff.name}</span>
+                </div>
+
+                <div class="level-inputs">
+                    <div class="input-group">
+                        <label class="input-label">Minimum Duration (minutes):</label>
+                        <input type="number" class="input-field min-duration" value="${buff.min_duration_minutes || 20}" min="1" max="1440">
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                            Activate buff if remaining time is less than this
+                        </small>
+                    </div>
+                    <!-- Item codes are now hidden and automatically managed -->
+                    <input type="hidden" class="item-codes" value="${(buff.item_codes || []).join(', ')}">
+                </div>
+            `;
+
+            return card;
+        }
+
+        function collectBuffManagementFromUI() {
+            const container = document.getElementById('buff-management-list');
+            const buffs = [];
+
+            container.querySelectorAll('.monster-card').forEach(card => {
+                const checkbox = card.querySelector('.monster-checkbox');
+                const nameElement = card.querySelector('.monster-name');
+                const durationInput = card.querySelector('.min-duration');
+                const itemCodesInput = card.querySelector('.item-codes');
+
+                const buffName = nameElement.textContent;
+                const enabled = checkbox.checked;
+                const minDuration = parseInt(durationInput.value) || 20;
+
+                // Parse item codes
+                const itemCodesText = itemCodesInput.value.trim();
+                const itemCodes = itemCodesText ?
+                    itemCodesText.split(',').map(code => parseInt(code.trim())).filter(code => !isNaN(code)) :
+                    [];
+
+                buffs.push({
+                    "name": buffName,
+                    "item_codes": itemCodes,
+                    "enabled": enabled,
+                    "min_duration_minutes": minDuration
+                });
+            });
+
+            return buffs;
+        }
+
+        function populateSkillsConfig(config) {
+            console.log('Loading skills config:', config);
+
+            // Set enabled state
+            document.getElementById('skills-enabled').checked = config.enabled || false;
+
+            // Clear and populate skills
+            const container = document.getElementById('skills-list');
+            container.innerHTML = '';
+
+            // Define skill names mapping
+            const skillNames = {
+                10001: "Instant Harvest",
+                10002: "Accelerated Gathering",
+                10003: "Attack Boost",
+                10004: "Defense Boost",
+                10005: "Gathering Speed",
+                10006: "Training Speed"
+            };
+
+            if (config.skills && config.skills.length > 0) {
+                config.skills.forEach(skill => {
+                    const skillCode = skill.code;
+                    const skillName = skillNames[skillCode] || `Skill ${skillCode}`;
+                    const skillItem = document.createElement('div');
+                    skillItem.className = 'job-item';
+                    skillItem.innerHTML = `
+                        <div>
+                            <div class="job-name">${skillName}</div>
+                            <div class="job-description">Code: ${skillCode} - Auto-activate when available</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-skill-code="${skillCode}" ${skill.enabled ? 'checked' : ''}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    container.appendChild(skillItem);
+                });
+            } else {
+                // Add default skills if none configured
+                const defaultSkills = [
+                    {code: 10001, name: "Instant Harvest", enabled: false},
+                    {code: 10002, name: "Accelerated Gathering", enabled: false}
+                ];
+
+                defaultSkills.forEach(skill => {
+                    const skillItem = document.createElement('div');
+                    skillItem.className = 'job-item';
+                    skillItem.innerHTML = `
+                        <div>
+                            <div class="job-name">${skill.name}</div>
+                            <div class="job-description">Code: ${skill.code} - Auto-activate when available</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-skill-code="${skill.code}" ${skill.enabled ? 'checked' : ''}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    container.appendChild(skillItem);
+                });
+            }
+
+            // Add helpful note
+            const noteDiv = document.createElement('div');
+            noteDiv.style.marginTop = '16px';
+            noteDiv.style.padding = '12px';
+            noteDiv.style.backgroundColor = '#f8fafc';
+            noteDiv.style.borderRadius = '6px';
+            noteDiv.style.fontSize = '14px';
+            noteDiv.style.color = '#64748b';
+            noteDiv.innerHTML = `
+                <strong>Note:</strong> Skills will only activate if:
+                <ul style="margin: 8px 0 0 20px;">
+                    <li>The skill system is enabled above</li>
+                    <li>Individual skills are enabled</li>
+                    <li>The skill is not on cooldown</li>
+                    <li>You have sufficient MP</li>
+                </ul>
+            `;
+            container.appendChild(noteDiv);
+        }
+
+        function createSkillCard(skill, enabled) {
+            const card = document.createElement('div');
+            card.className = 'monster-card';
+
+            card.innerHTML = `
+                <div class="monster-header">
+                    <input type="checkbox" class="monster-checkbox" ${enabled ? 'checked' : ''} data-skill-code="${skill.code}">
+                    <span class="monster-name">${skill.name}</span>
+                    <small style="color: #64748b; font-size: 12px; margin-left: auto;">Code: ${skill.code}</small>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function populateTreasureConfig(treasureConfig) {
+            console.log('Loading treasure config:', treasureConfig);
+
+            // Set enabled state
+            document.getElementById('treasure-enabled').checked = treasureConfig?.enabled || false;
+
+            // Set treasure page
+            const treasurePageSelect = document.getElementById('treasure-page');
+            treasurePageSelect.value = treasureConfig?.page || 1;
+
+            // Set skin change enabled state
+            document.getElementById('treasure-skin-change-enabled').checked = treasureConfig?.skin_change_enabled || false;
+
+            // Set skin item ID
+            document.getElementById('treasure-skin-item-id').value = treasureConfig?.skin_item_id || '';
+
+            // Set skin change interval
+            document.getElementById('treasure-skin-change-interval').value = treasureConfig?.skin_change_interval || 60;
+        }
+
+        function collectSkillsFromUI() {
+            const container = document.getElementById('skills-list');
+            const skills = [];
+
+            container.querySelectorAll('.monster-card').forEach(card => {
+                const checkbox = card.querySelector('.monster-checkbox');
+                const skillCode = parseInt(checkbox.dataset.skillCode);
+                const enabled = checkbox.checked;
+
+                skills.push({
+                    "code": skillCode,
+                    "enabled": enabled
+                });
+            });
+
+            return skills;
+        }
+
+        function populateDsavipConfig(jobs) {
+            console.log('Loading DSA VIP config');
+
+            // Find DSA VIP chest claim job
+            const dsavipJob = jobs.find(job => job.name === 'dsavip_chest_claim');
+
+            // Set DSA VIP chest claim toggle
+            const dsavipChestCheckbox = document.getElementById('dsavip-chest-enabled');
+            if (dsavipChestCheckbox) {
+                dsavipChestCheckbox.checked = dsavipJob ? dsavipJob.enabled : false;
+            }
+
+            // Set DSA VIP job enabled toggle  
+            const dsavipJobCheckbox = document.getElementById('dsavip-job-enabled');
+            if (dsavipJobCheckbox) {
+                dsavipJobCheckbox.checked = dsavipJob ? dsavipJob.enabled : false;
+            }
+        }
+
+        function populateSettingsConfig(jobs, threads) {
+            console.log('Loading settings config - jobs:', jobs, 'threads:', threads);
+
+            // Populate jobs
+            const jobsContainer = document.getElementById('jobs-list');
+            jobsContainer.innerHTML = '';
+
+            const jobDescriptions = {
+                'hospital_recover': 'Automatically heal wounded troops in hospital',
+                'wall_repair': 'Automatically repair wall damage',
+                'alliance_farmer': 'Claim gifts, help alliance members, donate research',
+                'mail_claim': 'Automatically claim mail rewards',
+                'caravan_farmer': 'Automatically collect caravan rewards',
+                'vip_chest_claim': 'Claim VIP chest rewards',
+                'harvester': 'Automatically harvest resources',
+                'socf_thread': 'Scan for objects in the field'
+            };
+
+            // Define all possible jobs with their default states
+            const allJobs = [
+                { name: 'hospital_recover', enabled: false },
+                { name: 'wall_repair', enabled: false },
+                { name: 'alliance_farmer', enabled: false },
+                { name: 'mail_claim', enabled: false },
+                { name: 'caravan_farmer', enabled: false },
+                { name: 'vip_chest_claim', enabled: false },
+                { name: 'harvester', enabled: false },
+                { name: 'socf_thread', enabled: false }
+            ];
+
+            // If jobs array is empty or incomplete, use all jobs with defaults
+            const jobsToShow = jobs.length > 0 ? jobs : allJobs;
+
+            // Add any missing jobs from the default list
+            allJobs.forEach(defaultJob => {
+                if (!jobsToShow.find(j => j.name === defaultJob.name)) {
+                    jobsToShow.push(defaultJob);
+                }
+            });
+
+            jobsToShow.forEach(job => {
+                // Skip 'use_resource_in_item_list' and 'dsavip_chest_claim' jobs - not editable by users in settings tab
+                if (job.name === 'use_resource_in_item_list' || job.name === 'dsavip_chest_claim') {
+                    return;
+                }
+
+                const jobItem = document.createElement('div');
+                jobItem.className = 'job-item';
+                jobItem.innerHTML = `
+                    <div>
+                        <div class="job-name">${job.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                        <div class="job-description">${jobDescriptions[job.name] || 'Job configuration'}</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" ${job.enabled ? 'checked' : ''} data-job-name="${job.name}">
+                        <span class="toggle-slider"></span>
+                    </label>
+                `;
+                jobsContainer.appendChild(jobItem);
+            });
+
+            // Populate threads
+            const threadsContainer = document.getElementById('threads-list');
+            threadsContainer.innerHTML = '';
+
+            const threadDescriptions = {
+                'free_chest_farmer_thread': 'Automatically open free chests',
+                'quest_monitor_thread': 'Monitor and complete quests',
+                'building_farmer_thread': 'Automatically upgrade buildings',
+                'academy_farmer_thread': 'Automatically research technologies',
+                'train_troop_thread': 'Continuously train troops'
+            };
+
+            // Define all possible threads with their default states
+            const allThreads = [
+                { name: 'free_chest_farmer_thread', enabled: false },
+                { name: 'quest_monitor_thread', enabled: false },
+                { name: 'building_farmer_thread', enabled: false },
+                { name: 'academy_farmer_thread', enabled: false },
+                { name: 'train_troop_thread', enabled: false }
+            ];
+
+            // If threads array is empty or incomplete, use all threads with defaults
+            const threadsToShow = threads.length > 0 ? threads : allThreads;
+
+            // Add any missing threads from the default list
+            allThreads.forEach(defaultThread => {
+                if (!threadsToShow.find(t => t.name === defaultThread.name)) {
+                    threadsToShow.push(defaultThread);
+                }
+            });
+
+            threadsToShow.forEach(thread => {
+                const threadItem = document.createElement('div');
+                threadItem.className = 'thread-item';
+                threadItem.innerHTML = `
+                    <div>
+                        <div class="thread-name">${thread.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                        <div class="thread-description">${threadDescriptions[thread.name] || 'Thread configuration'}</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" ${thread.enabled ? 'checked' : ''} data-thread-name="${thread.name}">
+                        <span class="toggle-slider"></span>
+                    </label>
+                `;
+                threadsContainer.appendChild(threadItem);
+            });
+
+            // Populate alliance farmer features
+            populateAllianceFarmerFeatures(fullConfigData.main.jobs);
+        }
+
+        function populateAllianceFarmerFeatures(jobs) {
+            const container = document.getElementById('alliance-farmer-features');
+            if (!container) return;
+
+            // Find alliance farmer job
+            const allianceFarmerJob = jobs.find(job => job.name === 'alliance_farmer');
+            if (!allianceFarmerJob || !allianceFarmerJob.kwargs) {
+                container.innerHTML = '<p>Alliance farmer job not found or not configured.</p>';
+                return;
+            }
+
+            const kwargs = allianceFarmerJob.kwargs;
+
+            container.innerHTML = `
+                <div class="job-item">
+                    <div>
+                        <div class="job-name">Gift Claim</div>
+                        <div class="job-description">Automatically claim alliance gifts</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="alliance-gift-claim" ${kwargs.gift_claim ? 'checked' : ''}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="job-item">
+                    <div>
+                        <div class="job-name">Help All</div>
+                        <div class="job-description">Automatically help all alliance members</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="alliance-help-all" ${kwargs.help_all ? 'checked' : ''}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="job-item">
+                    <div>
+                        <div class="job-name">Research Donate</div>
+                        <div class="job-description">Automatically donate to alliance research</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="alliance-research-donate" ${kwargs.research_donate ? 'checked' : ''}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+            `;
+        }
+
+        function createSocfObjectCard(target) {
+            const card = document.createElement('div');
+            card.className = 'monster-card';
+
+            const objectName = target.name || `Object ${target.code}`;
+            const levels = Array.isArray(target.level) ? target.level.join(',') : '';
+
+            card.innerHTML = `
+                <div class="monster-header">
+                    <input type="checkbox" class="monster-checkbox" ${target.enabled !== false ? 'checked' : ''} data-object-code="${target.code}">
+                    <span class="monster-name">${objectName}</span>
+                    <button class="btn btn-danger" onclick="removeSocfObjectCard(this)" style="margin-left: auto;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+
+                <div class="input-group" style="margin-top: 16px;">
+                    <label class="input-label">Target Levels:</label>
+                    <input type="text" class="input-field levels-input" value="${levels}" placeholder="1,2,3,4,5 or leave empty for all levels">
+                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                        Comma-separated list of levels to target. Leave empty to target all levels.
+                    </small>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function addSelectedSocfObject() {
+            const selectElement = document.getElementById('socf-object-select');
+            const selectedValue = selectElement.value;
+
+            if (!selectedValue) {
+                alert('Please select an object to add');
+                return;
+            }
+
+            const [objectCode, objectName] = selectedValue.split('_');
+            const container = document.getElementById('socf-objects-list');
+
+            // Check if object already exists
+            const existingObjects = container.querySelectorAll('.monster-checkbox');
+            for (let checkbox of existingObjects) {
+                if (checkbox.dataset.objectCode === objectCode) {
+                    alert(`${objectName} is already configured`);
+                    return;
+                }
+            }
+
+            // Set default levels based on object type
+            let defaultLevels;
+            if (objectCode === '20100105') { // Crystal Mine
+                defaultLevels = [2, 3, 4];
+            } else if (objectCode === '20100106') { // Dragon Soul Cavern
+                defaultLevels = [2, 3, 4, 5];
+            } else if (['20100101', '20100102', '20100103', '20100104'].includes(objectCode)) { // Resources
+                defaultLevels = [7, 8, 9, 10];
+            } else { // Monsters
+                defaultLevels = [1, 2, 3];
+            }
+
+            const objectCard = createSocfObjectCard({
+                "code": parseInt(objectCode),
+                "name": objectName,
+                "level": defaultLevels,
+                "enabled": true
+            });
+            container.appendChild(objectCard);
+
+            // Reset select
+            selectElement.value = '';
+        }
+
+        function addNewSocfObject() {
+            // Keep this function for backwards compatibility, but use dropdown approach
+            addSelectedSocfObject();
+        }
+
+        function removeSocfObjectCard(button) {
+            if (confirm('Are you sure you want to remove this object configuration?')) {
+                button.closest('.object-card').remove();
+            }
+        }
+
+        function createCommonTroopItem(troop) {
+            const troopItem = document.createElement('div');
+            troopItem.className = 'troop-item';
+            troopItem.style.marginBottom = '12px';
+
+            troopItem.innerHTML = `
+                <select class="troop-select" data-troop-code="${troop.code}">
+                    <option value="${troop.code}" selected>${troop.name || getTroopNameByCode(troop.code)}</option>
+                    <!-- Tier 6 Troops -->
+                    <option value="50100106">Paladin (Tier 6 Infantry)</option>
+                    <option value="50100107">Destroyer (Tier 6 Infantry)</option>
+                    <option value="50100206">Marksman (Tier 6 Ranged)</option>
+                    <option value="50100207">Musketeer (Tier 6 Ranged)</option>
+                    <option value="50100306">Marauder (Tier 6 Cavalry)</option>
+                    <option value="50100307">Valkyrie (Tier 6 Cavalry)</option>
+                    <!-- Tier 5 Troops -->
+                    <option value="50100105">Crusader (Tier 5 Infantry)</option>
+                    <option value="50100205">Sniper (Tier 5 Ranged)</option>
+                    <option value="50100305">Dragoon (Tier 5 Cavalry)</option>
+                    <!-- Tier 4 Troops -->
+                    <option value="50100104">Guardian (Tier 4 Infantry)</option>
+                    <option value="50100204">Crossbow Man (Tier 4 Ranged)</option>
+                    <option value="50100304">Iron Cavalry (Tier 4 Cavalry)</option>
+                    <!-- Tier 3 Troops -->
+                    <option value="50100103">Knight (Tier 3 Infantry)</option>
+                    <option value="50100203">Ranger (Tier 3 Ranged)</option>
+                    <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
+                </select>
+                <div class="input-group" style="flex: 1; margin-left: 12px;">
+                    <label class="input-label">Amount:</label>
+                    <input type="number" class="troop-amount-input" value="${troop.amount || 0}" min="0" style="width: 100px;">
+                </div>
+                <button class="btn btn-danger" onclick="removeCommonTroopItem(this)">Remove</button>
+            `;
+
+            return troopItem;
+        }
+
+        function addCommonTroop() {
+            const commonTroopsList = document.getElementById('common-troops-list');
+            const troopItem = createCommonTroopItem({
+                "code": 50100303,
+                "name": 'Heavy Cavalry (Tier 3 Cavalry)',
+                "amount": 100
+            });
+            commonTroopsList.appendChild(troopItem);
+        }
+
+        function removeCommonTroopItem(button) {
+            button.closest('.troop-item').remove();
+        }
+
+        function updateSocfObjectsUI() {
+            const socfEnabled = document.getElementById('socf-objects-enabled').checked;
+            document.getElementById('rally-join-enabled').disabled = socfEnabled;
+            document.getElementById('rally-start-enabled').disabled = socfEnabled;
+
+            if (socfEnabled) {
+                document.getElementById('rally-join-enabled').checked = false;
+                document.getElementById('rally-start-enabled').checked = false;
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>

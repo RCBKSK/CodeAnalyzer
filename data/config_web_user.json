@@ -1,0 +1,19 @@
+{
+  "discord": {
+    "user_id": "web_user"
+  },
+  "rally": {
+    "join": {
+      "enabled": false,
+      "numMarch": 8,
+      "level_based_troops": true,
+      "targets": []
+    },
+    "start": {
+      "enabled": false,
+      "numMarch": 6,
+      "level_based_troops": true,
+      "targets": []
+    }
+  }
+}
