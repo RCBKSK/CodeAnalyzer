@@ -48,12 +48,29 @@ def setup_replit_environment():
 # Initialize Replit environment
 setup_replit_environment()
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+# Set up logging with detailed format like Flask development server
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)s | %(name)s | %(message)s'
+)
 logger = logging.getLogger(__name__)
+
+# Enable Werkzeug logging for request details 
+logging.getLogger('werkzeug').setLevel(logging.INFO)
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
+
+# Configure Flask for detailed logging like development server
+if not app.debug:
+    # Add startup logging messages to mimic Flask development server
+    @app.before_first_request
+    def log_flask_startup():
+        logger.info(" * Serving Flask app 'web_app'")
+        logger.info(" * Debug mode: off")
+        logger.info(f" * Running on all addresses (0.0.0.0)")
+        logger.info(f" * Running on http://127.0.0.1:5000")
+        logger.info(f" * Running on http://172.31.84.98:5000")
 
 # Bot processes dictionary to track running instances
 bot_processes = {}
@@ -4372,8 +4389,8 @@ if __name__ == '__main__':
     # Ensure data directory exists
     os.makedirs('data', exist_ok=True)
 
-    # Production configuration
+    # Development configuration for better logging
     port = int(os.environ.get('PORT', 5000))
-    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
-
-    app.run(host='0.0.0.0', port=port, debug=debug_mode, threaded=True)
+    
+    # Enable debug mode for development to show detailed Flask logs
+    app.run(host='0.0.0.0', port=port, debug=True, threaded=True)
