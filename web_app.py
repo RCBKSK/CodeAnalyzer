@@ -996,72 +996,32 @@ def health_check():
         'service': 'LokBot Web App'
     }), 200
 
-@app.route('/api/notifications/stream')
+@app.route('/api/notifications/poll')
 @login_required
-def notification_stream():
+def notification_poll():
+    """Poll-based notification endpoint that doesn't cause worker timeouts"""
     user_id = session['user_id']
-    user_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.environ.get('REMOTE_ADDR', 'Unknown'))
-    logger.info(f"Starting notification stream for user: {user_id} from IP: {user_ip}")
+    
+    # Create a queue for this user if it doesn't exist
+    if user_id not in notification_queues:
+        notification_queues[user_id] = queue.Queue(maxsize=25)
 
-    def event_stream():
-        # Create a queue for this user if it doesn't exist
-        if user_id not in notification_queues:
-            notification_queues[user_id] = queue.Queue(maxsize=25)
-            logger.info(f"Created new notification queue for user: {user_id}")
-
-        q = notification_queues[user_id]
-        connection_id = f"{user_id}_{int(time.time())}"
-
-        try:
-            # Send initial connection message with shorter retry interval
-            yield f"retry: 5000\n"
-            yield f"data: {json.dumps({'type': 'connected', 'message': f'Connected to notification stream', 'connection_id': connection_id})}\n\n"
-
-            heartbeat_counter = 0
-            while True:
-                try:
-                    # Use shorter timeout to prevent worker timeout
-                    notification = q.get(timeout=10)
-                    logger.debug(f"Sending notification to user {user_id}: {notification}")
-                    yield f"data: {json.dumps(notification)}\n\n"
-                    heartbeat_counter = 0
-                except queue.Empty:
-                    # Send heartbeat more frequently to keep connection alive
-                    heartbeat_counter += 1
-                    yield f"data: {json.dumps({'type': 'heartbeat', 'count': heartbeat_counter})}\n\n"
-
-                    # Close connection after 5 heartbeats (50 seconds) to prevent worker timeout
-                    if heartbeat_counter > 5:
-                        logger.info(f"Closing notification stream for user {user_id} to prevent timeout")
-                        break
-                except GeneratorExit:
-                    break
-                except Exception as e:
-                    logger.error(f"Error in notification stream for user {user_id}: {str(e)}")
-                    break
-        except Exception as e:
-            logger.error(f"Error in event_stream generator for user {user_id}: {str(e)}")
-            yield f"data: {json.dumps({'type': 'error', 'message': 'Connection error'})}\n\n"
-
-    response = Response(event_stream(), mimetype="text/event-stream")
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    response.headers['Connection'] = 'keep-alive'
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = 'Cache-Control'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['X-Accel-Buffering'] = 'no'  # Disable nginx buffering
-
-    # Cleanup old queues periodically
-    import threading
-    def cleanup_old_queues():
-        for uid in list(notification_queues.keys()):
-            if notification_queues[uid].qsize() == 0:
-                # Check if queue has been inactive - implement your logic here
-                pass
-
-    return response
+    q = notification_queues[user_id]
+    notifications = []
+    
+    # Get all available notifications without blocking
+    try:
+        while not q.empty() and len(notifications) < 10:
+            notification = q.get_nowait()
+            notifications.append(notification)
+    except queue.Empty:
+        pass
+    
+    return jsonify({
+        'notifications': notifications,
+        'count': len(notifications),
+        'timestamp': time.time()
+    })
 
 @app.route('/api/notifications/history')
 @login_required
