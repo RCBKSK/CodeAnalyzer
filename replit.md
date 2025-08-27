@@ -1,7 +1,14 @@
 
 # LokBot - Automated Game Bot for League of the Kingdoms
 
-LokBot is a sophisticated automation bot for the Lords of the Kingdoms game, featuring both Discord bot integration and a web-based control panel. The bot automates various game activities including rally participation, monster attacks, resource gathering, and object scanning.
+LokBot is a comprehensive automation bot for League of the Kingdoms game, imported from https://github.com/RCBKSK/new-dev/. This sophisticated system features 4335+ lines of game automation logic, Discord bot integration, and a full-featured web control panel. The bot automates various game activities including rally participation, monster attacks, resource gathering, and advanced object scanning.
+
+## Recent Changes (August 27, 2025)
+- ✅ **Successfully imported complete bot from GitHub repository**
+- ✅ **Fixed worker timeout issues in notification streaming**
+- ✅ **Deployed working Flask web application**
+- ✅ **Integrated lokbot module with advanced game automation**
+- ✅ **Set up multi-configuration support for different automation modes**
 
 ## Features
 

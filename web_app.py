@@ -1013,27 +1013,26 @@ def notification_stream():
         connection_id = f"{user_id}_{int(time.time())}"
 
         try:
-            # Send initial connection message with retry header
-            yield f"retry: 10000\n"
+            # Send initial connection message with shorter retry interval
+            yield f"retry: 5000\n"
             yield f"data: {json.dumps({'type': 'connected', 'message': f'Connected to notification stream', 'connection_id': connection_id})}\n\n"
 
             heartbeat_counter = 0
             while True:
                 try:
-                    # Wait for notification with longer timeout for better performance
-                    notification = q.get(timeout=30)
+                    # Use shorter timeout to prevent worker timeout
+                    notification = q.get(timeout=10)
                     logger.debug(f"Sending notification to user {user_id}: {notification}")
                     yield f"data: {json.dumps(notification)}\n\n"
                     heartbeat_counter = 0
                 except queue.Empty:
-                    # Send heartbeat every 60 seconds for better performance
+                    # Send heartbeat more frequently to keep connection alive
                     heartbeat_counter += 1
-                    if heartbeat_counter % 3 == 0:  # Only send every third heartbeat
-                        yield f"data: {json.dumps({'type': 'heartbeat', 'count': heartbeat_counter})}\n\n"
+                    yield f"data: {json.dumps({'type': 'heartbeat', 'count': heartbeat_counter})}\n\n"
 
-                    # Close connection after 3 minutes of inactivity
-                    if heartbeat_counter > 6:
-                        logger.info(f"Closing inactive notification stream for user {user_id}")
+                    # Close connection after 5 heartbeats (50 seconds) to prevent worker timeout
+                    if heartbeat_counter > 5:
+                        logger.info(f"Closing notification stream for user {user_id} to prevent timeout")
                         break
                 except GeneratorExit:
                     break
