@@ -3444,6 +3444,8 @@ Status: Available to join"""
 
                                     # Check if target already has a rally
                                     try:
+                                        import time
+                                        distance = 0  # Initialize distance
                                         march_info = self.api.field_march_info({
                                             'fromId':
                                             self.kingdom_enter.get('kingdom').get(
@@ -3497,44 +3499,24 @@ Status: Available to join"""
                                             )
                                             continue
 
-                                        # Check if target already has a rally
+                                        # Create rally data
+                                        rally_data = {
+                                            'fromId':
+                                            self.kingdom_enter.get('kingdom').get(
+                                                'fieldObjectId'),
+                                            'marchType':
+                                            5,  # Rally march type
+                                            'toLoc':
+                                            loc,
+                                            'marchTroops':
+                                            march_troops,
+                                            'rallyTime':
+                                            rally_time,  # Rally time in minutes from config
+                                            'message':
+                                            rally_message  # Rally message from config
+                                        }
+
                                         try:
-                                            march_info = self.api.field_march_info({
-                                                'fromId':
-                                                self.kingdom_enter.get('kingdom').get(
-                                                    'fieldObjectId'),
-                                                'toLoc':
-                                                loc
-                                            })
-
-                                            # Check if monster is already being rallied
-                                            if march_info.get(
-                                                    'fo',
-                                                {}).get('occupied') or march_info.get(
-                                                    'fo', {}).get('rally'):
-                                                logger.info(
-                                                    f'Target at {loc} already has a rally, skipping'
-                                                )
-                                                continue
-
-                                            # Proceed with rally only if checks pass
-                                            rally_data = {
-                                                'fromId':
-                                                self.kingdom_enter.get('kingdom').get(
-                                                    'fieldObjectId'),
-                                                'marchType':
-                                                5,  # Rally march type
-                                                'toLoc':
-                                                loc,
-                                                'marchTroops':
-                                                march_troops,
-                                                'rallyTime':
-                                                rally_time,  # Rally time in minutes from config
-                                                'message':
-                                                rally_message  # Rally message from config
-                                            }
-
-                                            try:
                                                 # Final check that we have troops to send
                                                 if not march_troops or sum(
                                                         troop.get('amount', 0) for
@@ -3638,12 +3620,19 @@ Status: Available to join"""
                                                         )
                                                         time.sleep(wait_time)
                                                         continue
+                                        except Exception as e:
+                                            logger.error(f'Failed to start rally: {e}')
+                                    except Exception as e:
+                                        logger.error(
+                                            f"Failed to get march info: {str(e)}")
+                                        continue
                                 except Exception as e:
                                     logger.error(
                                         f"Failed to get march info: {str(e)}")
                                     continue
                             except Exception as e:
-                                logger.error(f'Failed to start rally: {e}')
+                                logger.error(f'Failed to process rally start: {e}')
+                                continue
                     else:
                         logger.info(
                             f'Level {level} not in allowed levels {allowed_levels}, ignore: {each_obj}'
