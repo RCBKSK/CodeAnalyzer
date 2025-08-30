@@ -2330,16 +2330,17 @@ def object_notification():
                 timestamp = int(time.time() * 1000)
                 instance_id = f"{user_id}_{timestamp}"
 
-        if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
-            # Try to get account name from existing bot processes first
-            if instance_id in bot_processes:
-                account_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+        # Always prioritize account name from bot_processes if available
+        if instance_id in bot_processes:
+            stored_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+            if stored_name and stored_name != 'Bot Instance':
+                account_name = stored_name
 
-            # If still no account name, generate one
-            if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
-                existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
-                instance_number = len(existing_instances) + 1
-                account_name = f"Bot Instance {instance_number}"
+        # Only generate generic name if absolutely no account name available
+        if not account_name or account_name in ['Unknown Instance', '']:
+            existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+            instance_number = len(existing_instances) + 1
+            account_name = f"Bot Instance {instance_number}"
 
         logger.info(f"Received object notification for user_id: {user_id}, instance: {instance_id}, account: {account_name}")
 
@@ -2386,16 +2387,17 @@ def gathering_notification():
                 timestamp = int(time.time() * 1000)
                 instance_id = f"{user_id}_{timestamp}"
 
-        if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
-            # Try to get account name from existing bot processes first
-            if instance_id in bot_processes:
-                account_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+        # Always prioritize account name from bot_processes if available
+        if instance_id in bot_processes:
+            stored_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+            if stored_name and stored_name != 'Bot Instance':
+                account_name = stored_name
 
-            # If still no account name, generate one
-            if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
-                existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
-                instance_number = len(existing_instances) + 1
-                account_name = f"Bot Instance {instance_number}"
+        # Only generate generic name if absolutely no account name available
+        if not account_name or account_name in ['Unknown Instance', '']:
+            existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+            instance_number = len(existing_instances) + 1
+            account_name = f"Bot Instance {instance_number}"
 
         logger.info(f"Received gathering notification for user_id: {user_id}, instance: {instance_id}, account: {account_name}")
 
