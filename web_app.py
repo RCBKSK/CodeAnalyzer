@@ -48,31 +48,12 @@ def setup_replit_environment():
 # Initialize Replit environment
 setup_replit_environment()
 
-# Set up logging with detailed format like Flask development server
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s | %(levelname)s | %(name)s | %(message)s'
-)
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Enable Werkzeug logging for request details 
-logging.getLogger('werkzeug').setLevel(logging.INFO)
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
-
-# Configure Flask for detailed logging like development server
-if not app.debug:
-    # Add startup logging messages to mimic Flask development server
-    def log_flask_startup():
-        logger.info(" * Serving Flask app 'web_app'")
-        logger.info(" * Debug mode: off")
-        logger.info(f" * Running on all addresses (0.0.0.0)")
-        logger.info(f" * Running on http://127.0.0.1:5000")
-        logger.info(f" * Running on http://172.31.84.98:5000")
-    
-    # Call startup logging immediately since before_first_request is deprecated
-    log_flask_startup()
 
 # Bot processes dictionary to track running instances
 bot_processes = {}
@@ -107,7 +88,7 @@ def cleanup_old_notifications():
                 original_count = len(notifications)
                 # Keep only notifications from the last 7 days
                 notifications_history[user_id][account_name] = [
-                    n for n in notifications 
+                    n for n in notifications
                     if n.get('timestamp', '') > cutoff_timestamp
                 ]
                 cleaned_count += original_count - len(notifications_history[user_id][account_name])
@@ -460,7 +441,7 @@ def has_config_access(username, config_file):
         if (config_file.startswith(f"{username}_") and config_file.endswith('.json')) or \
            (config_file.startswith('config_') and config_file.endswith('.json')) or \
            (config_file.endswith(f"_{username}.json")):
-            logger.info(f"User {username} granted access to new/user-specific config {config_file}")
+            logger.write(f"User {username} granted access to new/user-specific config {config_file}")
             return True
 
         logger.debug(f"User {username} denied access to {config_file} (not in assigned configs)")
@@ -608,14 +589,14 @@ def restart_bot_on_auth_failure(user_id, instance_id):
                         "name": f"{account_name} (Restarted)"
                     }
 
-                    add_notification(user_id, "bot_restart", "Bot Restarted", 
+                    add_notification(user_id, "bot_restart", "Bot Restarted",
                                    f"Bot {account_name} automatically restarted with fresh authentication and kingdom initialization")
                     logger.info(f"Successfully restarted bot {instance_id} for user {user_id} with complete initialization")
                     return True
 
             except Exception as e:
                 logger.error(f"Failed to restart bot {instance_id}: {str(e)}")
-                add_notification(user_id, "error", "Restart Failed", 
+                add_notification(user_id, "error", "Restart Failed",
                                f"Could not restart bot {account_name}: {str(e)}")
 
     except Exception as e:
@@ -642,7 +623,7 @@ def add_notification(user_id, notification_type, title, message, timestamp=None,
             # Use existing instance data
             target_instance = bot_processes[instance_id]
             if not account_name:
-                account_name = target_instance.get('name', f'Instance {instance_id.split("_")[-1]}')
+                account_name = target_instance.get('account_name') or target_instance.get('name', f'Instance {instance_id.split("_")[-1]}')
         elif instance_id and instance_id != "general":
             # Instance ID provided but not found in active processes
             # This could be a recently stopped instance, use provided data
@@ -710,8 +691,8 @@ def add_notification(user_id, notification_type, title, message, timestamp=None,
                 time_diff = abs((current_time - existing_time).total_seconds())
 
                 # More precise duplicate detection including instance_id
-                if (time_diff < 30 and 
-                    existing_notif['message'] == message and 
+                if (time_diff < 30 and
+                    existing_notif['message'] == message and
                     existing_notif['type'] == notification_type and
                     existing_notif.get('instance_id') == instance_id):
                     is_duplicate = True
@@ -754,7 +735,7 @@ def get_current_bot_instance():
 
         user_id = os.getenv('LOKBOT_USER_ID', 'web_user')
 
-        # First try to get from environment variable set by the bot process
+        # Use environment variables set when starting the bot process
         instance_id_env = os.getenv('LOKBOT_INSTANCE_ID')
         account_name_env = os.getenv('LOKBOT_ACCOUNT_NAME')
 
@@ -762,7 +743,7 @@ def get_current_bot_instance():
             # Use environment variables set when starting the bot process
             if instance_id_env in bot_processes:
                 proc_data = bot_processes[instance_id_env]
-                account_name = account_name_env or proc_data.get('name', f'Instance {instance_id_env.split("_")[-1]}')
+                account_name = account_name_env or proc_data.get('account_name') or proc_data.get('name', f'Instance {instance_id_env.split("_")[-1]}')
                 return instance_id_env, account_name
             else:
                 # Instance might have stopped, but we still have the env vars
@@ -774,7 +755,7 @@ def get_current_bot_instance():
         for proc_id, proc_data in bot_processes.items():
             try:
                 if proc_data["process"].pid == current_pid and proc_id.startswith(user_id):
-                    account_name = proc_data.get('name', f'Instance {proc_id.split("_")[-1]}')
+                    account_name = proc_data.get('account_name') or proc_data.get('name', f'Instance {proc_id.split("_")[-1]}')
                     return proc_id, account_name
             except (AttributeError, ProcessLookupError):
                 continue
@@ -785,7 +766,7 @@ def get_current_bot_instance():
             # Try to find any active instance for this user
             for proc_id, proc_data in bot_processes.items():
                 if proc_id.startswith(user_id) and proc_data["process"].poll() is None:
-                    account_name = proc_data.get('name', f'Instance {proc_id.split("_")[-1]}')
+                    account_name = proc_data.get('account_name') or proc_data.get('name', f'Instance {proc_id.split("_")[-1]}')
                     return proc_id, account_name
 
     except Exception as e:
@@ -928,7 +909,7 @@ def login():
                 temp_test_accounts[username]['active_sessions'].add(session_id)
 
             # Add login notification
-            add_notification(username, "login", "Successful Login", 
+            add_notification(username, "login", "Successful Login",
                            f"Logged in from {device_type} ({browser}) at IP: {user_ip}")
 
             return redirect(url_for('index'))
@@ -1127,9 +1108,9 @@ def get_notification_history():
 
                 # Check for duplicates before adding (more precise check)
                 existing = any(
-                    n.get('message') == notification['message'] and 
-                    n.get('type') == notification['type'] and 
-                    abs((datetime.fromisoformat(n['timestamp'].replace('Z', '+00:00')) - 
+                    n.get('message') == notification['message'] and
+                    n.get('type') == notification['type'] and
+                    abs((datetime.fromisoformat(n['timestamp'].replace('Z', '+00:00')) -
                          datetime.fromisoformat(notification['timestamp'].replace('Z', '+00:00'))).total_seconds()) < 1
                     for n in notifications_history[user_id][account_name]
                 )
@@ -1156,7 +1137,7 @@ def get_notification_history():
     # Add current active bot instances to available accounts
     for proc_id, proc_data in bot_processes.items():
         if proc_id.startswith(user_id) and proc_data["process"].poll() is None:
-            account_name = proc_data.get('name', f'Instance {proc_id}')
+            account_name = proc_data.get('account_name') or proc_data.get('name', f'Instance {proc_id}')
             if account_name not in available_accounts:
                 available_accounts.append(account_name)
 
@@ -1536,6 +1517,13 @@ def start_bot():
         # Generate account name with proper numbering
         account_name = data.get('account_name', f'Instance {instance_count + 1}')
 
+        # If no custom account name provided, try to extract from config file name
+        if account_name.startswith('Instance') and selected_config != 'config.json':
+            # Extract meaningful name from config file
+            config_name = selected_config.replace('.json', '').replace('config_', '').replace('_', ' ')
+            if config_name and len(config_name) > 0:
+                account_name = config_name.strip()
+
         # Set the current config in ConfigHelper FIRST (same as Discord bot)
         ConfigHelper.set_current_config(selected_config)
 
@@ -1622,13 +1610,13 @@ def start_bot():
 
                             # Handle authentication and connection errors with auto-restart
                             if "not_online" in line_lower or "noauthexception" in line_lower or "notOnlineException" in line_content:
-                                add_notification(user_id, "error", "Authentication Error", 
+                                add_notification(user_id, "error", "Authentication Error",
                                                "Bot lost connection - attempting automatic restart...")
                                 # Trigger automatic restart on authentication failure
                                 threading.Thread(target=restart_bot_on_auth_failure, args=[user_id, instance_id], daemon=True).start()
                                 continue
                             elif "failed to join rally" in line_lower and "not_online" in line_content:
-                                add_notification(user_id, "warning", "Rally Join Failed", 
+                                add_notification(user_id, "warning", "Rally Join Failed",
                                                "Rally join failed - bot needs to reconnect")
                                 continue
 
@@ -1642,7 +1630,7 @@ def start_bot():
                                     add_notification(user_id, "gathering", "Gathering Started", clean_message, account_name=account_name, instance_id=instance_id)
 
                             # Rally notifications
-                            elif "rally joined" in line_lower and "🔥" in line_content:
+                            elif "rally joined" in line_lower and "⚔️" in line_content:
                                 add_notification(user_id, "rally_join", "Rally Joined", line_content, account_name=account_name, instance_id=instance_id)
                             elif "rally started" in line_lower and "🏴" in line_content:
                                 add_notification(user_id, "rally_start", "Rally Started", line_content, account_name=account_name, instance_id=instance_id)
@@ -1660,7 +1648,7 @@ def start_bot():
                             # Crystal limit detection with auto-termination
                             elif "exceed_crystal_daily_quota" in line_content:
                                 # Send bold notification about crystal limit
-                                add_notification(user_id, "error", "🚨 Crystal Limit Reached", 
+                                add_notification(user_id, "error", "🚨 Crystal Limit Reached",
                                                "**Your Daily crystal limit is over, Please stop the bot**", account_name=account_name, instance_id=instance_id)
 
                                 # Auto-terminate the bot process
@@ -1676,14 +1664,14 @@ def start_bot():
                                                 process.kill()
                                                 process.wait()
                                         del bot_processes[instance_id]
-                                        add_notification(user_id, "bot_stop", "Bot Auto-Stopped", 
+                                        add_notification(user_id, "bot_stop", "Bot Auto-Stopped",
                                                        f"Bot {account_name} automatically stopped due to crystal limit", account_name=account_name, instance_id=instance_id)
                                 except Exception as e:
                                     logger.error(f"Error auto-terminating bot {instance_id}: {str(e)}")
                                 continue
                             # Enhanced error detection including token issues
                             elif any(token_error in line_lower for token_error in ["no_auth", "noauth", "401", "unauthorized", "token"]) and "error" in line_lower:
-                                add_notification(user_id, "error", "Token Error", 
+                                add_notification(user_id, "error", "Token Error",
                                                "Authentication token issue detected - attempting restart...", account_name=account_name, instance_id=instance_id)
                                 threading.Thread(target=restart_bot_on_auth_failure, args=[user_id, instance_id], daemon=True).start()
                                 continue
@@ -1731,7 +1719,7 @@ def start_bot():
                                     process.wait()
 
                             del bot_processes[instance_id]
-                            add_notification(user_id, "bot_stop", "Bot Auto-Stopped", 
+                            add_notification(user_id, "bot_stop", "Bot Auto-Stopped",
                                            f"Bot {account_name} auto-stopped after {auto_stop_duration} minutes.")
                             logger.info(f"Bot {account_name} auto-stopped after {auto_stop_duration} minutes.")
                     except Exception as e:
@@ -1750,6 +1738,7 @@ def start_bot():
                 "start_time": datetime.now(),
                 "user_id": user_id,
                 "name": account_name,
+                "account_name": account_name,  # Ensure both fields are set
                 "auto_stop_time": auto_stop_time,
                 "auto_stop_duration": auto_stop_duration,
             }
@@ -1848,7 +1837,7 @@ def stop_bot():
 
                         # Notify the instance owner
                         if instance_owner != "unknown":
-                            add_notification(instance_owner, "bot_stop", "Bot Stopped", 
+                            add_notification(instance_owner, "bot_stop", "Bot Stopped",
                                            f"Bot instance {account_name} was stopped", account_name=account_name, instance_id=instance_id)
 
                         # If admin stopped someone else's bot, log it
@@ -1921,7 +1910,7 @@ def get_status():
 
             # Add notification for unexpected process death
             if owner != 'unknown':
-                add_notification(owner, "bot_stop", "Bot Stopped", 
+                add_notification(owner, "bot_stop", "Bot Stopped",
                                f"Bot {account_name} stopped unexpectedly", account_name=account_name)
 
             del bot_processes[proc_id]
@@ -2330,16 +2319,27 @@ def object_notification():
 
         # Validate and generate proper instance information
         if not instance_id or instance_id == 'unknown':
-            # Generate a proper instance ID based on existing patterns
-            import time
-            timestamp = int(time.time() * 1000)
-            instance_id = f"{user_id}_{timestamp}"
+            # Try to get current instance first
+            current_instance_id, current_account_name = get_current_bot_instance()
+            if current_instance_id:
+                instance_id = current_instance_id
+                account_name = account_name or current_account_name
+            else:
+                # Generate a proper instance ID based on existing patterns
+                import time
+                timestamp = int(time.time() * 1000)
+                instance_id = f"{user_id}_{timestamp}"
 
         if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
-            # Generate a proper account name
-            existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
-            instance_number = len(existing_instances) + 1
-            account_name = f"Bot Instance {instance_number}"
+            # Try to get account name from existing bot processes first
+            if instance_id in bot_processes:
+                account_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+
+            # If still no account name, generate one
+            if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
+                existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+                instance_number = len(existing_instances) + 1
+                account_name = f"Bot Instance {instance_number}"
 
         logger.info(f"Received object notification for user_id: {user_id}, instance: {instance_id}, account: {account_name}")
 
@@ -2356,7 +2356,7 @@ def object_notification():
             title = "Object Found"
 
         # Add to notification system with validated instance information
-        add_notification(user_id, notification_type, title, data.get('formatted_message', 'Object found'), 
+        add_notification(user_id, notification_type, title, data.get('formatted_message', 'Object found'),
                         account_name=account_name, instance_id=instance_id)
 
         logger.info(f"Added notification for user {user_id} instance {instance_id} ({account_name}): {title}")
@@ -2375,16 +2375,27 @@ def gathering_notification():
 
         # Validate and generate proper instance information
         if not instance_id or instance_id == 'unknown':
-            # Generate a proper instance ID based on existing patterns
-            import time
-            timestamp = int(time.time() * 1000)
-            instance_id = f"{user_id}_{timestamp}"
+            # Try to get current instance first
+            current_instance_id, current_account_name = get_current_bot_instance()
+            if current_instance_id:
+                instance_id = current_instance_id
+                account_name = account_name or current_account_name
+            else:
+                # Generate a proper instance ID based on existing patterns
+                import time
+                timestamp = int(time.time() * 1000)
+                instance_id = f"{user_id}_{timestamp}"
 
         if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
-            # Generate a proper account name
-            existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
-            instance_number = len(existing_instances) + 1
-            account_name = f"Bot Instance {instance_number}"
+            # Try to get account name from existing bot processes first
+            if instance_id in bot_processes:
+                account_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+
+            # If still no account name, generate one
+            if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
+                existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+                instance_number = len(existing_instances) + 1
+                account_name = f"Bot Instance {instance_number}"
 
         logger.info(f"Received gathering notification for user_id: {user_id}, instance: {instance_id}, account: {account_name}")
 
@@ -2409,16 +2420,27 @@ def rally_notification():
 
         # Validate and generate proper instance information
         if not instance_id or instance_id == 'unknown':
-            # Generate a proper instance ID based on existing patterns
-            import time
-            timestamp = int(time.time() * 1000)
-            instance_id = f"{user_id}_{timestamp}"
+            # Try to get current instance first
+            current_instance_id, current_account_name = get_current_bot_instance()
+            if current_instance_id:
+                instance_id = current_instance_id
+                account_name = account_name or current_account_name
+            else:
+                # Generate a proper instance ID based on existing patterns
+                import time
+                timestamp = int(time.time() * 1000)
+                instance_id = f"{user_id}_{timestamp}"
 
         if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
-            # Generate a proper account name
-            existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
-            instance_number = len(existing_instances) + 1
-            account_name = f"Bot Instance {instance_number}"
+            # Try to get account name from existing bot processes first
+            if instance_id in bot_processes:
+                account_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+
+            # If still no account name, generate one
+            if not account_name or account_name in ['Unknown Instance', 'Bot Instance']:
+                existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+                instance_number = len(existing_instances) + 1
+                account_name = f"Bot Instance {instance_number}"
 
         logger.info(f"Received rally notification for user_id: {user_id}, type: {notification_type}, instance: {instance_id}, account: {account_name}")
 
@@ -2752,7 +2774,7 @@ def admin_user_activity_monitor():
             user_instances = [
                 {
                     'instance_id': proc_id,
-                    'name': proc_data['name'],
+                    'name': proc_data.get('account_name') or proc_data.get('name', f'Instance {proc_id.split("_")[-1]}'),
                     'start_time': proc_data['start_time'].isoformat(),
                     'config_file': proc_data.get('config_file', 'config.json')
                 }
@@ -2930,7 +2952,7 @@ def manage_temp_test_accounts():
             remaining_hours = (data['expires_at'] - current_time).total_seconds() / 3600
             if remaining_hours > 0:
                 # Count active instances
-                active_instances = sum(1 for proc_id in bot_processes 
+                active_instances = sum(1 for proc_id in bot_processes
                                      if proc_id.startswith(test_id) and bot_processes[proc_id]["process"].poll() is None)
 
                 active_accounts.append({
@@ -2980,31 +3002,37 @@ def march_status_update():
     """Receive march status updates from bot instances"""
     try:
         data = request.get_json()
-        user_id = data.get('user_id')
-        instance_id = data.get('instance_id')
+        user_id = data.get('user_id', 'web_user')
+        instance_id = data.get('instance_id', 'unknown')
+        account_name = data.get('account_name', 'Bot Instance')
 
-        if not user_id or not instance_id:
-            return jsonify({'error': 'Missing user_id or instance_id'}), 400
+        current_marches = data.get('current_marches', 0)
+        march_limit = data.get('march_limit', 0)
+        march_size = data.get('march_size', 0)
+        timestamp = data.get('timestamp', time.time())
 
-        # Update bot process data with march information
+        # Update bot process data if instance exists
         if instance_id in bot_processes:
-            bot_processes[instance_id].update({
-                'current_marches': data.get('current_marches', 0),
-                'march_limit': data.get('march_limit', 0),
-                'march_size': data.get('march_size', 0),
-                'last_march_update': data.get('timestamp', time.time())
-            })
+            # Update march data
+            bot_processes[instance_id]['current_marches'] = current_marches
+            bot_processes[instance_id]['march_limit'] = march_limit
+            bot_processes[instance_id]['march_size'] = march_size
+            bot_processes[instance_id]['last_march_update'] = timestamp
 
-        # Clear status cache to force refresh
-        global statusCache, lastStatusUpdate
-        statusCache = None
-        lastStatusUpdate = 0
+            # Ensure the account name is properly set in bot_processes
+            if not bot_processes[instance_id].get('account_name') and account_name != 'Bot Instance':
+                bot_processes[instance_id]['account_name'] = account_name
 
-        return jsonify({'success': True})
+            # Use the name from bot_processes if available (this contains the actual account name)
+            stored_name = bot_processes[instance_id].get('name')
+            if stored_name and stored_name != account_name:
+                account_name = stored_name
 
+        logger.debug(f"March status update for {account_name} (instance: {instance_id}): {current_marches}/{march_limit} marches")
+        return jsonify({'status': 'success'})
     except Exception as e:
-        logger.error(f"Error updating march status: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"Error in march_status_update: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/users/<username>/reset_password', methods=['POST'])
 @login_required
@@ -3351,7 +3379,7 @@ def get_march_status():
 
                 # Verify process is actually running
                 if process.poll() is None:
-                    account_name = proc_data.get('name', f'Instance {proc_id.split("_")[-1]}')
+                    account_name = proc_data.get('account_name') or proc_data.get('name', f'Instance {proc_id.split("_")[-1]}')
                     config_file = proc_data.get('config_file', 'config.json')
 
                     # Get cached march data if available
@@ -4253,7 +4281,7 @@ def create_temp_test_account():
     # Auto-assign specific config files to test accounts
     test_config_files = [
         "Nodes Finder.json",
-        "Auto Rally CVC.json", 
+        "Auto Rally CVC.json",
         "Auto Monster Attack.json"
     ]
 
@@ -4391,8 +4419,8 @@ if __name__ == '__main__':
     # Ensure data directory exists
     os.makedirs('data', exist_ok=True)
 
-    # Development configuration for better logging
+    # Production configuration
     port = int(os.environ.get('PORT', 5000))
-    
-    # Enable debug mode for development to show detailed Flask logs
-    app.run(host='0.0.0.0', port=port, debug=True, threaded=True)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+
+    app.run(host='0.0.0.0', port=port, debug=debug_mode, threaded=True)

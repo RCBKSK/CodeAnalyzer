@@ -932,7 +932,16 @@ class LokFarmer:
 
             user_id = os.getenv('LOKBOT_USER_ID', 'web_user')
             instance_id = os.getenv('LOKBOT_INSTANCE_ID', 'unknown')
-            account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
+            account_name = os.getenv('LOKBOT_ACCOUNT_NAME')
+
+            # If no account name in environment, try to get it from a more reliable source
+            if not account_name or account_name in ['Bot Instance', 'unknown']:
+                # Generate a meaningful account name based on instance timing
+                if instance_id != 'unknown' and '_' in instance_id:
+                    timestamp_part = instance_id.split('_')[-1]
+                    account_name = f'Bot {timestamp_part[-4:]}'  # Use last 4 digits of timestamp for better naming
+                else:
+                    account_name = f'Bot {user_id[-4:] if len(user_id) > 4 else user_id}'  # Use last 4 chars of user_id
 
             march_data = {
                 'user_id': user_id,
@@ -1451,7 +1460,7 @@ Location: {to_loc}
 Started: {started_time}
 Expected End: {ended_time}"""
 
-                    response = requests.post('http://localhost:6481/api/gathering_notification',
+                    response = requests.post('http://localhost:5000/api/gathering_notification',
                         json={
                             'resource_type': resource_type,
                             'resource_code': resource_code,
@@ -1684,7 +1693,7 @@ Expected End: {ended_time}"""
 
                 crystal_message = "🚨 **CRYSTAL LIMIT REACHED** - Your Daily Crystal Limit is Over, Please Stop the Bot"
 
-                response = requests.post('http://localhost:6481/api/crystal_limit_notification',
+                response = requests.post('http://localhost:5000/api/crystal_limit_notification',
                     json={
                         'user_id': user_id,
                         'instance_id': instance_id,
@@ -2042,7 +2051,7 @@ Expected End: {ended_time}"""
                         # Determine troop type
                         troop_type = "Unknown"
                         for troop in march_troops:
-                            code = troop.get('code')
+                            code = troop.get('code', 0)
                             if code >= 50100305:  # T5
                                 troop_type = "T5"
                                 break
@@ -2527,7 +2536,7 @@ Troops Sent: {total_troops} {troop_type}
 Rally ID: {rally_id}"""
 
                 # Send to web app notification system
-                response = requests.post('http://localhost:6481/api/rally_notification',
+                response = requests.post('http://localhost:5000/api/rally_notification',
                     json={
                         'user_id': user_id,
                         'notification_type': 'rally_join',
@@ -2738,7 +2747,7 @@ Rally ID: {rally_id}"""
                 if data:
                     for item in data:
                         param = item.get('param', {})
-                        if (param.get('itemCode') == ITEM_CODE_GOLDEN_HAMMER or
+                        if (param.get('itemCode') == ITEM_CODE_GOLDEN_HAMMER or 
                             param.get('code') == ITEM_CODE_GOLDEN_HAMMER):
                             golden_hammer_active = True
                             break
@@ -2794,7 +2803,7 @@ Location: {location}
 Status: Available to join"""
 
                 # Send to web app notification system
-                response = requests.post('http://localhost:6481/api/rally_notification',
+                response = requests.post('http://localhost:5000/api/rally_notification',
                     json={
                         'user_id': user_id,
                         'notification_type': 'rally_alert',
@@ -3302,8 +3311,46 @@ Status: Available to join"""
 
                                 # Check if there are any existing rallies to this target
                                 try:
-                                    import time
-                                    distance = 0  # Initialize distance
+                                    battle_response = self.api.alliance_battle_list_v2(
+                                    )
+                                    if not isinstance(battle_response, dict):
+                                        logger.error(
+                                            f'Invalid response from alliance_battle_list_v2: {battle_response}'
+                                        )
+                                        continue
+                                    existing_rallies = battle_response.get(
+                                        'battles', [])
+                                except Exception as e:
+                                    logger.error(
+                                        f'Failed to fetch battle list: {e}')
+                                    continue
+                                target_loc_str = f"{loc[0]},{loc[1]},{loc[2]}"
+                                has_existing_rally = any(
+                                    battle.get('toLoc', '') == target_loc_str
+                                    for battle in existing_rallies)
+
+                                if has_existing_rally:
+                                    logger.info(
+                                        f'Target at {loc} already has an active rally, skipping'
+                                    )
+                                    continue
+
+                                # Check both march and rally limits
+                                if self._is_march_limit_exceeded():
+                                    logger.info(
+                                        'March limit exceeded, skipping rally start'
+                                    )
+                                    continue
+
+                                # Add initial delay before starting rally sequence
+                                initial_delay = random.uniform(3, 8)
+                                logger.info(
+                                    f'Adding initial delay of {initial_delay:.2f} seconds before checking rally conditions'
+                                )
+                                time.sleep(initial_delay)
+
+                                # Get march info first to check available troops
+                                try:
                                     march_info = self.api.field_march_info({
                                         'fromId':
                                         self.kingdom_enter.get('kingdom').get(
@@ -3312,180 +3359,354 @@ Status: Available to join"""
                                         loc
                                     })
 
-                                    # Check if monster is already being rallied
-                                    if march_info.get(
-                                            'fo',
-                                        {}).get('occupied') or march_info.get(
-                                            'fo', {}).get('rally'):
+                                    # Build available troops dictionary
+                                    available_troops = {}
+                                    for troop in march_info.get('troops', []):
+                                        troop_code = troop.get('code')
+                                        troop_count = troop.get('amount', 0)
+                                        available_troops[troop_code] = troop_count
+
+                                    # Initialize march_troops before using it
+                                    march_troops = []
+
+                                    # Find the monster configuration in rally start config
+                                    monster_config = next(
+                                    (target
+                                     for target in config.get('rally', {}).get(
+                                             'start', {}).get('targets', [])
+                                         if target.get('monster_code') == code),
+                                        None)
+
+                                    if not monster_config:
                                         logger.info(
-                                            f'Target at {loc} already has a rally, skipping'
+                                            f'No rally start configuration found for monster code {code}'
                                         )
                                         continue
 
-                                    # Proceed with rally only if checks pass
-                                    rally_time = 10  # Default rally time
-                                    rally_message = f"{monster_config.get('monster_name', 'Monster')} Rally ({distance} tiles)"  # Include distance in message
+                                    # Prepare march troops based on level configuration
+                                    if monster_config.get('level_ranges'):
+                                        # Find matching level range
+                                        level_range = next(
+                                            (lr for lr in monster_config['level_ranges']
+                                             if lr.get('min_level', 0) <= level <=
+                                             lr.get('max_level', float('inf'))), None)
 
-                                    # Get the level range configuration that was used for troops
-                                    level_range_config = next(
-                                        (lr for lr in monster_config.get(
-                                            'level_ranges', [])
-                                         if lr.get('min_level', 0) <= level <=
-                                         lr.get('max_level', float('inf'))), None)
+                                        if level_range and 'troops' in level_range:
+                                            for troop in level_range['troops']:
+                                                # Check if using new fixed_amounts system
+                                                fixed_amounts = troop.get('fixed_amounts', [])
+                                                if fixed_amounts:
+                                                    # Use new fixed amounts system - randomly select one amount
+                                                    random_amount = random.choice(fixed_amounts)
+                                                    logger.info(
+                                                        f'Selected {random_amount} troops of code {troop.get("code")} from fixed amounts: {fixed_amounts}'
+                                                    )
+                                                    march_troops.append({
+                                                        'code':
+                                                        troop.get('code'),
+                                                        'level':
+                                                        0,
+                                                        'select':
+                                                        0,
+                                                        'amount':
+                                                        random_amount,
+                                                        'dead':
+                                                        0,
+                                                        'wounded':
+                                                        0,
+                                                        'hp':
+                                                        0,
+                                                        'attack':
+                                                        0,
+                                                        'defense':
+                                                        0,
+                                                        'seq':
+                                                        0
+                                                    })
+                                                else:
+                                                    # Legacy support for min/max amounts (will be deprecated)
+                                                    min_amount = troop.get('min_amount', 0)
+                                                    max_amount = troop.get('max_amount', min_amount)
+                                                    if min_amount > 0:
+                                                        logger.warning(
+                                                            f'Using legacy min/max amounts for troop {troop.get("code")} - consider updating config to use "fixed_amounts"'
+                                                        )
+                                                        march_troops.append({
+                                                            'code':
+                                                            troop.get('code'),
+                                                            'level':
+                                                            0,
+                                                            'select':
+                                                            0,
+                                                            'amount':
+                                                            random.randint(min_amount, max_amount),
+                                                            'dead':
+                                                            0,
+                                                            'wounded':
+                                                            0,
+                                                            'hp':
+                                                            0,
+                                                            'attack':
+                                                            0,
+                                                            'defense':
+                                                            0,
+                                                            'seq':
+                                                            0
+                                                        })
 
-                                    # Update rally parameters if we have a matching level range
-                                    if level_range_config:
-                                        rally_time = level_range_config.get(
-                                            'rally_time', 10)
-                                        rally_message = level_range_config.get(
-                                            'message', rally_message)
-
-                                    # If no troops are configured or available, skip this rally
                                     if not march_troops:
                                         logger.info(
                                             'No troops configured for rally, skipping'
                                         )
                                         continue
 
-                                    logger.info(
-                                        f'Prepared march troops: {march_troops}')
+                                    # Check if we have enough troops before proceeding
+                                    has_any_troops = False
+                                    for troop in march_troops:
+                                        troop_code = troop.get('code')
+                                        needed_amount = troop.get('amount', 0)
 
-                                    # Check if march queue is full
-                                    if self._is_march_limit_exceeded():
+                                        # Skip if no troops needed
+                                        if needed_amount <= 0:
+                                            continue
+
+                                        # Only check troops available in the main troops array
+                                        available = 0
+                                        for t in march_info.get('troops', []):
+                                            if t.get('code') == troop_code:
+                                                available += t.get('amount', 0)
+
+                                        # Check if we have enough of this troop type
+                                        if available <= 0:
+                                            logger.info(
+                                                f'No troops of type {troop_code} available'
+                                            )
+                                            troop['amount'] = 0
+                                            continue
+
+                                        if available < needed_amount:
+                                            logger.info(
+                                                f'Not enough troops of type {troop_code}: need {needed_amount}, have {available}, skipping rally'
+                                            )
+                                            # Don't adjust - skip rally if we don't have enough troops
+                                            return False
+                                        else:
+                                            troop['amount'] = needed_amount
+                                            has_any_troops = True
+
+                                    # Only proceed if we have any troops to send
+                                    if not has_any_troops:
                                         logger.info(
-                                            'March limit exceeded, skipping rally start'
+                                            'No troops available for rally, skipping'
                                         )
                                         continue
 
-                                    # Create rally data
-                                    rally_data = {
-                                        'fromId':
-                                        self.kingdom_enter.get('kingdom').get(
-                                            'fieldObjectId'),
-                                        'marchType':
-                                        5,  # Rally march type
-                                        'toLoc':
-                                        loc,
-                                        'marchTroops':
-                                        march_troops,
-                                        'rallyTime':
-                                        rally_time,  # Rally time in minutes from config
-                                        'message':
-                                        rally_message  # Rally message from config
-                                    }
+                                    # Make sure we filter out any troops with zero amounts
+                                    march_troops = [
+                                        troop for troop in march_troops
+                                        if troop.get('amount', 0) > 0
+                                    ]
 
+                                    if not march_troops:
+                                        logger.info(
+                                            'No troops available after filtering zero-amount troops, skipping rally'
+                                        )
+                                        continue
+
+                                    logger.info(
+                                        f'Prepared march troops: {march_troops}')
+
+                                    # Check if target already has a rally
                                     try:
-                                            # Final check that we have troops to send
-                                            if not march_troops or sum(
-                                                    troop.get('amount', 0) for
-                                                    troop in march_troops) <= 0:
-                                                logger.info(
-                                                    'No troops available for rally, skipping'
-                                                )
-                                                continue
+                                        import time
+                                        distance = 0  # Initialize distance
+                                        march_info = self.api.field_march_info({
+                                            'fromId':
+                                            self.kingdom_enter.get('kingdom').get(
+                                                'fieldObjectId'),
+                                            'toLoc':
+                                            loc
+                                        })
 
+                                        # Check if monster is already being rallied
+                                        if march_info.get(
+                                                'fo',
+                                            {}).get('occupied') or march_info.get(
+                                                'fo', {}).get('rally'):
                                             logger.info(
-                                                f'Attempting to start rally with {sum(troop.get("amount", 0) for troop in march_troops)} troops'
+                                                f'Target at {loc} already has a rally, skipping'
                                             )
-                                            try:
-                                                res = self.api.field_rally_start(
-                                                    rally_data)
+                                            continue
 
-                                                if not res.get('result', False):
-                                                    error_code = res.get('err',
-                                                                         {}).get(
-                                                                             'code',
-                                                                             'unknown')
-                                                    logger.warning(
-                                                        f'Rally start failed with error: {error_code}'
+                                        # Proceed with rally only if checks pass
+                                        rally_time = 10  # Default rally time
+                                        rally_message = f"{monster_config.get('monster_name', 'Monster')} Rally ({distance} tiles)"  # Include distance in message
+
+                                        # Get the level range configuration that was used for troops
+                                        level_range_config = next(
+                                            (lr for lr in monster_config.get(
+                                                'level_ranges', [])
+                                             if lr.get('min_level', 0) <= level <=
+                                             lr.get('max_level', float('inf'))), None)
+
+                                        # Update rally parameters if we have a matching level range
+                                        if level_range_config:
+                                            rally_time = level_range_config.get(
+                                                'rally_time', 10)
+                                            rally_message = level_range_config.get(
+                                                'message', rally_message)
+
+                                        # If no troops are configured or available, skip this rally
+                                        if not march_troops:
+                                            logger.info(
+                                                'No troops configured for rally, skipping'
+                                            )
+                                            continue
+
+                                        logger.info(
+                                            f'Prepared march troops: {march_troops}')
+
+                                        # Check if march queue is full
+                                        if self._is_march_limit_exceeded():
+                                            logger.info(
+                                                'March limit exceeded, skipping rally start'
+                                            )
+                                            continue
+
+                                        # Create rally data
+                                        rally_data = {
+                                            'fromId':
+                                            self.kingdom_enter.get('kingdom').get(
+                                                'fieldObjectId'),
+                                            'marchType':
+                                            5,  # Rally march type
+                                            'toLoc':
+                                            loc,
+                                            'marchTroops':
+                                            march_troops,
+                                            'rallyTime':
+                                            rally_time,  # Rally time in minutes from config
+                                            'message':
+                                            rally_message  # Rally message from config
+                                        }
+
+                                        try:
+                                                # Final check that we have troops to send
+                                                if not march_troops or sum(
+                                                        troop.get('amount', 0) for
+                                                        troop in march_troops) <= 0:
+                                                    logger.info(
+                                                        'No troops available for rally, skipping'
                                                     )
                                                     continue
 
                                                 logger.info(
-                                                    f'Rally API Response: {res}')
-                                                logger.info(
-                                                    f'Successfully started rally against {monster_config.get("monster_name", "monster")} at {loc}'
+                                                    f'Attempting to start rally with {sum(troop.get("amount", 0) for troop in march_troops)} troops'
                                                 )
+                                                try:
+                                                    res = self.api.field_rally_start(
+                                                        rally_data)
 
-                                                # Send Discord notification if enabled
-                                                if config.get('discord', {}).get(
-                                                        'enabled', False):
-                                                    try:
-                                                        from lokbot.discord_webhook import DiscordWebhook
+                                                    if not res.get('result', False):
+                                                        error_code = res.get('err',
+                                                                             {}).get(
+                                                                                 'code',
+                                                                                 'unknown')
+                                                        logger.warning(
+                                                            f'Rally start failed with error: {error_code}'
+                                                        )
+                                                        continue
 
-                                                        # Use the rally webhook if configured
-                                                        webhook_url = config.get(
-                                                            'discord',
-                                                            {}).get('webhook_url')
-                                                        if config.get(
-                                                                'discord',
-                                                            {}).get(
-                                                                    'rally_webhook_url'):
+                                                    logger.info(
+                                                        f'Rally API Response: {res}')
+                                                    logger.info(
+                                                        f'Successfully started rally against {monster_config.get("monster_name", "monster")} at {loc}'
+                                                    )
+
+                                                    # Send Discord notification if enabled
+                                                    if config.get('discord', {}).get(
+                                                            'enabled', False):
+                                                        try:
+                                                            from lokbot.discord_webhook import DiscordWebhook
+
+                                                            # Use the rally webhook if configured
                                                             webhook_url = config.get(
-                                                                'discord', {}
-                                                            ).get('rally_webhook_url')
+                                                                'discord',
+                                                                {}).get('webhook_url')
+                                                            if config.get(
+                                                                    'discord',
+                                                                {}).get(
+                                                                    'rally_webhook_url'):
+                                                                webhook_url = config.get(
+                                                                    'discord', {}
+                                                                ).get('rally_webhook_url')
 
-                                                        if webhook_url:
-                                                            webhook = DiscordWebhook(
-                                                            webhook_url)
+                                                            if webhook_url:
+                                                                webhook = DiscordWebhook(
+                                                                webhook_url)
 
-                                                            # Determine troop type (highest tier sent)
-                                                            troop_type = "Troops"
-                                                            if any(
-                                                                    troop.get(
-                                                                        'code',
-                                                                        0) >= 50100306
-                                                                    for troop in
-                                                                    march_troops):
-                                                                troop_type = "T6"
-                                                            elif any(
-                                                                    troop.get(
-                                                                        'code',
-                                                                        0) >= 50100305
-                                                                    for troop in
-                                                                    march_troops):
-                                                                troop_type = "T5"
+                                                                # Determine troop type (highest tier sent)
+                                                                troop_type = "Troops"
+                                                                if any(
+                                                                        troop.get(
+                                                                            'code',
+                                                                            0) >= 50100306
+                                                                        for troop in
+                                                                        march_troops):
+                                                                    troop_type = "T6"
+                                                                elif any(
+                                                                        troop.get(
+                                                                            'code',
+                                                                            0) >= 50100305
+                                                                        for troop in
+                                                                        march_troops):
+                                                                    troop_type = "T5"
 
-                                                            # Send formatted notification
-                                                            total_troops = sum(
-                                                            troop.get('amount', 0)
-                                                            for troop in
-                                                            march_troops)
-                                                            user_id = config.get(
+                                                                # Send formatted notification
+                                                                total_troops = sum(
+                                                                troop.get('amount', 0)
+                                                                for troop in
+                                                                march_troops)
+                                                                user_id = config.get(
                                                             'discord',
                                                                 {}).get('user_id', '')
-                                                            webhook.send_message(
-                                                                f"Rally Started - {monster_config.get('monster_name', 'Monster')} - Level {level} - {total_troops} {troop_type} troops sent"
+                                                                webhook.send_message(
+                                                                    f"Rally Started - {monster_config.get('monster_name', 'Monster')} - Level {level} - {total_troops} {troop_type} troops sent"
+                                                                )
+                                                        except Exception as e:
+                                                            logger.error(
+                                                                f"Failed to send Discord notification: {e}"
                                                             )
-                                                    except Exception as e:
-                                                        logger.error(
-                                                            f"Failed to send Discord notification: {e}"
-                                                        )
-                                            except OtherException as error_code:
-                                                error_msg = str(error_code)
-                                                logger.error(
-                                                    f'Rally API Error: {error_msg}')
-                                                logger.error(
-                                                    f'Rally Data: {rally_data}')
+                                                except OtherException as error_code:
+                                                    error_msg = str(error_code)
+                                                    logger.error(
+                                                        f'Rally API Error: {error_msg}')
+                                                    logger.error(
+                                                        f'Rally Data: {rally_data}')
 
-                                                if error_msg in [
-                                                        'full_task',
-                                                        'same_target_rally'
-                                                ]:
-                                                    wait_time = 60 if error_msg == 'full_task' else 120
-                                                    logger.info(
-                                                        f'Rally failed due to {error_msg}, waiting {wait_time} seconds before next attempt'
-                                                    )
-                                                    time.sleep(wait_time)
-                                                    continue
-                                            except Exception as e:
-                                                logger.error(f"Failed to start rally: {e}")
+                                                    if error_msg in [
+                                                            'full_task',
+                                                            'same_target_rally'
+                                                    ]:
+                                                        wait_time = 60 if error_msg == 'full_task' else 120
+                                                        logger.info(
+                                                            f'Rally failed due to {error_msg}, waiting {wait_time} seconds before next attempt'
+                                                        )
+                                                        time.sleep(wait_time)
+                                                        continue
                                         except Exception as e:
-                                            logger.error(f"Failed to get march info: {str(e)}")
-                                            continue
+                                            logger.error(f'Failed to start rally: {e}')
                                     except Exception as e:
-                                        logger.error(f"Failed to process rally start: {e}")
+                                        logger.error(
+                                            f"Failed to get march info: {str(e)}")
                                         continue
+                                except Exception as e:
+                                    logger.error(
+                                        f"Failed to get march info: {str(e)}")
+                                    continue
+                            except Exception as e:
+                                logger.error(f'Failed to process rally start: {e}')
+                                continue
                     else:
                         logger.info(
                             f'Level {level} not in allowed levels {allowed_levels}, ignore: {each_obj}'
@@ -3575,7 +3796,7 @@ Status: {status}"""
                             instance_id = f"{user_id}_{timestamp}"
                             account_name = "Bot Instance"
 
-                            response = requests.post('http://localhost:6481/api/object_notification',
+                            response = requests.post('http://localhost:5000/api/object_notification',
                                 json={
                                     'object_type': obj_type,
                                     'object_name': object_name,

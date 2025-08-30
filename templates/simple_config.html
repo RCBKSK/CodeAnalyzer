@@ -1430,6 +1430,21 @@
             updateThemeIcon(savedTheme);
         }
 
+        // Add missing showNotification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
         // Make functions globally available
         window.switchTab = switchTab;
         window.toggleTheme = toggleTheme;
@@ -1441,6 +1456,16 @@
         window.renameConfig = renameConfig;
         window.loadSelectedConfig = loadSelectedConfig;
         window.deleteCurrentConfig = deleteCurrentConfig;
+        window.toggleJob = toggleJob;
+        window.toggleThread = toggleThread;
+        window.toggleAllianceFarmerFeature = toggleAllianceFarmerFeature;
+        window.addSelectedMonster = addSelectedMonster;
+        window.addSelectedSocfObject = addSelectedSocfObject;
+        window.removeMonsterCard = removeMonsterCard;
+        window.addTroopToCard = addTroopToCard;
+        window.removeTroopItem = removeTroopItem;
+        window.saveConfig = saveConfig;
+        window.showNotification = showNotification;
 
         // Load initial configuration when page loads
         $(document).ready(function () {
@@ -2253,176 +2278,6 @@
             attemptSave();
         }
 
-        function getDefaultConfig() {
-            return {
-                "buff_management": {
-                    "enabled": true,
-                    "buffs": [
-                        {"name": "Food Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102001, 10102002]},
-                        {"name": "Wood Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102003, 10102004]},
-                        {"name": "Stone Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102005, 10102006]},
-                        {"name": "Gold Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102007, 10102008]},
-                        {"name": "Gathering Speed Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102009, 10102010]},
-                        {"name": "Kingdom Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102026, 10102027]},
-                        {"name": "Anti Spying Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102021, 10102022]}
-                    ]
-                },
-                "discord": {
-                    "enabled": true,
-                    "enable_chat_monitoring": true,
-                    "webhook_url": "",
-                    "chat_webhook_url": "",
-                    "crystal_mine_level1_webhook_url": "",
-                    "custom_webhook_url": "",
-                    "dragon_soul_level2plus_webhook_url": "",
-                    "gathering_webhook_url": "",
-                    "level2plus_webhook_url": "",
-                    "level3plus_webhook_url": "",
-                    "monster_webhook_url": "",
-                    "occupied_resources_webhook_url": "",
-                    "rally_webhook_url": ""
-                },
-                "main": {
-                    "jobs": [
-                        {"enabled": true, "interval": {"start": 1200, "end": 1800}, "name": "hospital_recover"},
-                        {"enabled": false, "interval": {"start": 30, "end": 90}, "name": "wall_repair"},
-                        {
-                            "enabled": true,
-                            "interval": {"start": 120, "end": 200},
-                            "kwargs": {
-                                "gift_claim": true,
-                                "help_all": true,
-                                "research_donate": true,
-                                "shop_auto_buy_item_code_list": [10101008]
-                            },
-                            "name": "alliance_farmer"
-                        },
-                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "mail_claim"},
-                        {"enabled": true, "interval": {"start": 120, "end": 200}, "name": "caravan_farmer"},
-                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "use_resource_in_item_list"},
-                        {"enabled": true, "interval": {"start": 120, "end": 200}, "name": "vip_chest_claim"},
-                        {"enabled": false, "interval": {"start": 120, "end": 200}, "name": "dsavip_chest_claim"},
-                        {"enabled": false, "interval": {"start": 10, "end": 20}, "name": "harvester"},
-                        {
-                            "enabled": false,
-                            "interval": {"start": 1, "end": 1},
-                            "kwargs": {
-                                "radius": 16,
-                                "share_to": {"chat_channels": [0, 0]},
-                                "targets": [
-                                    {"code": 20100106, "enabled": false, "level": [2, 3, 4, 5], "name": "Dragon Soul Cavern"},
-                                    {"code": 20100101, "enabled": false, "level": [7, 8, 9, 10], "name": "Farm"},
-                                    {"code": 20100102, "enabled": false, "level": [7, 8, 9, 10], "name": "Gold Mine"},
-                                    {"code": 20100103, "enabled": false, "level": [7, 8, 9, 10], "name": "Lumber Camp"},
-                                    {"code": 20100104, "enabled": false, "level": [7, 8, 9, 10], "name": "Quarry"},
-                                    {"code": 20200103, "enabled": false, "level": [1, 2, 3], "name": "Golem"},
-                                    {"code": 20200301, "enabled": false, "level": [1, 2, 3], "name": "Orc"},
-                                    {"code": 20200302, "enabled": false, "level": [1, 2, 3], "name": "Skeleton"},
-                                    {"code": 20200201, "enabled": false, "level": [1, 2, 3, 4], "name": "Deathkar"},
-                                    {"code": 20100105, "enabled": true, "level": [2, 3, 4], "name": "Crystal Mine"}
-                                ]
-                            },
-                            "name": "socf_thread"
-                        }
-                    ],
-                    "normal_monsters": {
-                        "enabled": false,
-                        "max_distance": 200,
-                        "common_troops": [
-                            {"code": 50100304, "name": "Iron Cavalry (Tier 4 Cavalry)", "amount": 0},
-                            {"code": 50100305, "name": "Dragoon (Tier 5 Cavalry)", "amount": 0},
-                            {"code": 50100306, "name": "Marauder (Tier 6 Cavalry)", "amount": 0}
-                        ],
-                        "targets": [
-                            {"monster_code": 20200103, "monster_name": "Golem", "level_ranges": [1, 2, 3]},
-                            {"monster_code": 20200104, "monster_name": "Treasure Goblin", "level_ranges": [1, 2, 3, 4]},
-                            {"monster_code": 20200101, "monster_name": "Orc", "level_ranges": [1, 2, 3]},
-                            {"monster_code": 20200102, "monster_name": "Skeleton", "level_ranges": [1, 2, 3]}
-                        ]
-                    },
-                    "object_scanning": {
-                        "enabled": false,
-                        "enable_gathering": false,
-                        "enable_monster_attack": false,
-                        "notify_discord": false,
-                        "max_marches": 10,
-                        "monster_attack": {"enabled": false},
-                        "monster_distance_check": {"enabled": false, "max_distance": 250},
-                        "objects": {}
-                    },
-                    "skills": {
-                        "enabled": true,
-                        "skills": [{"code": 10001, "enabled": true}, {"code": 10002, "enabled": true}]
-                    },
-                    "threads": [
-                        {"enabled": true, "name": "free_chest_farmer_thread"},
-                        {"enabled": true, "name": "quest_monitor_thread"},
-                        {"enabled": false, "name": "building_farmer_thread", "kwargs": {"speedup": true}},
-                        {"enabled": false, "name": "academy_farmer_thread", "kwargs": {"speedup": true, "to_max_level": false}},
-                        {
-                            "enabled": false,
-                            "name": "train_troop_thread",
-                            "kwargs": {"interval": 3600, "speedup": true, "troop_code": 50100101}
-                        }
-                    ],
-                    "treasure": {"enabled": false, "page": 1}
-                },
-                "rally": {
-                    "join": {
-                        "enabled": false,
-                        "numMarch": 8,
-                        "max_rally_distance": 500,
-                        "level_based_troops": true,
-                        "targets": []
-                    },
-                    "start": {
-                        "enabled": false,
-                        "numMarch": 6,
-                        "max_rally_distance": 500,
-                        "level_based_troops": true,
-                        "targets": []
-                    }
-                },
-                "socketio": {
-                    "debug": false,
-                    "engineio_logging": false
-                },
-                "toggles": {
-                    "features": {
-                        "chat_monitoring": true,
-                        "discord": true,
-                        "enable_chat_monitoring": true,
-                        "enable_gathering": false,
-                        "enable_monster_attack": false,
-                        "notify_discord": false,
-                        "object_scanning": false,
-                        "rally_join": false,
-                        "rally_start": false
-                    },
-                    "jobs": {
-                        "alliance_farmer": true,
-                        "caravan_farmer": true,
-                        "dsavip_chest_claim": false,
-                        "harvester": false,
-                        "hospital_recover": true,
-                        "mail_claim": false,
-                        "socf_thread": false,
-                        "use_resource_in_item_list": false,
-                        "vip_chest_claim": true,
-                        "wall_repair": false
-                    },
-                    "threads": {
-                        "academy_farmer_thread": false,
-                        "building_farmer_thread": false,
-                        "free_chest_farmer_thread": true,
-                        "quest_monitor_thread": true,
-                        "train_troop_thread": false
-                    }
-                }
-            };
-        }
-
-
         function deleteCurrentConfig() {
             const configSelect = document.getElementById('config-file-select');
             const selectedFile = configSelect.value;
@@ -3090,7 +2945,8 @@
                 if (!fullConfigData.main) fullConfigData.main = {};
                 if (!fullConfigData.main.normal_monsters) {
                     fullConfigData.main.normal_monsters = {
-                        enabled: false, "common_troops": [],
+                        "enabled": false,
+                        "common_troops": [],
                         "targets": []
                     };
                 }
@@ -3190,9 +3046,9 @@
                 // Sync to toggles structure
                 fullConfigData.toggles.features.enable_gathering = gatheringEnabled;
 
-                // If SOCF is enabled, disable rally features
+                // If SOCF is enabled, disable rally join only (not rally start)
                 if (socfEnabled) {
-                    // Disable rally join
+                    // Disable rally join only
                     if (!fullConfigData.rally) fullConfigData.rally = {};
                     if (!fullConfigData.rally.join) {
                         fullConfigData.rally.join = {
@@ -3205,31 +3061,15 @@
                     fullConfigData.rally.join.enabled = false;
                     fullConfigData.toggles.features.rally_join = false;
 
-                    // Disable rally start
-                    if (!fullConfigData.rally.start) {
-                        fullConfigData.rally.start = {
-                            "enabled": false,
-                            "numMarch": 6,
-                            "level_based_troops": true,
-                            "targets": []
-                        };
-                    }
-                    fullConfigData.rally.start.enabled = false;
-                    fullConfigData.toggles.features.rally_start = false;
-
                     // Update UI to reflect the changes immediately
                     const rallyJoinToggle = document.getElementById('rally-join-enabled');
-                    const rallyStartToggle = document.getElementById('rally-start-enabled');
 
                     if (rallyJoinToggle) {
                         rallyJoinToggle.checked = false;
                     }
-                    if (rallyStartToggle) {
-                        rallyStartToggle.checked = false;
-                    }
 
                     // Show notification to user
-                    showNotification('Object Scanning enabled - Rally Join and Rally Start have been automatically disabled to prevent conflicts.', 'warning');
+                    showNotification('Object Scanning enabled - Rally Join has been automatically disabled to prevent conflicts. Rally Start remains available.', 'warning');
                 }
 
                 // Update max marches
@@ -3369,44 +3209,72 @@
                 });
 
             } else if (configType === 'settings') {
+                // Settings is more complex - need to update multiple parts
+                console.log('Saving settings config');
+
+                // Ensure we have the main structure
                 if (!fullConfigData.main) {
                     fullConfigData.main = {};
                 }
-                if (!fullConfigData.main.jobs) {
-                    fullConfigData.main.jobs = [];
+
+                // Ensure we have the toggles structure
+                if (!fullConfigData.toggles) {
+                    fullConfigData.toggles = {
+                        jobs: {},
+                        threads: {},
+                        features: {}
+                    };
                 }
 
-                // Update jobs based on form state
-                for (const job of fullConfigData.main.jobs) {
-                    const jobCheckbox = document.getElementById(`job-${job.name}`);
-                    if (jobCheckbox) {
-                        job.enabled = jobCheckbox.checked;
+                // Collect current state from UI
+                collectSettingsFromUI();
+
+                // Sync jobs bidirectionally
+                if (fullConfigData.main.jobs) {
+                    if (!fullConfigData.toggles.jobs) {
+                        fullConfigData.toggles.jobs = {};
                     }
+
+                    // Sync from main.jobs to toggles.jobs
+                    fullConfigData.main.jobs.forEach(job => {
+                        fullConfigData.toggles.jobs[job.name] = job.enabled;
+                    });
+
+                    // Sync from toggles.jobs back to main.jobs (in case there are toggles without corresponding jobs)
+                    Object.keys(fullConfigData.toggles.jobs).forEach(jobName => {
+                        const job = fullConfigData.main.jobs.find(j => j.name === jobName);
+                        if (job) {
+                            job.enabled = fullConfigData.toggles.jobs[jobName];
+                        }
+                    });
                 }
 
-                // Update alliance farmer features
-                const allianceFarmerJob = fullConfigData.main.jobs.find(job => job.name === 'alliance_farmer');
-                if (allianceFarmerJob && allianceFarmerJob.kwargs) {
-                    const giftClaimCheckbox = document.getElementById('alliance-gift-claim');
-                    const helpAllCheckbox = document.getElementById('alliance-help-all');
-                    const researchDonateCheckbox = document.getElementById('alliance-research-donate');
-
-                    if (giftClaimCheckbox) allianceFarmerJob.kwargs.gift_claim = giftClaimCheckbox.checked;
-                    if (helpAllCheckbox) allianceFarmerJob.kwargs.help_all = helpAllCheckbox.checked;
-                    if (researchDonateCheckbox) allianceFarmerJob.kwargs.research_donate = researchDonateCheckbox.checked;
-                }
-
-                // Update threads based on form state
-                if (!fullConfigData.main.threads) {
-                    fullConfigData.main.threads = [];
-                }
-
-                for (const thread of fullConfigData.main.threads) {
-                    const threadCheckbox = document.getElementById(`thread-${thread.name}`);
-                    if (threadCheckbox) {
-                        thread.enabled = threadCheckbox.checked;
+                // Sync threads bidirectionally
+                if (fullConfigData.main.threads) {
+                    if (!fullConfigData.toggles.threads) {
+                        fullConfigData.toggles.threads = {};
                     }
+
+                    // Sync from main.threads to toggles.threads
+                    fullConfigData.main.threads.forEach(thread => {
+                        fullConfigData.toggles.threads[thread.name] = thread.enabled;
+                    });
+
+                    // Sync from toggles.threads back to main.threads
+                    Object.keys(fullConfigData.toggles.threads).forEach(threadName => {
+                        const thread = fullConfigData.main.threads.find(t => t.name === threadName);
+                        if (thread) {
+                            thread.enabled = fullConfigData.toggles.threads[threadName];
+                        }
+                    });
                 }
+
+                console.log('Settings sync completed', {
+                    jobsCount: fullConfigData.main.jobs?.length || 0,
+                    threadsCount: fullConfigData.main.threads?.length || 0,
+                    togglesJobs: Object.keys(fullConfigData.toggles.jobs || {}).length,
+                    togglesThreads: Object.keys(fullConfigData.toggles.threads || {}).length
+                });
             }
 
             // Show saving state
@@ -3465,6 +3333,66 @@
             });
 
             return objects;
+        }
+
+        function addSelectedSocfObject() {
+            const selectElement = document.getElementById('socf-object-select');
+            const selectedValue = selectElement.value;
+
+            if (!selectedValue) {
+                alert('Please select an object to add');
+                return;
+            }
+
+            const [objectCode, objectName] = selectedValue.split('_');
+            const container = document.getElementById('socf-objects-list');
+
+            // Check if object already exists
+            const existingObjects = container.querySelectorAll('.monster-checkbox');
+            for (let checkbox of existingObjects) {
+                if (checkbox.dataset.objectCode === objectCode) {
+                    alert(`${objectName} is already configured`);
+                    return;
+                }
+            }
+
+            const objectCard = createSocfObjectCard({
+                code: parseInt(objectCode),
+                name: objectName,
+                level: [1, 2, 3, 4, 5],
+                enabled: true
+            });
+            container.appendChild(objectCard);
+
+            // Reset select
+            selectElement.value = '';
+        }
+
+        function createSocfObjectCard(target) {
+            const card = document.createElement('div');
+            card.className = 'monster-card';
+
+            card.innerHTML = `
+                <div class="monster-header">
+                    <input type="checkbox" class="monster-checkbox" ${target.enabled ? 'checked' : ''} data-object-code="${target.code}">
+                    <span class="monster-name">${target.name}</span>
+                    <button class="btn btn-danger" onclick="removeMonsterCard(this)" style="margin-left: auto;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+
+                <div class="level-inputs">
+                    <div class="input-group">
+                        <label class="input-label">Levels (comma-separated):</label>
+                        <input type="text" class="input-field levels-input" value="${(target.level || []).join(', ')}" placeholder="e.g., 1, 2, 3, 4, 5">
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                            Specify which levels to target for this object
+                        </small>
+                    </div>
+                </div>
+            `;
+
+            return card;
         }
 
         function collectMonstersFromUI(configType) {
@@ -3969,254 +3897,222 @@
         }
 
         function populateSettingsConfig(jobs, threads) {
-            console.log('Loading settings config - jobs:', jobs, 'threads:', threads);
+            console.log('Loading settings config - jobs:', jobs);
+            console.log('Loading settings config - threads:', threads);
 
             // Populate jobs
-            const jobsContainer = document.getElementById('jobs-list');
-            jobsContainer.innerHTML = '';
+            const jobsList = document.getElementById('jobs-list');
+            if (jobsList) {
+                jobsList.innerHTML = '';
 
-            const jobDescriptions = {
-                'hospital_recover': 'Automatically heal wounded troops in hospital',
-                'wall_repair': 'Automatically repair wall damage',
-                'alliance_farmer': 'Claim gifts, help alliance members, donate research',
-                'mail_claim': 'Automatically claim mail rewards',
-                'caravan_farmer': 'Automatically collect caravan rewards',
-                'vip_chest_claim': 'Claim VIP chest rewards',
-                'harvester': 'Automatically harvest resources',
-                'socf_thread': 'Scan for objects in the field'
-            };
+                const jobDescriptions = {
+                    'hospital_recover': 'Automatically heal wounded troops in the hospital',
+                    'wall_repair': 'Automatically repair wall damage',
+                    'alliance_farmer': 'Perform alliance activities like helping and donating',
+                    'mail_claim': 'Automatically claim mail rewards',
+                    'caravan_farmer': 'Manage caravan trading activities',
+                    'use_resource_in_item_list': 'Use resource items from inventory',
+                    'vip_chest_claim': 'Claim VIP chest rewards',
+                    'harvester': 'Harvest resources from resource nodes',
+                    'socf_thread': 'Scan and share objects/monsters found nearby',
+                    'dsavip_chest_claim': 'Claim DSA VIP chest rewards'
+                };
 
-            // Define all possible jobs with their default states
-            const allJobs = [
-                { name: 'hospital_recover', enabled: false },
-                { name: 'wall_repair', enabled: false },
-                { name: 'alliance_farmer', enabled: false },
-                { name: 'mail_claim', enabled: false },
-                { name: 'caravan_farmer', enabled: false },
-                { name: 'vip_chest_claim', enabled: false },
-                { name: 'harvester', enabled: false },
-                { name: 'socf_thread', enabled: false }
-            ];
+                jobs.forEach(job => {
+                    // Skip DSA VIP chest claim as it has its own dedicated tab
+                    if (job.name === 'dsavip_chest_claim') {
+                        return;
+                    }
 
-            // If jobs array is empty or incomplete, use all jobs with defaults
-            const jobsToShow = jobs.length > 0 ? jobs : allJobs;
-
-            // Add any missing jobs from the default list
-            allJobs.forEach(defaultJob => {
-                if (!jobsToShow.find(j => j.name === defaultJob.name)) {
-                    jobsToShow.push(defaultJob);
-                }
-            });
-
-            jobsToShow.forEach(job => {
-                // Skip 'use_resource_in_item_list' and 'dsavip_chest_claim' jobs - not editable by users in settings tab
-                if (job.name === 'use_resource_in_item_list' || job.name === 'dsavip_chest_claim') {
-                    return;
-                }
-
-                const jobItem = document.createElement('div');
-                jobItem.className = 'job-item';
-                jobItem.innerHTML = `
-                    <div>
-                        <div class="job-name">${job.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
-                        <div class="job-description">${jobDescriptions[job.name] || 'Job configuration'}</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" ${job.enabled ? 'checked' : ''} data-job-name="${job.name}">
-                        <span class="toggle-slider"></span>
-                    </label>
-                `;
-                jobsContainer.appendChild(jobItem);
-            });
-
-            // Populate threads
-            const threadsContainer = document.getElementById('threads-list');
-            threadsContainer.innerHTML = '';
-
-            const threadDescriptions = {
-                'free_chest_farmer_thread': 'Automatically open free chests',
-                'quest_monitor_thread': 'Monitor and complete quests',
-                'building_farmer_thread': 'Automatically upgrade buildings',
-                'academy_farmer_thread': 'Automatically research technologies',
-                'train_troop_thread': 'Continuously train troops'
-            };
-
-            // Define all possible threads with their default states
-            const allThreads = [
-                { name: 'free_chest_farmer_thread', enabled: false },
-                { name: 'quest_monitor_thread', enabled: false },
-                { name: 'building_farmer_thread', enabled: false },
-                { name: 'academy_farmer_thread', enabled: false },
-                { name: 'train_troop_thread', enabled: false }
-            ];
-
-            // If threads array is empty or incomplete, use all threads with defaults
-            const threadsToShow = threads.length > 0 ? threads : allThreads;
-
-            // Add any missing threads from the default list
-            allThreads.forEach(defaultThread => {
-                if (!threadsToShow.find(t => t.name === defaultThread.name)) {
-                    threadsToShow.push(defaultThread);
-                }
-            });
-
-            threadsToShow.forEach(thread => {
-                const threadItem = document.createElement('div');
-                threadItem.className = 'thread-item';
-                threadItem.innerHTML = `
-                    <div>
-                        <div class="thread-name">${thread.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
-                        <div class="thread-description">${threadDescriptions[thread.name] || 'Thread configuration'}</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" ${thread.enabled ? 'checked' : ''} data-thread-name="${thread.name}">
-                        <span class="toggle-slider"></span>
-                    </label>
-                `;
-                threadsContainer.appendChild(threadItem);
-            });
+                    const jobItem = document.createElement('div');
+                    jobItem.className = 'job-item';
+                    jobItem.innerHTML = `
+                        <div>
+                            <div class="job-name">${job.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                            <div class="job-description">${jobDescriptions[job.name] || 'Job configuration'}</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${job.enabled ? 'checked' : ''} onchange="toggleJob('${job.name}', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    jobsList.appendChild(jobItem);
+                });
+            }
 
             // Populate alliance farmer features
-            populateAllianceFarmerFeatures(fullConfigData.main.jobs);
+            const allianceFarmerFeatures = document.getElementById('alliance-farmer-features');
+            if (allianceFarmerFeatures) {
+                allianceFarmerFeatures.innerHTML = '';
+
+                // Find alliance_farmer job to get its kwargs
+                const allianceFarmerJob = jobs.find(job => job.name === 'alliance_farmer');
+                const kwargs = allianceFarmerJob?.kwargs || {};
+
+                const features = {
+                    'gift_claim': 'Claim gifts from alliance members',
+                    'help_all': 'Help all alliance members with their activities',
+                    'research_donate': 'Donate to alliance research projects'
+                };
+
+                Object.entries(features).forEach(([featureName, description]) => {
+                    const featureItem = document.createElement('div');
+                    featureItem.className = 'job-item';
+                    featureItem.innerHTML = `
+                        <div>
+                            <div class="job-name">${featureName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                            <div class="job-description">${description}</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${kwargs[featureName] ? 'checked' : ''} onchange="toggleAllianceFarmerFeature('${featureName}', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    allianceFarmerFeatures.appendChild(featureItem);
+                });
+            }
+
+            // Populate threads
+            const threadsList = document.getElementById('threads-list');
+            if (threadsList) {
+                threadsList.innerHTML = '';
+
+                const threadDescriptions = {
+                    'free_chest_farmer_thread': 'Automatically claim free chests and daily rewards',
+                    'quest_monitor_thread': 'Monitor and complete available quests',
+                    'building_farmer_thread': 'Automatically upgrade buildings',
+                    'academy_farmer_thread': 'Automatically conduct research in academy',
+                    'train_troop_thread': 'Automatically train troops'
+                };
+
+                threads.forEach(thread => {
+                    const threadItem = document.createElement('div');
+                    threadItem.className = 'thread-item';
+                    threadItem.innerHTML = `
+                        <div>
+                            <div class="thread-name">${thread.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                            <div class="thread-description">${threadDescriptions[thread.name] || 'Thread configuration'}</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${thread.enabled ? 'checked' : ''} onchange="toggleThread('${thread.name}', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    threadsList.appendChild(threadItem);
+                });
+            }
         }
 
-        function populateAllianceFarmerFeatures(jobs) {
-            const container = document.getElementById('alliance-farmer-features');
-            if (!container) return;
+        function toggleJob(jobName, enabled) {
+            console.log(`Toggling job: ${jobName} to ${enabled}`);
+
+            // Update the job in fullConfigData
+            if (!fullConfigData.main) {
+                fullConfigData.main = {};
+            }
+            if (!fullConfigData.main.jobs) {
+                fullConfigData.main.jobs = [];
+            }
+
+            // Find and update the job
+            let job = fullConfigData.main.jobs.find(j => j.name === jobName);
+            if (job) {
+                job.enabled = enabled;
+            } else {
+                // Create new job if it doesn't exist
+                const defaultJob = {
+                    name: jobName,
+                    enabled: enabled,
+                    interval: { start: 120, end: 200 }
+                };
+                fullConfigData.main.jobs.push(defaultJob);
+            }
+
+            // Also update toggles structure for consistency
+            if (!fullConfigData.toggles) {
+                fullConfigData.toggles = {};
+            }
+            if (!fullConfigData.toggles.jobs) {
+                fullConfigData.toggles.jobs = {};
+            }
+            fullConfigData.toggles.jobs[jobName] = enabled;
+
+            console.log(`Updated job ${jobName} enabled status to ${enabled}`);
+        }
+
+        function toggleThread(threadName, enabled) {
+            console.log(`Toggling thread: ${threadName} to ${enabled}`);
+
+            // Update the thread in fullConfigData
+            if (!fullConfigData.main) {
+                fullConfigData.main = {};
+            }
+            if (!fullConfigData.main.threads) {
+                fullConfigData.main.threads = [];
+            }
+
+            // Find and update the thread
+            let thread = fullConfigData.main.threads.find(t => t.name === threadName);
+            if (thread) {
+                thread.enabled = enabled;
+            } else {
+                // Create new thread if it doesn't exist
+                const defaultThread = {
+                    name: threadName,
+                    enabled: enabled
+                };
+                fullConfigData.main.threads.push(defaultThread);
+            }
+
+            // Also update toggles structure for consistency
+            if (!fullConfigData.toggles) {
+                fullConfigData.toggles = {};
+            }
+            if (!fullConfigData.toggles.threads) {
+                fullConfigData.toggles.threads = {};
+            }
+            fullConfigData.toggles.threads[threadName] = enabled;
+
+            console.log(`Updated thread ${threadName} enabled status to ${enabled}`);
+        }
+
+        function toggleAllianceFarmerFeature(featureName, enabled) {
+            console.log(`Toggling alliance farmer feature: ${featureName} to ${enabled}`);
+
+            // Update the alliance farmer job kwargs in fullConfigData
+            if (!fullConfigData.main) {
+                fullConfigData.main = {};
+            }
+            if (!fullConfigData.main.jobs) {
+                fullConfigData.main.jobs = [];
+            }
 
             // Find alliance farmer job
-            const allianceFarmerJob = jobs.find(job => job.name === 'alliance_farmer');
-            if (!allianceFarmerJob || !allianceFarmerJob.kwargs) {
-                container.innerHTML = '<p>Alliance farmer job not found or not configured.</p>';
-                return;
-            }
-
-            const kwargs = allianceFarmerJob.kwargs;
-
-            container.innerHTML = `
-                <div class="job-item">
-                    <div>
-                        <div class="job-name">Gift Claim</div>
-                        <div class="job-description">Automatically claim alliance gifts</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="alliance-gift-claim" ${kwargs.gift_claim ? 'checked' : ''}>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="job-item">
-                    <div>
-                        <div class="job-name">Help All</div>
-                        <div class="job-description">Automatically help all alliance members</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="alliance-help-all" ${kwargs.help_all ? 'checked' : ''}>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="job-item">
-                    <div>
-                        <div class="job-name">Research Donate</div>
-                        <div class="job-description">Automatically donate to alliance research</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="alliance-research-donate" ${kwargs.research_donate ? 'checked' : ''}>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-
-            `;
-        }
-
-        function createSocfObjectCard(target) {
-            const card = document.createElement('div');
-            card.className = 'monster-card';
-
-            const objectName = target.name || `Object ${target.code}`;
-            const levels = Array.isArray(target.level) ? target.level.join(',') : '';
-
-            card.innerHTML = `
-                <div class="monster-header">
-                    <input type="checkbox" class="monster-checkbox" ${target.enabled !== false ? 'checked' : ''} data-object-code="${target.code}">
-                    <span class="monster-name">${objectName}</span>
-                    <button class="btn btn-danger" onclick="removeSocfObjectCard(this)" style="margin-left: auto;">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-
-                <div class="input-group" style="margin-top: 16px;">
-                    <label class="input-label">Target Levels:</label>
-                    <input type="text" class="input-field levels-input" value="${levels}" placeholder="1,2,3,4,5 or leave empty for all levels">
-                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
-                        Comma-separated list of levels to target. Leave empty to target all levels.
-                    </small>
-                </div>
-            `;
-
-            return card;
-        }
-
-        function addSelectedSocfObject() {
-            const selectElement = document.getElementById('socf-object-select');
-            const selectedValue = selectElement.value;
-
-            if (!selectedValue) {
-                alert('Please select an object to add');
-                return;
-            }
-
-            const [objectCode, objectName] = selectedValue.split('_');
-            const container = document.getElementById('socf-objects-list');
-
-            // Check if object already exists
-            const existingObjects = container.querySelectorAll('.monster-checkbox');
-            for (let checkbox of existingObjects) {
-                if (checkbox.dataset.objectCode === objectCode) {
-                    alert(`${objectName} is already configured`);
-                    return;
+            let allianceJob = fullConfigData.main.jobs.find(j => j.name === 'alliance_farmer');
+            if (allianceJob) {
+                if (!allianceJob.kwargs) {
+                    allianceJob.kwargs = {};
                 }
+                allianceJob.kwargs[featureName] = enabled;
+            } else {
+                // Create alliance farmer job if it doesn't exist
+                const newAllianceJob = {
+                    name: 'alliance_farmer',
+                    enabled: true,
+                    interval: { start: 120, end: 200 },
+                    kwargs: {
+                        [featureName]: enabled
+                    }
+                };
+                fullConfigData.main.jobs.push(newAllianceJob);
             }
 
-            // Set default levels based on object type
-            let defaultLevels;
-            if (objectCode === '20100105') { // Crystal Mine
-                defaultLevels = [2, 3, 4];
-            } else if (objectCode === '20100106') { // Dragon Soul Cavern
-                defaultLevels = [2, 3, 4, 5];
-            } else if (['20100101', '20100102', '20100103', '20100104'].includes(objectCode)) { // Resources
-                defaultLevels = [7, 8, 9, 10];
-            } else { // Monsters
-                defaultLevels = [1, 2, 3];
-            }
-
-            const objectCard = createSocfObjectCard({
-                "code": parseInt(objectCode),
-                "name": objectName,
-                "level": defaultLevels,
-                "enabled": true
-            });
-            container.appendChild(objectCard);
-
-            // Reset select
-            selectElement.value = '';
-        }
-
-        function addNewSocfObject() {
-            // Keep this function for backwards compatibility, but use dropdown approach
-            addSelectedSocfObject();
-        }
-
-        function removeSocfObjectCard(button) {
-            if (confirm('Are you sure you want to remove this object configuration?')) {
-                button.closest('.object-card').remove();
-            }
+            console.log(`Updated alliance farmer feature ${featureName} to ${enabled}`);
         }
 
         function createCommonTroopItem(troop) {
             const troopItem = document.createElement('div');
             troopItem.className = 'troop-item';
-            troopItem.style.marginBottom = '12px';
-
             troopItem.innerHTML = `
                 <select class="troop-select" data-troop-code="${troop.code}">
                     <option value="${troop.code}" selected>${troop.name || getTroopNameByCode(troop.code)}</option>
@@ -4240,50 +4136,93 @@
                     <option value="50100203">Ranger (Tier 3 Ranged)</option>
                     <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
                 </select>
-                <div class="input-group" style="flex: 1; margin-left: 12px;">
-                    <label class="input-label">Amount:</label>
-                    <input type="number" class="troop-amount-input" value="${troop.amount || 0}" min="0" style="width: 100px;">
-                </div>
-                <button class="btn btn-danger" onclick="removeCommonTroopItem(this)">Remove</button>
+                <input type="number" class="troop-amount-input" value="${troop.amount || 0}" min="0" placeholder="Amount">
+                <button class="btn btn-danger" onclick="removeTroopItem(this)">Remove</button>
             `;
-
             return troopItem;
         }
 
         function addCommonTroop() {
             const commonTroopsList = document.getElementById('common-troops-list');
-            const troopItem = createCommonTroopItem({
-                "code": 50100303,
-                "name": 'Heavy Cavalry (Tier 3 Cavalry)',
-                "amount": 100
-            });
-            commonTroopsList.appendChild(troopItem);
-        }
-
-        function removeCommonTroopItem(button) {
-            button.closest('.troop-item').remove();
-        }
-
-        function updateSocfObjectsUI() {
-            const socfEnabled = document.getElementById('socf-objects-enabled').checked;
-            document.getElementById('rally-join-enabled').disabled = socfEnabled;
-            document.getElementById('rally-start-enabled').disabled = socfEnabled;
-
-            if (socfEnabled) {
-                document.getElementById('rally-join-enabled').checked = false;
-                document.getElementById('rally-start-enabled').checked = false;
+            if (commonTroopsList) {
+                const newTroop = {
+                    code: 50100305,
+                    name: 'Dragoon (Tier 5 Cavalry)',
+                    amount: 0
+                };
+                const troopItem = createCommonTroopItem(newTroop);
+                commonTroopsList.appendChild(troopItem);
             }
         }
 
+        // Make addCommonTroop globally available
+        window.addCommonTroop = addCommonTroop;
+
         function showNotification(message, type = 'info') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Create new notification
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.textContent = message;
+
+            // Add to page
             document.body.appendChild(notification);
 
+            // Auto-remove after 5 seconds
             setTimeout(() => {
-                notification.remove();
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
             }, 5000);
+        }
+
+        function createCommonTroopItem(troop, index) {
+            return `
+                <div class="form-group">
+                    <label>Troop ${index + 1}: ${troop.name}</label>
+                    <input type="number" 
+                           id="commonTroop_${troop.code}_amount" 
+                           value="${troop.amount}" 
+                           min="0" 
+                           placeholder="Amount">
+                    <input type="hidden" 
+                           id="commonTroop_${troop.code}_code" 
+                           value="${troop.code}">
+                    <input type="hidden" 
+                           id="commonTroop_${troop.code}_name" 
+                           value="${troop.name}">
+                </div>
+            `;
+        }
+
+        function collectSettingsFromUI() {
+            console.log('Collecting settings from UI');
+
+            // Collect job toggles
+            const jobCheckboxes = document.querySelectorAll('#jobs-list input[type="checkbox"]');
+            jobCheckboxes.forEach(checkbox => {
+                const jobName = checkbox.getAttribute('onchange').match(/toggleJob\('([^']+)'/)[1];
+                toggleJob(jobName, checkbox.checked);
+            });
+
+            // Collect thread toggles
+            const threadCheckboxes = document.querySelectorAll('#threads-list input[type="checkbox"]');
+            threadCheckboxes.forEach(checkbox => {
+                const threadName = checkbox.getAttribute('onchange').match(/toggleThread\('([^']+)'/)[1];
+                toggleThread(threadName, checkbox.checked);
+            });
+
+            // Collect alliance farmer feature toggles
+            const allianceFeatureCheckboxes = document.querySelectorAll('#alliance-farmer-features input[type="checkbox"]');
+            allianceFeatureCheckboxes.forEach(checkbox => {
+                const featureName = checkbox.getAttribute('onchange').match(/toggleAllianceFarmerFeature\('([^']+)'/)[1];
+                toggleAllianceFarmerFeature(featureName, checkbox.checked);
+            });
+
+            console.log('Settings collection completed');
         }
     </script>
 </body>
