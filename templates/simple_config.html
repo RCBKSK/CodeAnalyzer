@@ -960,9 +960,18 @@
 
                 <!-- Max Attack Distance -->
                 <div class="distance-section">
-                    <span class="troops-title">Max Attack Distance</span>
-                    <input type="number" id="monster-attack-distance" class="distance-input" value="200" min="1">
-                    <span class="unit-label">km</span>
+                    <div class="toggle-section">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="monster-distance-check-enabled">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="troops-title">Enable Distance Check</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px;">
+                        <span class="troops-title">Max Attack Distance</span>
+                        <input type="number" id="monster-attack-distance" class="distance-input" value="200" min="1">
+                        <span class="unit-label">km</span>
+                    </div>
                 </div>
 
                 <!-- Add New Monster -->
@@ -2445,11 +2454,21 @@
             // Set enabled state
             document.getElementById('monster-attack-enabled').checked = config.enabled || false;
 
+            // Set distance check enabled state
+            const distanceCheckEnabled = (fullConfigData && fullConfigData.main && 
+                                        fullConfigData.main.object_scanning && 
+                                        fullConfigData.main.object_scanning.monster_distance_check &&
+                                        fullConfigData.main.object_scanning.monster_distance_check.enabled) || false;
+            document.getElementById('monster-distance-check-enabled').checked = distanceCheckEnabled;
+
             // Set distance
             const distanceInput = document.getElementById('monster-attack-distance');
-            if (config.max_distance) {
-                distanceInput.value = config.max_distance;
-            }
+            const distanceValue = (fullConfigData && fullConfigData.main && 
+                                 fullConfigData.main.object_scanning && 
+                                 fullConfigData.main.object_scanning.monster_distance_check &&
+                                 fullConfigData.main.object_scanning.monster_distance_check.max_distance) || 
+                                config.max_distance || 250;
+            distanceInput.value = distanceValue;
 
             // Clear and populate monsters
             const container = document.getElementById('monster-attack-monsters');
@@ -2986,9 +3005,23 @@
                 // 4. main.normal_monsters.enabled
                 fullConfigData.main.normal_monsters.enabled = isEnabled;
 
-                // Update distance
+                // Update distance check settings
+                const distanceCheckEnabled = document.getElementById('monster-distance-check-enabled').checked;
                 const distance = parseInt(document.getElementById('monster-attack-distance').value);
+                
+                // Ensure monster_distance_check section exists in object_scanning
+                if (!fullConfigData.main.object_scanning.monster_distance_check) {
+                    fullConfigData.main.object_scanning.monster_distance_check = {
+                        "enabled": false,
+                        "max_distance": 250
+                    };
+                }
+                
+                // Update monster distance check settings
+                fullConfigData.main.object_scanning.monster_distance_check.enabled = distanceCheckEnabled;
                 if (distance) {
+                    fullConfigData.main.object_scanning.monster_distance_check.max_distance = distance;
+                    // Also update the normal_monsters max_distance for backward compatibility
                     fullConfigData.main.normal_monsters.max_distance = distance;
                 }
 
