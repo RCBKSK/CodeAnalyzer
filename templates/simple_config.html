@@ -2490,8 +2490,8 @@
             // Populate common troops
             const commonTroopsList = document.getElementById('common-troops-list');
             if (config.common_troops && config.common_troops.length > 0) {
-                config.common_troops.forEach(troop => {
-                    const troopItem = createCommonTroopItem(troop);
+                config.common_troops.forEach((troop, index) => {
+                    const troopItem = createCommonTroopItem(troop, index);
                     commonTroopsList.appendChild(troopItem);
                 });
             }
@@ -4150,7 +4150,8 @@
                     name: 'Dragoon (Tier 5 Cavalry)',
                     amount: 0
                 };
-                const troopItem = createCommonTroopItem(newTroop);
+                const currentIndex = commonTroopsList.children.length;
+                const troopItem = createCommonTroopItem(newTroop, currentIndex);
                 commonTroopsList.appendChild(troopItem);
             }
         }
@@ -4180,22 +4181,23 @@
         }
 
         function createCommonTroopItem(troop, index) {
-            return `
-                <div class="form-group">
-                    <label>Troop ${index + 1}: ${troop.name}</label>
-                    <input type="number" 
-                           id="commonTroop_${troop.code}_amount" 
-                           value="${troop.amount}" 
-                           min="0" 
-                           placeholder="Amount">
-                    <input type="hidden" 
-                           id="commonTroop_${troop.code}_code" 
-                           value="${troop.code}">
-                    <input type="hidden" 
-                           id="commonTroop_${troop.code}_name" 
-                           value="${troop.name}">
-                </div>
+            const troopDiv = document.createElement('div');
+            troopDiv.className = 'form-group';
+            troopDiv.innerHTML = `
+                <label>Troop ${index + 1}: ${troop.name}</label>
+                <input type="number" 
+                       id="commonTroop_${troop.code}_amount" 
+                       value="${troop.amount}" 
+                       min="0" 
+                       placeholder="Amount">
+                <input type="hidden" 
+                       id="commonTroop_${troop.code}_code" 
+                       value="${troop.code}">
+                <input type="hidden" 
+                       id="commonTroop_${troop.code}_name" 
+                       value="${troop.name}">
             `;
+            return troopDiv;
         }
 
         function collectSettingsFromUI() {

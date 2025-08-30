@@ -939,9 +939,9 @@ class LokFarmer:
                 # Generate a meaningful account name based on instance timing
                 if instance_id != 'unknown' and '_' in instance_id:
                     timestamp_part = instance_id.split('_')[-1]
-                    account_name = f'Bot {timestamp_part[-4:]}'  # Use last 4 digits of timestamp for better naming
+                    account_name = f'Instance {timestamp_part[-4:]}'  # Use last 4 digits of timestamp
                 else:
-                    account_name = f'Bot {user_id[-4:] if len(user_id) > 4 else user_id}'  # Use last 4 chars of user_id
+                    account_name = 'Bot Instance'
 
             march_data = {
                 'user_id': user_id,
