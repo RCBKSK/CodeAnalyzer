@@ -52,12 +52,10 @@ socketio
 email_validator
 flask
 flask-sqlalchemy
-gunicorn
 psycopg2-binary
 email_validator
 flask
 flask-sqlalchemy
-gunicorn
 psycopg2-binary
 aiohttp==3.11.13
 APScheduler==3.11.0
@@ -68,7 +66,6 @@ Flask==3.1.1
 flask-cors==6.0.1
 flask-sqlalchemy
 gevent
-gunicorn
 httpx==0.24.1
 loguru==0.7.3
 numpy==1.26.4
@@ -85,5 +82,4 @@ tenacity==8.2.3
 email_validator
 flask
 flask-sqlalchemy
-gunicorn
 psycopg2-binary
