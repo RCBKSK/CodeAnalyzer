@@ -611,18 +611,20 @@ def add_notification(user_id, notification_type, title, message, timestamp=None,
             timestamp = datetime.now(timezone.utc).isoformat()
 
         # Robust instance identification system
-        if instance_id is None or account_name is None:
+        if instance_id is None or account_name is None or account_name in ['Bot Instance', 'Unknown Instance']:
             # Try to get instance from current process context
             current_instance_id, current_account_name = get_current_bot_instance()
             if current_instance_id:
                 instance_id = instance_id or current_instance_id
-                account_name = account_name or current_account_name
+                # Only use current_account_name if we don't have a proper account_name
+                if not account_name or account_name in ['Bot Instance', 'Unknown Instance']:
+                    account_name = current_account_name
 
         # Validate and set instance information
         if instance_id and instance_id in bot_processes:
             # Use existing instance data
             target_instance = bot_processes[instance_id]
-            if not account_name:
+            if not account_name or account_name in ['Bot Instance', 'Unknown Instance']:
                 account_name = target_instance.get('account_name') or target_instance.get('name', f'Instance {instance_id.split("_")[-1]}')
         elif instance_id and instance_id != "general":
             # Instance ID provided but not found in active processes
