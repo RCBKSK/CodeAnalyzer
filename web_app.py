@@ -64,13 +64,15 @@ app.secret_key = secrets.token_hex(16)
 # Configure Flask for detailed logging like development server
 if not app.debug:
     # Add startup logging messages to mimic Flask development server
-    @app.before_first_request
     def log_flask_startup():
         logger.info(" * Serving Flask app 'web_app'")
         logger.info(" * Debug mode: off")
         logger.info(f" * Running on all addresses (0.0.0.0)")
         logger.info(f" * Running on http://127.0.0.1:5000")
         logger.info(f" * Running on http://172.31.84.98:5000")
+    
+    # Call startup logging immediately since before_first_request is deprecated
+    log_flask_startup()
 
 # Bot processes dictionary to track running instances
 bot_processes = {}
@@ -458,7 +460,7 @@ def has_config_access(username, config_file):
         if (config_file.startswith(f"{username}_") and config_file.endswith('.json')) or \
            (config_file.startswith('config_') and config_file.endswith('.json')) or \
            (config_file.endswith(f"_{username}.json")):
-            logger.write(f"User {username} granted access to new/user-specific config {config_file}")
+            logger.info(f"User {username} granted access to new/user-specific config {config_file}")
             return True
 
         logger.debug(f"User {username} denied access to {config_file} (not in assigned configs)")
