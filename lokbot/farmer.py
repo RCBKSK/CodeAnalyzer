@@ -1451,8 +1451,8 @@ class LokFarmer:
 
                     # Generate instance_id and account_name based on current process
                     timestamp = int(time.time() * 1000)
-                    instance_id = f"{user_id}_{timestamp}"
-                    account_name = "Bot Instance"
+                    instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{timestamp}")
+                    account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
 
                     gathering_message = f"""Gathering March Started!
 Resource: {resource_type} (Level {resource_level})
@@ -1688,8 +1688,8 @@ Expected End: {ended_time}"""
                 # Generate instance_id and account_name based on current process
                 import time
                 timestamp = int(time.time() * 1000)
-                instance_id = f"{user_id}_{timestamp}"
-                account_name = "Bot Instance"
+                instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{timestamp}")
+                account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
 
                 crystal_message = "🚨 **CRYSTAL LIMIT REACHED** - Your Daily Crystal Limit is Over, Please Stop the Bot"
 
@@ -2788,8 +2788,8 @@ Rally ID: {rally_id}"""
 
                 # Generate instance_id and account_name based on current process
                 timestamp = int(time.time() * 1000)
-                instance_id = f"{user_id}_{timestamp}"
-                account_name = "Bot Instance"
+                instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{timestamp}")
+                account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
 
                 # Get monster name from code mapping
                 from lokbot.rally_utils import get_monster_name_by_code
@@ -3793,8 +3793,8 @@ Status: {status}"""
 
                             # Generate instance_id and account_name based on current process
                             timestamp = int(time.time() * 1000)
-                            instance_id = f"{user_id}_{timestamp}"
-                            account_name = "Bot Instance"
+                            instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{timestamp}")
+                            account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
 
                             response = requests.post('http://localhost:5000/api/object_notification',
                                 json={
