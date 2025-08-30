@@ -105,10 +105,10 @@
           },
           "targets": [
             {
-              "code": 20100106,
-              "name": "Crystal Mine",
+              "code": 20100102,
+              "name": "Gold Mine",
               "level": [
-                2
+                4
               ],
               "enabled": true
             }

@@ -3017,6 +3017,9 @@ def march_status_update():
 
         # Update bot process data if instance exists
         if instance_id in bot_processes:
+            # Get previous march count for change detection
+            previous_marches = bot_processes[instance_id].get('current_marches', 0)
+            
             # Update march data
             bot_processes[instance_id]['current_marches'] = current_marches
             bot_processes[instance_id]['march_limit'] = march_limit
@@ -3031,6 +3034,22 @@ def march_status_update():
             stored_name = bot_processes[instance_id].get('name')
             if stored_name and stored_name != account_name:
                 account_name = stored_name
+
+            # Send march status notification if there's a significant change
+            if current_marches != previous_marches:
+                march_status_message = f"March Status: {current_marches}/{march_limit} marches active"
+                if current_marches > previous_marches:
+                    title = "⚔️ March Started"
+                    march_status_message = f"New march started! Now {current_marches}/{march_limit} marches active"
+                elif current_marches < previous_marches:
+                    title = "🏠 March Returned"
+                    march_status_message = f"March returned! Now {current_marches}/{march_limit} marches active"
+                else:
+                    title = "⚔️ March Status"
+                
+                # Send notification to user
+                add_notification(user_id, "march_status", title, march_status_message,
+                               account_name=account_name, instance_id=instance_id)
 
         logger.debug(f"March status update for {account_name} (instance: {instance_id}): {current_marches}/{march_limit} marches")
         return jsonify({'status': 'success'})

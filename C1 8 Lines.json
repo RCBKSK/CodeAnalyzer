@@ -42,7 +42,9 @@
           "gift_claim": true,
           "help_all": true,
           "research_donate": true,
-          "shop_auto_buy_item_code_list": [10101008]
+          "shop_auto_buy_item_code_list": [
+            10101008
+          ]
         },
         "name": "alliance_farmer"
       },
@@ -95,13 +97,18 @@
         "kwargs": {
           "radius": 16,
           "share_to": {
-            "chat_channels": [0, 0]
+            "chat_channels": [
+              0,
+              0
+            ]
           },
           "targets": [
             {
-              "code": 20100106,
-              "name": "Crystal Mine",
-              "level": [2],
+              "code": 20100102,
+              "name": "Gold Mine",
+              "level": [
+                4
+              ],
               "enabled": true
             }
           ]
@@ -145,22 +152,39 @@
       "enabled": false,
       "targets": [
         {
-          "level_ranges": [1, 2, 3],
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
           "monster_code": 20200103,
           "monster_name": "Golem"
         },
         {
-          "level_ranges": [1, 2, 3, 4],
+          "level_ranges": [
+            1,
+            2,
+            3,
+            4
+          ],
           "monster_code": 20200104,
           "monster_name": "Treasure Goblin"
         },
         {
-          "level_ranges": [1, 2, 3],
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
           "monster_code": 20200101,
           "monster_name": "Orc"
         },
         {
-          "level_ranges": [1, 2, 3],
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
           "monster_code": 20200102,
           "monster_name": "Skeleton"
         }
@@ -248,17 +272,26 @@
               "troops": [
                 {
                   "code": 50100304,
-                  "fixed_amounts": [30000, 30000],
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ],
                   "name": "Iron Cavalry (Tier 4 Cavalry)"
                 },
                 {
                   "code": 50100305,
-                  "fixed_amounts": [50000, 50000],
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ],
                   "name": "Dragoon (Tier 5 Cavalry)"
                 },
                 {
                   "code": 50100306,
-                  "fixed_amounts": [60000, 60000],
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ],
                   "name": "Marauder (Tier 6 Cavalry)"
                 }
               ]
@@ -275,27 +308,42 @@
               "troops": [
                 {
                   "code": 50100302,
-                  "fixed_amounts": [15000, 15000],
+                  "fixed_amounts": [
+                    15000,
+                    15000
+                  ],
                   "name": "Horseman (Tier 2 Cavalry)"
                 },
                 {
                   "code": 50100303,
-                  "fixed_amounts": [20000, 20000],
+                  "fixed_amounts": [
+                    20000,
+                    20000
+                  ],
                   "name": "Heavy Cavalry (Tier 3 Cavalry)"
                 },
                 {
                   "code": 50100304,
-                  "fixed_amounts": [30000, 30000],
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ],
                   "name": "Iron Cavalry (Tier 4 Cavalry)"
                 },
                 {
                   "code": 50100305,
-                  "fixed_amounts": [50000, 50000],
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ],
                   "name": "Dragoon (Tier 5 Cavalry)"
                 },
                 {
                   "code": 50100306,
-                  "fixed_amounts": [60000, 60000],
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ],
                   "name": "Marauder (Tier 6 Cavalry)"
                 }
               ]
@@ -312,27 +360,42 @@
               "troops": [
                 {
                   "code": 50100302,
-                  "fixed_amounts": [15000, 15000],
+                  "fixed_amounts": [
+                    15000,
+                    15000
+                  ],
                   "name": "Horseman (Tier 2 Cavalry)"
                 },
                 {
                   "code": 50100303,
-                  "fixed_amounts": [20000, 20000],
+                  "fixed_amounts": [
+                    20000,
+                    20000
+                  ],
                   "name": "Heavy Cavalry (Tier 3 Cavalry)"
                 },
                 {
                   "code": 50100304,
-                  "fixed_amounts": [30000, 30000],
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ],
                   "name": "Iron Cavalry (Tier 4 Cavalry)"
                 },
                 {
                   "code": 50100305,
-                  "fixed_amounts": [50000, 50000],
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ],
                   "name": "Dragoon (Tier 5 Cavalry)"
                 },
                 {
                   "code": 50100306,
-                  "fixed_amounts": [60000, 60000],
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ],
                   "name": "Marauder (Tier 6 Cavalry)"
                 }
               ]
@@ -349,27 +412,42 @@
               "troops": [
                 {
                   "code": 50100302,
-                  "fixed_amounts": [15000, 15000],
+                  "fixed_amounts": [
+                    15000,
+                    15000
+                  ],
                   "name": "Horseman (Tier 2 Cavalry)"
                 },
                 {
                   "code": 50100303,
-                  "fixed_amounts": [20000, 20000],
+                  "fixed_amounts": [
+                    20000,
+                    20000
+                  ],
                   "name": "Heavy Cavalry (Tier 3 Cavalry)"
                 },
                 {
                   "code": 50100304,
-                  "fixed_amounts": [30000, 30000],
+                  "fixed_amounts": [
+                    30000,
+                    30000
+                  ],
                   "name": "Iron Cavalry (Tier 4 Cavalry)"
                 },
                 {
                   "code": 50100305,
-                  "fixed_amounts": [50000, 50000],
+                  "fixed_amounts": [
+                    50000,
+                    50000
+                  ],
                   "name": "Dragoon (Tier 5 Cavalry)"
                 },
                 {
                   "code": 50100306,
-                  "fixed_amounts": [60000, 60000],
+                  "fixed_amounts": [
+                    60000,
+                    60000
+                  ],
                   "name": "Marauder (Tier 6 Cavalry)"
                 }
               ]
