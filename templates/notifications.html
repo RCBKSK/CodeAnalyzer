@@ -1023,7 +1023,7 @@
             loadNotificationHistory();
             loadDailyCounters();
             loadMarchStatus();
-			updateNotificationStats();
+                        updateNotificationStats();
         }
 
         function clearNotifications() {
@@ -1035,7 +1035,7 @@
                         if (data.success) {
                             notifications = [];
                             showEmptyState();
-							updateNotificationStats();
+                                                        updateNotificationStats();
 
                             console.log('Notifications cleared successfully');
                         } else {
@@ -1070,12 +1070,12 @@
 
                         updateAccountSelect();
                         filterNotifications();
-						updateNotificationStats();
+                                                updateNotificationStats();
                     } else {
                         notifications = [];
                         availableAccounts = [];
                         showEmptyState();
-						updateNotificationStats();
+                                                updateNotificationStats();
                     }
                 },
                 error: function(xhr) {
@@ -1083,7 +1083,7 @@
                     notifications = [];
                     availableAccounts = [];
                     showEmptyState();
-					updateNotificationStats();
+                                        updateNotificationStats();
                 }
             });
         }
@@ -1096,7 +1096,7 @@
                     if (data.counters) {
                         dailyCounters = data.counters;
                         updateStatistics();
-						updateNotificationStats();
+                                                updateNotificationStats();
                     }
                 },
                 error: function(xhr) {
@@ -1185,6 +1185,46 @@
             container.html(html);
         }
 
+        let currentMarchStatusData = []; // Store current march status data
+        
+        function updateMarchStatusFromNotification(notification) {
+            // Parse march status from notification message
+            const message = notification.message || '';
+            const accountName = notification.account_name || 'Unknown';
+            
+            // Look for pattern like "Now 3/6 marches active" or "3/6 marches active"
+            const marchPattern = /(\d+)\/(\d+)\s+marches?\s+active/i;
+            const match = message.match(marchPattern);
+            
+            if (match) {
+                const currentMarches = parseInt(match[1]);
+                const maxMarches = parseInt(match[2]);
+                const timestamp = new Date().getTime() / 1000;
+                
+                // Create a bot data object similar to what the API would return
+                const botData = {
+                    account_name: accountName,
+                    current_marches: currentMarches,
+                    max_marches: maxMarches,
+                    last_updated: timestamp,
+                    config_source: 'live update'
+                };
+                
+                // Update or add this bot's data in our current march status
+                const existingIndex = currentMarchStatusData.findIndex(bot => bot.account_name === accountName);
+                if (existingIndex >= 0) {
+                    currentMarchStatusData[existingIndex] = botData;
+                } else {
+                    currentMarchStatusData.push(botData);
+                }
+                
+                // Update the march status display with all current data
+                displayMarchStatus(currentMarchStatusData);
+                
+                console.log(`Updated march status for ${accountName}: ${currentMarches}/${maxMarches}`);
+            }
+        }
+
         function updateAccountSelect() {
             const accountSelect = $('#accountSelect');
             const currentValue = accountSelect.val();
@@ -1231,23 +1271,26 @@
                 if (notification.type === 'gathering') {
                     dailyCounters.gathering++;
                     updateStatistics();
-					updateNotificationStats();
+                                        updateNotificationStats();
                 } else if (notification.type === 'rally_join') {
                     dailyCounters.rally_join++;
                     updateStatistics();
-					updateNotificationStats();
+                                        updateNotificationStats();
                 } else if (notification.type === 'rally_start') {
                     dailyCounters.rally_start++;
                     updateStatistics();
-					updateNotificationStats();
+                                        updateNotificationStats();
                 } else if (notification.type === 'monster_attack') {
                     dailyCounters.monster_attack++;
                     updateStatistics();
-					updateNotificationStats();
+                                        updateNotificationStats();
                 } else if (notification.type in ['crystal_mine', 'dragon_soul', 'object_scan']) {
                     dailyCounters.object_scan++;
                     updateStatistics();
-					updateNotificationStats();
+                                        updateNotificationStats();
+                } else if (notification.type === 'march_status') {
+                    // Update march status display directly from notification data
+                    updateMarchStatusFromNotification(notification);
                 }
 
                 if (notification.account_name && !availableAccounts.includes(notification.account_name)) {
@@ -1297,19 +1340,19 @@
             $('#objectScanCount').text(dailyCounters.object_scan);
         }
 
-		function updateNotificationStats() {
-			const total = notifications.length;
-			const today = notifications.filter(n => isToday(n.timestamp)).length;
-			$('#notificationStats').text(`${today} / ${total} Notifications Today`);
-		}
+                function updateNotificationStats() {
+                        const total = notifications.length;
+                        const today = notifications.filter(n => isToday(n.timestamp)).length;
+                        $('#notificationStats').text(`${today} / ${total} Notifications Today`);
+                }
 
-		function isToday(timestamp) {
-			const today = new Date();
-			const date = new Date(timestamp);
-			return date.getDate() === today.getDate() &&
-				   date.getMonth() === today.getMonth() &&
-				   date.getFullYear() === today.getFullYear();
-		}
+                function isToday(timestamp) {
+                        const today = new Date();
+                        const date = new Date(timestamp);
+                        return date.getDate() === today.getDate() &&
+                                   date.getMonth() === today.getMonth() &&
+                                   date.getFullYear() === today.getFullYear();
+                }
 
         function displayNotifications(notificationList) {
             const container = $('#notificationsList');
@@ -1664,7 +1707,7 @@
 
                 // Update display
                 setupSeparatedView();
-				updateNotificationStats();
+                                updateNotificationStats();
 
                 console.log(`Cleared notifications for ${accountName}`);
             }
@@ -1676,7 +1719,7 @@
                 : notifications.filter(n => n.type === currentFilter);
 
             displayNotifications(filtered);
-			updateNotificationStats();
+                        updateNotificationStats();
         }
 
         function setupEventSource() {
@@ -1702,7 +1745,7 @@
                     }
 
                     addNotification(notification);
-					updateNotificationStats();
+                                        updateNotificationStats();
                 } catch (error) {
                     console.error('Error parsing notification', error, event.data);
                 }
@@ -1869,7 +1912,7 @@
             setTimeout(setupEventSource, 1000);
 
             setInterval(loadMarchStatus, 600000);
-			setInterval(updateNotificationStats, 60000);
+                        setInterval(updateNotificationStats, 60000);
         });
 
         window.refreshNotifications = refreshNotifications;
