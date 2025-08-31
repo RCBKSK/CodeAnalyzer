@@ -271,30 +271,92 @@
         .troop-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            padding: 12px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .troop-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .troop-item:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .troop-item:hover::before {
+            left: 100%;
         }
 
         .troop-select {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 14px;
+            flex: 2;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             background: white;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.3s ease;
         }
 
-        .troop-amount {
-            width: 80px;
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 14px;
+        .troop-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .troop-amount,
+        .troop-amount-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .troop-amount:focus,
+        .troop-amount-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-enabled {
+            background-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .status-disabled {
+            background-color: #6b7280;
+            box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.2);
         }
 
         .fixed-amounts-container {
@@ -2607,16 +2669,20 @@
                 });
             }
 
-            // Load common troops section
+            // Load common troops section with improved styling
             const commonTroopsContainer = document.createElement('div');
             commonTroopsContainer.innerHTML = `
-                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
-                        <i class="fas fa-users"></i> Common Troops Configuration
-                    </h3>
+                <div class="monster-card" style="margin-top: 24px;">
+                    <div class="monster-header">
+                        <i class="fas fa-users" style="color: #3b82f6; font-size: 18px;"></i>
+                        <span class="monster-name" style="font-size: 18px;">Common Troops Configuration</span>
+                    </div>
+                    <div style="color: #64748b; font-size: 14px; margin-bottom: 20px;">
+                        Configure default troop compositions for monster attacks
+                    </div>
                     <div id="common-troops-list"></div>
-                    <button class="btn btn-primary" onclick="addCommonTroop()">
-                        <i class="fas fa-plus"></i> Add Troop
+                    <button class="btn btn-primary" onclick="addCommonTroop()" style="margin-top: 16px;">
+                        <i class="fas fa-plus"></i> Add Troop Type
                     </button>
                 </div>
             `;
@@ -3895,8 +3961,12 @@
 
             card.innerHTML = `
                 <div class="monster-header">
-                    <input type="checkbox" class="monster-checkbox" ${buff.enabled ? 'checked' : ''} data-buff-name="${buff.name}">
+                    <i class="fas fa-magic" style="color: #3b82f6; font-size: 16px;"></i>
                     <span class="monster-name">${buff.name}</span>
+                    <select class="buff-status-select" data-buff-name="${buff.name}" style="margin-left: auto; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; background: white; font-weight: 500;" onchange="updateBuffStatus(this)">
+                        <option value="disabled" ${!buff.enabled ? 'selected' : ''}>Disabled</option>
+                        <option value="enabled" ${buff.enabled ? 'selected' : ''}>Enabled</option>
+                    </select>
                 </div>
 
                 <div class="level-inputs">
@@ -3907,6 +3977,15 @@
                             Activate buff if remaining time is less than this
                         </small>
                     </div>
+                    <div class="input-group">
+                        <label class="input-label">Status:</label>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0;">
+                            <div class="status-indicator ${buff.enabled ? 'status-enabled' : 'status-disabled'}"></div>
+                            <span class="status-text" style="font-size: 14px; font-weight: 500; color: ${buff.enabled ? '#10b981' : '#64748b'};">
+                                ${buff.enabled ? 'Active' : 'Inactive'}
+                            </span>
+                        </div>
+                    </div>
                     <!-- Item codes are now hidden and automatically managed -->
                     <input type="hidden" class="item-codes" value="${(buff.item_codes || []).join(', ')}">
                 </div>
@@ -3915,18 +3994,30 @@
             return card;
         }
 
+        function updateBuffStatus(selectElement) {
+            const card = selectElement.closest('.monster-card');
+            const statusIndicator = card.querySelector('.status-indicator');
+            const statusText = card.querySelector('.status-text');
+            const enabled = selectElement.value === 'enabled';
+            
+            // Update visual indicators
+            statusIndicator.className = `status-indicator ${enabled ? 'status-enabled' : 'status-disabled'}`;
+            statusText.textContent = enabled ? 'Active' : 'Inactive';
+            statusText.style.color = enabled ? '#10b981' : '#64748b';
+        }
+
         function collectBuffManagementFromUI() {
             const container = document.getElementById('buff-management-list');
             const buffs = [];
 
             container.querySelectorAll('.monster-card').forEach(card => {
-                const checkbox = card.querySelector('.monster-checkbox');
+                const selectElement = card.querySelector('.buff-status-select');
                 const nameElement = card.querySelector('.monster-name');
                 const durationInput = card.querySelector('.min-duration');
                 const itemCodesInput = card.querySelector('.item-codes');
 
                 const buffName = nameElement.textContent;
-                const enabled = checkbox.checked;
+                const enabled = selectElement.value === 'enabled';
                 const minDuration = parseInt(durationInput.value) || 20;
 
                 // Parse item codes
@@ -4391,22 +4482,66 @@
 
         function createCommonTroopItem(troop, index) {
             const troopDiv = document.createElement('div');
-            troopDiv.className = 'form-group';
+            troopDiv.className = 'troop-item';
             troopDiv.innerHTML = `
-                <label>Troop ${index + 1}: ${troop.name}</label>
-                <input type="number" 
-                       id="commonTroop_${troop.code}_amount" 
-                       value="${troop.amount}" 
-                       min="0" 
-                       placeholder="Amount">
-                <input type="hidden" 
-                       id="commonTroop_${troop.code}_code" 
-                       value="${troop.code}">
-                <input type="hidden" 
-                       id="commonTroop_${troop.code}_name" 
-                       value="${troop.name}">
+                <select class="troop-select" data-troop-code="${troop.code}" onchange="updateTroopData(this)">
+                    <option value="${troop.code}" selected>${troop.name || getTroopNameByCode(troop.code)}</option>
+                    <optgroup label="Tier 6 Troops">
+                        <option value="50100106">Paladin (Tier 6 Infantry)</option>
+                        <option value="50100107">Destroyer (Tier 6 Infantry)</option>
+                        <option value="50100206">Marksman (Tier 6 Ranged)</option>
+                        <option value="50100207">Musketeer (Tier 6 Ranged)</option>
+                        <option value="50100306">Marauder (Tier 6 Cavalry)</option>
+                        <option value="50100307">Valkyrie (Tier 6 Cavalry)</option>
+                    </optgroup>
+                    <optgroup label="Tier 5 Troops">
+                        <option value="50100105">Crusader (Tier 5 Infantry)</option>
+                        <option value="50100205">Sniper (Tier 5 Ranged)</option>
+                        <option value="50100305">Dragoon (Tier 5 Cavalry)</option>
+                    </optgroup>
+                    <optgroup label="Tier 4 Troops">
+                        <option value="50100104">Guardian (Tier 4 Infantry)</option>
+                        <option value="50100204">Crossbow Man (Tier 4 Ranged)</option>
+                        <option value="50100304">Iron Cavalry (Tier 4 Cavalry)</option>
+                    </optgroup>
+                    <optgroup label="Tier 3 Troops">
+                        <option value="50100103">Knight (Tier 3 Infantry)</option>
+                        <option value="50100203">Ranger (Tier 3 Ranged)</option>
+                        <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
+                    </optgroup>
+                </select>
+                <input type="number" class="troop-amount-input" value="${troop.amount || 0}" min="0" placeholder="Amount">
+                <button class="btn btn-danger" onclick="removeTroopItem(this)" style="flex-shrink: 0;">
+                    <i class="fas fa-trash"></i>
+                </button>
             `;
             return troopDiv;
+        }
+
+        function updateTroopData(selectElement) {
+            // Update the data-troop-code attribute when selection changes
+            selectElement.setAttribute('data-troop-code', selectElement.value);
+        }
+
+        function getTroopNameByCode(code) {
+            const troopNames = {
+                50100106: "Paladin (Tier 6 Infantry)",
+                50100107: "Destroyer (Tier 6 Infantry)",
+                50100206: "Marksman (Tier 6 Ranged)",
+                50100207: "Musketeer (Tier 6 Ranged)",
+                50100306: "Marauder (Tier 6 Cavalry)",
+                50100307: "Valkyrie (Tier 6 Cavalry)",
+                50100105: "Crusader (Tier 5 Infantry)",
+                50100205: "Sniper (Tier 5 Ranged)",
+                50100305: "Dragoon (Tier 5 Cavalry)",
+                50100104: "Guardian (Tier 4 Infantry)",
+                50100204: "Crossbow Man (Tier 4 Ranged)",
+                50100304: "Iron Cavalry (Tier 4 Cavalry)",
+                50100103: "Knight (Tier 3 Infantry)",
+                50100203: "Ranger (Tier 3 Ranged)",
+                50100303: "Heavy Cavalry (Tier 3 Cavalry)"
+            };
+            return troopNames[code] || `Unknown Troop (${code})`;
         }
 
         function collectSettingsFromUI() {
