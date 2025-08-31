@@ -1846,7 +1846,7 @@ Expected End: {ended_time}"""
                 
             logger.info(f"Step 1: Successfully changed skin using item ID: {skin_item_id} (Skills workflow)")
             
-            # Step 2: Activate "Increase Resource Production" skill (code 10025)
+            # Step 2: Activate skills when Instant Harvest is enabled
             try:
                 # Check if Instant Harvest (10001) is enabled first, as per requirements
                 skills_config = config.get('main', {}).get('skills', {})
@@ -1855,18 +1855,28 @@ Expected End: {ended_time}"""
                                             for skill in enabled_skills)
                 
                 if instant_harvest_enabled:
-                    logger.info("Step 2: Instant Harvest is enabled, activating Increase Resource Production skill (10025)")
-                    skill_result = self.api.skill_use({'code': 10025})
+                    # Step 2a: Activate Increase Resource Production skill (10025)
+                    logger.info("Step 2a: Activating Increase Resource Production skill (10025)")
+                    skill_result_10025 = self.api.skill_use({'code': 10025})
                     
-                    if skill_result and skill_result.get('result'):
+                    if skill_result_10025 and skill_result_10025.get('result'):
                         logger.info("Successfully activated Increase Resource Production skill (10025)")
                     else:
-                        logger.warning(f"Failed to activate skill 10025: {skill_result}")
+                        logger.warning(f"Failed to activate skill 10025: {skill_result_10025}")
+                    
+                    # Step 2b: Activate Instant Harvest skill (10001)
+                    logger.info("Step 2b: Activating Instant Harvest skill (10001)")
+                    skill_result_10001 = self.api.skill_use({'code': 10001})
+                    
+                    if skill_result_10001 and skill_result_10001.get('result'):
+                        logger.info("Successfully activated Instant Harvest skill (10001)")
+                    else:
+                        logger.warning(f"Failed to activate skill 10001: {skill_result_10001}")
                 else:
                     logger.info("Instant Harvest is not enabled, skipping skill activation in workflow")
                     
             except Exception as e:
-                logger.error(f"Error activating skill 10025: {str(e)}")
+                logger.error(f"Error activating skills: {str(e)}")
             
             # Step 3: Wait 2 minutes
             logger.info("Step 3: Waiting 2 minutes before second skin change...")
