@@ -802,6 +802,30 @@
                     <span class="troops-title">Enable Rally Join</span>
                 </div>
 
+                <!-- Rally Join Skin Change -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="rally-join-skin-change-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Skin Change</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Change skin before joining rallies
+                    </small>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Item ID</span>
+                    <input type="text" id="rally-join-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
+                    <span class="unit-label">item id</span>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Change Interval</span>
+                    <input type="number" id="rally-join-skin-change-interval" class="distance-input" value="60" min="1">
+                    <span class="unit-label">minutes</span>
+                </div>
+
                 <!-- Number of Marches -->
                 <div class="distance-section">
                     <span class="troops-title">Number of Marches</span>
@@ -877,6 +901,30 @@
                         <span class="toggle-slider"></span>
                     </label>
                     <span class="troops-title">Enable Rally Start</span>
+                </div>
+
+                <!-- Rally Start Skin Change -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="rally-start-skin-change-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Skin Change</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Change skin before starting rallies
+                    </small>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Item ID</span>
+                    <input type="text" id="rally-start-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
+                    <span class="unit-label">item id</span>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Change Interval</span>
+                    <input type="number" id="rally-start-skin-change-interval" class="distance-input" value="60" min="1">
+                    <span class="unit-label">minutes</span>
                 </div>
 
                 <!-- Number of Marches -->
@@ -1039,6 +1087,30 @@
                     </small>
                 </div>
 
+                <!-- Object Scanning Skin Change -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="socf-objects-skin-change-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Skin Change</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Change skin during object scanning activities
+                    </small>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Item ID</span>
+                    <input type="text" id="socf-objects-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
+                    <span class="unit-label">item id</span>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Change Interval</span>
+                    <input type="number" id="socf-objects-skin-change-interval" class="distance-input" value="60" min="1">
+                    <span class="unit-label">minutes</span>
+                </div>
+
                 <div id="socf-objects-list">
                     <!-- Object cards will be loaded here -->
                 </div>
@@ -1143,6 +1215,30 @@
                     <small style="display: block; color: #64748b; margin-top: 5px;">
                         Automatically use skills during gameplay
                     </small>
+                </div>
+
+                <!-- Skills Skin Change -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="skills-skin-change-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Skin Change</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Change skin → Activate "Increase Resource Production" → Wait 2 mins → Change skin again
+                    </small>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Item ID</span>
+                    <input type="text" id="skills-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
+                    <span class="unit-label">item id</span>
+                </div>
+
+                <div class="distance-section">
+                    <span class="troops-title">Skin Change Interval</span>
+                    <input type="number" id="skills-skin-change-interval" class="distance-input" value="60" min="1">
+                    <span class="unit-label">minutes</span>
                 </div>
 
                 <div id="skills-list">
@@ -2406,6 +2502,16 @@
                 distanceInput.value = config.max_rally_distance;
             }
 
+            // Load skin change settings
+            const skinChangeEnabled = config.skin_change_enabled || false;
+            document.getElementById('rally-join-skin-change-enabled').checked = skinChangeEnabled;
+
+            const skinItemId = config.skin_item_id || '';
+            document.getElementById('rally-join-skin-item-id').value = skinItemId;
+
+            const skinChangeInterval = config.skin_change_interval || 60;
+            document.getElementById('rally-join-skin-change-interval').value = skinChangeInterval;
+
             // Clear and populate monsters
             const container = document.getElementById('rally-join-monsters');
             container.innerHTML = '';
@@ -2435,6 +2541,16 @@
             if (config.max_rally_distance) {
                 distanceInput.value = config.max_rally_distance;
             }
+
+            // Load skin change settings
+            const skinChangeEnabled = config.skin_change_enabled || false;
+            document.getElementById('rally-start-skin-change-enabled').checked = skinChangeEnabled;
+
+            const skinItemId = config.skin_item_id || '';
+            document.getElementById('rally-start-skin-item-id').value = skinItemId;
+
+            const skinChangeInterval = config.skin_change_interval || 60;
+            document.getElementById('rally-start-skin-change-interval').value = skinChangeInterval;
 
             // Clear and populate monsters
             const container = document.getElementById('rally-start-monsters');
@@ -2882,6 +2998,18 @@
                 // Update targets
                 fullConfigData.rally.join.targets = collectMonstersFromUI('rally-join');
 
+                // Update skin change settings
+                const rallyJoinSkinEnabled = document.getElementById('rally-join-skin-change-enabled').checked;
+                fullConfigData.rally.join.skin_change_enabled = rallyJoinSkinEnabled;
+
+                const rallyJoinSkinItemId = document.getElementById('rally-join-skin-item-id').value;
+                fullConfigData.rally.join.skin_item_id = rallyJoinSkinItemId;
+
+                const rallyJoinSkinInterval = parseInt(document.getElementById('rally-join-skin-change-interval').value);
+                if (!isNaN(rallyJoinSkinInterval)) {
+                    fullConfigData.rally.join.skin_change_interval = rallyJoinSkinInterval;
+                }
+
             } else if (configType === 'rally-start') {
                 if (!fullConfigData.rally) fullConfigData.rally = {};
                 if (!fullConfigData.rally.start) {
@@ -2959,6 +3087,18 @@
 
                 // Update targets
                 fullConfigData.rally.start.targets = collectMonstersFromUI('rally-start');
+
+                // Update skin change settings
+                const rallyStartSkinEnabled = document.getElementById('rally-start-skin-change-enabled').checked;
+                fullConfigData.rally.start.skin_change_enabled = rallyStartSkinEnabled;
+
+                const rallyStartSkinItemId = document.getElementById('rally-start-skin-item-id').value;
+                fullConfigData.rally.start.skin_item_id = rallyStartSkinItemId;
+
+                const rallyStartSkinInterval = parseInt(document.getElementById('rally-start-skin-change-interval').value);
+                if (!isNaN(rallyStartSkinInterval)) {
+                    fullConfigData.rally.start.skin_change_interval = rallyStartSkinInterval;
+                }
 
             } else if (configType === 'monster-attack') {
                 if (!fullConfigData.main) fullConfigData.main = {};
@@ -3120,6 +3260,21 @@
                 // Update targets
                 socfJob.kwargs.targets = collectSocfObjectsFromUI();
 
+                // Update skin change settings
+                const socfSkinEnabled = document.getElementById('socf-objects-skin-change-enabled').checked;
+                if (!fullConfigData.main.object_scanning.skin_change_settings) {
+                    fullConfigData.main.object_scanning.skin_change_settings = {};
+                }
+                fullConfigData.main.object_scanning.skin_change_settings.enabled = socfSkinEnabled;
+
+                const socfSkinItemId = document.getElementById('socf-objects-skin-item-id').value;
+                fullConfigData.main.object_scanning.skin_change_settings.skin_item_id = socfSkinItemId;
+
+                const socfSkinInterval = parseInt(document.getElementById('socf-objects-skin-change-interval').value);
+                if (!isNaN(socfSkinInterval)) {
+                    fullConfigData.main.object_scanning.skin_change_settings.skin_change_interval = socfSkinInterval;
+                }
+
             } else if (configType === 'buff-management') {
                 if (!fullConfigData.buff_management) {
                     fullConfigData.buff_management = {
@@ -3163,6 +3318,18 @@
                     enabled: skillsEnabled,
                     skills: skillsConfig
                 };
+
+                // Update skin change settings for Skills (special workflow)
+                const skillsSkinEnabled = document.getElementById('skills-skin-change-enabled').checked;
+                fullConfigData.main.skills.skin_change_enabled = skillsSkinEnabled;
+
+                const skillsSkinItemId = document.getElementById('skills-skin-item-id').value;
+                fullConfigData.main.skills.skin_item_id = skillsSkinItemId;
+
+                const skillsSkinInterval = parseInt(document.getElementById('skills-skin-change-interval').value);
+                if (!isNaN(skillsSkinInterval)) {
+                    fullConfigData.main.skills.skin_change_interval = skillsSkinInterval;
+                }
 
                 console.log('Skills config being saved:', fullConfigData.main.skills);
 
@@ -3593,6 +3760,12 @@
                 radiusInput.value = socfJob.kwargs.radius;
             }
 
+            // Load skin change settings
+            const skinChangeSettings = fullConfigData.main?.object_scanning?.skin_change_settings || {};
+            document.getElementById('socf-objects-skin-change-enabled').checked = skinChangeSettings.enabled || false;
+            document.getElementById('socf-objects-skin-item-id').value = skinChangeSettings.skin_item_id || '';
+            document.getElementById('socf-objects-skin-change-interval').value = skinChangeSettings.skin_change_interval || 60;
+
             // Clear and populate objects
             const container = document.getElementById('socf-objects-list');
             container.innerHTML = '';
@@ -3780,6 +3953,11 @@
 
             // Set enabled state
             document.getElementById('skills-enabled').checked = config.enabled || false;
+
+            // Load skin change settings
+            document.getElementById('skills-skin-change-enabled').checked = config.skin_change_enabled || false;
+            document.getElementById('skills-skin-item-id').value = config.skin_item_id || '';
+            document.getElementById('skills-skin-change-interval').value = config.skin_change_interval || 60;
 
             // Clear and populate skills
             const container = document.getElementById('skills-list');

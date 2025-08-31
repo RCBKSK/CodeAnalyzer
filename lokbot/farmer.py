@@ -1727,50 +1727,52 @@ Expected End: {ended_time}"""
             logger.error(f"Error handling crystal limit: {str(e)}")
 
     def _skin_change_thread(self):
-        """Thread to handle automatic skin changes based on configuration"""
+        """Thread to handle automatic skin changes based on configuration from multiple sources"""
         logger.info("Skin change thread started")
 
         while True:
             try:
-                # Check if skin change is enabled in treasure configuration
-                treasure_config = config.get('main', {}).get('treasure', {})
-                skin_enabled = treasure_config.get('skin_change_enabled', False)
-
-                if not skin_enabled:
-                    logger.debug("Skin change is disabled, waiting...")
+                # Check all potential skin change sources
+                skin_configs = self._get_all_skin_change_configs()
+                
+                if not skin_configs:
+                    logger.debug("No skin change configurations enabled, waiting...")
                     time.sleep(60)  # Check every minute
                     continue
 
-                # Get skin change configuration
-                skin_item_id = treasure_config.get('skin_item_id', '')
-                change_interval_minutes = treasure_config.get('skin_change_interval', 60)
-
-                if not skin_item_id:
-                    logger.warning("Skin item ID not configured, waiting...")
-                    time.sleep(60)
-                    continue
-
-                # Convert interval to seconds
-                change_interval_seconds = change_interval_minutes * 60
                 current_time = time.time()
 
-                # Check if enough time has passed since last skin change
-                if current_time - self.skin_last_change >= change_interval_seconds:
-                    try:
-                        # Prepare the payload
-                        payload = {"itemId": skin_item_id}
+                # Process each enabled skin change configuration
+                for source, config_data in skin_configs.items():
+                    skin_item_id = config_data.get('skin_item_id', '')
+                    change_interval_minutes = config_data.get('skin_change_interval', 60)
+                    
+                    if not skin_item_id:
+                        logger.warning(f"Skin item ID not configured for {source}, skipping...")
+                        continue
 
-                        # Call the skin equip API
-                        result = self.api.kingdom_skin_equip(payload)
+                    # Convert interval to seconds
+                    change_interval_seconds = change_interval_minutes * 60
+                    
+                    # Use source-specific last change tracking
+                    last_change_key = f'skin_last_change_{source}'
+                    if not hasattr(self, last_change_key):
+                        setattr(self, last_change_key, 0)
+                    
+                    last_change = getattr(self, last_change_key)
 
-                        if result and result.get('result'):
-                            logger.info(f"Successfully changed skin using item ID: {skin_item_id}")
-                            self.skin_last_change = current_time
-                        else:
-                            logger.warning(f"Failed to change skin: {result}")
+                    # Check if enough time has passed since last skin change for this source
+                    if current_time - last_change >= change_interval_seconds:
+                        try:
+                            # Handle special Skills workflow
+                            if source == 'skills':
+                                self._handle_skills_skin_workflow(skin_item_id, current_time, last_change_key)
+                            else:
+                                # Standard skin change for other sources
+                                self._perform_skin_change(skin_item_id, source, current_time, last_change_key)
 
-                    except Exception as e:
-                        logger.error(f"Error changing skin: {str(e)}")
+                        except Exception as e:
+                            logger.error(f"Error changing skin for {source}: {str(e)}")
 
                 # Wait before next check (check every minute)
                 time.sleep(60)
@@ -1778,6 +1780,112 @@ Expected End: {ended_time}"""
             except Exception as e:
                 logger.error(f"Error in skin change thread: {str(e)}")
                 time.sleep(60)
+
+    def _get_all_skin_change_configs(self):
+        """Collect skin change configurations from all enabled sources"""
+        skin_configs = {}
+        
+        # Check rally-join configuration
+        rally_join_config = config.get('rally', {}).get('join', {})
+        if rally_join_config.get('enabled', False) and rally_join_config.get('skin_change_enabled', False):
+            skin_configs['rally_join'] = rally_join_config
+            
+        # Check rally-start configuration
+        rally_start_config = config.get('rally', {}).get('start', {})
+        if rally_start_config.get('enabled', False) and rally_start_config.get('skin_change_enabled', False):
+            skin_configs['rally_start'] = rally_start_config
+            
+        # Check object scanning configuration
+        object_scanning_config = config.get('main', {}).get('object_scanning', {})
+        skin_change_settings = object_scanning_config.get('skin_change_settings', {})
+        if object_scanning_config.get('enabled', False) and skin_change_settings.get('enabled', False):
+            skin_configs['object_scanning'] = skin_change_settings
+            
+        # Check skills configuration  
+        skills_config = config.get('main', {}).get('skills', {})
+        if skills_config.get('enabled', False) and skills_config.get('skin_change_enabled', False):
+            skin_configs['skills'] = skills_config
+            
+        # Check treasure configuration (existing functionality)
+        treasure_config = config.get('main', {}).get('treasure', {})
+        if treasure_config.get('enabled', False) and treasure_config.get('skin_change_enabled', False):
+            skin_configs['treasure'] = treasure_config
+            
+        return skin_configs
+
+    def _perform_skin_change(self, skin_item_id, source, current_time, last_change_key):
+        """Perform a standard skin change"""
+        try:
+            # Prepare the payload
+            payload = {"itemId": skin_item_id}
+
+            # Call the skin equip API
+            result = self.api.kingdom_skin_equip(payload)
+
+            if result and result.get('result'):
+                logger.info(f"Successfully changed skin using item ID: {skin_item_id} (source: {source})")
+                setattr(self, last_change_key, current_time)
+            else:
+                logger.warning(f"Failed to change skin for {source}: {result}")
+
+        except Exception as e:
+            logger.error(f"Error changing skin for {source}: {str(e)}")
+
+    def _handle_skills_skin_workflow(self, skin_item_id, current_time, last_change_key):
+        """Handle the special Skills workflow: skin change → activate skill 10025 → wait 2 mins → skin change again"""
+        try:
+            logger.info("Starting Skills skin change workflow")
+            
+            # Step 1: Change skin
+            payload = {"itemId": skin_item_id}
+            result = self.api.kingdom_skin_equip(payload)
+            
+            if not (result and result.get('result')):
+                logger.warning(f"Failed initial skin change for Skills workflow: {result}")
+                return
+                
+            logger.info(f"Step 1: Successfully changed skin using item ID: {skin_item_id} (Skills workflow)")
+            
+            # Step 2: Activate "Increase Resource Production" skill (code 10025)
+            try:
+                # Check if Instant Harvest (10001) is enabled first, as per requirements
+                skills_config = config.get('main', {}).get('skills', {})
+                enabled_skills = skills_config.get('skills', [])
+                instant_harvest_enabled = any(skill.get('code') == 10001 and skill.get('enabled', False) 
+                                            for skill in enabled_skills)
+                
+                if instant_harvest_enabled:
+                    logger.info("Step 2: Instant Harvest is enabled, activating Increase Resource Production skill (10025)")
+                    skill_result = self.api.skill_use({'code': 10025})
+                    
+                    if skill_result and skill_result.get('result'):
+                        logger.info("Successfully activated Increase Resource Production skill (10025)")
+                    else:
+                        logger.warning(f"Failed to activate skill 10025: {skill_result}")
+                else:
+                    logger.info("Instant Harvest is not enabled, skipping skill activation in workflow")
+                    
+            except Exception as e:
+                logger.error(f"Error activating skill 10025: {str(e)}")
+            
+            # Step 3: Wait 2 minutes
+            logger.info("Step 3: Waiting 2 minutes before second skin change...")
+            time.sleep(120)  # Wait 2 minutes
+            
+            # Step 4: Change skin again
+            result2 = self.api.kingdom_skin_equip(payload)
+            
+            if result2 and result2.get('result'):
+                logger.info(f"Step 4: Successfully changed skin again using item ID: {skin_item_id} (Skills workflow complete)")
+            else:
+                logger.warning(f"Failed second skin change for Skills workflow: {result2}")
+            
+            # Update last change time
+            setattr(self, last_change_key, current_time)
+            logger.info("Skills skin change workflow completed")
+            
+        except Exception as e:
+            logger.error(f"Error in Skills skin change workflow: {str(e)}")
 
     def _on_field_objects_gather(self, each_obj):
         # Check crystal limit first
