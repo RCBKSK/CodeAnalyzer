@@ -1223,22 +1223,22 @@
                         <input type="checkbox" id="skills-skin-change-enabled">
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="troops-title">Enable Skin Change</span>
+                    <span class="troops-title">Enable Two-Skin Workflow</span>
                     <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Change skin → Activate "Increase Resource Production" + "Instant Harvest" → Wait 2 mins → Change skin again
+                        Change to Skin 1 → Activate "Increase Resource Production" + "Instant Harvest" → Wait 2 mins → Change to Skin 2
                     </small>
                 </div>
 
                 <div class="distance-section">
-                    <span class="troops-title">Skin Item ID</span>
+                    <span class="troops-title">First Skin ID</span>
                     <input type="text" id="skills-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
-                    <span class="unit-label">item id</span>
+                    <span class="unit-label">first skin id</span>
                 </div>
 
                 <div class="distance-section">
-                    <span class="troops-title">Skin Change Interval</span>
-                    <input type="number" id="skills-skin-change-interval" class="distance-input" value="60" min="1">
-                    <span class="unit-label">minutes</span>
+                    <span class="troops-title">Second Skin ID</span>
+                    <input type="text" id="skills-skin-item-id-2" class="distance-input" value="" placeholder="e.g., 10101002">
+                    <span class="unit-label">second skin id</span>
                 </div>
 
                 <div id="skills-list">
@@ -3326,10 +3326,8 @@
                 const skillsSkinItemId = document.getElementById('skills-skin-item-id').value;
                 fullConfigData.main.skills.skin_item_id = skillsSkinItemId;
 
-                const skillsSkinInterval = parseInt(document.getElementById('skills-skin-change-interval').value);
-                if (!isNaN(skillsSkinInterval)) {
-                    fullConfigData.main.skills.skin_change_interval = skillsSkinInterval;
-                }
+                const skillsSkinItemId2 = document.getElementById('skills-skin-item-id-2').value;
+                fullConfigData.main.skills.skin_item_id_2 = skillsSkinItemId2;
 
                 console.log('Skills config being saved:', fullConfigData.main.skills);
 
@@ -3957,7 +3955,7 @@
             // Load skin change settings
             document.getElementById('skills-skin-change-enabled').checked = config.skin_change_enabled || false;
             document.getElementById('skills-skin-item-id').value = config.skin_item_id || '';
-            document.getElementById('skills-skin-change-interval').value = config.skin_change_interval || 60;
+            document.getElementById('skills-skin-item-id-2').value = config.skin_item_id_2 || '';
 
             // Clear and populate skills
             const container = document.getElementById('skills-list');

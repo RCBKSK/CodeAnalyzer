@@ -83,10 +83,8 @@ function updateBotStatus() {
                 actionsDisplay.textContent = data.actions_completed || 0;
             }
             
-            // Update game state if available
-            if (data.game_state) {
-                updateGameState(data.game_state);
-            }
+            // Update game state and march status
+            updateGameState(data);
             
             // Update footer status
             updateFooterStatus(data.status);
@@ -143,8 +141,9 @@ function updateRecentLogs() {
         });
 }
 
-function updateGameState(gameState) {
-    // Update resource displays
+function updateGameState(data) {
+    // Update resource displays from game state
+    const gameState = data.game_state || {};
     const resources = gameState.resources;
     if (resources) {
         updateResourceDisplay('wood', resources.wood);
@@ -160,6 +159,74 @@ function updateGameState(gameState) {
             powerDisplay.textContent = formatNumber(gameState.power_level);
         }
     }
+    
+    // Update march status from user processes data
+    const userProcesses = data.user_processes || [];
+    updateMarchStatus(userProcesses);
+}
+
+function updateMarchStatus(userProcesses) {
+    // Find march status display elements
+    const marchContainers = document.querySelectorAll('.march-status, [data-march-status]');
+    
+    if (userProcesses && userProcesses.length > 0) {
+        userProcesses.forEach((processInfo, index) => {
+            const currentMarches = processInfo.current_marches || 0;
+            const marchLimit = processInfo.march_limit || 0;
+            const instanceName = processInfo.name || 'Bot Instance';
+            
+            // Update march status for each instance
+            const marchElements = document.querySelectorAll(`[data-instance="${processInfo.instance_id}"] .march-info, .march-status-${index}`);
+            marchElements.forEach(element => {
+                element.textContent = `${currentMarches}/${marchLimit} marches`;
+            });
+            
+            // Update general march status displays
+            if (index === 0) { // Use first instance for general display
+                const generalMarchElements = document.querySelectorAll('.current-marches, [data-march-current]');
+                generalMarchElements.forEach(element => {
+                    element.textContent = currentMarches;
+                });
+                
+                const marchLimitElements = document.querySelectorAll('.march-limit, [data-march-limit]');
+                marchLimitElements.forEach(element => {
+                    element.textContent = marchLimit;
+                });
+                
+                const marchStatusElements = document.querySelectorAll('.march-status-text, [data-march-status-text]');
+                marchStatusElements.forEach(element => {
+                    element.textContent = `${currentMarches}/${marchLimit}`;
+                });
+            }
+        });
+    }
+    
+    // Update notification panel march data if it exists
+    updateNotificationPanelMarches(userProcesses);
+}
+
+function updateNotificationPanelMarches(userProcesses) {
+    // Preserve march data in notification panel during refresh
+    const notificationPanels = document.querySelectorAll('.notification-panel, .bot-status-panel');
+    
+    notificationPanels.forEach(panel => {
+        const marchElements = panel.querySelectorAll('.march-count, .march-status, [data-march-info]');
+        
+        if (userProcesses && userProcesses.length > 0) {
+            const totalMarches = userProcesses.reduce((sum, proc) => sum + (proc.current_marches || 0), 0);
+            const totalLimit = userProcesses.reduce((sum, proc) => sum + (proc.march_limit || 0), 0);
+            
+            marchElements.forEach(element => {
+                if (element.classList.contains('march-count')) {
+                    element.textContent = totalMarches;
+                } else if (element.classList.contains('march-status')) {
+                    element.textContent = `${totalMarches}/${totalLimit}`;
+                } else if (element.hasAttribute('data-march-info')) {
+                    element.textContent = `Marches: ${totalMarches}/${totalLimit}`;
+                }
+            });
+        }
+    });
 }
 
 function updateResourceDisplay(resourceType, amount) {

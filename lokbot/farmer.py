@@ -239,6 +239,15 @@ class LokFarmer:
         except Exception as e:
             logger.error(f"Failed to start skin change thread: {e}")
 
+        # Start skills management thread
+        try:
+            skills_thread = threading.Thread(target=self._skills_management_thread)
+            skills_thread.daemon = True
+            skills_thread.start()
+            logger.info("Skills management thread started")
+        except Exception as e:
+            logger.error(f"Failed to start skills management thread: {e}")
+
         # Initialize job registry
         try:
             self.jobs = {
@@ -1832,11 +1841,15 @@ Expected End: {ended_time}"""
             logger.error(f"Error changing skin for {source}: {str(e)}")
 
     def _handle_skills_skin_workflow(self, skin_item_id, current_time, last_change_key):
-        """Handle the special Skills workflow: skin change → activate skill 10025 → wait 2 mins → skin change again"""
+        """Handle the special Skills workflow: Skin 1 → activate skills → wait 2 mins → Skin 2"""
         try:
-            logger.info("Starting Skills skin change workflow")
+            logger.info("Starting Skills two-skin workflow")
             
-            # Step 1: Change skin
+            # Get skills config for second skin ID
+            skills_config = config.get('main', {}).get('skills', {})
+            skin_item_id_2 = skills_config.get('skin_item_id_2', '')
+            
+            # Step 1: Change to first skin
             payload = {"itemId": skin_item_id}
             result = self.api.kingdom_skin_equip(payload)
             
@@ -1844,12 +1857,10 @@ Expected End: {ended_time}"""
                 logger.warning(f"Failed initial skin change for Skills workflow: {result}")
                 return
                 
-            logger.info(f"Step 1: Successfully changed skin using item ID: {skin_item_id} (Skills workflow)")
+            logger.info(f"Step 1: Successfully changed to first skin using item ID: {skin_item_id}")
             
-            # Step 2: Activate skills when Instant Harvest is enabled
+            # Step 2: Activate skills when enabled
             try:
-                # Check if Instant Harvest (10001) is enabled first, as per requirements
-                skills_config = config.get('main', {}).get('skills', {})
                 enabled_skills = skills_config.get('skills', [])
                 instant_harvest_enabled = any(skill.get('code') == 10001 and skill.get('enabled', False) 
                                             for skill in enabled_skills)
@@ -1879,23 +1890,113 @@ Expected End: {ended_time}"""
                 logger.error(f"Error activating skills: {str(e)}")
             
             # Step 3: Wait 2 minutes
-            logger.info("Step 3: Waiting 2 minutes before second skin change...")
+            logger.info("Step 3: Waiting 2 minutes before changing to second skin...")
             time.sleep(120)  # Wait 2 minutes
             
-            # Step 4: Change skin again
-            result2 = self.api.kingdom_skin_equip(payload)
-            
-            if result2 and result2.get('result'):
-                logger.info(f"Step 4: Successfully changed skin again using item ID: {skin_item_id} (Skills workflow complete)")
+            # Step 4: Change to second skin (if configured)
+            if skin_item_id_2:
+                payload2 = {"itemId": skin_item_id_2}
+                result2 = self.api.kingdom_skin_equip(payload2)
+                
+                if result2 and result2.get('result'):
+                    logger.info(f"Step 4: Successfully changed to second skin using item ID: {skin_item_id_2}")
+                else:
+                    logger.warning(f"Failed to change to second skin: {result2}")
             else:
-                logger.warning(f"Failed second skin change for Skills workflow: {result2}")
+                logger.info("Step 4: No second skin ID configured, skipping second skin change")
             
             # Update last change time
             setattr(self, last_change_key, current_time)
-            logger.info("Skills skin change workflow completed")
+            logger.info("Skills two-skin workflow completed")
             
         except Exception as e:
-            logger.error(f"Error in Skills skin change workflow: {str(e)}")
+            logger.error(f"Error in Skills two-skin workflow: {str(e)}")
+
+    def _skills_management_thread(self):
+        """Skills management thread that runs at bot start and every 10 minutes"""
+        logger.info("Skills management thread started")
+        
+        # Run skills immediately at startup
+        self._execute_skills()
+        
+        # Then run every 10 minutes
+        while True:
+            try:
+                time.sleep(600)  # Wait 10 minutes (600 seconds)
+                self._execute_skills()
+            except Exception as e:
+                logger.error(f"Error in skills management thread: {str(e)}")
+                time.sleep(60)  # Wait 1 minute on error before retrying
+
+    def _execute_skills(self):
+        """Execute configured skills if skills system is enabled"""
+        try:
+            # Get current config
+            from lokbot import config
+            skills_config = config.get('main', {}).get('skills', {})
+            
+            if not skills_config.get('enabled', False):
+                logger.debug("Skills system is disabled")
+                return
+                
+            logger.info("Executing skills configuration")
+            
+            # Get available skills from API
+            skill_list = self.api.skill_list()
+            available_skills_data = skill_list.get('skills', [])
+            available_skill_codes = [skill.get('code') for skill in available_skills_data]
+            
+            logger.info(f"Available skills from API: {available_skill_codes}")
+
+            # Check configured skills
+            configured_skills = skills_config.get('skills', [])
+            logger.info(f"Configured skills: {configured_skills}")
+
+            # Use enabled skills if available 
+            for skill_config in configured_skills:
+                skill_code = skill_config.get('code')
+                skill_enabled = skill_config.get('enabled', False)
+                
+                logger.info(f"Processing skill {skill_code}: enabled={skill_enabled}")
+                
+                if not skill_enabled:
+                    logger.info(f"Skill {skill_code} is disabled in config, skipping")
+                    continue
+                    
+                if skill_code not in available_skill_codes:
+                    logger.warning(f"Skill {skill_code} is not available in game, skipping")
+                    continue
+
+                try:
+                    # Get skill info to check cooldown
+                    skill_info = next((s for s in available_skills_data if s.get('code') == skill_code), None)
+                    if skill_info:
+                        next_skill_time = skill_info.get('nextSkillTime')
+                        if next_skill_time:
+                            logger.info(f"Skill {skill_code} is on cooldown until {next_skill_time}")
+                            continue
+
+                    # Try to use the skill
+                    logger.info(f"Attempting to use skill {skill_code}")
+                    self.api.skill_use(skill_code)
+                    logger.info(f"Successfully used skill {skill_code}")
+                    
+                    # Add delay between skill uses
+                    time.sleep(random.uniform(1, 3))
+                    
+                except OtherException as e:
+                    error_str = str(e)
+                    if error_str == 'yet_in_cooltime':
+                        logger.info(f"Skill {skill_code} is still on cooldown")
+                    elif error_str == 'not_enough_mp':
+                        logger.info(f"Not enough MP to use skill {skill_code}")
+                    else:
+                        logger.error(f"Error using skill {skill_code}: {error_str}")
+                except Exception as e:
+                    logger.error(f"Unexpected error using skill {skill_code}: {e}")
+                    
+        except Exception as e:
+            logger.error(f"Error in skills execution: {e}")
 
     def _on_field_objects_gather(self, each_obj):
         # Check crystal limit first
