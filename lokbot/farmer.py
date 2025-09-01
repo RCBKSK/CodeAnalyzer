@@ -1841,13 +1841,15 @@ Expected End: {ended_time}"""
             logger.error(f"Error changing skin for {source}: {str(e)}")
 
     def _handle_skills_skin_workflow(self, skin_item_id, current_time, last_change_key):
-        """Handle the special Skills workflow: Skin 1 → activate skills → wait 2 mins → Skin 2"""
+        """Handle the special Skills workflow: Skin 1 → Change treasure page + activate skills → wait 2 mins → Skin 2 and Change treasure page again"""
         try:
             logger.info("Starting Skills two-skin workflow")
             
-            # Get skills config for second skin ID
+            # Get skills config for second skin ID and treasure pages
             skills_config = config.get('main', {}).get('skills', {})
             skin_item_id_2 = skills_config.get('skin_item_id_2', '')
+            treasure_page_1 = skills_config.get('treasure_page_1', 1)
+            treasure_page_2 = skills_config.get('treasure_page_2', 2)
             
             # Step 1: Change to first skin
             payload = {"itemId": skin_item_id}
@@ -1858,6 +1860,14 @@ Expected End: {ended_time}"""
                 return
                 
             logger.info(f"Step 1: Successfully changed to first skin using item ID: {skin_item_id}")
+            
+            # Step 1a: Change to first treasure page
+            try:
+                logger.info(f"Step 1a: Changing to treasure page {treasure_page_1}")
+                self.api.kingdom_treasure_page(treasure_page_1)
+                logger.info(f"Successfully changed to treasure page {treasure_page_1}")
+            except Exception as e:
+                logger.error(f"Error changing to treasure page {treasure_page_1}: {str(e)}")
             
             # Step 2: Activate skills when enabled
             try:
@@ -1904,6 +1914,14 @@ Expected End: {ended_time}"""
                     logger.warning(f"Failed to change to second skin: {result2}")
             else:
                 logger.info("Step 4: No second skin ID configured, skipping second skin change")
+            
+            # Step 4a: Change to second treasure page
+            try:
+                logger.info(f"Step 4a: Changing to treasure page {treasure_page_2}")
+                self.api.kingdom_treasure_page(treasure_page_2)
+                logger.info(f"Successfully changed to treasure page {treasure_page_2}")
+            except Exception as e:
+                logger.error(f"Error changing to treasure page {treasure_page_2}: {str(e)}")
             
             # Update last change time
             setattr(self, last_change_key, current_time)
