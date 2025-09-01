@@ -2341,8 +2341,21 @@ Expected End: {ended_time}"""
                     if skill_info:
                         next_skill_time = skill_info.get('nextSkillTime')
                         if next_skill_time:
-                            logger.info(f"Skill {skill_code} is on cooldown until {next_skill_time}")
-                            continue
+                            # Parse the cooldown time and compare with current time
+                            from datetime import datetime
+                            try:
+                                # Parse the ISO format time string
+                                cooldown_time = datetime.fromisoformat(next_skill_time.replace('Z', '+00:00'))
+                                current_time = datetime.now(cooldown_time.tzinfo)
+                                
+                                if current_time < cooldown_time:
+                                    logger.info(f"Skill {skill_code} is on cooldown until {next_skill_time} (current: {current_time.isoformat()})")
+                                    continue
+                                else:
+                                    logger.info(f"Skill {skill_code} cooldown has expired ({next_skill_time} < {current_time.isoformat()}), proceeding to activate")
+                            except Exception as time_parse_error:
+                                logger.warning(f"Could not parse cooldown time for skill {skill_code}: {time_parse_error}. Attempting to use skill anyway.")
+                                # If we can't parse the time, try to use the skill anyway
 
                     # Try to use the skill
                     logger.info(f"Attempting to use skill {skill_code}")
