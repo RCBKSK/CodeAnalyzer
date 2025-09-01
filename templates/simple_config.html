@@ -1193,6 +1193,32 @@
                     <span class="unit-label">tiles</span>
                 </div>
 
+                <!-- Area Restrictions -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="area-restrictions-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable Area Restrictions</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Limit gathering and monster attacks to specific coordinate areas
+                    </small>
+                </div>
+
+                <div id="area-restrictions-container" style="margin-top: 16px; display: none;">
+                    <div id="area-restrictions-list">
+                        <!-- Area restriction cards will be loaded here -->
+                    </div>
+                    
+                    <!-- Add New Area -->
+                    <div style="margin-top: 16px;">
+                        <button class="btn btn-secondary" onclick="addAreaRestriction()">
+                            <i class="fas fa-plus"></i>
+                            Add New Area
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Add New Object -->
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="socf-object-select" class="dropdown-field" style="flex: 1;">
@@ -2988,6 +3014,59 @@
             button.closest('.troop-item').remove();
         }
 
+        // Area Restrictions Functions
+        function addAreaRestriction() {
+            const container = document.getElementById('area-restrictions-list');
+            const areaDiv = document.createElement('div');
+            areaDiv.className = 'monster-card';
+            areaDiv.innerHTML = `
+                <div class="monster-header">
+                    <input type="text" class="input-field area-name" placeholder="Area name (e.g., Safe Zone North)" style="flex: 1; margin-right: 8px;">
+                    <button class="btn btn-danger" onclick="removeAreaRestriction(this)">Remove</button>
+                </div>
+                <div class="level-inputs" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+                    <div class="input-group">
+                        <label class="input-label">Min X</label>
+                        <input type="number" class="input-field area-min-x" min="0" max="2047" placeholder="e.g., 800">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Max X</label>
+                        <input type="number" class="input-field area-max-x" min="0" max="2047" placeholder="e.g., 1200">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Min Y</label>
+                        <input type="number" class="input-field area-min-y" min="0" max="2047" placeholder="e.g., 1200">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Max Y</label>
+                        <input type="number" class="input-field area-max-y" min="0" max="2047" placeholder="e.g., 1600">
+                    </div>
+                </div>
+                <small style="display: block; color: #64748b; margin-top: 8px; font-size: 12px;">
+                    Define rectangular areas where gathering and monster attacks are allowed. Coordinates range from 0 to 2047.
+                </small>
+            `;
+            container.appendChild(areaDiv);
+        }
+
+        function removeAreaRestriction(button) {
+            button.closest('.monster-card').remove();
+        }
+
+        function toggleAreaRestrictions() {
+            const enabled = document.getElementById('area-restrictions-enabled').checked;
+            const container = document.getElementById('area-restrictions-container');
+            container.style.display = enabled ? 'block' : 'none';
+        }
+
+        // Add event listener for area restrictions toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const areaToggle = document.getElementById('area-restrictions-enabled');
+            if (areaToggle) {
+                areaToggle.addEventListener('change', toggleAreaRestrictions);
+            }
+        });
+
         // Save configuration
         function saveConfig(configType) {
             console.log(`Saving config for: ${configType}`);
@@ -3346,6 +3425,37 @@
                 if (radius) {
                     socfJob.kwargs.radius = radius;
                 }
+
+                // Update area restrictions
+                const areaRestrictionsEnabled = document.getElementById('area-restrictions-enabled').checked;
+                if (!fullConfigData.main.object_scanning.area_restrictions) {
+                    fullConfigData.main.object_scanning.area_restrictions = {
+                        "enabled": false,
+                        "allowed_areas": []
+                    };
+                }
+                fullConfigData.main.object_scanning.area_restrictions.enabled = areaRestrictionsEnabled;
+
+                // Collect area restrictions from UI
+                const areaRestrictions = [];
+                document.querySelectorAll('#area-restrictions-list .monster-card').forEach(areaCard => {
+                    const name = areaCard.querySelector('.area-name').value;
+                    const minX = parseInt(areaCard.querySelector('.area-min-x').value);
+                    const maxX = parseInt(areaCard.querySelector('.area-max-x').value);
+                    const minY = parseInt(areaCard.querySelector('.area-min-y').value);
+                    const maxY = parseInt(areaCard.querySelector('.area-max-y').value);
+                    
+                    if (name && !isNaN(minX) && !isNaN(maxX) && !isNaN(minY) && !isNaN(maxY)) {
+                        areaRestrictions.push({
+                            name: name,
+                            min_x: minX,
+                            max_x: maxX,
+                            min_y: minY,
+                            max_y: maxY
+                        });
+                    }
+                });
+                fullConfigData.main.object_scanning.area_restrictions.allowed_areas = areaRestrictions;
 
                 // Update targets
                 socfJob.kwargs.targets = collectSocfObjectsFromUI();
@@ -3860,6 +3970,54 @@
             document.getElementById('socf-objects-skin-change-enabled').checked = skinChangeSettings.enabled || false;
             document.getElementById('socf-objects-skin-item-id').value = skinChangeSettings.skin_item_id || '';
             document.getElementById('socf-objects-skin-change-interval').value = skinChangeSettings.skin_change_interval || 60;
+
+            // Load area restrictions
+            const areaRestrictions = fullConfigData.main?.object_scanning?.area_restrictions || {};
+            const areaRestrictionsEnabled = areaRestrictions.enabled || false;
+            document.getElementById('area-restrictions-enabled').checked = areaRestrictionsEnabled;
+            
+            // Show/hide area restrictions container
+            const areaRestrictionsContainer = document.getElementById('area-restrictions-container');
+            areaRestrictionsContainer.style.display = areaRestrictionsEnabled ? 'block' : 'none';
+
+            // Clear and populate area restrictions
+            const areaContainer = document.getElementById('area-restrictions-list');
+            areaContainer.innerHTML = '';
+
+            if (areaRestrictions.allowed_areas && areaRestrictions.allowed_areas.length > 0) {
+                areaRestrictions.allowed_areas.forEach(area => {
+                    const areaDiv = document.createElement('div');
+                    areaDiv.className = 'monster-card';
+                    areaDiv.innerHTML = `
+                        <div class="monster-header">
+                            <input type="text" class="input-field area-name" placeholder="Area name (e.g., Safe Zone North)" style="flex: 1; margin-right: 8px;" value="${area.name || ''}">
+                            <button class="btn btn-danger" onclick="removeAreaRestriction(this)">Remove</button>
+                        </div>
+                        <div class="level-inputs" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+                            <div class="input-group">
+                                <label class="input-label">Min X</label>
+                                <input type="number" class="input-field area-min-x" min="0" max="2047" placeholder="e.g., 800" value="${area.min_x || ''}">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Max X</label>
+                                <input type="number" class="input-field area-max-x" min="0" max="2047" placeholder="e.g., 1200" value="${area.max_x || ''}">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Min Y</label>
+                                <input type="number" class="input-field area-min-y" min="0" max="2047" placeholder="e.g., 1200" value="${area.min_y || ''}">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Max Y</label>
+                                <input type="number" class="input-field area-max-y" min="0" max="2047" placeholder="e.g., 1600" value="${area.max_y || ''}">
+                            </div>
+                        </div>
+                        <small style="display: block; color: #64748b; margin-top: 8px; font-size: 12px;">
+                            Define rectangular areas where gathering and monster attacks are allowed. Coordinates range from 0 to 2047.
+                        </small>
+                    `;
+                    areaContainer.appendChild(areaDiv);
+                });
+            }
 
             // Clear and populate objects
             const container = document.getElementById('socf-objects-list');

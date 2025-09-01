@@ -3638,7 +3638,16 @@ def handle_objects_config():
                     objects = job.get('kwargs', {}).get('targets', [])
                     break
 
-            return jsonify({'objects': objects})
+            # Get area restrictions from object_scanning config
+            area_restrictions = config.get('main', {}).get('object_scanning', {}).get('area_restrictions', {
+                'enabled': False,
+                'allowed_areas': []
+            })
+
+            return jsonify({
+                'objects': objects,
+                'area_restrictions': area_restrictions
+            })
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
@@ -3646,6 +3655,7 @@ def handle_objects_config():
         try:
             data = request.json
             objects = data.get('objects', [])
+            area_restrictions = data.get('area_restrictions', {})
 
             config = ConfigHelper.load_config()
 
@@ -3657,9 +3667,18 @@ def handle_objects_config():
                     job['kwargs']['targets'] = objects
                     break
 
+            # Ensure object_scanning section exists
+            if 'main' not in config:
+                config['main'] = {}
+            if 'object_scanning' not in config['main']:
+                config['main']['object_scanning'] = {}
+
+            # Update area restrictions
+            config['main']['object_scanning']['area_restrictions'] = area_restrictions
+
             success = ConfigHelper.save_config(config, config_file)
             if success:
-                return jsonify({'success': True, 'message': 'Updated object targets'})
+                return jsonify({'success': True, 'message': 'Updated object configuration'})
             else:
                 return jsonify({'error': 'Failed to save configuration'}), 500
         except Exception as e:
