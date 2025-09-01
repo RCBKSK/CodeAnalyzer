@@ -5161,8 +5161,8 @@ Status: {status}"""
             if not skills_list:
                 return
 
-            # Get current skill status
-            skill_status = self.api.kingdom_skill_info()
+            # Get current skill status using the correct API method
+            skill_status = self.api.skill_list()
             if not skill_status:
                 logger.warning('Failed to get skill status')
                 return
@@ -5179,16 +5179,18 @@ Status: {status}"""
                     # Check if skill is available (not on cooldown and we have enough MP)
                     skill_info = None
                     for available_skill in skill_status.get('skills', []):
-                        if available_skill.get('skillId') == skill_code:
+                        if available_skill.get('skillId') == skill_code or available_skill.get('code') == skill_code:
                             skill_info = available_skill
                             break
 
                     if not skill_info:
+                        logger.debug(f'Skill {skill_code} not found in available skills')
                         continue
 
                     # Check if skill is on cooldown
-                    if skill_info.get('cooldown', 0) > 0:
-                        logger.debug(f'Skill {skill_code} is on cooldown: {skill_info.get("cooldown")} seconds')
+                    cooldown = skill_info.get('cooldown', 0)
+                    if cooldown > 0:
+                        logger.debug(f'Skill {skill_code} is on cooldown: {cooldown} seconds')
                         continue
 
                     # Check if we have enough MP
@@ -5199,12 +5201,14 @@ Status: {status}"""
                         logger.debug(f'Not enough MP for skill {skill_code}: {current_mp}/{required_mp}')
                         continue
 
-                    # Activate the skill
-                    result = self.api.kingdom_skill_activate(skill_code)
+                    # Activate the skill using the correct API method
+                    result = self.api.skill_use(skill_code)
                     if result:
-                        logger.info(f'Successfully activated skill {skill_code}')
+                        logger.info(f'✅ Successfully activated skill {skill_code}')
+                        # Update current MP to prevent overlapping activations
+                        current_mp -= required_mp
                     else:
-                        logger.warning(f'Failed to activate skill {skill_code}')
+                        logger.warning(f'❌ Failed to activate skill {skill_code}')
 
                 except Exception as e:
                     logger.error(f'Error activating skill {skill_code}: {str(e)}')
