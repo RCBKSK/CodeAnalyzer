@@ -2,67 +2,67 @@
   "buff_management": {
     "buffs": [
       {
-        "name": "Food Production Boost",
+        "enabled": true,
         "item_codes": [
           10102001,
           10102002
         ],
-        "enabled": true,
-        "min_duration_minutes": 20
+        "min_duration_minutes": 20,
+        "name": "Food Production Boost"
       },
       {
-        "name": "Wood Production Boost",
+        "enabled": true,
         "item_codes": [
           10102003,
           10102004
         ],
-        "enabled": true,
-        "min_duration_minutes": 20
+        "min_duration_minutes": 20,
+        "name": "Wood Production Boost"
       },
       {
-        "name": "Stone Production Boost",
+        "enabled": true,
         "item_codes": [
           10102005,
           10102006
         ],
-        "enabled": true,
-        "min_duration_minutes": 20
+        "min_duration_minutes": 20,
+        "name": "Stone Production Boost"
       },
       {
-        "name": "Gold Production Boost",
+        "enabled": true,
         "item_codes": [
           10102007,
           10102008
         ],
-        "enabled": true,
-        "min_duration_minutes": 20
+        "min_duration_minutes": 20,
+        "name": "Gold Production Boost"
       },
       {
-        "name": "Gathering Speed Boost",
+        "enabled": true,
         "item_codes": [
           10102009,
           10102010
         ],
-        "enabled": true,
-        "min_duration_minutes": 20
+        "min_duration_minutes": 20,
+        "name": "Gathering Speed Boost"
       },
       {
-        "name": "Kingdom Shield",
+        "enabled": true,
         "item_codes": [
           10102026,
           10102027
         ],
-        "enabled": true,
-        "min_duration_minutes": 20
+        "min_duration_minutes": 20,
+        "name": "Kingdom Shield"
       },
       {
-        "name": "Anti Spying Shield",
+        "enabled": true,
         "item_codes": [
           10102021,
           10102022
         ],
-        "enabled": true,
-        "min_duration_minutes": 20
+        "min_duration_minutes": 20,
+        "name": "Anti Spying Shield"
       }
     ],
     "enabled": false
@@ -289,8 +289,8 @@
         }
       ],
       "skin_change_enabled": true,
-      "skin_item_id": "660c494c861b19d4e81f7c64",
-      "skin_item_id_2": "6302cd7ad949314fce863238",
+      "skin_item_id": "1557544",
+      "skin_item_id_2": "1864946",
       "treasure_page_1": 2,
       "treasure_page_2": 1
     },
@@ -355,6 +355,7 @@
   },
   "toggles": {
     "features": {
+      "buff_management": false,
       "chat_monitoring": true,
       "discord": true,
       "enable_chat_monitoring": true,
@@ -363,8 +364,7 @@
       "notify_discord": false,
       "object_scanning": true,
       "rally_join": false,
-      "rally_start": false,
-      "buff_management": false
+      "rally_start": false
     },
     "jobs": {
       "alliance_farmer": true,
