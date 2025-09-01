@@ -2124,7 +2124,7 @@ Expected End: {ended_time}"""
             
             # Prepare notification data
             notification_data = {
-                'user_id': self.user_id,
+                'user_id': self._id,
                 'instance_id': self._id,
                 'account_name': account_name,
                 'notification_type': 'skills_completion',
