@@ -110,9 +110,18 @@
           "gift_claim": true,
           "help_all": true,
           "research_donate": true,
-          "shop_auto_buy_item_code_list": [
-            10101008
-          ]
+          "shop_items_config": {
+            "enabled": false,
+            "items": [
+              {
+                "enabled": true,
+                "item_code": 10101008,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "priority": 1
+              }
+            ]
+          }
         },
         "name": "alliance_farmer"
       },

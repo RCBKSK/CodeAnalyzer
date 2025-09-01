@@ -5025,11 +5025,13 @@
                 return;
             }
             
-            // Sort items by priority
-            const sortedItems = [...currentShopConfig.items].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+            // Sort items by priority but keep track of original indices
+            const sortedItems = currentShopConfig.items
+                .map((item, originalIndex) => ({ item, originalIndex }))
+                .sort((a, b) => (a.item.priority || 999) - (b.item.priority || 999));
             
-            sortedItems.forEach((item, index) => {
-                const itemElement = createShopItemElement(item, index);
+            sortedItems.forEach(({ item, originalIndex }) => {
+                const itemElement = createShopItemElement(item, originalIndex);
                 itemsList.appendChild(itemElement);
             });
         }
@@ -5201,15 +5203,28 @@
         }
 
         function updateShopItem(index, field, value) {
-            if (currentShopConfig.items[index]) {
+            if (currentShopConfig && 
+                currentShopConfig.items && 
+                index >= 0 && 
+                index < currentShopConfig.items.length && 
+                currentShopConfig.items[index]) {
                 currentShopConfig.items[index][field] = value;
+            } else {
+                console.error('Invalid updateShopItem call:', { index, field, value, itemsLength: currentShopConfig?.items?.length });
             }
         }
 
         function removeShopItem(index) {
-            currentShopConfig.items.splice(index, 1);
-            renderShopItemsList();
-            showNotification('Item removed from shop auto-buy list', 'info');
+            if (currentShopConfig && 
+                currentShopConfig.items && 
+                index >= 0 && 
+                index < currentShopConfig.items.length) {
+                currentShopConfig.items.splice(index, 1);
+                renderShopItemsList();
+                showNotification('Item removed from shop auto-buy list', 'info');
+            } else {
+                console.error('Invalid removeShopItem call:', { index, itemsLength: currentShopConfig?.items?.length });
+            }
         }
 
         async function saveAllianceShopConfig() {
