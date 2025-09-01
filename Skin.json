@@ -126,7 +126,7 @@
         "name": "alliance_farmer"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 200,
           "start": 120
@@ -166,7 +166,7 @@
         "name": "dsavip_chest_claim"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 20,
           "start": 10
@@ -290,14 +290,14 @@
       "skills": [
         {
           "code": 10001,
-          "enabled": true
+          "enabled": false
         },
         {
           "code": 10002,
           "enabled": true
         }
       ],
-      "skin_change_enabled": true,
+      "skin_change_enabled": false,
       "skin_item_id": "1557544",
       "skin_item_id_2": "1864946",
       "treasure_page_1": 2,
@@ -379,9 +379,9 @@
       "alliance_farmer": true,
       "caravan_farmer": true,
       "dsavip_chest_claim": false,
-      "harvester": false,
+      "harvester": true,
       "hospital_recover": true,
-      "mail_claim": false,
+      "mail_claim": true,
       "socf_thread": true,
       "use_resource_in_item_list": false,
       "vip_chest_claim": true,

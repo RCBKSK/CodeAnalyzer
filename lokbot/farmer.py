@@ -135,7 +135,18 @@ class LokFarmer:
         treasure_config = config.get('main', {}).get('treasure', {})
         if treasure_config.get('enabled', True):
             treasure_page = treasure_config.get('page', 1)
-            self.api.kingdom_treasure_page(treasure_page)
+            result = self.api.kingdom_treasure_page(treasure_page)
+            
+            # Send treasure page change notification
+            if result:
+                try:
+                    self._send_notification(
+                        'treasure_page_changed',
+                        '📜 Treasure Page Changed',
+                        f'Successfully set treasure page to {treasure_page}'
+                    )
+                except Exception as notif_error:
+                    logger.debug(f"Failed to send treasure page notification: {notif_error}")
 
         # Skills are now handled by the dedicated skills management thread
         # This prevents conflicts with the periodic activation system
@@ -2091,6 +2102,16 @@ Expected End: {ended_time}"""
             if result and result.get('result'):
                 logger.info(f"✅ Successfully changed skin using NFT ID: {skin_nft_id} -> Skin ID: {skin_id} (source: {source})")
                 setattr(self, last_change_key, current_time)
+                
+                # Send skin change notification
+                try:
+                    self._send_notification(
+                        'skin_changed',
+                        '👕 Skin Changed',
+                        f'Successfully changed skin to {skin_id} (NFT ID: {skin_nft_id}) for {source}'
+                    )
+                except Exception as notif_error:
+                    logger.debug(f"Failed to send skin change notification: {notif_error}")
             else:
                 logger.warning(f"❌ Failed to change skin for {source}: {result}")
 
@@ -2213,11 +2234,16 @@ Expected End: {ended_time}"""
         except Exception as e:
             logger.error(f"❌ Error in Skills 6-step workflow: {str(e)}")
 
-    def _send_skills_completion_notification(self):
-        """Send notification when skills activation workflow is completed"""
+    def _send_notification(self, notification_type, title, message):
+        """Send notification to web app
+        
+        Args:
+            notification_type: Type of notification ('skill_activated', 'buff_activated', 'skin_changed', etc.)
+            title: Notification title
+            message: Notification message
+        """
         try:
             import requests
-            import json
             
             # Get account name for notification
             account_name = getattr(self, 'account_name', 'Bot Instance')
@@ -2227,19 +2253,30 @@ Expected End: {ended_time}"""
                 'user_id': self._id,
                 'instance_id': self._id,
                 'account_name': account_name,
-                'notification_type': 'skills_completion',
-                'title': '🎉 Skills Activation Complete',
-                'message': 'All 6 steps of skills activation workflow completed successfully:\n• Skin 1 equipped\n• Treasure page 1 set\n• Resource production boost activated (10018)\n• Instant harvest activated (10001)\n• Treasure page 2 set\n• Skin 2 equipped',
+                'notification_type': notification_type,
+                'title': title,
+                'message': message,
                 'timestamp': time.time()
             }
             
             # Send to web app notification endpoint
             response = requests.post('http://localhost:5000/api/skills_notification', json=notification_data, timeout=5)
             if response.status_code == 200:
-                logger.info("Skills completion notification sent successfully")
+                logger.debug(f"Notification sent successfully: {notification_type}")
             else:
-                logger.warning(f"Failed to send skills notification: {response.status_code}")
+                logger.warning(f"Failed to send notification: {response.status_code}")
                 
+        except Exception as e:
+            logger.debug(f"Error sending notification: {str(e)}")
+
+    def _send_skills_completion_notification(self):
+        """Send notification when skills activation workflow is completed"""
+        try:
+            self._send_notification(
+                'skills_completion',
+                '🎉 Skills Activation Complete',
+                'All 6 steps of skills activation workflow completed successfully:\n• Skin 1 equipped\n• Treasure page 1 set\n• Resource production boost activated (10018)\n• Instant harvest activated (10001)\n• Treasure page 2 set\n• Skin 2 equipped'
+            )
         except Exception as e:
             logger.error(f"Error sending skills completion notification: {str(e)}")
 
@@ -2311,6 +2348,17 @@ Expected End: {ended_time}"""
                     logger.info(f"Attempting to use skill {skill_code}")
                     self.api.skill_use(skill_code)
                     logger.info(f"Successfully used skill {skill_code}")
+                    
+                    # Send skill activation notification
+                    try:
+                        skill_name = skill_info.get('name', f'Skill {skill_code}') if skill_info else f'Skill {skill_code}'
+                        self._send_notification(
+                            'skill_activated',
+                            '⚡ Skill Activated',
+                            f'Successfully activated {skill_name} (Code: {skill_code})'
+                        )
+                    except Exception as notif_error:
+                        logger.debug(f"Failed to send skill notification: {notif_error}")
                     
                     # Add delay between skill uses
                     time.sleep(random.uniform(1, 3))
@@ -5713,6 +5761,16 @@ Status: {status}"""
                                 # Update Golden Hammer status
                                 if item_code == ITEM_CODE_GOLDEN_HAMMER:
                                     self.has_additional_building_queue = True
+
+                                # Send buff activation notification
+                                try:
+                                    self._send_notification(
+                                        'buff_activated',
+                                        '🛡️ Buff Activated',
+                                        f'Successfully activated {buff_name.replace("_", " ").title()} buff (Code: {item_code}) - {activation_reason}'
+                                    )
+                                except Exception as notif_error:
+                                    logger.debug(f"Failed to send buff notification: {notif_error}")
 
                                 # Add delay between buff activations
                                 time.sleep(random.uniform(3, 8))

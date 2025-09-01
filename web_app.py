@@ -3141,20 +3141,34 @@ def manage_temp_test_accounts():
 
 @app.route('/api/skills_notification', methods=['POST'])
 def skills_notification():
-    """Receive skills completion notifications from bot instances"""
+    """Receive skills, buffs, skin and treasure page notifications from bot instances"""
     try:
         data = request.get_json()
         user_id = data.get('user_id', 'unknown')
         instance_id = data.get('instance_id', 'unknown')
         account_name = data.get('account_name', 'Bot Instance')
-        title = data.get('title', 'Skills Activation Complete')
-        message = data.get('message', 'Skills activation workflow completed')
+        title = data.get('title', 'Skills/Skins/Buffs Update')
+        message = data.get('message', '')
+        notification_type = data.get('notification_type', 'skills_completion')
+        
+        # Map notification types to appropriate categories for filtering/tagging
+        type_mapping = {
+            'skill_activated': 'skill',
+            'skill_deactivated': 'skill', 
+            'buff_activated': 'buff',
+            'buff_expired': 'buff',
+            'skin_changed': 'skin',
+            'treasure_page_changed': 'treasure_page',
+            'skills_completion': 'skill'
+        }
+        
+        mapped_type = type_mapping.get(notification_type, 'skill')
         
         # Add notification to the system
-        add_notification(user_id, "skills_completion", title, message,
+        add_notification(user_id, mapped_type, title, message,
                        account_name=account_name, instance_id=instance_id)
         
-        logger.info(f"Skills completion notification received for {account_name} (instance: {instance_id})")
+        logger.info(f"Skills/Skins/Buffs notification received for {account_name} (instance: {instance_id}): {notification_type}")
         return jsonify({'status': 'success'})
     except Exception as e:
         logger.error(f"Error in skills_notification: {str(e)}")
