@@ -918,7 +918,106 @@ class LokFarmer:
                 f"Zone {zone_id} at [{x}, {y}], distance: {distance:.2f} tiles"
             )
 
-        return [zone[0] for zone in sorted_zones]
+        # Apply area restrictions if enabled
+        filtered_zones = self._filter_zones_by_area_restrictions([zone[0] for zone in sorted_zones])
+        
+        return filtered_zones
+
+    def _is_coordinate_in_allowed_areas(self, x, y):
+        """
+        Check if the given coordinates are within any of the allowed gathering areas.
+        
+        Args:
+            x: X coordinate (0-2047)
+            y: Y coordinate (0-2047)
+            
+        Returns:
+            bool: True if coordinates are allowed, False otherwise
+        """
+        from lokbot import config
+        
+        # Get area restrictions from config
+        restrictions = config.get('main', {}).get('object_scanning', {}).get('area_restrictions', {})
+        
+        # If restrictions are not enabled, allow all areas
+        if not restrictions.get('enabled', False):
+            return True
+            
+        allowed_areas = restrictions.get('allowed_areas', [])
+        
+        # If no areas defined, allow all (safety fallback)
+        if not allowed_areas:
+            return True
+            
+        # Check if coordinates fall within any allowed rectangular area
+        for area in allowed_areas:
+            min_x = area.get('min_x', 0)
+            max_x = area.get('max_x', 2047)
+            min_y = area.get('min_y', 0)
+            max_y = area.get('max_y', 2047)
+            
+            if min_x <= x <= max_x and min_y <= y <= max_y:
+                logger.debug(f"Coordinates [{x}, {y}] allowed in area: {area.get('name', 'Unnamed')}")
+                return True
+                
+        logger.debug(f"Coordinates [{x}, {y}] outside all allowed areas")
+        return False
+
+    def _filter_zones_by_area_restrictions(self, zone_ids):
+        """
+        Filter zone list to only include zones that overlap with allowed areas.
+        
+        Args:
+            zone_ids: List of zone IDs to filter
+            
+        Returns:
+            list: Filtered list of zone IDs that are within allowed areas
+        """
+        from lokbot import config
+        
+        restrictions = config.get('main', {}).get('object_scanning', {}).get('area_restrictions', {})
+        
+        # If restrictions are not enabled, return all zones
+        if not restrictions.get('enabled', False):
+            return zone_ids
+            
+        allowed_zones = []
+        
+        for zone_id in zone_ids:
+            # Convert zone ID to zone coordinates
+            zone_y = zone_id // 64
+            zone_x = zone_id % 64
+            
+            # Convert zone coordinates to tile coordinate boundaries
+            zone_min_x = zone_x * 32
+            zone_max_x = zone_x * 32 + 31
+            zone_min_y = zone_y * 32
+            zone_max_y = zone_y * 32 + 31
+            
+            # Check if any part of the zone overlaps with allowed areas
+            zone_allowed = False
+            for corner_x in [zone_min_x, zone_max_x]:
+                for corner_y in [zone_min_y, zone_max_y]:
+                    if self._is_coordinate_in_allowed_areas(corner_x, corner_y):
+                        zone_allowed = True
+                        break
+                if zone_allowed:
+                    break
+                    
+            # Also check zone center
+            if not zone_allowed:
+                zone_center_x = zone_x * 32 + 16
+                zone_center_y = zone_y * 32 + 16
+                if self._is_coordinate_in_allowed_areas(zone_center_x, zone_center_y):
+                    zone_allowed = True
+            
+            if zone_allowed:
+                allowed_zones.append(zone_id)
+                
+        if len(allowed_zones) != len(zone_ids):
+            logger.info(f"Area restrictions filtered {len(zone_ids)} zones down to {len(allowed_zones)} allowed zones")
+            
+        return allowed_zones
 
     def _update_march_limit(self):
         try:
@@ -2040,6 +2139,13 @@ Expected End: {ended_time}"""
         to_loc = each_obj.get('loc')
         target_foid = each_obj.get('_id')  # Extract field object ID from the object
 
+        # Check area restrictions before proceeding
+        if to_loc and len(to_loc) >= 2:
+            x, y = to_loc[0], to_loc[1]
+            if not self._is_coordinate_in_allowed_areas(x, y):
+                logger.debug(f"Skipping gathering - coordinates [{x}, {y}] outside allowed areas")
+                return False
+
         # CHECK FOR MARCH CONFLICTS BEFORE PROCEEDING (with location and FOID validation)
         if self._is_object_being_marched(to_loc, target_foid):
             logger.warning(f"Skipping gathering at {to_loc} (FOID: {target_foid}) - object is already being marched to")
@@ -2127,6 +2233,14 @@ Expected End: {ended_time}"""
 
         monster_code = each_obj.get('code')
         monster_level = each_obj.get('level')
+        monster_loc = each_obj.get('loc')
+
+        # Check area restrictions for monster attacks
+        if monster_loc and len(monster_loc) >= 2:
+            x, y = monster_loc[0], monster_loc[1]
+            if not self._is_coordinate_in_allowed_areas(x, y):
+                logger.debug(f"Skipping monster attack - coordinates [{x}, {y}] outside allowed areas")
+                return False
 
         # Check if monster is in configured targets
         target_monster = next(
@@ -2149,7 +2263,6 @@ Expected End: {ended_time}"""
             return False
 
         # Check distance if enabled
-        monster_loc = each_obj.get('loc')
         monster_foid = each_obj.get('_id')  # Extract field object ID from the monster object
         from_loc = self.kingdom_enter.get('kingdom').get('loc')
         distance = self._calc_distance(from_loc, monster_loc)

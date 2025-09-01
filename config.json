@@ -307,6 +307,25 @@
         "enabled": false,
         "max_distance": 250
       },
+      "area_restrictions": {
+        "enabled": false,
+        "allowed_areas": [
+          {
+            "name": "Safe Zone North",
+            "min_x": 800,
+            "max_x": 1200,
+            "min_y": 1200,
+            "max_y": 1600
+          },
+          {
+            "name": "Safe Zone South",
+            "min_x": 600,
+            "max_x": 1000,
+            "min_y": 400,
+            "max_y": 800
+          }
+        ]
+      },
       "objects": {}
     },
     "skills": {
