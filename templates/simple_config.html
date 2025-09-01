@@ -5559,22 +5559,17 @@
             }
         }
 
-        // Override saveConfig to include caravan config saving
-        const originalSaveConfig = window.saveConfig;
+        // Extend saveConfig to include caravan config saving
+        const previousSaveConfig = window.saveConfig;
         window.saveConfig = async function(tabName) {
             try {
-                // Save shop config if it's enabled or has items
-                if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
-                    await saveAllianceShopConfig();
-                }
-                
                 // Save caravan config if it's enabled or has items
                 if (currentCaravanConfig.enabled || (currentCaravanConfig.items && currentCaravanConfig.items.length > 0)) {
                     await saveCaravanConfig();
                 }
                 
-                // Call original save function
-                return originalSaveConfig(tabName);
+                // Call previous save function (which already includes shop config)
+                return previousSaveConfig(tabName);
             } catch (error) {
                 showNotification('Error saving configurations: ' + error.message, 'error');
                 return false;
