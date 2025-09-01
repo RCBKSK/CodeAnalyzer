@@ -4532,6 +4532,56 @@
                     `;
                     allianceFarmerFeatures.appendChild(featureItem);
                 });
+
+                // Add Alliance Shop Configuration Section
+                const shopConfigSection = document.createElement('div');
+                shopConfigSection.className = 'shop-config-section';
+                shopConfigSection.style.cssText = `
+                    margin-top: 24px;
+                    padding: 20px;
+                    background: var(--bg-secondary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 12px;
+                    box-shadow: var(--shadow);
+                `;
+                
+                shopConfigSection.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <h4 style="font-size: 14px; font-weight: 600; margin: 0; color: var(--text-primary);">
+                            <i class="fas fa-shopping-cart"></i> Alliance Shop Auto-Buy
+                        </h4>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="shop-buying-enabled" onchange="toggleShopBuying(this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div id="shop-config-content" style="display: none;">
+                        <div style="margin-bottom: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary);">
+                                Configure which items to automatically buy from your alliance shop. Items are purchased in priority order (1 = highest priority).
+                            </p>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <button class="btn btn-secondary" onclick="loadAllianceShopItems()" style="font-size: 12px; padding: 8px 16px;">
+                                <i class="fas fa-refresh"></i> Load Available Items
+                            </button>
+                            <button class="btn btn-accent" onclick="addShopItem()" style="font-size: 12px; padding: 8px 16px; margin-left: 8px;">
+                                <i class="fas fa-plus"></i> Add Item
+                            </button>
+                        </div>
+                        
+                        <div id="shop-items-list" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Shop items will be loaded here -->
+                        </div>
+                    </div>
+                `;
+                
+                allianceFarmerFeatures.appendChild(shopConfigSection);
+                
+                // Load existing shop configuration
+                loadAllianceShopConfig();
             }
 
             // Populate threads
@@ -4831,6 +4881,324 @@
             });
 
             console.log('Settings collection completed');
+        }
+
+        // Alliance Shop Configuration Functions
+        let availableShopItems = {};
+        let currentShopConfig = { enabled: false, items: [] };
+
+        async function loadAllianceShopItems() {
+            try {
+                const response = await fetch('/api/alliance_shop/items');
+                const data = await response.json();
+                
+                if (data.success) {
+                    availableShopItems = data.categories;
+                    showNotification('Available items loaded successfully', 'success');
+                } else {
+                    showNotification('Failed to load available items: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Error loading shop items: ' + error.message, 'error');
+            }
+        }
+
+        async function loadAllianceShopConfig() {
+            try {
+                const configFile = getCurrentConfigFile();
+                const response = await fetch(`/api/alliance_shop/config?config_file=${encodeURIComponent(configFile)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentShopConfig = data.config;
+                    updateShopConfigDisplay();
+                } else {
+                    console.warn('No shop config found, using defaults');
+                    currentShopConfig = { enabled: false, items: [] };
+                    updateShopConfigDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading shop config:', error);
+                currentShopConfig = { enabled: false, items: [] };
+                updateShopConfigDisplay();
+            }
+        }
+
+        function updateShopConfigDisplay() {
+            const enabledCheckbox = document.getElementById('shop-buying-enabled');
+            const configContent = document.getElementById('shop-config-content');
+            
+            if (enabledCheckbox) {
+                enabledCheckbox.checked = currentShopConfig.enabled || false;
+                configContent.style.display = currentShopConfig.enabled ? 'block' : 'none';
+            }
+            
+            renderShopItemsList();
+        }
+
+        function toggleShopBuying(enabled) {
+            currentShopConfig.enabled = enabled;
+            const configContent = document.getElementById('shop-config-content');
+            configContent.style.display = enabled ? 'block' : 'none';
+            
+            if (enabled && Object.keys(availableShopItems).length === 0) {
+                loadAllianceShopItems();
+            }
+        }
+
+        function renderShopItemsList() {
+            const itemsList = document.getElementById('shop-items-list');
+            itemsList.innerHTML = '';
+            
+            if (!currentShopConfig.items || currentShopConfig.items.length === 0) {
+                itemsList.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                        <i class="fas fa-shopping-cart" style="font-size: 24px; margin-bottom: 8px; opacity: 0.5;"></i>
+                        <p style="margin: 0;">No items configured for auto-buying</p>
+                        <p style="margin: 4px 0 0 0; font-size: 12px;">Click "Add Item" to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort items by priority
+            const sortedItems = [...currentShopConfig.items].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+            
+            sortedItems.forEach((item, index) => {
+                const itemElement = createShopItemElement(item, index);
+                itemsList.appendChild(itemElement);
+            });
+        }
+
+        function createShopItemElement(item, index) {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'shop-item-config';
+            itemElement.style.cssText = `
+                background: var(--bg-primary);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 12px;
+                position: relative;
+            `;
+            
+            // Find item info from available items
+            let itemInfo = { name: `Item ${item.item_code}`, description: '', category: 'Unknown' };
+            Object.values(availableShopItems).forEach(category => {
+                const found = category.find(i => i.item_code === item.item_code);
+                if (found) itemInfo = found;
+            });
+            
+            itemElement.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">
+                            ${itemInfo.name}
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">
+                            ${itemInfo.description} • Code: ${item.item_code}
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label class="toggle-switch" style="margin: 0;">
+                            <input type="checkbox" ${item.enabled ? 'checked' : ''} 
+                                   onchange="updateShopItem(${index}, 'enabled', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <button onclick="removeShopItem(${index})" 
+                                style="background: var(--danger-color); color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
+                            Priority
+                        </label>
+                        <input type="number" min="1" max="999" value="${item.priority || 1}" 
+                               onchange="updateShopItem(${index}, 'priority', parseInt(this.value))"
+                               style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
+                            Min Buy
+                        </label>
+                        <input type="number" min="1" value="${item.min_buy || 1}" 
+                               onchange="updateShopItem(${index}, 'min_buy', parseInt(this.value))"
+                               style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
+                            Max Buy
+                        </label>
+                        <input type="number" min="1" value="${item.max_buy || 999999}" 
+                               onchange="updateShopItem(${index}, 'max_buy', parseInt(this.value))"
+                               style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+                    </div>
+                </div>
+            `;
+            
+            return itemElement;
+        }
+
+        function addShopItem() {
+            if (Object.keys(availableShopItems).length === 0) {
+                showNotification('Please load available items first', 'warning');
+                return;
+            }
+            
+            // Create item selection modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: var(--bg-secondary);
+                border-radius: 12px;
+                padding: 24px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                position: relative;
+            `;
+            
+            modalContent.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: var(--text-primary);">Add Shop Item</h3>
+                    <button onclick="this.closest('.modal').remove()" 
+                            style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary);">
+                        ×
+                    </button>
+                </div>
+                
+                <div id="item-categories">
+                    ${Object.entries(availableShopItems).map(([categoryName, items]) => `
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">
+                                ${categoryName}
+                            </h4>
+                            <div style="display: grid; gap: 8px;">
+                                ${items.map(item => `
+                                    <div onclick="selectShopItem(${item.item_code}, '${item.name}', ${item.default_priority})" 
+                                         style="padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s;"
+                                         onmouseover="this.style.borderColor = 'var(--accent-color)'"
+                                         onmouseout="this.style.borderColor = 'var(--border-color)'">
+                                        <div style="font-weight: 500; color: var(--text-primary);">${item.name}</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${item.description}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            modal.className = 'modal';
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+
+        function selectShopItem(itemCode, itemName, defaultPriority) {
+            // Check if item already exists
+            const existingIndex = currentShopConfig.items.findIndex(item => item.item_code === itemCode);
+            if (existingIndex !== -1) {
+                showNotification(`${itemName} is already in the list`, 'warning');
+                document.querySelector('.modal').remove();
+                return;
+            }
+            
+            // Add new item
+            const newItem = {
+                item_code: itemCode,
+                enabled: true,
+                priority: defaultPriority || 1,
+                min_buy: 1,
+                max_buy: 999999
+            };
+            
+            currentShopConfig.items.push(newItem);
+            renderShopItemsList();
+            document.querySelector('.modal').remove();
+            showNotification(`${itemName} added to shop auto-buy list`, 'success');
+        }
+
+        function updateShopItem(index, field, value) {
+            if (currentShopConfig.items[index]) {
+                currentShopConfig.items[index][field] = value;
+            }
+        }
+
+        function removeShopItem(index) {
+            currentShopConfig.items.splice(index, 1);
+            renderShopItemsList();
+            showNotification('Item removed from shop auto-buy list', 'info');
+        }
+
+        async function saveAllianceShopConfig() {
+            try {
+                const configFile = getCurrentConfigFile();
+                const response = await fetch('/api/alliance_shop/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        config_file: configFile,
+                        shop_config: currentShopConfig
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    return true;
+                } else {
+                    throw new Error(data.error || 'Failed to save shop config');
+                }
+            } catch (error) {
+                console.error('Error saving shop config:', error);
+                throw error;
+            }
+        }
+
+        // Extend the existing saveConfig function to include shop configuration
+        const originalSaveConfig = window.saveConfig;
+        window.saveConfig = async function(tabName) {
+            try {
+                // Save shop config if it's enabled or has items
+                if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
+                    await saveAllianceShopConfig();
+                }
+                
+                // Call original save function
+                return originalSaveConfig(tabName);
+            } catch (error) {
+                showNotification('Error saving alliance shop configuration: ' + error.message, 'error');
+                return false;
+            }
+        };
+
+        // Add shop functions to global scope
+        window.loadAllianceShopItems = loadAllianceShopItems;
+        window.toggleShopBuying = toggleShopBuying;
+        window.addShopItem = addShopItem;
+        window.selectShopItem = selectShopItem;
+        window.updateShopItem = updateShopItem;
+        window.removeShopItem = removeShopItem;
+        window.loadAllianceShopConfig = loadAllianceShopConfig;
         }
     </script>
 </body>

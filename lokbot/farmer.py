@@ -767,6 +767,129 @@ class LokFarmer:
 
             alliance_point -= cost * amount
 
+    def _alliance_shop_autobuy_enhanced(self, shop_config):
+        """Enhanced alliance shop buying with priority system and quantity controls."""
+        try:
+            from lokbot.enum import ALLIANCE_SHOP_ITEMS
+            
+            if not shop_config.get('enabled', False):
+                return
+                
+            shop_list = self.api.alliance_shop_list()
+        except OtherException:
+            return
+
+        alliance_point = shop_list.get('alliancePoint', 0)
+        shop_items = shop_list.get('allianceShopItems', [])
+        
+        if alliance_point <= 0:
+            logger.debug("No alliance points available for shop purchases")
+            return
+
+        # Create a mapping of available items in the shop
+        available_items = {}
+        for shop_item in shop_items:
+            code = shop_item.get('code')
+            if code:
+                available_items[code] = {
+                    'cost': shop_item.get('ap_1', 0),  # Alliance point cost
+                    'amount': shop_item.get('amount', 0),  # Available quantity
+                    'original_item': shop_item
+                }
+
+        # Get configured items and sort by priority
+        configured_items = shop_config.get('items', [])
+        enabled_items = [item for item in configured_items if item.get('enabled', False)]
+        
+        # Sort by priority (lower number = higher priority)
+        enabled_items.sort(key=lambda x: x.get('priority', 999))
+        
+        logger.info(f"Starting enhanced alliance shop buying with {alliance_point} alliance points")
+        logger.info(f"Found {len(enabled_items)} enabled items to consider")
+        
+        purchases_made = []
+        
+        for item_config in enabled_items:
+            item_code = item_config.get('item_code')
+            min_buy = item_config.get('min_buy', 1)
+            max_buy = item_config.get('max_buy', 999999)
+            priority = item_config.get('priority', 999)
+            
+            if item_code not in available_items:
+                logger.debug(f"Item {item_code} not available in alliance shop")
+                continue
+                
+            shop_item = available_items[item_code]
+            item_cost = shop_item['cost']
+            available_quantity = shop_item['amount']
+            
+            if item_cost <= 0 or available_quantity <= 0:
+                logger.debug(f"Item {item_code}: invalid cost ({item_cost}) or quantity ({available_quantity})")
+                continue
+                
+            # Calculate how many we can afford
+            max_affordable = int(alliance_point / item_cost)
+            
+            if max_affordable < min_buy:
+                logger.debug(f"Item {item_code}: cannot afford minimum purchase ({max_affordable} < {min_buy})")
+                continue
+                
+            # Calculate actual purchase amount
+            desired_amount = min(max_affordable, max_buy, available_quantity)
+            
+            if desired_amount < min_buy:
+                logger.debug(f"Item {item_code}: desired amount ({desired_amount}) below minimum ({min_buy})")
+                continue
+                
+            # Get item info for logging
+            item_info = ALLIANCE_SHOP_ITEMS.get(item_code, {})
+            item_name = item_info.get('name', f'Item {item_code}')
+            
+            try:
+                logger.info(f"Attempting to buy {desired_amount}x {item_name} for {item_cost * desired_amount} alliance points")
+                
+                result = self.api.alliance_shop_buy(item_code, desired_amount)
+                
+                if result:
+                    alliance_point -= item_cost * desired_amount
+                    purchases_made.append({
+                        'item_code': item_code,
+                        'name': item_name,
+                        'amount': desired_amount,
+                        'cost': item_cost * desired_amount,
+                        'priority': priority
+                    })
+                    
+                    logger.info(f"✅ Successfully bought {desired_amount}x {item_name}")
+                    logger.info(f"Remaining alliance points: {alliance_point}")
+                    
+                    # Update available quantity for future iterations
+                    available_items[item_code]['amount'] -= desired_amount
+                else:
+                    logger.warning(f"❌ Failed to buy {item_name} - API returned false")
+                    
+            except OtherException as error_code:
+                logger.warning(f"❌ Alliance shop buy failed for {item_name}: {str(error_code)}")
+                # Don't return here, continue with other items
+                continue
+                
+            # Stop if we're out of alliance points
+            if alliance_point <= 0:
+                logger.info("No more alliance points available, stopping purchases")
+                break
+                
+        # Log summary
+        if purchases_made:
+            total_spent = sum(p['cost'] for p in purchases_made)
+            logger.info(f"🛒 Alliance shop buying summary:")
+            logger.info(f"   • Total items bought: {len(purchases_made)}")
+            logger.info(f"   • Total alliance points spent: {total_spent}")
+            logger.info(f"   • Remaining alliance points: {alliance_point}")
+            for purchase in purchases_made:
+                logger.info(f"   • {purchase['amount']}x {purchase['name']} (Priority {purchase['priority']})")
+        else:
+            logger.info("No alliance shop purchases were made")
+
     @functools.lru_cache()
     def _get_land_with_level(self):
         rank = self.api.field_worldmap_devrank().get('lands')
@@ -5093,7 +5216,8 @@ Status: {status}"""
                         gift_claim=True,
                         help_all=True,
                         research_donate=True,
-                        shop_auto_buy_item_code_list=None):
+                        shop_auto_buy_item_code_list=None,
+                        shop_items_config=None):
         if not self.alliance_id:
             return
 
@@ -5106,9 +5230,17 @@ Status: {status}"""
         if research_donate:
             self._alliance_research_donate_all()
 
-        if shop_auto_buy_item_code_list and type(
-                shop_auto_buy_item_code_list) is list:
-            self._alliance_shop_autobuy(shop_auto_buy_item_code_list)
+        # Enhanced shop buying with priority system and quantity controls
+        if shop_items_config and isinstance(shop_items_config, dict):
+            self._alliance_shop_autobuy_enhanced(shop_items_config)
+        elif shop_auto_buy_item_code_list and type(shop_auto_buy_item_code_list) is list:
+            # Backward compatibility - convert old format to new format
+            old_config = {
+                'enabled': True,
+                'items': [{'item_code': code, 'enabled': True, 'priority': 1, 'min_buy': 1, 'max_buy': 999999} 
+                         for code in shop_auto_buy_item_code_list]
+            }
+            self._alliance_shop_autobuy_enhanced(old_config)
 
     def caravan_farmer(self):
         caravan = self.api.kingdom_caravan_list().get('caravan')

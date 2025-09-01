@@ -4074,6 +4074,125 @@ def update_alliance_farmer_config():
         logger.error(f"Error updating alliance farmer config: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/alliance_shop/items', methods=['GET'])
+@login_required
+def get_alliance_shop_items():
+    """Get available alliance shop items with descriptions"""
+    try:
+        from lokbot.enum import ALLIANCE_SHOP_ITEMS
+        
+        # Group items by category for better organization
+        categorized_items = {}
+        for item_code, item_info in ALLIANCE_SHOP_ITEMS.items():
+            category = item_info.get('category', 'Other')
+            if category not in categorized_items:
+                categorized_items[category] = []
+            
+            categorized_items[category].append({
+                'item_code': item_code,
+                'name': item_info.get('name', f'Item {item_code}'),
+                'description': item_info.get('description', ''),
+                'category': category,
+                'default_priority': item_info.get('priority', 3)
+            })
+        
+        # Sort categories and items within categories
+        for category in categorized_items:
+            categorized_items[category].sort(key=lambda x: x['name'])
+        
+        return jsonify({
+            'success': True,
+            'categories': categorized_items,
+            'total_items': len(ALLIANCE_SHOP_ITEMS)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting alliance shop items: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/alliance_shop/config', methods=['GET', 'POST'])
+@login_required
+def handle_alliance_shop_config():
+    """Get or update alliance shop configuration"""
+    try:
+        username = session.get('username', session['user_id'])
+        selected_config = request.args.get('config_file') or request.json.get('config_file', 'config.json') if request.json else 'config.json'
+        
+        # Check if user has access to this config file
+        if not has_config_access(username, selected_config):
+            return jsonify({'error': 'Access denied to this config file'}), 403
+
+        # Load config
+        if os.path.exists(selected_config):
+            with open(selected_config, 'r') as f:
+                config = json.load(f)
+        else:
+            return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+        # Find alliance_farmer job
+        alliance_job = None
+        for job in config.get('main', {}).get('jobs', []):
+            if job.get('name') == 'alliance_farmer':
+                alliance_job = job
+                break
+
+        if not alliance_job:
+            return jsonify({'error': 'Alliance farmer job not found'}), 404
+
+        if request.method == 'GET':
+            # Get current shop configuration
+            kwargs = alliance_job.get('kwargs', {})
+            
+            # Check if using new enhanced config format
+            shop_items_config = kwargs.get('shop_items_config', {})
+            
+            if not shop_items_config:
+                # Convert old format to new format for display
+                old_item_list = kwargs.get('shop_auto_buy_item_code_list', [])
+                shop_items_config = {
+                    'enabled': len(old_item_list) > 0,
+                    'items': [
+                        {
+                            'item_code': item_code,
+                            'enabled': True,
+                            'priority': 1,
+                            'min_buy': 1,
+                            'max_buy': 999999
+                        } for item_code in old_item_list
+                    ]
+                }
+            
+            return jsonify({
+                'success': True,
+                'config': shop_items_config
+            })
+            
+        elif request.method == 'POST':
+            # Update shop configuration
+            data = request.json
+            new_shop_config = data.get('shop_config', {})
+            
+            # Ensure kwargs exists
+            if 'kwargs' not in alliance_job:
+                alliance_job['kwargs'] = {}
+            
+            # Update with new enhanced configuration
+            alliance_job['kwargs']['shop_items_config'] = new_shop_config
+            
+            # Remove old format for compatibility
+            if 'shop_auto_buy_item_code_list' in alliance_job['kwargs']:
+                del alliance_job['kwargs']['shop_auto_buy_item_code_list']
+            
+            # Save config
+            with open(selected_config, 'w') as f:
+                json.dump(config, f, indent=2)
+            
+            return jsonify({'success': True, 'message': 'Alliance shop configuration updated successfully'})
+            
+    except Exception as e:
+        logger.error(f"Error handling alliance shop config: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/config/socf_objects', methods=['GET', 'POST'])
 def handle_socf_objects_config():
     """Manage socf_thread objects configuration"""
