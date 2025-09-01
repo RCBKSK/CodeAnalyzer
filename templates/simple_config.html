@@ -3818,11 +3818,15 @@
                 });
             }
 
-            // Show saving state
-            const saveBtn = event.target;
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-            saveBtn.disabled = true;
+            // Show saving state (only if called from an event)
+            let saveBtn = null;
+            let originalText = '';
+            if (event && event.target) {
+                saveBtn = event.target;
+                originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                saveBtn.disabled = true;
+            }
 
             $.ajax({
                 url: '/api/config',
@@ -3839,8 +3843,10 @@
                     alert('Error saving configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
                 },
                 complete: function () {
-                    saveBtn.innerHTML = originalText;
-                    saveBtn.disabled = false;
+                    if (saveBtn) {
+                        saveBtn.innerHTML = originalText;
+                        saveBtn.disabled = false;
+                    }
                 }
             });
         }
