@@ -3,7 +3,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#3b82f6">
     <title>Visual Configuration Builder - HelenA QuantumRaid Bot</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -50,6 +53,58 @@
             grid-template-columns: 300px 1fr 350px;
             gap: 24px;
             min-height: 70vh;
+        }
+        
+        /* Mobile responsiveness for config builder */
+        @media (max-width: 1200px) {
+            .builder-container {
+                grid-template-columns: 250px 1fr 300px;
+                gap: 16px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .builder-container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                min-height: auto;
+            }
+            
+            .palette, .canvas, .inspector {
+                order: 1;
+            }
+            
+            .canvas {
+                order: 2;
+                min-height: 50vh;
+            }
+            
+            .inspector {
+                order: 3;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px;
+            }
+            
+            .header {
+                padding: 12px;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
         }
 
         /* Component Palette */

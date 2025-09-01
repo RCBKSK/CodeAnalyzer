@@ -1,110 +1,110 @@
 {
   "buff_management": {
-    "enabled": true,
     "buffs": [
       {
-        "name": "Food Production Boost",
         "enabled": true,
-        "min_duration_minutes": 20,
         "item_codes": [
           10102001,
           10102002
-        ]
+        ],
+        "min_duration_minutes": 20,
+        "name": "Food Production Boost"
       },
       {
-        "name": "Wood Production Boost",
         "enabled": true,
-        "min_duration_minutes": 20,
         "item_codes": [
           10102003,
           10102004
-        ]
+        ],
+        "min_duration_minutes": 20,
+        "name": "Wood Production Boost"
       },
       {
-        "name": "Stone Production Boost",
         "enabled": true,
-        "min_duration_minutes": 20,
         "item_codes": [
           10102005,
           10102006
-        ]
+        ],
+        "min_duration_minutes": 20,
+        "name": "Stone Production Boost"
       },
       {
-        "name": "Gold Production Boost",
         "enabled": true,
-        "min_duration_minutes": 20,
         "item_codes": [
           10102007,
           10102008
-        ]
+        ],
+        "min_duration_minutes": 20,
+        "name": "Gold Production Boost"
       },
       {
-        "name": "Gathering Speed Boost",
         "enabled": true,
-        "min_duration_minutes": 20,
         "item_codes": [
           10102009,
           10102010
-        ]
+        ],
+        "min_duration_minutes": 20,
+        "name": "Gathering Speed Boost"
       },
       {
-        "name": "Kingdom Shield",
         "enabled": true,
-        "min_duration_minutes": 20,
         "item_codes": [
           10102026,
           10102027
-        ]
+        ],
+        "min_duration_minutes": 20,
+        "name": "Kingdom Shield"
       },
       {
-        "name": "Anti Spying Shield",
         "enabled": true,
-        "min_duration_minutes": 20,
         "item_codes": [
           10102021,
           10102022
-        ]
+        ],
+        "min_duration_minutes": 20,
+        "name": "Anti Spying Shield"
       }
-    ]
+    ],
+    "enabled": true
   },
   "discord": {
-    "enabled": true,
-    "enable_chat_monitoring": true,
-    "webhook_url": "",
     "chat_webhook_url": "",
     "crystal_mine_level1_webhook_url": "",
     "custom_webhook_url": "",
     "dragon_soul_level2plus_webhook_url": "",
+    "enable_chat_monitoring": true,
+    "enabled": true,
     "gathering_webhook_url": "",
     "level2plus_webhook_url": "",
     "level3plus_webhook_url": "",
     "monster_webhook_url": "",
     "occupied_resources_webhook_url": "",
-    "rally_webhook_url": ""
+    "rally_webhook_url": "",
+    "webhook_url": ""
   },
   "main": {
     "jobs": [
       {
         "enabled": true,
         "interval": {
-          "start": 1200,
-          "end": 1800
+          "end": 1800,
+          "start": 1200
         },
         "name": "hospital_recover"
       },
       {
         "enabled": false,
         "interval": {
-          "start": 30,
-          "end": 90
+          "end": 90,
+          "start": 30
         },
         "name": "wall_repair"
       },
       {
         "enabled": true,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
         "kwargs": {
           "gift_claim": true,
@@ -119,56 +119,56 @@
       {
         "enabled": false,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
         "name": "mail_claim"
       },
       {
         "enabled": true,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
         "name": "caravan_farmer"
       },
       {
         "enabled": false,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
         "name": "use_resource_in_item_list"
       },
       {
         "enabled": true,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
         "name": "vip_chest_claim"
       },
       {
         "enabled": false,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
         "name": "dsavip_chest_claim"
       },
       {
         "enabled": false,
         "interval": {
-          "start": 10,
-          "end": 20
+          "end": 20,
+          "start": 10
         },
         "name": "harvester"
       },
       {
         "enabled": false,
         "interval": {
-          "start": 1,
-          "end": 1
+          "end": 1,
+          "start": 1
         },
         "kwargs": {
           "radius": 16,
@@ -291,8 +291,6 @@
       }
     ],
     "normal_monsters": {
-      "enabled": false,
-      "max_distance": 200,
       "common_troops": [
         {
           "code": 50100304,
@@ -310,6 +308,8 @@
           "amount": 0
         }
       ],
+      "enabled": true,
+      "max_distance": 250,
       "targets": [
         {
           "monster_code": 20200103,
@@ -351,18 +351,18 @@
       ]
     },
     "object_scanning": {
-      "enabled": false,
       "enable_gathering": false,
-      "enable_monster_attack": false,
-      "notify_discord": false,
+      "enable_monster_attack": true,
+      "enabled": false,
       "max_marches": 10,
       "monster_attack": {
-        "enabled": false
+        "enabled": true
       },
       "monster_distance_check": {
         "enabled": false,
         "max_distance": 250
       },
+      "notify_discord": false,
       "objects": {}
     },
     "skills": {
@@ -389,27 +389,27 @@
       },
       {
         "enabled": false,
-        "name": "building_farmer_thread",
         "kwargs": {
           "speedup": true
-        }
+        },
+        "name": "building_farmer_thread"
       },
       {
         "enabled": false,
-        "name": "academy_farmer_thread",
         "kwargs": {
           "speedup": true,
           "to_max_level": false
-        }
+        },
+        "name": "academy_farmer_thread"
       },
       {
         "enabled": false,
-        "name": "train_troop_thread",
         "kwargs": {
           "interval": 3600,
           "speedup": true,
           "troop_code": 50100101
-        }
+        },
+        "name": "train_troop_thread"
       }
     ],
     "treasure": {
@@ -420,16 +420,16 @@
   "rally": {
     "join": {
       "enabled": false,
-      "numMarch": 8,
-      "max_rally_distance": 500,
       "level_based_troops": true,
+      "max_rally_distance": 500,
+      "numMarch": 8,
       "targets": []
     },
     "start": {
       "enabled": false,
-      "numMarch": 6,
-      "max_rally_distance": 500,
       "level_based_troops": true,
+      "max_rally_distance": 500,
+      "numMarch": 6,
       "targets": []
     }
   },
@@ -443,7 +443,7 @@
       "discord": true,
       "enable_chat_monitoring": true,
       "enable_gathering": false,
-      "enable_monster_attack": false,
+      "enable_monster_attack": true,
       "notify_discord": false,
       "object_scanning": false,
       "rally_join": false,
