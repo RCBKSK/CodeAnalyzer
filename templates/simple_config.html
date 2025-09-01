@@ -3277,8 +3277,9 @@
                 if (!fullConfigData.toggles) fullConfigData.toggles = {};
                 if (!fullConfigData.toggles.features) fullConfigData.toggles.features = {};
 
-                // Get the enabled state from UI
-                const isEnabled = document.getElementById('monster-attack-enabled').checked;
+                // Get the enabled state from UI with safety checks
+                const enabledElement = document.getElementById('monster-attack-enabled');
+                const isEnabled = enabledElement ? enabledElement.checked : false;
 
                 // Update ALL 4 locations for Monster Attack toggle
                 // 1. toggles.features.enable_monster_attack
@@ -3293,9 +3294,12 @@
                 // 4. main.normal_monsters.enabled
                 fullConfigData.main.normal_monsters.enabled = isEnabled;
 
-                // Update distance check settings
-                const distanceCheckEnabled = document.getElementById('monster-distance-check-enabled').checked;
-                const distance = parseInt(document.getElementById('monster-attack-distance').value);
+                // Update distance check settings with safety checks
+                const distanceCheckElement = document.getElementById('monster-distance-check-enabled');
+                const distanceCheckEnabled = distanceCheckElement ? distanceCheckElement.checked : false;
+                
+                const distanceElement = document.getElementById('monster-attack-distance');
+                const distance = distanceElement ? parseInt(distanceElement.value) : 200;
                 
                 // Ensure monster_distance_check section exists in object_scanning
                 if (!fullConfigData.main.object_scanning.monster_distance_check) {
