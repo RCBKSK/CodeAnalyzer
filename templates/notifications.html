@@ -421,6 +421,10 @@
         .notification-item.monster_attack::before { background: #ef4444; }
         .notification-item.crystal_mine::before { background: #06b6d4; }
         .notification-item.dragon_soul::before { background: #f97316; }
+        .notification-item.skill::before { background: #8b5cf6; }
+        .notification-item.buff::before { background: #10b981; }
+        .notification-item.skin::before { background: #f59e0b; }
+        .notification-item.treasure_page::before { background: #6366f1; }
         .notification-item.error::before { background: #ef4444; }
         .notification-item.bot_start::before { background: #10b981; }
         .notification-item.bot_stop::before { background: #64748b; }
@@ -483,9 +487,9 @@
         .notification-icon.crystal_mine { color: #06b6d4; }
         .notification-icon.dragon_soul { color: #f97316; }
         .notification-icon.skill { color: #8b5cf6; }
-        .notification-icon.buff { color: #f59e0b; }
-        .notification-icon.skin { color: #ec4899; }
-        .notification-icon.treasure_page { color: #f97316; }
+        .notification-icon.buff { color: #10b981; }
+        .notification-icon.skin { color: #f59e0b; }
+        .notification-icon.treasure_page { color: #6366f1; }
         .notification-icon.error { color: #ef4444; }
         .notification-icon.bot_start { color: #10b981; }
         .notification-icon.bot_stop { color: #64748b; }
@@ -944,6 +948,18 @@
                 <button class="filter-btn" data-filter="dragon_soul">
                     <i class="fas fa-fire"></i> Dragon Souls
                 </button>
+                <button class="filter-btn" data-filter="skill">
+                    <i class="fas fa-magic"></i> Skills
+                </button>
+                <button class="filter-btn" data-filter="buff">
+                    <i class="fas fa-shield-alt"></i> Buffs
+                </button>
+                <button class="filter-btn" data-filter="skin">
+                    <i class="fas fa-tshirt"></i> Skins
+                </button>
+                <button class="filter-btn" data-filter="treasure_page">
+                    <i class="fas fa-scroll"></i> Treasures
+                </button>
                 <button class="filter-btn" data-filter="error">
                     <i class="fas fa-exclamation-triangle"></i> System Alerts
                 </button>
@@ -1020,7 +1036,11 @@
             rally_join: 0,
             rally_start: 0,
             monster_attack: 0,
-            object_scan: 0
+            object_scan: 0,
+            skill: 0,
+            buff: 0,
+            skin: 0,
+            treasure_page: 0
         };
 
         function refreshNotifications() {
@@ -1290,6 +1310,22 @@
                                         updateNotificationStats();
                 } else if (notification.type in ['crystal_mine', 'dragon_soul', 'object_scan']) {
                     dailyCounters.object_scan++;
+                    updateStatistics();
+                                        updateNotificationStats();
+                } else if (notification.type === 'skill') {
+                    dailyCounters.skill++;
+                    updateStatistics();
+                                        updateNotificationStats();
+                } else if (notification.type === 'buff') {
+                    dailyCounters.buff++;
+                    updateStatistics();
+                                        updateNotificationStats();
+                } else if (notification.type === 'skin') {
+                    dailyCounters.skin++;
+                    updateStatistics();
+                                        updateNotificationStats();
+                } else if (notification.type === 'treasure_page') {
+                    dailyCounters.treasure_page++;
                     updateStatistics();
                                         updateNotificationStats();
                 } else if (notification.type === 'march_status') {
