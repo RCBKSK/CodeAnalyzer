@@ -674,12 +674,28 @@ def add_notification(user_id, notification_type, title, message, timestamp=None,
             'count': count  # Include count for reference
         }
 
-        # Initialize user notification history structure
-        if user_id not in notifications_history:
-            notifications_history[user_id] = {}
+        # Initialize user notification history structure - Create entries for both user IDs
+        # This handles the case where bot uses game user ID but web session uses username
+        user_ids_to_update = [user_id]
+        
+        # If this looks like a game user ID (long hex string), also store under session username
+        if len(user_id) == 24 and all(c in '0123456789abcdef' for c in user_id.lower()):
+            # This is likely a game/database user ID, also store under 'admin' for web interface access
+            user_ids_to_update.append('admin')
+        
+        # If this is a session username, also check if we have a game user ID mapping
+        elif user_id == 'admin':
+            # Look for any existing long user IDs and map to admin
+            for existing_user_id in list(notifications_history.keys()):
+                if len(existing_user_id) == 24 and all(c in '0123456789abcdef' for c in existing_user_id.lower()):
+                    user_ids_to_update.append(existing_user_id)
+        
+        for target_user_id in user_ids_to_update:
+            if target_user_id not in notifications_history:
+                notifications_history[target_user_id] = {}
 
-        if account_name not in notifications_history[user_id]:
-            notifications_history[user_id][account_name] = []
+            if account_name not in notifications_history[target_user_id]:
+                notifications_history[target_user_id][account_name] = []
 
         # Enhanced duplicate check - consider instance separation
         current_time = datetime.now(timezone.utc)
@@ -703,24 +719,25 @@ def add_notification(user_id, notification_type, title, message, timestamp=None,
                 continue
 
         if not is_duplicate:
-            # Add notification to history
-            notifications_history[user_id][account_name].append(notification)
+            # Add notification to history for all mapped user IDs
+            for target_user_id in user_ids_to_update:
+                notifications_history[target_user_id][account_name].append(notification)
 
-            # Keep only last 150 notifications per account (increased for better history with multiple instances)
-            if len(notifications_history[user_id][account_name]) > 150:
-                notifications_history[user_id][account_name] = notifications_history[user_id][account_name][-150:]
+                # Keep only last 150 notifications per account (increased for better history with multiple instances)
+                if len(notifications_history[target_user_id][account_name]) > 150:
+                    notifications_history[target_user_id][account_name] = notifications_history[target_user_id][account_name][-150:]
 
-            # Add to real-time queue
-            if user_id in notification_queues:
-                try:
-                    notification_queues[user_id].put_nowait(notification)
-                except queue.Full:
-                    # If queue is full, remove oldest and add new
+                # Add to real-time queue for each mapped user ID
+                if target_user_id in notification_queues:
                     try:
-                        notification_queues[user_id].get_nowait()
-                        notification_queues[user_id].put_nowait(notification)
-                    except queue.Empty:
-                        pass
+                        notification_queues[target_user_id].put_nowait(notification)
+                    except queue.Full:
+                        # If queue is full, remove oldest and add new
+                        try:
+                            notification_queues[target_user_id].get_nowait()
+                            notification_queues[target_user_id].put_nowait(notification)
+                        except queue.Empty:
+                            pass
 
             logger.info(f"Added notification for user {user_id} instance {instance_id} ({account_name}): {title}")
         else:
