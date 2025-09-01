@@ -1,0 +1,167 @@
+{
+    "result": true,
+    "skins": [
+        {
+            "_id": "67f3a04d624d8d6cc79766fe",
+            "code": 10704001,
+            "grade": 3,
+            "nftId": "1883735",
+            "nftStatus": 0,
+            "abilities": [
+                [
+                    208,
+                    2,
+                    0.05
+                ]
+            ],
+            "amount": 1,
+            "skinEnchantLevel": 0
+        },
+        {
+            "_id": "67f39e58530cb532bee7c8da",
+            "code": 10707001,
+            "grade": 3,
+            "nftId": "1883734",
+            "nftStatus": 0,
+            "abilities": [
+                [
+                    14,
+                    2,
+                    0.055
+                ]
+            ],
+            "amount": 1,
+            "skinEnchantLevel": 1
+        },
+        {
+            "_id": "677a580119cddc7a19254c20",
+            "code": 10709001,
+            "grade": 4,
+            "nftId": "1807697",
+            "nftStatus": 0,
+            "abilities": [
+                [
+                    68,
+                    2,
+                    0.091
+                ],
+                [
+                    83,
+                    2,
+                    0.091
+                ]
+            ],
+            "amount": 1,
+            "skinEnchantLevel": 3
+        },
+        {
+            "_id": "660c494c861b19d4e81f7c64",
+            "code": 10710001,
+            "grade": 4,
+            "nftId": "1726795",
+            "nftStatus": 0,
+            "abilities": [
+                [
+                    109,
+                    2,
+                    0.195
+                ],
+                [
+                    14,
+                    2,
+                    0.091
+                ]
+            ],
+            "amount": 1,
+            "skinEnchantLevel": 3
+        },
+        {
+            "_id": "6302cd7ad949314fce863238",
+            "code": 10713001,
+            "grade": 4,
+            "nftStatus": 2,
+            "abilities": [
+                [
+                    57,
+                    2,
+                    0.084
+                ],
+                [
+                    11,
+                    1,
+                    1
+                ]
+            ],
+            "amount": 1,
+            "nftId": "1386029",
+            "skinEnchantLevel": 2
+        },
+        {
+            "_id": "62e34db5d1b2dc0b93acb046",
+            "code": 10720001,
+            "grade": 5,
+            "nftStatus": 2,
+            "abilities": [
+                [
+                    29,
+                    2,
+                    0.14
+                ],
+                [
+                    36,
+                    2,
+                    0.14
+                ],
+                [
+                    53,
+                    2,
+                    0.14
+                ]
+            ],
+            "amount": 1,
+            "nftId": "1373240",
+            "skinEnchantLevel": 4
+        },
+        {
+            "_id": "686aad75d0f07064d0523415",
+            "code": 10730001,
+            "grade": 3,
+            "nftId": "1888948",
+            "nftStatus": 0,
+            "abilities": [
+                [
+                    165,
+                    2,
+                    0.15
+                ],
+                [
+                    166,
+                    2,
+                    0.15
+                ]
+            ],
+            "amount": 1,
+            "skinEnchantLevel": 0
+        }
+    ],
+    "equipped": {
+        "_id": "6302cd7ad949314fce863238",
+        "code": 10713001,
+        "grade": 4,
+        "abilities": [
+            [
+                57,
+                2,
+                0.084
+            ],
+            [
+                11,
+                1,
+                1
+            ]
+        ],
+        "amount": 1,
+        "nftId": "1386029",
+        "skinEnchantLevel": 2
+    }
+}

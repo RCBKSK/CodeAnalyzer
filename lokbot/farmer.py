@@ -1889,6 +1889,50 @@ Expected End: {ended_time}"""
                 logger.error(f"Error in skin change thread: {str(e)}")
                 time.sleep(60)
 
+    def _get_skin_id_from_nft_id(self, nft_id):
+        """Get skin ID from NFT ID by calling the API
+        :param nft_id: The NFT ID to lookup
+        :return: The corresponding skin ID (_id) or None if not found
+        """
+        try:
+            if not nft_id:
+                logger.warning("Empty NFT ID provided for skin lookup")
+                return None
+                
+            # Convert to string to ensure consistent comparison
+            nft_id = str(nft_id)
+            
+            logger.info(f"Looking up Skin ID for NFT ID: {nft_id}")
+            
+            # Call the API to get skin list
+            skin_list_response = self.api.kingdom_skin_list({"type": 0})
+            
+            if not skin_list_response or not skin_list_response.get('result'):
+                logger.error(f"Failed to fetch skin list: {skin_list_response}")
+                return None
+                
+            skins = skin_list_response.get('skins', [])
+            logger.debug(f"Retrieved {len(skins)} skins from API")
+            
+            # Search for matching NFT ID
+            for skin in skins:
+                skin_nft_id = str(skin.get('nftId', ''))
+                if skin_nft_id == nft_id:
+                    skin_id = skin.get('_id')
+                    logger.info(f"✅ Found match! NFT ID {nft_id} -> Skin ID {skin_id}")
+                    return skin_id
+                    
+            logger.warning(f"❌ No skin found with NFT ID: {nft_id}")
+            logger.debug("Available NFT IDs in skin list:")
+            for skin in skins[:10]:  # Log first 10 for debugging
+                logger.debug(f"  NFT ID: {skin.get('nftId', 'Unknown')} -> Skin ID: {skin.get('_id', 'Unknown')}")
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error looking up skin ID for NFT ID {nft_id}: {str(e)}")
+            return None
+
     def _get_all_skin_change_configs(self):
         """Collect skin change configurations from all enabled sources"""
         skin_configs = {}
@@ -1921,26 +1965,40 @@ Expected End: {ended_time}"""
             
         return skin_configs
 
-    def _perform_skin_change(self, skin_item_id, source, current_time, last_change_key):
-        """Perform a standard skin change"""
+    def _perform_skin_change(self, skin_nft_id, source, current_time, last_change_key):
+        """Perform a standard skin change using NFT ID
+        :param skin_nft_id: The NFT ID of the skin to equip
+        :param source: Source of the skin change request
+        :param current_time: Current timestamp
+        :param last_change_key: Key for tracking last change time
+        """
         try:
-            # Prepare the payload
-            payload = {"itemId": skin_item_id}
+            # Convert NFT ID to Skin ID
+            skin_id = self._get_skin_id_from_nft_id(skin_nft_id)
+            
+            if not skin_id:
+                logger.error(f"Failed to find Skin ID for NFT ID: {skin_nft_id} (source: {source})")
+                return
+            
+            logger.info(f"Using NFT ID {skin_nft_id} -> Skin ID {skin_id} for {source}")
+            
+            # Prepare the payload with the looked-up Skin ID
+            payload = {"itemId": skin_id}
 
             # Call the skin equip API
             result = self.api.kingdom_skin_equip(payload)
 
             if result and result.get('result'):
-                logger.info(f"Successfully changed skin using item ID: {skin_item_id} (source: {source})")
+                logger.info(f"✅ Successfully changed skin using NFT ID: {skin_nft_id} -> Skin ID: {skin_id} (source: {source})")
                 setattr(self, last_change_key, current_time)
             else:
-                logger.warning(f"Failed to change skin for {source}: {result}")
+                logger.warning(f"❌ Failed to change skin for {source}: {result}")
 
         except Exception as e:
             logger.error(f"Error changing skin for {source}: {str(e)}")
 
-    def _handle_skills_skin_workflow(self, skin_item_id, current_time, last_change_key):
-        """Handle the 6-step Skills workflow:
+    def _handle_skills_skin_workflow(self, skin_nft_id, current_time, last_change_key):
+        """Handle the 6-step Skills workflow using NFT IDs:
         1. Change skin (Skin 1)
         2. Change Treasure Page (First Treasure Page)  
         3. Activate Increase resource production (Code = 10018)
@@ -1949,23 +2007,30 @@ Expected End: {ended_time}"""
         6. Skin Change Second Skin
         """
         try:
-            logger.info("Starting Skills 6-step activation workflow")
+            logger.info("Starting Skills 6-step activation workflow with NFT IDs")
             
-            # Get skills config for second skin ID and treasure pages
+            # Get skills config for second skin NFT ID and treasure pages
             skills_config = config.get('main', {}).get('skills', {})
-            skin_item_id_2 = skills_config.get('skin_item_id_2', '')
+            skin_nft_id_2 = skills_config.get('skin_item_id_2', '')
             treasure_page_1 = skills_config.get('treasure_page_1', 1)
             treasure_page_2 = skills_config.get('treasure_page_2', 2)
             
-            # Step 1: Change skin (Skin 1)
-            payload = {"itemId": skin_item_id}
+            # Step 1: Change skin (Skin 1) using NFT ID
+            logger.info(f"Step 1: Looking up Skin ID for NFT ID: {skin_nft_id}")
+            skin_id = self._get_skin_id_from_nft_id(skin_nft_id)
+            
+            if not skin_id:
+                logger.error(f"❌ Step 1 Failed: Could not find Skin ID for NFT ID: {skin_nft_id}")
+                return
+                
+            payload = {"itemId": skin_id}
             result = self.api.kingdom_skin_equip(payload)
             
             if not (result and result.get('result')):
-                logger.warning(f"Failed Step 1 - Skin change: {result}")
+                logger.warning(f"❌ Step 1 Failed - Skin change: {result}")
                 return
                 
-            logger.info(f"✅ Step 1 Complete: Changed to first skin using item ID: {skin_item_id}")
+            logger.info(f"✅ Step 1 Complete: Changed to first skin using NFT ID: {skin_nft_id} -> Skin ID: {skin_id}")
             time.sleep(2)  # Small delay between steps
             
             # Step 2: Change Treasure Page (First Treasure Page)
@@ -2012,21 +2077,27 @@ Expected End: {ended_time}"""
             except Exception as e:
                 logger.error(f"❌ Step 5 Failed: Error changing to treasure page {treasure_page_2}: {str(e)}")
             
-            # Step 6: Skin Change Second Skin
-            if skin_item_id_2:
+            # Step 6: Skin Change Second Skin using NFT ID
+            if skin_nft_id_2:
                 try:
-                    logger.info("Step 6: Changing to second skin")
-                    payload2 = {"itemId": skin_item_id_2}
-                    result2 = self.api.kingdom_skin_equip(payload2)
+                    logger.info(f"Step 6: Looking up Skin ID for second NFT ID: {skin_nft_id_2}")
+                    skin_id_2 = self._get_skin_id_from_nft_id(skin_nft_id_2)
                     
-                    if result2 and result2.get('result'):
-                        logger.info(f"✅ Step 6 Complete: Successfully changed to second skin using item ID: {skin_item_id_2}")
+                    if not skin_id_2:
+                        logger.error(f"❌ Step 6 Failed: Could not find Skin ID for NFT ID: {skin_nft_id_2}")
                     else:
-                        logger.warning(f"❌ Step 6 Failed: Could not change to second skin: {result2}")
+                        logger.info(f"Step 6: Changing to second skin using NFT ID: {skin_nft_id_2} -> Skin ID: {skin_id_2}")
+                        payload2 = {"itemId": skin_id_2}
+                        result2 = self.api.kingdom_skin_equip(payload2)
+                        
+                        if result2 and result2.get('result'):
+                            logger.info(f"✅ Step 6 Complete: Successfully changed to second skin using NFT ID: {skin_nft_id_2} -> Skin ID: {skin_id_2}")
+                        else:
+                            logger.warning(f"❌ Step 6 Failed: Could not change to second skin: {result2}")
                 except Exception as e:
                     logger.error(f"❌ Step 6 Failed: Error changing to second skin: {str(e)}")
             else:
-                logger.warning("❌ Step 6 Skipped: No second skin ID configured")
+                logger.warning("❌ Step 6 Skipped: No second skin NFT ID configured")
             
             # Update last change time
             setattr(self, last_change_key, current_time)

@@ -377,6 +377,15 @@ class LokBotApi:
         """
         return self.post('kingdom/treasure/page', {'page': page})
 
+    def kingdom_skin_list(self, payload=None):
+        """Get list of available skins
+        :param payload: Skin list payload (e.g., {"type": 0})
+        :return: API response with skins list
+        """
+        if payload is None:
+            payload = {"type": 0}
+        return self.post('kingdom/skin/list', payload)
+
     def kingdom_skin_equip(self, payload):
         """Equip a skin
         :param payload: Skin equip payload with itemId
