@@ -2744,9 +2744,12 @@ Expected End: {ended_time}"""
             try:
                 import requests
                 import os
+                import time
 
-                # Get user ID from environment or config
+                # Get user ID and instance info from environment
                 user_id = os.getenv('LOKBOT_USER_ID', config.get('discord', {}).get('user_id', 'web_user'))
+                instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{int(time.time() * 1000)}")
+                account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
 
                 # Get monster name from code mapping
                 from lokbot.rally_utils import get_monster_name_by_code
@@ -2767,7 +2770,7 @@ Expected End: {ended_time}"""
                     troop_type = "T3"
 
                 # Format the rally join message
-                rally_message = f"""⚔️ Rally Joined!
+                rally_message = f"""🔥 Rally Joined!
 Monster: {monster_display_name} (Level {monster_level})
 Troops Sent: {total_troops} {troop_type}
 Rally ID: {rally_id}"""
@@ -2781,7 +2784,9 @@ Rally ID: {rally_id}"""
                         'monster_level': monster_level,
                         'rally_id': rally_id,
                         'location': monster_loc,
-                        'formatted_message': rally_message
+                        'formatted_message': rally_message,
+                        'instance_id': instance_id,
+                        'account_name': account_name
                     },
                     timeout=2)
                 logger.info("Rally join notification sent to web app")
