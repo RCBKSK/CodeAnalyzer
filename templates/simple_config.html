@@ -3837,7 +3837,7 @@
 
             container.querySelectorAll('.monster-card').forEach(card => {
                 const checkbox = card.querySelector('.monster-checkbox');
-                if (!checkbox.checked) return;
+                if (!checkbox || !checkbox.checked) return;
 
                 const monsterNameElement = card.querySelector('.monster-name');
                 const monsterName = monsterNameElement.value || monsterNameElement.textContent;
@@ -3899,7 +3899,7 @@
 
             container.querySelectorAll('.monster-card').forEach(card => {
                 const checkbox = card.querySelector('.monster-checkbox');
-                if (!checkbox.checked) return;
+                if (!checkbox || !checkbox.checked) return;
 
                 const monsterNameElement = card.querySelector('.monster-name');
                 const monsterName = monsterNameElement.value || monsterNameElement.textContent;
@@ -3934,7 +3934,7 @@
                     const troopSelect = troopItem.querySelector('.troop-select');
                     const amountInput = troopItem.querySelector('.troop-amount-input');
 
-                    if (troopSelect.value && amountInput.value !== '') {
+                    if (troopSelect && amountInput && troopSelect.value && amountInput.value !== '') {
                         const troopCode = parseInt(troopSelect.value);
                         const amount = parseInt(amountInput.value) || 0;
 
