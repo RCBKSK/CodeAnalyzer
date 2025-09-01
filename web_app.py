@@ -1378,9 +1378,18 @@ def get_config_summary():
         skills = main_config.get('skills', {})
         if skills.get('enabled', False):
             enabled_skills = [skill for skill in skills.get('skills', []) if skill.get('enabled', False)]
+            skill_details = []
+            skill_names = {10001: "Instant Harvest", 10002: "Accelerated Gathering", 10018: "Increase Resource Production"}
+            
+            for skill in enabled_skills:
+                skill_name = skill_names.get(skill.get('code'), f"Skill {skill.get('code')}")
+                skill_details.append(skill_name)
+            
             summary['other_features']['skills'] = {
                 'enabled': True,
-                'enabled_skills_count': len(enabled_skills)
+                'enabled_skills_count': len(enabled_skills),
+                'skill_details': skill_details,
+                'six_step_workflow': skills.get('skin_item_id') or skills.get('skin_item_id_2')
             }
 
         # Treasure
@@ -1416,6 +1425,56 @@ def get_config_summary():
             'enabled': len(enabled_threads),
             'enabled_list': [thread.get('name', 'Unknown') for thread in enabled_threads]
         }
+
+        # Gathering (resource collection)
+        gather_config = main_config.get('gather', {})
+        if gather_config.get('enabled', False):
+            enabled_resources = [res for res in gather_config.get('targets', []) if res.get('enabled', False)]
+            summary['other_features']['gathering'] = {
+                'enabled': True,
+                'max_distance': gather_config.get('max_distance', 200),
+                'enabled_resources_count': len(enabled_resources)
+            }
+
+        # Hospital recovery
+        hospital_job = next((job for job in jobs if job.get('name') == 'hospital_recover' and job.get('enabled', False)), None)
+        if hospital_job:
+            summary['other_features']['hospital_recovery'] = {
+                'enabled': True,
+                'interval': f"{hospital_job.get('interval', {}).get('start', 20)}-{hospital_job.get('interval', {}).get('end', 30)}min"
+            }
+
+        # Alliance features
+        alliance_job = next((job for job in jobs if job.get('name') == 'alliance_farmer' and job.get('enabled', False)), None)
+        if alliance_job:
+            kwargs = alliance_job.get('kwargs', {})
+            features = []
+            if kwargs.get('help_all'): features.append('Help All')
+            if kwargs.get('gift_claim'): features.append('Gift Claim')
+            if kwargs.get('research_donate'): features.append('Research Donate')
+            if kwargs.get('shop_auto_buy_item_code_list'): features.append('Auto Buy Items')
+            
+            summary['other_features']['alliance'] = {
+                'enabled': True,
+                'features': features,
+                'interval': f"{alliance_job.get('interval', {}).get('start', 120)}-{alliance_job.get('interval', {}).get('end', 200)}min"
+            }
+
+        # Caravan
+        caravan_job = next((job for job in jobs if job.get('name') == 'caravan_farmer' and job.get('enabled', False)), None)
+        if caravan_job:
+            summary['other_features']['caravan'] = {
+                'enabled': True,
+                'interval': f"{caravan_job.get('interval', {}).get('start', 120)}-{caravan_job.get('interval', {}).get('end', 200)}min"
+            }
+
+        # VIP Chest
+        vip_chest_job = next((job for job in jobs if job.get('name') == 'vip_chest_claim' and job.get('enabled', False)), None)
+        if vip_chest_job:
+            summary['other_features']['vip_chest'] = {
+                'enabled': True,
+                'interval': f"{vip_chest_job.get('interval', {}).get('start', 120)}-{vip_chest_job.get('interval', {}).get('end', 200)}min"
+            }
 
         # Discord settings
         discord_config = config.get('discord', {})
