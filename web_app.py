@@ -1323,19 +1323,41 @@ def get_config_summary():
         rally_start = rally_config.get('start', {})
 
         if rally_join.get('enabled', False):
+            enabled_rally_monsters = [monster for monster in rally_join.get('targets', []) if monster.get('enabled', False)]
+            rally_monster_details = []
+            for monster in enabled_rally_monsters:
+                name = monster.get('name', f"Monster {monster.get('code')}")
+                levels = monster.get('level', [])
+                level_str = f"L{min(levels)}-{max(levels)}" if levels and len(levels) > 1 else f"L{levels[0]}" if levels else "Any"
+                rally_monster_details.append(f"{name} ({level_str})")
+            
             summary['rally_settings']['rally_join'] = {
                 'enabled': True,
                 'max_marches': rally_join.get('numMarch', 8),
                 'max_distance': rally_join.get('max_rally_distance', 500),
-                'monsters_count': len(rally_join.get('targets', []))
+                'monsters_count': len(rally_join.get('targets', [])),
+                'enabled_monsters_count': len(enabled_rally_monsters),
+                'monster_details': rally_monster_details,
+                'skin_change': bool(rally_join.get('skin_item_id'))
             }
 
         if rally_start.get('enabled', False):
+            enabled_start_monsters = [monster for monster in rally_start.get('targets', []) if monster.get('enabled', False)]
+            start_monster_details = []
+            for monster in enabled_start_monsters:
+                name = monster.get('name', f"Monster {monster.get('code')}")
+                levels = monster.get('level', [])
+                level_str = f"L{min(levels)}-{max(levels)}" if levels and len(levels) > 1 else f"L{levels[0]}" if levels else "Any"
+                start_monster_details.append(f"{name} ({level_str})")
+            
             summary['rally_settings']['rally_start'] = {
                 'enabled': True,
                 'max_marches': rally_start.get('numMarch', 6),
                 'max_distance': rally_start.get('max_rally_distance', 500),
-                'monsters_count': len(rally_start.get('targets', []))
+                'monsters_count': len(rally_start.get('targets', [])),
+                'enabled_monsters_count': len(enabled_start_monsters),
+                'monster_details': start_monster_details,
+                'skin_change': bool(rally_start.get('skin_item_id'))
             }
 
         # Object scanning (SOCF thread)
@@ -1348,12 +1370,17 @@ def get_config_summary():
                 targets = kwargs.get('targets', [])
 
                 enabled_objects = []
+                object_details = []
                 for target in targets:
                     if target.get('enabled', False):
+                        name = target.get('name', f"Object {target.get('code', 'Unknown')}")
+                        levels = target.get('level', [])
+                        level_str = f"L{min(levels)}-{max(levels)}" if levels and len(levels) > 1 else f"L{levels[0]}" if levels else "Any"
+                        object_details.append(f"{name} ({level_str})")
                         enabled_objects.append({
-                            'name': target.get('name', f"Object {target.get('code', 'Unknown')}"),
+                            'name': name,
                             'code': target.get('code'),
-                            'levels': target.get('level', [])
+                            'levels': levels
                         })
 
                 summary['object_scanning'] = {
@@ -1361,17 +1388,30 @@ def get_config_summary():
                     'radius': kwargs.get('radius', 16),
                     'total_objects': len(targets),
                     'enabled_objects': enabled_objects,
-                    'share_to_channels': kwargs.get('share_to', {}).get('chat_channels', [])
+                    'enabled_objects_count': len(enabled_objects),
+                    'object_details': object_details,
+                    'share_to_channels': kwargs.get('share_to', {}).get('chat_channels', []),
+                    'skin_change': bool(kwargs.get('skin_item_id'))
                 }
                 break
 
         # Normal monster attack
         normal_monsters = main_config.get('normal_monsters', {})
         if normal_monsters.get('enabled', False):
+            enabled_monsters = [monster for monster in normal_monsters.get('targets', []) if monster.get('enabled', False)]
+            monster_details = []
+            for monster in enabled_monsters:
+                name = monster.get('name', f"Monster {monster.get('code')}")
+                levels = monster.get('level', [])
+                level_str = f"L{min(levels)}-{max(levels)}" if levels and len(levels) > 1 else f"L{levels[0]}" if levels else "Any"
+                monster_details.append(f"{name} ({level_str})")
+            
             summary['other_features']['normal_monsters'] = {
                 'enabled': True,
                 'max_distance': normal_monsters.get('max_distance', 200),
-                'monsters_count': len(normal_monsters.get('targets', []))
+                'monsters_count': len(normal_monsters.get('targets', [])),
+                'enabled_monsters_count': len(enabled_monsters),
+                'monster_details': monster_details
             }
 
         # Skills
@@ -1385,11 +1425,22 @@ def get_config_summary():
                 skill_name = skill_names.get(skill.get('code'), f"Skill {skill.get('code')}")
                 skill_details.append(skill_name)
             
+            # Check for 6-step workflow configuration
+            six_step_enabled = bool(skills.get('skin_item_id') or skills.get('skin_item_id_2'))
+            workflow_details = []
+            if six_step_enabled:
+                workflow_details.append(f"First Skin NFT ID: {skills.get('skin_item_id', 'Not set')}")
+                if skills.get('skin_item_id_2'):
+                    workflow_details.append(f"Second Skin NFT ID: {skills.get('skin_item_id_2')}")
+                workflow_details.append(f"Treasure Page 1: {skills.get('treasure_page_1', 1)}")
+                workflow_details.append(f"Treasure Page 2: {skills.get('treasure_page_2', 2)}")
+            
             summary['other_features']['skills'] = {
                 'enabled': True,
                 'enabled_skills_count': len(enabled_skills),
                 'skill_details': skill_details,
-                'six_step_workflow': skills.get('skin_item_id') or skills.get('skin_item_id_2')
+                'six_step_workflow': six_step_enabled,
+                'workflow_details': workflow_details
             }
 
         # Treasure
@@ -1404,9 +1455,29 @@ def get_config_summary():
         buff_management = config.get('buff_management', {})
         if buff_management.get('enabled', False):
             enabled_buffs = [buff for buff in buff_management.get('buffs', []) if buff.get('enabled', False)]
+            buff_names = {
+                10301001: "Attack Boost",
+                10301002: "Defense Boost", 
+                10301003: "Health Boost",
+                10301004: "March Speed Boost",
+                10301005: "Gathering Speed Boost",
+                10301006: "Training Speed Boost",
+                10301007: "Research Speed Boost",
+                10301008: "Construction Speed Boost",
+                10301009: "Resource Production Boost",
+                10301010: "Hospital Capacity Boost"
+            }
+            
+            buff_details = []
+            for buff in enabled_buffs:
+                buff_name = buff_names.get(buff.get('code'), f"Buff {buff.get('code')}")
+                condition = buff.get('condition', 'Always')
+                buff_details.append(f"{buff_name} ({condition})")
+            
             summary['other_features']['buff_management'] = {
                 'enabled': True,
-                'enabled_buffs_count': len(enabled_buffs)
+                'enabled_buffs_count': len(enabled_buffs),
+                'buff_details': buff_details
             }
 
         # Jobs summary
@@ -1430,10 +1501,18 @@ def get_config_summary():
         gather_config = main_config.get('gather', {})
         if gather_config.get('enabled', False):
             enabled_resources = [res for res in gather_config.get('targets', []) if res.get('enabled', False)]
+            resource_details = []
+            for resource in enabled_resources:
+                name = resource.get('name', f"Resource {resource.get('code')}")
+                levels = resource.get('level', [])
+                level_str = f"L{min(levels)}-{max(levels)}" if levels and len(levels) > 1 else f"L{levels[0]}" if levels else "Any"
+                resource_details.append(f"{name} ({level_str})")
+            
             summary['other_features']['gathering'] = {
                 'enabled': True,
                 'max_distance': gather_config.get('max_distance', 200),
-                'enabled_resources_count': len(enabled_resources)
+                'enabled_resources_count': len(enabled_resources),
+                'resource_details': resource_details
             }
 
         # Hospital recovery
