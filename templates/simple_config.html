@@ -4580,8 +4580,56 @@
                 
                 allianceFarmerFeatures.appendChild(shopConfigSection);
                 
-                // Load existing shop configuration
+                // Add Caravan Configuration Section
+                const caravanConfigSection = document.createElement('div');
+                caravanConfigSection.className = 'caravan-config-section';
+                caravanConfigSection.style.cssText = `
+                    margin-top: 24px;
+                    padding: 20px;
+                    background: var(--bg-secondary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 12px;
+                    box-shadow: var(--shadow);
+                `;
+                
+                caravanConfigSection.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <h4 style="font-size: 14px; font-weight: 600; margin: 0; color: var(--text-primary);">
+                            <i class="fas fa-truck"></i> Caravan Auto-Buy
+                        </h4>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="caravan-buying-enabled" onchange="toggleCaravanBuying(this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div id="caravan-config-content" style="display: none;">
+                        <div style="margin-bottom: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary);">
+                                Configure which items to automatically buy from caravans. Items are purchased in priority order (1 = highest priority). Caravan items rotate regularly.
+                            </p>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <button class="btn btn-secondary" onclick="loadCaravanItems()" style="font-size: 12px; padding: 8px 16px;">
+                                <i class="fas fa-refresh"></i> Load Available Items
+                            </button>
+                            <button class="btn btn-accent" onclick="addCaravanItem()" style="font-size: 12px; padding: 8px 16px; margin-left: 8px;">
+                                <i class="fas fa-plus"></i> Add Item
+                            </button>
+                        </div>
+                        
+                        <div id="caravan-items-list" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Caravan items will be loaded here -->
+                        </div>
+                    </div>
+                `;
+                
+                allianceFarmerFeatures.appendChild(caravanConfigSection);
+                
+                // Load existing configurations
                 loadAllianceShopConfig();
+                loadCaravanConfig();
             }
 
             // Populate threads
@@ -5199,6 +5247,351 @@
         window.updateShopItem = updateShopItem;
         window.removeShopItem = removeShopItem;
         window.loadAllianceShopConfig = loadAllianceShopConfig;
+
+        // ===============================
+        // CARAVAN CONFIGURATION FUNCTIONS
+        // ===============================
+        
+        let currentCaravanConfig = {
+            enabled: false,
+            items: []
+        };
+
+        async function loadCaravanItems() {
+            try {
+                const response = await fetch('/api/caravan/items');
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.caravanItemsData = data.categories;
+                    showNotification('Caravan items loaded successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to load caravan items');
+                }
+            } catch (error) {
+                console.error('Error loading caravan items:', error);
+                showNotification('Error loading caravan items: ' + error.message, 'error');
+            }
+        }
+
+        function toggleCaravanBuying(enabled) {
+            currentCaravanConfig.enabled = enabled;
+            const content = document.getElementById('caravan-config-content');
+            if (content) {
+                content.style.display = enabled ? 'block' : 'none';
+            }
+        }
+
+        function addCaravanItem() {
+            if (!window.caravanItemsData) {
+                showNotification('Please load caravan items first', 'warning');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
+                z-index: 10000;
+            `;
+
+            // Generate category options
+            let categoryOptions = '';
+            for (const category in window.caravanItemsData) {
+                categoryOptions += `<option value="${category}">${category}</option>`;
+            }
+
+            modal.innerHTML = `
+                <div style="background: var(--bg-secondary); padding: 24px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin: 0 0 20px 0; color: var(--text-primary);">Add Caravan Item</h3>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--text-primary);">Category:</label>
+                        <select id="caravan-category-select" onchange="updateCaravanItemOptions()" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                            <option value="">Select Category</option>
+                            ${categoryOptions}
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--text-primary);">Item:</label>
+                        <select id="caravan-item-select" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                            <option value="">Select Item</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Priority (1-10):</label>
+                            <input type="number" id="caravan-priority" min="1" max="10" value="1" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Min Buy:</label>
+                            <input type="number" id="caravan-min-buy" min="1" value="1" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Max Buy:</label>
+                            <input type="number" id="caravan-max-buy" min="1" value="999999" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 8px 16px; background: var(--bg-primary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer;">Cancel</button>
+                        <button onclick="saveCaravanItem()" style="padding: 8px 16px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Add Item</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.remove();
+            };
+        }
+
+        function updateCaravanItemOptions() {
+            const categorySelect = document.getElementById('caravan-category-select');
+            const itemSelect = document.getElementById('caravan-item-select');
+            const category = categorySelect.value;
+
+            itemSelect.innerHTML = '<option value="">Select Item</option>';
+
+            if (category && window.caravanItemsData[category]) {
+                window.caravanItemsData[category].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.item_code;
+                    option.textContent = item.name;
+                    option.title = item.description;
+                    itemSelect.appendChild(option);
+                });
+            }
+        }
+
+        function saveCaravanItem() {
+            const itemCode = parseInt(document.getElementById('caravan-item-select').value);
+            const priority = parseInt(document.getElementById('caravan-priority').value);
+            const minBuy = parseInt(document.getElementById('caravan-min-buy').value);
+            const maxBuy = parseInt(document.getElementById('caravan-max-buy').value);
+
+            if (!itemCode) {
+                showNotification('Please select an item', 'warning');
+                return;
+            }
+
+            // Check if item already exists
+            if (currentCaravanConfig.items.some(item => item.item_code === itemCode)) {
+                showNotification('Item already exists in configuration', 'warning');
+                return;
+            }
+
+            // Find item details
+            let itemDetails = null;
+            for (const category in window.caravanItemsData) {
+                const found = window.caravanItemsData[category].find(item => item.item_code === itemCode);
+                if (found) {
+                    itemDetails = found;
+                    break;
+                }
+            }
+
+            const newItem = {
+                item_code: itemCode,
+                enabled: true,
+                priority: priority,
+                min_buy: minBuy,
+                max_buy: maxBuy,
+                name: itemDetails ? itemDetails.name : `Item ${itemCode}`,
+                description: itemDetails ? itemDetails.description : '',
+                category: itemDetails ? itemDetails.category : 'Other'
+            };
+
+            currentCaravanConfig.items.push(newItem);
+            updateCaravanItemsList();
+            document.querySelector('.modal-overlay').remove();
+            showNotification('Caravan item added successfully!', 'success');
+        }
+
+        function updateCaravanItemsList() {
+            const container = document.getElementById('caravan-items-list');
+            if (!container) return;
+
+            if (currentCaravanConfig.items.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No caravan items configured. Click "Add Item" to get started.</p>';
+                return;
+            }
+
+            container.innerHTML = currentCaravanConfig.items.map(item => `
+                <div style="display: flex; align-items: center; padding: 12px; margin-bottom: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${item.name}</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">${item.description}</div>
+                        <div style="font-size: 11px; color: var(--text-secondary);">
+                            Priority: ${item.priority} | Min: ${item.min_buy} | Max: ${item.max_buy} | Category: ${item.category}
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label class="toggle-switch" style="transform: scale(0.8);">
+                            <input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleCaravanItem(${item.item_code}, this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <button onclick="editCaravanItem(${item.item_code})" style="padding: 4px 8px; font-size: 10px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer;">Edit</button>
+                        <button onclick="removeCaravanItem(${item.item_code})" style="padding: 4px 8px; font-size: 10px; background: var(--error-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCaravanItem(itemCode, enabled) {
+            const item = currentCaravanConfig.items.find(item => item.item_code === itemCode);
+            if (item) {
+                item.enabled = enabled;
+            }
+        }
+
+        function editCaravanItem(itemCode) {
+            const item = currentCaravanConfig.items.find(item => item.item_code === itemCode);
+            if (!item) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
+                z-index: 10000;
+            `;
+
+            modal.innerHTML = `
+                <div style="background: var(--bg-secondary); padding: 24px; border-radius: 12px; width: 90%; max-width: 400px;">
+                    <h3 style="margin: 0 0 20px 0; color: var(--text-primary);">Edit ${item.name}</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Priority (1-10):</label>
+                            <input type="number" id="edit-caravan-priority" min="1" max="10" value="${item.priority}" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Min Buy:</label>
+                            <input type="number" id="edit-caravan-min-buy" min="1" value="${item.min_buy}" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Max Buy:</label>
+                            <input type="number" id="edit-caravan-max-buy" min="1" value="${item.max_buy}" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 8px 16px; background: var(--bg-primary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer;">Cancel</button>
+                        <button onclick="updateCaravanItem(${itemCode})" style="padding: 8px 16px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Update</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+        }
+
+        function updateCaravanItem(itemCode) {
+            const item = currentCaravanConfig.items.find(item => item.item_code === itemCode);
+            if (!item) return;
+
+            item.priority = parseInt(document.getElementById('edit-caravan-priority').value);
+            item.min_buy = parseInt(document.getElementById('edit-caravan-min-buy').value);
+            item.max_buy = parseInt(document.getElementById('edit-caravan-max-buy').value);
+
+            updateCaravanItemsList();
+            document.querySelector('.modal-overlay').remove();
+            showNotification('Caravan item updated successfully!', 'success');
+        }
+
+        function removeCaravanItem(itemCode) {
+            if (confirm('Are you sure you want to remove this caravan item?')) {
+                currentCaravanConfig.items = currentCaravanConfig.items.filter(item => item.item_code !== itemCode);
+                updateCaravanItemsList();
+                showNotification('Caravan item removed successfully!', 'success');
+            }
+        }
+
+        async function loadCaravanConfig() {
+            try {
+                const configFile = getCurrentConfigFile();
+                const response = await fetch(`/api/caravan/config?config_file=${encodeURIComponent(configFile)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentCaravanConfig = data.config || { enabled: false, items: [] };
+                    
+                    // Update UI
+                    const enabledCheckbox = document.getElementById('caravan-buying-enabled');
+                    if (enabledCheckbox) {
+                        enabledCheckbox.checked = currentCaravanConfig.enabled;
+                        toggleCaravanBuying(currentCaravanConfig.enabled);
+                    }
+                    
+                    updateCaravanItemsList();
+                }
+            } catch (error) {
+                console.error('Error loading caravan config:', error);
+            }
+        }
+
+        async function saveCaravanConfig() {
+            try {
+                const configFile = getCurrentConfigFile();
+                const response = await fetch('/api/caravan/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        config_file: configFile,
+                        caravan_config: currentCaravanConfig
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    return true;
+                } else {
+                    throw new Error(data.error || 'Failed to save caravan config');
+                }
+            } catch (error) {
+                showNotification('Error saving caravan configuration: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        // Override saveConfig to include caravan config saving
+        const originalSaveConfig = window.saveConfig;
+        window.saveConfig = async function(tabName) {
+            try {
+                // Save shop config if it's enabled or has items
+                if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
+                    await saveAllianceShopConfig();
+                }
+                
+                // Save caravan config if it's enabled or has items
+                if (currentCaravanConfig.enabled || (currentCaravanConfig.items && currentCaravanConfig.items.length > 0)) {
+                    await saveCaravanConfig();
+                }
+                
+                // Call original save function
+                return originalSaveConfig(tabName);
+            } catch (error) {
+                showNotification('Error saving configurations: ' + error.message, 'error');
+                return false;
+            }
+        };
+
+        // Add caravan functions to global scope
+        window.loadCaravanItems = loadCaravanItems;
+        window.toggleCaravanBuying = toggleCaravanBuying;
+        window.addCaravanItem = addCaravanItem;
+        window.updateCaravanItemOptions = updateCaravanItemOptions;
+        window.saveCaravanItem = saveCaravanItem;
+        window.toggleCaravanItem = toggleCaravanItem;
+        window.editCaravanItem = editCaravanItem;
+        window.updateCaravanItem = updateCaravanItem;
+        window.removeCaravanItem = removeCaravanItem;
+        window.loadCaravanConfig = loadCaravanConfig;
     </script>
 </body>
 

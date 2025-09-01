@@ -5246,33 +5246,198 @@ Status: {status}"""
             }
             self._alliance_shop_autobuy_enhanced(old_config)
 
-    def caravan_farmer(self):
-        caravan = self.api.kingdom_caravan_list().get('caravan')
+    def caravan_farmer(self, caravan_items_config=None):
+        """
+        Enhanced caravan farmer with priority-based purchasing and quantity controls
+        """
+        try:
+            caravan = self.api.kingdom_caravan_list().get('caravan')
+            if not caravan:
+                logger.info('No caravan data available')
+                return
 
-        if not caravan:
-            return
+            available_items = caravan.get('items', [])
+            if not available_items:
+                logger.info('No items available in caravan')
+                return
 
-        for each_item in caravan.get('items', []):
-            if each_item.get('amount') < 1:
-                continue
+            # Use enhanced buying with configuration or fallback to basic mode
+            if caravan_items_config and isinstance(caravan_items_config, dict):
+                self._caravan_autobuy_enhanced(caravan_items_config, available_items)
+            else:
+                # Backward compatibility - basic caravan buying
+                self._caravan_autobuy_basic(available_items)
 
-            if each_item.get('code') not in BUYABLE_CARAVAN_ITEM_CODE_LIST:
-                continue
+        except Exception as e:
+            logger.error(f'Error in caravan_farmer: {str(e)}')
 
-            if each_item.get(
-                    'costItemCode') not in BUYABLE_CARAVAN_ITEM_CODE_LIST:
-                continue
+    def _caravan_autobuy_enhanced(self, config, available_items):
+        """
+        Enhanced caravan buying with priority system and quantity controls
+        """
+        try:
+            if not config.get('enabled', False):
+                logger.debug('Caravan buying is disabled')
+                return
 
-            resource_index = lokbot.util.get_resource_index_by_item_code(
-                each_item.get('costItemCode'))
+            configured_items = config.get('items', [])
+            if not configured_items:
+                logger.info('No caravan items configured for purchase')
+                return
 
-            if resource_index == -1:
-                continue
+            # Filter and sort items by priority (1 = highest priority)
+            enabled_items = [item for item in configured_items if item.get('enabled', False)]
+            if not enabled_items:
+                logger.info('No caravan items enabled for purchase')
+                return
 
-            if each_item.get('cost') > self.resources[resource_index]:
-                continue
+            # Sort by priority (ascending, so 1 comes first)
+            enabled_items.sort(key=lambda x: x.get('priority', 999))
 
-            self.api.kingdom_caravan_buy(each_item.get('_id'))
+            total_purchased = 0
+            purchase_summary = []
+
+            for config_item in enabled_items:
+                item_code = config_item.get('item_code')
+                if not item_code:
+                    continue
+
+                # Find this item in available caravan items
+                available_item = None
+                for caravan_item in available_items:
+                    if caravan_item.get('code') == item_code:
+                        available_item = caravan_item
+                        break
+
+                if not available_item:
+                    logger.debug(f'Caravan item {item_code} not available in current caravan')
+                    continue
+
+                if available_item.get('amount', 0) < 1:
+                    logger.debug(f'Caravan item {item_code} out of stock')
+                    continue
+
+                # Check cost and affordability
+                cost = available_item.get('cost', 0)
+                cost_item_code = available_item.get('costItemCode')
+                
+                if not cost_item_code:
+                    logger.debug(f'No cost currency for item {item_code}')
+                    continue
+
+                # Get current resource amount
+                resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
+                if resource_index == -1:
+                    logger.debug(f'Unknown cost currency {cost_item_code} for item {item_code}')
+                    continue
+
+                current_resources = self.resources[resource_index]
+                if cost > current_resources:
+                    logger.debug(f'Cannot afford item {item_code}: costs {cost}, have {current_resources}')
+                    continue
+
+                # Calculate how many we can/should buy
+                min_buy = max(1, config_item.get('min_buy', 1))
+                max_buy = config_item.get('max_buy', 999999)
+                available_amount = available_item.get('amount', 0)
+                
+                # Determine actual purchase amount
+                target_amount = min(max_buy, available_amount)
+                target_amount = max(min_buy, target_amount) if target_amount >= min_buy else 0
+                
+                if target_amount == 0:
+                    logger.debug(f'Purchase amount for item {item_code} is 0 (below minimum)')
+                    continue
+
+                # Check if we can afford the minimum amount
+                total_cost = cost * target_amount
+                if total_cost > current_resources:
+                    # Try to buy as many as we can afford
+                    affordable_amount = current_resources // cost
+                    if affordable_amount >= min_buy:
+                        target_amount = min(affordable_amount, max_buy)
+                    else:
+                        logger.debug(f'Cannot afford minimum quantity for item {item_code}')
+                        continue
+
+                # Attempt purchase
+                try:
+                    item_info = CARAVAN_ITEMS.get(item_code, {})
+                    item_name = item_info.get('name', f'Item {item_code}')
+                    
+                    # For caravan, we buy one at a time in a loop
+                    purchased_count = 0
+                    for _ in range(target_amount):
+                        try:
+                            self.api.kingdom_caravan_buy(available_item.get('_id'))
+                            purchased_count += 1
+                            time.sleep(random.uniform(0.5, 1.5))  # Small delay between purchases
+                        except Exception as e:
+                            logger.warning(f'Failed to buy item {item_code}: {str(e)}')
+                            break
+
+                    if purchased_count > 0:
+                        total_purchased += purchased_count
+                        purchase_summary.append(f"{item_name} x{purchased_count}")
+                        logger.info(f'✅ Bought {purchased_count}x {item_name} from caravan')
+                        
+                        # Update resource count for next calculations
+                        self.resources[resource_index] -= (cost * purchased_count)
+
+                except Exception as e:
+                    logger.error(f'Error purchasing caravan item {item_code}: {str(e)}')
+
+            # Summary
+            if total_purchased > 0:
+                logger.info(f'🛒 Caravan purchase complete: {", ".join(purchase_summary)}')
+            else:
+                logger.info('No caravan items purchased (none affordable/available)')
+
+        except Exception as e:
+            logger.error(f'Error in enhanced caravan buying: {str(e)}')
+
+    def _caravan_autobuy_basic(self, available_items):
+        """
+        Basic caravan buying for backward compatibility
+        """
+        try:
+            purchased_count = 0
+            
+            for each_item in available_items:
+                if each_item.get('amount') < 1:
+                    continue
+
+                if each_item.get('code') not in BUYABLE_CARAVAN_ITEM_CODE_LIST:
+                    continue
+
+                cost_item_code = each_item.get('costItemCode')
+                if not cost_item_code:
+                    continue
+
+                resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
+                if resource_index == -1:
+                    continue
+
+                if each_item.get('cost', 0) > self.resources[resource_index]:
+                    continue
+
+                try:
+                    self.api.kingdom_caravan_buy(each_item.get('_id'))
+                    purchased_count += 1
+                    item_info = CARAVAN_ITEMS.get(each_item.get('code'), {})
+                    item_name = item_info.get('name', f"Item {each_item.get('code')}")
+                    logger.info(f'✅ Bought {item_name} from caravan (basic mode)')
+                    time.sleep(random.uniform(0.5, 1.5))
+                except Exception as e:
+                    logger.warning(f'Failed to buy caravan item: {str(e)}')
+
+            if purchased_count > 0:
+                logger.info(f'🛒 Basic caravan purchase complete: {purchased_count} items bought')
+            else:
+                logger.info('No caravan items purchased (basic mode)')
+                
+        except Exception as e:
+            logger.error(f'Error in basic caravan buying: {str(e)}')
 
     def mail_claim(self):
         self.api.mail_claim_all(1)  # report

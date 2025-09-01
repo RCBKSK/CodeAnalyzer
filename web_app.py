@@ -4748,6 +4748,113 @@ def favicon():
     </svg>'''
     return Response(svg, mimetype='image/svg+xml')
 
+@app.route('/api/caravan/items', methods=['GET'])
+@login_required
+def get_caravan_items():
+    """Get available caravan items with descriptions"""
+    try:
+        from lokbot.enum import CARAVAN_ITEMS
+        
+        # Group items by category for better organization
+        categorized_items = {}
+        for item_code, item_info in CARAVAN_ITEMS.items():
+            category = item_info.get('category', 'Other')
+            if category not in categorized_items:
+                categorized_items[category] = []
+            
+            categorized_items[category].append({
+                'item_code': item_code,
+                'name': item_info.get('name', f'Item {item_code}'),
+                'description': item_info.get('description', ''),
+                'priority': item_info.get('priority', 3),
+                'category': category
+            })
+        
+        # Sort items within each category by priority
+        for category in categorized_items:
+            categorized_items[category].sort(key=lambda x: x['priority'])
+        
+        return jsonify({
+            'success': True,
+            'categories': categorized_items,
+            'total_items': len(CARAVAN_ITEMS)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting caravan items: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/caravan/config', methods=['GET', 'POST'])
+@login_required
+def handle_caravan_config():
+    """Get or update caravan configuration"""
+    try:
+        username = session.get('username', session['user_id'])
+        selected_config = request.args.get('config_file') or request.json.get('config_file', 'config.json') if request.json else 'config.json'
+        
+        # Check if user has access to this config file
+        if not has_config_access(username, selected_config):
+            return jsonify({'error': 'Access denied to this config file'}), 403
+
+        # Load config
+        if os.path.exists(selected_config):
+            with open(selected_config, 'r') as f:
+                config = json.load(f)
+        else:
+            return jsonify({'error': f'Config file {selected_config} not found'}), 404
+
+        if request.method == 'GET':
+            # Get current caravan configuration
+            caravan_config = config.get('main', {}).get('caravan_items', {
+                'enabled': False,
+                'items': []
+            })
+            
+            return jsonify({
+                'success': True,
+                'config': caravan_config
+            })
+            
+        elif request.method == 'POST':
+            # Update caravan configuration
+            caravan_config = request.json.get('caravan_config', {})
+            
+            # Ensure main section exists
+            if 'main' not in config:
+                config['main'] = {}
+            
+            # Update caravan configuration
+            config['main']['caravan_items'] = caravan_config
+            
+            # Update caravan_farmer job kwargs to include new config
+            jobs = config.get('main', {}).get('jobs', [])
+            for job in jobs:
+                if job.get('name') == 'caravan_farmer':
+                    if 'kwargs' not in job:
+                        job['kwargs'] = {}
+                    job['kwargs']['caravan_items_config'] = caravan_config
+                    break
+            
+            # Save config
+            with open(selected_config, 'w') as f:
+                json.dump(config, f, indent=2)
+            
+            add_notification(
+                username, 
+                'config_update', 
+                'Caravan Config Updated', 
+                f'Caravan buying configuration saved to {selected_config}'
+            )
+            
+            return jsonify({
+                'success': True,
+                'message': 'Caravan configuration updated successfully'
+            })
+            
+    except Exception as e:
+        logger.error(f"Error handling caravan config: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     # Ensure data directory exists
     os.makedirs('data', exist_ok=True)

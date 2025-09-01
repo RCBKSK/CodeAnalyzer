@@ -366,13 +366,113 @@ USABLE_ITEM_CODE_LIST = (
     ITEM_CODE_ACTION_POINTS_20, ITEM_CODE_ACTION_POINTS_50,
     ITEM_CODE_ACTION_POINTS_100)
 
-BUYABLE_CARAVAN_ITEM_CODE_LIST = (
-    10101007,
-    10101008,
-    10101009,
-    10103008,
-    10103009,
-)
+# Caravan Item Information Mapping
+CARAVAN_ITEMS = {
+    # VIP Points - High Priority
+    10101007: {"name": "VIP Points (50)", "category": "VIP", "description": "50 VIP Points for premium features", "priority": 1},
+    10101008: {"name": "VIP Points (100)", "category": "VIP", "description": "100 VIP Points for premium features", "priority": 1},
+    10101009: {"name": "VIP Points (200)", "category": "VIP", "description": "200 VIP Points for premium features", "priority": 1},
+    
+    # Speedups - General (High Value)
+    10103007: {"name": "Speedup (8H)", "category": "Speedups", "description": "8 Hours General Speedup", "priority": 1},
+    10103008: {"name": "Speedup (1D)", "category": "Speedups", "description": "1 Day General Speedup", "priority": 1},
+    10103009: {"name": "Speedup (3D)", "category": "Speedups", "description": "3 Days General Speedup", "priority": 1},
+    10103010: {"name": "Speedup (7D)", "category": "Speedups", "description": "7 Days General Speedup", "priority": 1},
+    
+    # Speedups - General (Medium Value)
+    10103004: {"name": "Speedup (30M)", "category": "Speedups", "description": "30 Minutes General Speedup", "priority": 2},
+    10103005: {"name": "Speedup (1H)", "category": "Speedups", "description": "1 Hour General Speedup", "priority": 2},
+    10103006: {"name": "Speedup (3H)", "category": "Speedups", "description": "3 Hours General Speedup", "priority": 2},
+    
+    # Speedups - Building
+    10103018: {"name": "Building Speedup (8H)", "category": "Speedups", "description": "8 Hours Building Speedup", "priority": 1},
+    10103019: {"name": "Building Speedup (1D)", "category": "Speedups", "description": "1 Day Building Speedup", "priority": 1},
+    10103020: {"name": "Building Speedup (3D)", "category": "Speedups", "description": "3 Days Building Speedup", "priority": 1},
+    
+    # Speedups - Research
+    10103024: {"name": "Research Speedup (8H)", "category": "Speedups", "description": "8 Hours Research Speedup", "priority": 1},
+    10103025: {"name": "Research Speedup (1D)", "category": "Speedups", "description": "1 Day Research Speedup", "priority": 1},
+    10103026: {"name": "Research Speedup (3D)", "category": "Speedups", "description": "3 Days Research Speedup", "priority": 1},
+    
+    # Speedups - Training
+    10103030: {"name": "Training Speedup (8H)", "category": "Speedups", "description": "8 Hours Training Speedup", "priority": 1},
+    10103031: {"name": "Training Speedup (1D)", "category": "Speedups", "description": "1 Day Training Speedup", "priority": 1},
+    10103032: {"name": "Training Speedup (3D)", "category": "Speedups", "description": "3 Days Training Speedup", "priority": 1},
+    
+    # Resources - High Value
+    10101018: {"name": "Food (500K)", "category": "Resources", "description": "500,000 Food", "priority": 2},
+    10101019: {"name": "Food (1M)", "category": "Resources", "description": "1,000,000 Food", "priority": 1},
+    10101027: {"name": "Lumber (500K)", "category": "Resources", "description": "500,000 Lumber", "priority": 2},
+    10101028: {"name": "Lumber (1M)", "category": "Resources", "description": "1,000,000 Lumber", "priority": 1},
+    10101036: {"name": "Stone (500K)", "category": "Resources", "description": "500,000 Stone", "priority": 2},
+    10101037: {"name": "Stone (1M)", "category": "Resources", "description": "1,000,000 Stone", "priority": 1},
+    10101045: {"name": "Gold (500K)", "category": "Resources", "description": "500,000 Gold", "priority": 2},
+    10101046: {"name": "Gold (1M)", "category": "Resources", "description": "1,000,000 Gold", "priority": 1},
+    
+    # Resources - Medium Value
+    10101016: {"name": "Food (50K)", "category": "Resources", "description": "50,000 Food", "priority": 3},
+    10101017: {"name": "Food (100K)", "category": "Resources", "description": "100,000 Food", "priority": 3},
+    10101025: {"name": "Lumber (50K)", "category": "Resources", "description": "50,000 Lumber", "priority": 3},
+    10101026: {"name": "Lumber (100K)", "category": "Resources", "description": "100,000 Lumber", "priority": 3},
+    10101034: {"name": "Stone (50K)", "category": "Resources", "description": "50,000 Stone", "priority": 3},
+    10101035: {"name": "Stone (100K)", "category": "Resources", "description": "100,000 Stone", "priority": 3},
+    10101043: {"name": "Gold (50K)", "category": "Resources", "description": "50,000 Gold", "priority": 3},
+    10101044: {"name": "Gold (100K)", "category": "Resources", "description": "100,000 Gold", "priority": 3},
+    
+    # Crystal
+    10101048: {"name": "Crystal (100)", "category": "Crystal", "description": "100 Crystal - Premium Currency", "priority": 1},
+    10101049: {"name": "Crystal (500)", "category": "Crystal", "description": "500 Crystal - Premium Currency", "priority": 1},
+    10101050: {"name": "Crystal (1K)", "category": "Crystal", "description": "1,000 Crystal - Premium Currency", "priority": 1},
+    
+    # Action Points
+    10101051: {"name": "Action Points (10)", "category": "Action Points", "description": "10 Action Points", "priority": 2},
+    10101052: {"name": "Action Points (20)", "category": "Action Points", "description": "20 Action Points", "priority": 2},
+    10101053: {"name": "Action Points (50)", "category": "Action Points", "description": "50 Action Points", "priority": 1},
+    10101054: {"name": "Action Points (100)", "category": "Action Points", "description": "100 Action Points", "priority": 1},
+    
+    # Boosts - Production
+    10102001: {"name": "Food Boost (8H)", "category": "Boosts", "description": "8 Hour Food Production Boost", "priority": 2},
+    10102002: {"name": "Food Boost (1D)", "category": "Boosts", "description": "1 Day Food Production Boost", "priority": 1},
+    10102003: {"name": "Lumber Boost (8H)", "category": "Boosts", "description": "8 Hour Lumber Production Boost", "priority": 2},
+    10102004: {"name": "Lumber Boost (1D)", "category": "Boosts", "description": "1 Day Lumber Production Boost", "priority": 1},
+    10102005: {"name": "Stone Boost (8H)", "category": "Boosts", "description": "8 Hour Stone Production Boost", "priority": 2},
+    10102006: {"name": "Stone Boost (1D)", "category": "Boosts", "description": "1 Day Stone Production Boost", "priority": 1},
+    10102007: {"name": "Gold Boost (8H)", "category": "Boosts", "description": "8 Hour Gold Production Boost", "priority": 2},
+    10102008: {"name": "Gold Boost (1D)", "category": "Boosts", "description": "1 Day Gold Production Boost", "priority": 1},
+    
+    # Boosts - Gathering
+    10102009: {"name": "Gathering Boost (8H)", "category": "Boosts", "description": "8 Hour Gathering Speed Boost", "priority": 2},
+    10102010: {"name": "Gathering Boost (1D)", "category": "Boosts", "description": "1 Day Gathering Speed Boost", "priority": 1},
+    
+    # Boosts - Research & Building
+    10102011: {"name": "Research Boost (8H)", "category": "Boosts", "description": "8 Hour Research Speed Boost", "priority": 2},
+    10102012: {"name": "Research Boost (1D)", "category": "Boosts", "description": "1 Day Research Speed Boost", "priority": 1},
+    10102013: {"name": "Building Boost (8H)", "category": "Boosts", "description": "8 Hour Building Speed Boost", "priority": 2},
+    10102014: {"name": "Building Boost (1D)", "category": "Boosts", "description": "1 Day Building Speed Boost", "priority": 1},
+    
+    # Boosts - Training
+    10102015: {"name": "Training Boost (8H)", "category": "Boosts", "description": "8 Hour Training Speed Boost", "priority": 2},
+    10102016: {"name": "Training Boost (1D)", "category": "Boosts", "description": "1 Day Training Speed Boost", "priority": 1},
+    
+    # Peace Shields
+    10104001: {"name": "Peace Shield (8H)", "category": "Protection", "description": "8 Hour Peace Shield", "priority": 2},
+    10104002: {"name": "Peace Shield (1D)", "category": "Protection", "description": "1 Day Peace Shield", "priority": 1},
+    10104003: {"name": "Peace Shield (3D)", "category": "Protection", "description": "3 Day Peace Shield", "priority": 1},
+    10104004: {"name": "Peace Shield (7D)", "category": "Protection", "description": "7 Day Peace Shield", "priority": 1},
+    
+    # Troop Capacity Increase
+    10105001: {"name": "Troop Capacity +1K", "category": "Military", "description": "Increase troop capacity by 1,000", "priority": 2},
+    10105002: {"name": "Troop Capacity +5K", "category": "Military", "description": "Increase troop capacity by 5,000", "priority": 1},
+    10105003: {"name": "Troop Capacity +10K", "category": "Military", "description": "Increase troop capacity by 10,000", "priority": 1},
+    
+    # March Slots
+    10106001: {"name": "March Slot (1H)", "category": "Military", "description": "Additional march slot for 1 hour", "priority": 3},
+    10106002: {"name": "March Slot (8H)", "category": "Military", "description": "Additional march slot for 8 hours", "priority": 2},
+    10106003: {"name": "March Slot (1D)", "category": "Military", "description": "Additional march slot for 1 day", "priority": 1},
+}
+
+# Keep backward compatibility with old list format
+BUYABLE_CARAVAN_ITEM_CODE_LIST = tuple(CARAVAN_ITEMS.keys())
 
 # Alliance Shop Item Information Mapping
 ALLIANCE_SHOP_ITEMS = {
