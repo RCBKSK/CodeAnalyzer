@@ -3503,19 +3503,27 @@
 
             } else if (configType === 'skills') {
                 const skillsEnabled = document.getElementById('skills-enabled').checked;
-                const skillCheckboxes = document.querySelectorAll('#skills-list input[type="checkbox"][data-skill-code]');
+                
+                // Get individual skill checkboxes by their IDs
+                const skill10001 = document.getElementById('skill-10001-enabled');
+                const skill10002 = document.getElementById('skill-10002-enabled');
 
                 const skillsConfig = [];
-                skillCheckboxes.forEach(checkbox => {
-                    const skillCode = parseInt(checkbox.dataset.skillCode);
-                    const enabled = checkbox.checked;
-                    if (!isNaN(skillCode)) {
-                        skillsConfig.push({
-                            code: skillCode,
-                            enabled: enabled
-                        });
-                    }
-                });
+                
+                // Add skills if checkboxes exist
+                if (skill10001) {
+                    skillsConfig.push({
+                        code: 10001,
+                        enabled: skill10001.checked
+                    });
+                }
+                
+                if (skill10002) {
+                    skillsConfig.push({
+                        code: 10002,
+                        enabled: skill10002.checked
+                    });
+                }
 
                 // Ensure main.skills structure exists
                 if (!fullConfigData.main) {
@@ -4248,82 +4256,24 @@
             document.getElementById('skills-treasure-page-1').value = config.treasure_page_1 || 1;
             document.getElementById('skills-treasure-page-2').value = config.treasure_page_2 || 2;
 
-            // Clear and populate skills
-            const container = document.getElementById('skills-list');
-            container.innerHTML = '';
-
-            // Define skill names mapping
-            const skillNames = {
-                10018: "Increase Resource Production",
-                10001: "Instant Harvest",
-                10002: "Accelerated Gathering",
-                10003: "Attack Boost",
-                10004: "Defense Boost",
-                10005: "Gathering Speed",
-                10006: "Training Speed"
-            };
-
+            // Set individual skill checkboxes based on config
+            const skill10001 = document.getElementById('skill-10001-enabled');
+            const skill10002 = document.getElementById('skill-10002-enabled');
+            
+            // Set skill states based on config
             if (config.skills && config.skills.length > 0) {
                 config.skills.forEach(skill => {
-                    const skillCode = skill.code;
-                    const skillName = skillNames[skillCode] || `Skill ${skillCode}`;
-                    const skillItem = document.createElement('div');
-                    skillItem.className = 'job-item';
-                    skillItem.innerHTML = `
-                        <div>
-                            <div class="job-name">${skillName}</div>
-                            <div class="job-description">Code: ${skillCode} - Auto-activate when available</div>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" data-skill-code="${skillCode}" ${skill.enabled ? 'checked' : ''}>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    `;
-                    container.appendChild(skillItem);
+                    if (skill.code === 10001 && skill10001) {
+                        skill10001.checked = skill.enabled;
+                    } else if (skill.code === 10002 && skill10002) {
+                        skill10002.checked = skill.enabled;
+                    }
                 });
             } else {
-                // Add default skills if none configured
-                const defaultSkills = [
-                    {code: 10018, name: "Increase Resource Production", enabled: false},
-                    {code: 10001, name: "Instant Harvest", enabled: false},
-                    {code: 10002, name: "Accelerated Gathering", enabled: false}
-                ];
-
-                defaultSkills.forEach(skill => {
-                    const skillItem = document.createElement('div');
-                    skillItem.className = 'job-item';
-                    skillItem.innerHTML = `
-                        <div>
-                            <div class="job-name">${skill.name}</div>
-                            <div class="job-description">Code: ${skill.code} - Auto-activate when available</div>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" data-skill-code="${skill.code}" ${skill.enabled ? 'checked' : ''}>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    `;
-                    container.appendChild(skillItem);
-                });
+                // Set default states for skills if none configured
+                if (skill10001) skill10001.checked = false;
+                if (skill10002) skill10002.checked = false;
             }
-
-            // Add helpful note
-            const noteDiv = document.createElement('div');
-            noteDiv.style.marginTop = '16px';
-            noteDiv.style.padding = '12px';
-            noteDiv.style.backgroundColor = '#f8fafc';
-            noteDiv.style.borderRadius = '6px';
-            noteDiv.style.fontSize = '14px';
-            noteDiv.style.color = '#64748b';
-            noteDiv.innerHTML = `
-                <strong>Note:</strong> Skills will only activate if:
-                <ul style="margin: 8px 0 0 20px;">
-                    <li>The skill system is enabled above</li>
-                    <li>Individual skills are enabled</li>
-                    <li>The skill is not on cooldown</li>
-                    <li>You have sufficient MP</li>
-                </ul>
-            `;
-            container.appendChild(noteDiv);
         }
 
         function createSkillCard(skill, enabled) {
@@ -4362,19 +4312,25 @@
         }
 
         function collectSkillsFromUI() {
-            const container = document.getElementById('skills-list');
             const skills = [];
-
-            container.querySelectorAll('.monster-card').forEach(card => {
-                const checkbox = card.querySelector('.monster-checkbox');
-                const skillCode = parseInt(checkbox.dataset.skillCode);
-                const enabled = checkbox.checked;
-
+            
+            // Collect from individual skill checkboxes
+            const skill10001 = document.getElementById('skill-10001-enabled');
+            const skill10002 = document.getElementById('skill-10002-enabled');
+            
+            if (skill10001) {
                 skills.push({
-                    "code": skillCode,
-                    "enabled": enabled
+                    "code": 10001,
+                    "enabled": skill10001.checked
                 });
-            });
+            }
+            
+            if (skill10002) {
+                skills.push({
+                    "code": 10002,
+                    "enabled": skill10002.checked
+                });
+            }
 
             return skills;
         }
