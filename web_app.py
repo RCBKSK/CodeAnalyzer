@@ -441,7 +441,7 @@ def has_config_access(username, config_file):
         if (config_file.startswith(f"{username}_") and config_file.endswith('.json')) or \
            (config_file.startswith('config_') and config_file.endswith('.json')) or \
            (config_file.endswith(f"_{username}.json")):
-            logger.write(f"User {username} granted access to new/user-specific config {config_file}")
+            logger.debug(f"User {username} granted access to new/user-specific config {config_file}")
             return True
 
         logger.debug(f"User {username} denied access to {config_file} (not in assigned configs)")
