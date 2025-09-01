@@ -4116,7 +4116,10 @@ def handle_alliance_shop_config():
     """Get or update alliance shop configuration"""
     try:
         username = session.get('username', session['user_id'])
-        selected_config = request.args.get('config_file') or request.json.get('config_file', 'config.json') if request.json else 'config.json'
+        if request.method == 'GET':
+            selected_config = request.args.get('config_file', 'config.json')
+        else:
+            selected_config = request.json.get('config_file', 'config.json') if request.json else 'config.json'
         
         # Check if user has access to this config file
         if not has_config_access(username, selected_config):
@@ -4790,7 +4793,10 @@ def handle_caravan_config():
     """Get or update caravan configuration"""
     try:
         username = session.get('username', session['user_id'])
-        selected_config = request.args.get('config_file') or request.json.get('config_file', 'config.json') if request.json else 'config.json'
+        if request.method == 'GET':
+            selected_config = request.args.get('config_file', 'config.json')
+        else:
+            selected_config = request.json.get('config_file', 'config.json') if request.json else 'config.json'
         
         # Check if user has access to this config file
         if not has_config_access(username, selected_config):
