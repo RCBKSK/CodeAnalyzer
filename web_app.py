@@ -3001,6 +3001,27 @@ def manage_temp_test_accounts():
             logger.error(f"Error deleting test account {test_id}: {str(e)}")
             return jsonify({'error': str(e)}), 500
 
+@app.route('/api/skills_notification', methods=['POST'])
+def skills_notification():
+    """Receive skills completion notifications from bot instances"""
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id', 'unknown')
+        instance_id = data.get('instance_id', 'unknown')
+        account_name = data.get('account_name', 'Bot Instance')
+        title = data.get('title', 'Skills Activation Complete')
+        message = data.get('message', 'Skills activation workflow completed')
+        
+        # Add notification to the system
+        add_notification(user_id, "skills_completion", title, message,
+                       account_name=account_name, instance_id=instance_id)
+        
+        logger.info(f"Skills completion notification received for {account_name} (instance: {instance_id})")
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        logger.error(f"Error in skills_notification: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 @app.route('/api/march_status_update', methods=['POST'])
 def march_status_update():
     """Receive march status updates from bot instances"""

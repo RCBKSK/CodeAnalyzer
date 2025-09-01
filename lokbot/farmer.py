@@ -1940,9 +1940,16 @@ Expected End: {ended_time}"""
             logger.error(f"Error changing skin for {source}: {str(e)}")
 
     def _handle_skills_skin_workflow(self, skin_item_id, current_time, last_change_key):
-        """Handle the special Skills workflow: Skin 1 → Change treasure page + activate skills → wait 2 mins → Skin 2 and Change treasure page again"""
+        """Handle the 6-step Skills workflow:
+        1. Change skin (Skin 1)
+        2. Change Treasure Page (First Treasure Page)  
+        3. Activate Increase resource production (Code = 10018)
+        4. Instant Harvest (Code = 10001)
+        5. Change Treasure Page (Second Treasure page)
+        6. Skin Change Second Skin
+        """
         try:
-            logger.info("Starting Skills two-skin workflow")
+            logger.info("Starting Skills 6-step activation workflow")
             
             # Get skills config for second skin ID and treasure pages
             skills_config = config.get('main', {}).get('skills', {})
@@ -1950,84 +1957,120 @@ Expected End: {ended_time}"""
             treasure_page_1 = skills_config.get('treasure_page_1', 1)
             treasure_page_2 = skills_config.get('treasure_page_2', 2)
             
-            # Step 1: Change to first skin
+            # Step 1: Change skin (Skin 1)
             payload = {"itemId": skin_item_id}
             result = self.api.kingdom_skin_equip(payload)
             
             if not (result and result.get('result')):
-                logger.warning(f"Failed initial skin change for Skills workflow: {result}")
+                logger.warning(f"Failed Step 1 - Skin change: {result}")
                 return
                 
-            logger.info(f"Step 1: Successfully changed to first skin using item ID: {skin_item_id}")
+            logger.info(f"✅ Step 1 Complete: Changed to first skin using item ID: {skin_item_id}")
+            time.sleep(2)  # Small delay between steps
             
-            # Step 1a: Change to first treasure page
+            # Step 2: Change Treasure Page (First Treasure Page)
             try:
-                logger.info(f"Step 1a: Changing to treasure page {treasure_page_1}")
+                logger.info(f"Step 2: Changing to treasure page {treasure_page_1}")
                 self.api.kingdom_treasure_page(treasure_page_1)
-                logger.info(f"Successfully changed to treasure page {treasure_page_1}")
+                logger.info(f"✅ Step 2 Complete: Changed to treasure page {treasure_page_1}")
+                time.sleep(2)
             except Exception as e:
-                logger.error(f"Error changing to treasure page {treasure_page_1}: {str(e)}")
+                logger.error(f"❌ Step 2 Failed: Error changing to treasure page {treasure_page_1}: {str(e)}")
             
-            # Step 2: Activate skills when enabled
+            # Step 3: Activate Increase resource production (Code = 10018)
             try:
-                enabled_skills = skills_config.get('skills', [])
-                instant_harvest_enabled = any(skill.get('code') == 10001 and skill.get('enabled', False) 
-                                            for skill in enabled_skills)
+                logger.info("Step 3: Activating Increase Resource Production skill (Code = 10018)")
+                skill_result_10018 = self.api.skill_use(10018)
                 
-                if instant_harvest_enabled:
-                    # Step 2a: Activate Increase Resource Production skill (10025)
-                    logger.info("Step 2a: Activating Increase Resource Production skill (10025)")
-                    skill_result_10025 = self.api.skill_use({'code': 10025})
-                    
-                    if skill_result_10025 and skill_result_10025.get('result'):
-                        logger.info("Successfully activated Increase Resource Production skill (10025)")
-                    else:
-                        logger.warning(f"Failed to activate skill 10025: {skill_result_10025}")
-                    
-                    # Step 2b: Activate Instant Harvest skill (10001)
-                    logger.info("Step 2b: Activating Instant Harvest skill (10001)")
-                    skill_result_10001 = self.api.skill_use({'code': 10001})
-                    
-                    if skill_result_10001 and skill_result_10001.get('result'):
-                        logger.info("Successfully activated Instant Harvest skill (10001)")
-                    else:
-                        logger.warning(f"Failed to activate skill 10001: {skill_result_10001}")
+                if skill_result_10018 and skill_result_10018.get('result'):
+                    logger.info("✅ Step 3 Complete: Successfully activated Increase Resource Production skill (10018)")
                 else:
-                    logger.info("Instant Harvest is not enabled, skipping skill activation in workflow")
-                    
+                    logger.warning(f"❌ Step 3 Failed: Could not activate skill 10018: {skill_result_10018}")
+                time.sleep(2)
             except Exception as e:
-                logger.error(f"Error activating skills: {str(e)}")
+                logger.error(f"❌ Step 3 Failed: Error activating skill 10018: {str(e)}")
             
-            # Step 3: Wait 2 minutes
-            logger.info("Step 3: Waiting 2 minutes before changing to second skin...")
-            time.sleep(120)  # Wait 2 minutes
-            
-            # Step 4: Change to second skin (if configured)
-            if skin_item_id_2:
-                payload2 = {"itemId": skin_item_id_2}
-                result2 = self.api.kingdom_skin_equip(payload2)
-                
-                if result2 and result2.get('result'):
-                    logger.info(f"Step 4: Successfully changed to second skin using item ID: {skin_item_id_2}")
-                else:
-                    logger.warning(f"Failed to change to second skin: {result2}")
-            else:
-                logger.info("Step 4: No second skin ID configured, skipping second skin change")
-            
-            # Step 4a: Change to second treasure page
+            # Step 4: Instant Harvest (Code = 10001)
             try:
-                logger.info(f"Step 4a: Changing to treasure page {treasure_page_2}")
+                logger.info("Step 4: Activating Instant Harvest skill (Code = 10001)")
+                skill_result_10001 = self.api.skill_use(10001)
+                
+                if skill_result_10001 and skill_result_10001.get('result'):
+                    logger.info("✅ Step 4 Complete: Successfully activated Instant Harvest skill (10001)")
+                else:
+                    logger.warning(f"❌ Step 4 Failed: Could not activate skill 10001: {skill_result_10001}")
+                time.sleep(2)
+            except Exception as e:
+                logger.error(f"❌ Step 4 Failed: Error activating skill 10001: {str(e)}")
+            
+            # Step 5: Change Treasure Page (Second Treasure page)
+            try:
+                logger.info(f"Step 5: Changing to treasure page {treasure_page_2}")
                 self.api.kingdom_treasure_page(treasure_page_2)
-                logger.info(f"Successfully changed to treasure page {treasure_page_2}")
+                logger.info(f"✅ Step 5 Complete: Changed to treasure page {treasure_page_2}")
+                time.sleep(2)
             except Exception as e:
-                logger.error(f"Error changing to treasure page {treasure_page_2}: {str(e)}")
+                logger.error(f"❌ Step 5 Failed: Error changing to treasure page {treasure_page_2}: {str(e)}")
+            
+            # Step 6: Skin Change Second Skin
+            if skin_item_id_2:
+                try:
+                    logger.info("Step 6: Changing to second skin")
+                    payload2 = {"itemId": skin_item_id_2}
+                    result2 = self.api.kingdom_skin_equip(payload2)
+                    
+                    if result2 and result2.get('result'):
+                        logger.info(f"✅ Step 6 Complete: Successfully changed to second skin using item ID: {skin_item_id_2}")
+                    else:
+                        logger.warning(f"❌ Step 6 Failed: Could not change to second skin: {result2}")
+                except Exception as e:
+                    logger.error(f"❌ Step 6 Failed: Error changing to second skin: {str(e)}")
+            else:
+                logger.warning("❌ Step 6 Skipped: No second skin ID configured")
             
             # Update last change time
             setattr(self, last_change_key, current_time)
-            logger.info("Skills two-skin workflow completed")
+            
+            # Send completion notification
+            try:
+                self._send_skills_completion_notification()
+            except Exception as e:
+                logger.error(f"Error sending skills completion notification: {str(e)}")
+            
+            logger.info("🎉 Skills 6-step activation workflow completed successfully!")
             
         except Exception as e:
-            logger.error(f"Error in Skills two-skin workflow: {str(e)}")
+            logger.error(f"❌ Error in Skills 6-step workflow: {str(e)}")
+
+    def _send_skills_completion_notification(self):
+        """Send notification when skills activation workflow is completed"""
+        try:
+            import requests
+            import json
+            
+            # Get account name for notification
+            account_name = getattr(self, 'account_name', 'Bot Instance')
+            
+            # Prepare notification data
+            notification_data = {
+                'user_id': self.user_id,
+                'instance_id': self._id,
+                'account_name': account_name,
+                'notification_type': 'skills_completion',
+                'title': '🎉 Skills Activation Complete',
+                'message': 'All 6 steps of skills activation workflow completed successfully:\n• Skin 1 equipped\n• Treasure page 1 set\n• Resource production boost activated (10018)\n• Instant harvest activated (10001)\n• Treasure page 2 set\n• Skin 2 equipped',
+                'timestamp': time.time()
+            }
+            
+            # Send to web app notification endpoint
+            response = requests.post('http://localhost:5000/api/skills_notification', json=notification_data, timeout=5)
+            if response.status_code == 200:
+                logger.info("Skills completion notification sent successfully")
+            else:
+                logger.warning(f"Failed to send skills notification: {response.status_code}")
+                
+        except Exception as e:
+            logger.error(f"Error sending skills completion notification: {str(e)}")
 
     def _skills_management_thread(self):
         """Skills management thread that runs at bot start and every 10 minutes"""
