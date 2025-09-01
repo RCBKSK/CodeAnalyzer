@@ -1805,6 +1805,13 @@
             document.getElementById('create-config-modal').style.display = 'none';
             document.getElementById('new-config-name').value = '';
             document.getElementById('template-select').value = '';
+            
+            // Reset the create button state in case it's stuck
+            const createBtns = document.querySelectorAll('button[onclick="createNewConfig()"]');
+            createBtns.forEach(btn => {
+                btn.innerHTML = '<i class="fas fa-plus"></i> Create Config';
+                btn.disabled = false;
+            });
         }
 
         function createNewConfig() {
@@ -2417,6 +2424,11 @@
                         if (response && response.success) {
                             console.log(`Config file '${fileName}' created successfully`);
                             showNotification(`Config file '${fileName}' created successfully!`, 'success');
+                            
+                            // Reset button state before hiding modal
+                            createBtn.innerHTML = originalText;
+                            createBtn.disabled = false;
+                            
                             hideCreateConfigModal();
 
                             // Verify the file was created by reloading config list
