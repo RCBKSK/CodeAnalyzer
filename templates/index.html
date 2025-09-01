@@ -1938,7 +1938,11 @@
                             <strong>Jobs:</strong> ${jt.jobs.enabled}/${jt.jobs.total} enabled<br>
                     `;
                     if (jt.jobs.enabled_list.length > 0) {
-                        html += `<strong>Enabled:</strong> ${jt.jobs.enabled_list.join(', ')}<br>`;
+                        // Format job names for better readability
+                        const formattedJobs = jt.jobs.enabled_list.map(job => {
+                            return job.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        });
+                        html += `<small style="color: #64748b;">• ${formattedJobs.join('<br>• ')}</small><br>`;
                     }
                     html += '</div>';
                 }
@@ -1949,7 +1953,11 @@
                             <strong>Threads:</strong> ${jt.threads.enabled}/${jt.threads.total} enabled<br>
                     `;
                     if (jt.threads.enabled_list.length > 0) {
-                        html += `<strong>Enabled:</strong> ${jt.threads.enabled_list.join(', ')}<br>`;
+                        // Format thread names for better readability
+                        const formattedThreads = jt.threads.enabled_list.map(thread => {
+                            return thread.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace('Thread', '');
+                        });
+                        html += `<small style="color: #64748b;">• ${formattedThreads.join('<br>• ')}</small><br>`;
                     }
                     html += '</div>';
                 }
@@ -1969,14 +1977,35 @@
                                 <strong>${featureName}:</strong> ✅ Enabled
                         `;
 
+                        // Add detailed information for each feature
                         if (feature === 'normal_monsters' && config.max_distance) {
                             html += ` (Distance: ${config.max_distance}, Targets: ${config.monsters_count})`;
                         } else if (feature === 'skills' && config.enabled_skills_count) {
                             html += ` (${config.enabled_skills_count} skills)`;
+                            if (config.skill_details && config.skill_details.length > 0) {
+                                html += `<br><small style="color: #64748b; margin-left: 20px;">• ${config.skill_details.join(', ')}</small>`;
+                            }
                         } else if (feature === 'buff_management' && config.enabled_buffs_count) {
                             html += ` (${config.enabled_buffs_count} buffs)`;
+                            if (config.buff_details && config.buff_details.length > 0) {
+                                html += `<br><small style="color: #64748b; margin-left: 20px;">• ${config.buff_details.slice(0, 3).join('<br>• ')}</small>`;
+                                if (config.buff_details.length > 3) {
+                                    html += `<br><small style="color: #64748b; margin-left: 20px;">• ...and ${config.buff_details.length - 3} more</small>`;
+                                }
+                            }
                         } else if (feature === 'discord' && config.webhooks_configured) {
-                            html += ` (${config.webhooks_configured} webhooks)`;
+                            html += ` (${config.webhooks_configured} webhooks configured)`;
+                        } else if (feature === 'alliance' && config.features) {
+                            html += `<br><small style="color: #64748b; margin-left: 20px;">• Features: ${config.features.join(', ')}</small>`;
+                            if (config.interval) {
+                                html += `<br><small style="color: #64748b; margin-left: 20px;">• Interval: ${config.interval}</small>`;
+                            }
+                        } else if (feature === 'caravan' && config.interval) {
+                            html += `<br><small style="color: #64748b; margin-left: 20px;">• Interval: ${config.interval}</small>`;
+                        } else if (feature === 'hospital_recovery' && config.interval) {
+                            html += `<br><small style="color: #64748b; margin-left: 20px;">• Recovery Interval: ${config.interval}</small>`;
+                        } else if (feature === 'vip_chest' && config.interval) {
+                            html += `<br><small style="color: #64748b; margin-left: 20px;">• Claim Interval: ${config.interval}</small>`;
                         } else if (feature === 'treasure' && config.page) {
                             html += ` (Page: ${config.page})`;
                         }
