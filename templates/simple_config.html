@@ -1849,6 +1849,22 @@
             onConfigFileSelectionChange();
         }
 
+        function getCurrentConfigFile() {
+            // First try to get from the global variable
+            if (typeof currentConfigFile !== 'undefined' && currentConfigFile) {
+                return currentConfigFile;
+            }
+            
+            // Fallback to the dropdown selection
+            const selectedFile = document.getElementById('config-file-select').value;
+            if (selectedFile) {
+                return selectedFile;
+            }
+            
+            // Final fallback to default config
+            return 'config.json';
+        }
+
         function loadSelectedConfig() {
             const selectedFile = document.getElementById('config-file-select').value;
             if (!selectedFile) {

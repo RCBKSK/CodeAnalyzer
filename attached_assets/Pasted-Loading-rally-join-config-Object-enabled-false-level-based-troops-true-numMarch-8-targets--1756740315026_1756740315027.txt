@@ -1,0 +1,42 @@
+Loading rally-join config: 
+Object {enabled: false, level_based_troops: true, numMarch: 8, targets: Array(4)}
+Loading rally-start config: 
+Object {enabled: false, level_based_troops: true, numMarch: 8, targets: Array(4)}
+Loading monster-attack config: 
+Object {common_troops: Array(2), enabled: true, fixed_troops: {…}, targets: Array(3)}
+Loading SOCF objects config: 
+(10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Loading buff management config: 
+Object {}
+Loading skills config: 
+Object {enabled: true, skills: Array(2)}
+Loading treasure config: 
+Object {enabled: false, page: 1}
+Loading DSA VIP config
+Loading settings config - jobs: 
+(10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Loading settings config - threads: 
+(5) [{…}, {…}, {…}, {…}, {…}]
+Error loading shop config: 
+ReferenceError {}
+message: "getCurrentConfigFile is not defined"
+stack: "ReferenceError: getCurrentConfigFile is not defined↵ at loadAllianceShopConfig (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/simple-config:4957:36)↵ at populateSettingsConfig (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/simple-config:4632:17)↵ at Object.success (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/simple-config:2693:21)↵ at c (https://code.jquery.com/jquery-3.6.0.min.js:2:28327)↵ at Object.fireWith [as resolveWith] (https://code.jquery.com/jquery-3.6.0.min.js:2:29072)↵ at l (https://code.jquery.com/jquery-3.6.0.min.js:2:79901)↵ at XMLHttpRequest.<anonymous> (https://code.jquery.com/jquery-3.6.0.min.js:2:82355)"
+get stack: ƒ ()
+set stack: ƒ ()
+length: 1
+name: ""
+[[Prototype]]: ƒ ()
+[[Prototype]]: Object
+
+at t.value (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Error loading caravan config: 
+ReferenceError {}
+message: "getCurrentConfigFile is not defined"
+stack: "ReferenceError: getCurrentConfigFile is not defined↵ at loadCaravanConfig (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/simple-config:5516:36)↵ at populateSettingsConfig (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/simple-config:4633:17)↵ at Object.success (https://c2b86347-7db8-4b08-bc49-93c6ab22d0be-00-2ox0336ylfvj6.spock.replit.dev:5000/simple-config:2693:21)↵ at c (https://code.jquery.com/jquery-3.6.0.min.js:2:28327)↵ at Object.fireWith [as resolveWith] (https://code.jquery.com/jquery-3.6.0.min.js:2:29072)↵ at l (https://code.jquery.com/jquery-3.6.0.min.js:2:79901)↵ at XMLHttpRequest.<anonymous> (https://code.jquery.com/jquery-3.6.0.min.js:2:82355)"
+get stack: ƒ ()
+set stack: ƒ ()
+[[Prototype]]: Object
+
