@@ -3070,7 +3070,8 @@
         }
 
         function toggleAreaRestrictions() {
-            const enabled = document.getElementById('area-restrictions-enabled').checked;
+            const enabledElement = document.getElementById('area-restrictions-enabled');
+            const enabled = enabledElement ? enabledElement.checked : false;
             const container = document.getElementById('area-restrictions-container');
             container.style.display = enabled ? 'block' : 'none';
         }
@@ -3116,8 +3117,9 @@
                     };
                 }
 
-                // Update enabled state
-                const rallyJoinEnabled = document.getElementById('rally-join-enabled').checked;
+                // Update enabled state with null check
+                const rallyJoinEnabledElement = document.getElementById('rally-join-enabled');
+                const rallyJoinEnabled = rallyJoinEnabledElement ? rallyJoinEnabledElement.checked : false;
                 fullConfigData.rally.join.enabled = rallyJoinEnabled;
 
                 // Sync to toggles structure
@@ -3183,8 +3185,9 @@
                 // Update targets
                 fullConfigData.rally.join.targets = collectMonstersFromUI('rally-join');
 
-                // Update skin change settings
-                const rallyJoinSkinEnabled = document.getElementById('rally-join-skin-change-enabled').checked;
+                // Update skin change settings with null check
+                const rallyJoinSkinEnabledElement = document.getElementById('rally-join-skin-change-enabled');
+                const rallyJoinSkinEnabled = rallyJoinSkinEnabledElement ? rallyJoinSkinEnabledElement.checked : false;
                 fullConfigData.rally.join.skin_change_enabled = rallyJoinSkinEnabled;
 
                 const rallyJoinSkinItemId = document.getElementById('rally-join-skin-item-id').value;
@@ -3203,7 +3206,8 @@
                 }
 
                 // Update enabled state
-                const rallyStartEnabled = document.getElementById('rally-start-enabled').checked;
+                const rallyStartEnabledElement = document.getElementById('rally-start-enabled');
+                const rallyStartEnabled = rallyStartEnabledElement ? rallyStartEnabledElement.checked : false;
                 fullConfigData.rally.start.enabled = rallyStartEnabled;
 
                 // Sync to toggles structure
@@ -3270,7 +3274,8 @@
                 fullConfigData.rally.start.targets = collectMonstersFromUI('rally-start');
 
                 // Update skin change settings
-                const rallyStartSkinEnabled = document.getElementById('rally-start-skin-change-enabled').checked;
+                const rallyStartSkinEnabledElement = document.getElementById('rally-start-skin-change-enabled');
+                const rallyStartSkinEnabled = rallyStartSkinEnabledElement ? rallyStartSkinEnabledElement.checked : false;
                 fullConfigData.rally.start.skin_change_enabled = rallyStartSkinEnabled;
 
                 const rallyStartSkinItemId = document.getElementById('rally-start-skin-item-id').value;
@@ -3384,8 +3389,9 @@
                     fullConfigData.main.jobs.push(socfJob);
                 }
 
-                // Update enabled state
-                const socfEnabled = document.getElementById('socf-objects-enabled').checked;
+                // Update enabled state with null check
+                const socfEnabledElement = document.getElementById('socf-objects-enabled');
+                const socfEnabled = socfEnabledElement ? socfEnabledElement.checked : false;
                 socfJob.enabled = socfEnabled;
                 fullConfigData.main.object_scanning.enabled = socfEnabled;
 
@@ -3393,8 +3399,9 @@
                 fullConfigData.toggles.jobs.socf_thread = socfEnabled;
                 fullConfigData.toggles.features.object_scanning = socfEnabled;
 
-                // Update gathering enabled state
-                const gatheringEnabled = document.getElementById('socf-gathering-enabled').checked;
+                // Update gathering enabled state with null check
+                const gatheringEnabledElement = document.getElementById('socf-gathering-enabled');
+                const gatheringEnabled = gatheringEnabledElement ? gatheringEnabledElement.checked : false;
                 fullConfigData.main.object_scanning.enable_gathering = gatheringEnabled;
 
                 // Sync to toggles structure
@@ -3438,8 +3445,9 @@
                     socfJob.kwargs.radius = radius;
                 }
 
-                // Update area restrictions
-                const areaRestrictionsEnabled = document.getElementById('area-restrictions-enabled').checked;
+                // Update area restrictions with null check
+                const areaRestrictionsEnabledElement = document.getElementById('area-restrictions-enabled');
+                const areaRestrictionsEnabled = areaRestrictionsEnabledElement ? areaRestrictionsEnabledElement.checked : false;
                 if (!fullConfigData.main.object_scanning.area_restrictions) {
                     fullConfigData.main.object_scanning.area_restrictions = {
                         "enabled": false,
@@ -3472,8 +3480,9 @@
                 // Update targets
                 socfJob.kwargs.targets = collectSocfObjectsFromUI();
 
-                // Update skin change settings
-                const socfSkinEnabled = document.getElementById('socf-objects-skin-change-enabled').checked;
+                // Update skin change settings with null check
+                const socfSkinEnabledElement = document.getElementById('socf-objects-skin-change-enabled');
+                const socfSkinEnabled = socfSkinEnabledElement ? socfSkinEnabledElement.checked : false;
                 if (!fullConfigData.main.object_scanning.skin_change_settings) {
                     fullConfigData.main.object_scanning.skin_change_settings = {};
                 }
@@ -3491,8 +3500,9 @@
                     };
                 }
 
-                // Update enabled state
-                const buffEnabled = document.getElementById('buff-management-enabled').checked;
+                // Update enabled state with null check
+                const buffEnabledElement = document.getElementById('buff-management-enabled');
+                const buffEnabled = buffEnabledElement ? buffEnabledElement.checked : false;
                 fullConfigData.buff_management.enabled = buffEnabled;
 
                 // Sync to toggles structure
@@ -3502,7 +3512,8 @@
                 fullConfigData.buff_management.buffs = collectBuffManagementFromUI();
 
             } else if (configType === 'skills') {
-                const skillsEnabled = document.getElementById('skills-enabled').checked;
+                const skillsEnabledElement = document.getElementById('skills-enabled');
+                const skillsEnabled = skillsEnabledElement ? skillsEnabledElement.checked : false;
                 
                 // Get individual skill checkboxes by their IDs
                 const skill10001 = document.getElementById('skill-10001-enabled');
@@ -3564,7 +3575,8 @@
                 }
 
                 // Update enabled state
-                const treasureEnabled = document.getElementById('treasure-enabled').checked;
+                const treasureEnabledElement = document.getElementById('treasure-enabled');
+                const treasureEnabled = treasureEnabledElement ? treasureEnabledElement.checked : false;
                 fullConfigData.main.treasure.enabled = treasureEnabled;
 
                 // Sync to toggles structure
@@ -3575,7 +3587,8 @@
                 fullConfigData.main.treasure.page = parseInt(treasurePageSelect.value);
 
                 // Update skin change settings
-                const skinChangeEnabled = document.getElementById('treasure-skin-change-enabled').checked;
+                const skinChangeEnabledElement = document.getElementById('treasure-skin-change-enabled');
+                const skinChangeEnabled = skinChangeEnabledElement ? skinChangeEnabledElement.checked : false;
                 fullConfigData.main.treasure.skin_change_enabled = skinChangeEnabled;
 
                 const skinItemId = document.getElementById('treasure-skin-item-id').value;
@@ -3588,8 +3601,10 @@
 
 
             } else if (configType === 'dsavip') {
-                const dsavipChestEnabled = document.getElementById('dsavip-chest-enabled').checked;
-                const dsavipJobEnabled = document.getElementById('dsavip-job-enabled').checked;
+                const dsavipChestEnabledElement = document.getElementById('dsavip-chest-enabled');
+                const dsavipChestEnabled = dsavipChestEnabledElement ? dsavipChestEnabledElement.checked : false;
+                const dsavipJobEnabledElement = document.getElementById('dsavip-job-enabled');
+                const dsavipJobEnabled = dsavipJobEnabledElement ? dsavipJobEnabledElement.checked : false;
 
                 // Ensure main structure exists
                 if (!fullConfigData.main) {

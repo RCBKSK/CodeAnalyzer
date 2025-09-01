@@ -390,6 +390,18 @@ function validateSettingsForm(e) {
     return true;
 }
 
+// Update task list status
+function updateTaskList() {
+    const taskList = document.querySelector('#progress-tracker-task-1');
+    if (taskList) {
+        taskList.textContent = '[x] 1. Install the required packages';
+    }
+    const taskList2 = document.querySelector('#progress-tracker-task-2');
+    if (taskList2) {
+        taskList2.textContent = '[x] 2. Restart the workflow to see if the project is working';
+    }
+}
+
 // Utility functions
 function debounce(func, wait) {
     let timeout;
