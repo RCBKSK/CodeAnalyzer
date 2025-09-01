@@ -137,31 +137,8 @@ class LokFarmer:
             treasure_page = treasure_config.get('page', 1)
             self.api.kingdom_treasure_page(treasure_page)
 
-        # Handle skills
-        if config.get('main', {}).get('skills', {}).get('enabled', True):
-            # Get available skills
-            skill_list = self.api.skill_list()
-            available_skills = [skill.get('code') for skill in skill_list.get('skills', [])]
-
-            # Use enabled skills if available
-            for skill in config.get('main', {}).get('skills', {}).get('skills', []):
-                try:
-                    if skill.get('enabled') and skill.get('code') in available_skills:
-                        # Get skill info to check cooldown
-                        skill_info = next((s for s in skill_list.get('skills', []) if s.get('code') == skill.get('code')), None)
-                        if skill_info and skill_info.get('nextSkillTime'):
-                            logger.info(f"Skill {skill.get('code')} is on cooldown until {skill_info.get('nextSkillTime')}")
-                            continue
-
-                        self.api.skill_use(skill.get('code'))
-                        logger.info(f"Used skill {skill.get('code')}")
-                except OtherException as e:
-                    if str(e) == 'yet_in_cooltime':
-                        logger.info(f"Skill {skill.get('code')} is still on cooldown")
-                    else:
-                        logger.error(f"Error using skill {skill.get('code')}: {e}")
-                except Exception as e:
-                    logger.error(f"Unexpected error using skill {skill.get('code')}: {e}")
+        # Skills are now handled by the dedicated skills management thread
+        # This prevents conflicts with the periodic activation system
 
         # [food, lumber, stone, gold]
         self.resources = self.kingdom_enter.get('kingdom').get('resources')
