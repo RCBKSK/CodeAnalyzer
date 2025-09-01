@@ -882,12 +882,6 @@
                     <span class="unit-label">item id</span>
                 </div>
 
-                <div class="distance-section">
-                    <span class="troops-title">Skin Change Interval</span>
-                    <input type="number" id="rally-join-skin-change-interval" class="distance-input" value="60" min="1">
-                    <span class="unit-label">minutes</span>
-                </div>
-
                 <!-- Number of Marches -->
                 <div class="distance-section">
                     <span class="troops-title">Number of Marches</span>
@@ -981,12 +975,6 @@
                     <span class="troops-title">Skin Item ID</span>
                     <input type="text" id="rally-start-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
                     <span class="unit-label">item id</span>
-                </div>
-
-                <div class="distance-section">
-                    <span class="troops-title">Skin Change Interval</span>
-                    <input type="number" id="rally-start-skin-change-interval" class="distance-input" value="60" min="1">
-                    <span class="unit-label">minutes</span>
                 </div>
 
                 <!-- Number of Marches -->
@@ -1165,12 +1153,6 @@
                     <span class="troops-title">Skin Item ID</span>
                     <input type="text" id="socf-objects-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
                     <span class="unit-label">item id</span>
-                </div>
-
-                <div class="distance-section">
-                    <span class="troops-title">Skin Change Interval</span>
-                    <input type="number" id="socf-objects-skin-change-interval" class="distance-input" value="60" min="1">
-                    <span class="unit-label">minutes</span>
                 </div>
 
                 <div id="socf-objects-list">
@@ -2621,8 +2603,6 @@
             const skinItemId = config.skin_item_id || '';
             document.getElementById('rally-join-skin-item-id').value = skinItemId;
 
-            const skinChangeInterval = config.skin_change_interval || 60;
-            document.getElementById('rally-join-skin-change-interval').value = skinChangeInterval;
 
             // Clear and populate monsters
             const container = document.getElementById('rally-join-monsters');
@@ -2661,8 +2641,6 @@
             const skinItemId = config.skin_item_id || '';
             document.getElementById('rally-start-skin-item-id').value = skinItemId;
 
-            const skinChangeInterval = config.skin_change_interval || 60;
-            document.getElementById('rally-start-skin-change-interval').value = skinChangeInterval;
 
             // Clear and populate monsters
             const container = document.getElementById('rally-start-monsters');
@@ -3174,10 +3152,6 @@
                 const rallyJoinSkinItemId = document.getElementById('rally-join-skin-item-id').value;
                 fullConfigData.rally.join.skin_item_id = rallyJoinSkinItemId;
 
-                const rallyJoinSkinInterval = parseInt(document.getElementById('rally-join-skin-change-interval').value);
-                if (!isNaN(rallyJoinSkinInterval)) {
-                    fullConfigData.rally.join.skin_change_interval = rallyJoinSkinInterval;
-                }
 
             } else if (configType === 'rally-start') {
                 if (!fullConfigData.rally) fullConfigData.rally = {};
@@ -3264,10 +3238,6 @@
                 const rallyStartSkinItemId = document.getElementById('rally-start-skin-item-id').value;
                 fullConfigData.rally.start.skin_item_id = rallyStartSkinItemId;
 
-                const rallyStartSkinInterval = parseInt(document.getElementById('rally-start-skin-change-interval').value);
-                if (!isNaN(rallyStartSkinInterval)) {
-                    fullConfigData.rally.start.skin_change_interval = rallyStartSkinInterval;
-                }
 
             } else if (configType === 'monster-attack') {
                 if (!fullConfigData.main) fullConfigData.main = {};
@@ -3470,10 +3440,6 @@
                 const socfSkinItemId = document.getElementById('socf-objects-skin-item-id').value;
                 fullConfigData.main.object_scanning.skin_change_settings.skin_item_id = socfSkinItemId;
 
-                const socfSkinInterval = parseInt(document.getElementById('socf-objects-skin-change-interval').value);
-                if (!isNaN(socfSkinInterval)) {
-                    fullConfigData.main.object_scanning.skin_change_settings.skin_change_interval = socfSkinInterval;
-                }
 
             } else if (configType === 'buff-management') {
                 if (!fullConfigData.buff_management) {
@@ -3969,7 +3935,6 @@
             const skinChangeSettings = fullConfigData.main?.object_scanning?.skin_change_settings || {};
             document.getElementById('socf-objects-skin-change-enabled').checked = skinChangeSettings.enabled || false;
             document.getElementById('socf-objects-skin-item-id').value = skinChangeSettings.skin_item_id || '';
-            document.getElementById('socf-objects-skin-change-interval').value = skinChangeSettings.skin_change_interval || 60;
 
             // Load area restrictions
             const areaRestrictions = fullConfigData.main?.object_scanning?.area_restrictions || {};
