@@ -4926,21 +4926,27 @@
             // Collect job toggles
             const jobCheckboxes = document.querySelectorAll('#jobs-list input[type="checkbox"]');
             jobCheckboxes.forEach(checkbox => {
-                const jobName = checkbox.getAttribute('onchange').match(/toggleJob\('([^']+)'/)[1];
+                const match = checkbox.getAttribute('onchange').match(/toggleJob\('([^']+)'/);
+                if (!match) return;
+                const jobName = match[1];
                 toggleJob(jobName, checkbox.checked);
             });
 
             // Collect thread toggles
             const threadCheckboxes = document.querySelectorAll('#threads-list input[type="checkbox"]');
             threadCheckboxes.forEach(checkbox => {
-                const threadName = checkbox.getAttribute('onchange').match(/toggleThread\('([^']+)'/)[1];
+                const match = checkbox.getAttribute('onchange').match(/toggleThread\('([^']+)'/);
+                if (!match) return;
+                const threadName = match[1];
                 toggleThread(threadName, checkbox.checked);
             });
 
             // Collect alliance farmer feature toggles
             const allianceFeatureCheckboxes = document.querySelectorAll('#alliance-farmer-features input[type="checkbox"]');
             allianceFeatureCheckboxes.forEach(checkbox => {
-                const featureName = checkbox.getAttribute('onchange').match(/toggleAllianceFarmerFeature\('([^']+)'/)[1];
+                const match = checkbox.getAttribute('onchange').match(/toggleAllianceFarmerFeature\('([^']+)'/);
+                if (!match) return;
+                const featureName = match[1];
                 toggleAllianceFarmerFeature(featureName, checkbox.checked);
             });
 
