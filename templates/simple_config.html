@@ -1801,12 +1801,6 @@
             document.getElementById('new-config-name').focus();
         }
 
-        // Make all modal functions globally accessible
-        function showCreateConfigModal() {
-            document.getElementById('create-config-modal').style.display = 'block';
-            document.getElementById('new-config-name').focus();
-        }
-
         function hideCreateConfigModal() {
             document.getElementById('create-config-modal').style.display = 'none';
             document.getElementById('new-config-name').value = '';
@@ -2366,6 +2360,7 @@
                         console.error('Default config validation also failed');
                         createBtn.innerHTML = originalText;
                         createBtn.disabled = false;
+                        hideCreateConfigModal();
                         showNotification('Critical error: unable to create valid config structure', 'error');
                         return;
                     }
@@ -2387,6 +2382,7 @@
                     } else {
                         createBtn.innerHTML = originalText;
                         createBtn.disabled = false;
+                        hideCreateConfigModal();
                         showNotification('Failed to verify config structure', 'error');
                         return;
                     }
@@ -2463,6 +2459,7 @@
                             showNotification(`Failed to create config file after ${maxRetries} attempts: ${errorMsg}`, 'error');
                             createBtn.innerHTML = originalText;
                             createBtn.disabled = false;
+                            hideCreateConfigModal();
                         }
                     },
                     complete: function () {
