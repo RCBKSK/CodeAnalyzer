@@ -1287,7 +1287,7 @@
                     </label>
                     <span class="troops-title">Enable Two-Skin Workflow</span>
                     <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Change to Skin 1 → Activate "Increase Resource Production" + "Instant Harvest" → Wait 2 mins → Change to Skin 2
+                        Change to Skin 1 →Change treasure page + Activate "Increase Resource Production" + "Instant Harvest" → Wait 2 mins → Change to Skin 2 and Change treasure page again
                     </small>
                 </div>
 
@@ -1301,6 +1301,30 @@
                     <span class="troops-title">Second Skin ID</span>
                     <input type="text" id="skills-skin-item-id-2" class="distance-input" value="" placeholder="e.g., 10101002">
                     <span class="unit-label">second skin id</span>
+                </div>
+
+                <!-- First Treasure Page Selection -->
+                <div class="distance-section">
+                    <span class="troops-title">First Treasure Page</span>
+                    <select id="skills-treasure-page-1" class="dropdown-field">
+                        <option value="0">Page 0</option>
+                        <option value="1" selected>Page 1</option>
+                        <option value="2">Page 2</option>
+                        <option value="3">Page 3</option>
+                    </select>
+                    <span class="unit-label">treasure page 1</span>
+                </div>
+
+                <!-- Second Treasure Page Selection -->
+                <div class="distance-section">
+                    <span class="troops-title">Second Treasure Page</span>
+                    <select id="skills-treasure-page-2" class="dropdown-field">
+                        <option value="0">Page 0</option>
+                        <option value="1">Page 1</option>
+                        <option value="2" selected>Page 2</option>
+                        <option value="3">Page 3</option>
+                    </select>
+                    <span class="unit-label">treasure page 2</span>
                 </div>
 
                 <div id="skills-list">
@@ -3395,6 +3419,13 @@
                 const skillsSkinItemId2 = document.getElementById('skills-skin-item-id-2').value;
                 fullConfigData.main.skills.skin_item_id_2 = skillsSkinItemId2;
 
+                // Update treasure page settings for Skills workflow
+                const skillsTreasurePage1 = document.getElementById('skills-treasure-page-1').value;
+                fullConfigData.main.skills.treasure_page_1 = parseInt(skillsTreasurePage1);
+
+                const skillsTreasurePage2 = document.getElementById('skills-treasure-page-2').value;
+                fullConfigData.main.skills.treasure_page_2 = parseInt(skillsTreasurePage2);
+
                 console.log('Skills config being saved:', fullConfigData.main.skills);
 
             } else if (configType === 'treasure') {
@@ -4047,6 +4078,10 @@
             document.getElementById('skills-skin-change-enabled').checked = config.skin_change_enabled || false;
             document.getElementById('skills-skin-item-id').value = config.skin_item_id || '';
             document.getElementById('skills-skin-item-id-2').value = config.skin_item_id_2 || '';
+
+            // Load treasure page settings
+            document.getElementById('skills-treasure-page-1').value = config.treasure_page_1 || 1;
+            document.getElementById('skills-treasure-page-2').value = config.treasure_page_2 || 2;
 
             // Clear and populate skills
             const container = document.getElementById('skills-list');
