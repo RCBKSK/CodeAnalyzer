@@ -3035,6 +3035,19 @@ def march_status_update():
             if stored_name and stored_name != account_name:
                 account_name = stored_name
 
+            # Also update march status cache used by notification portal
+            if not hasattr(app, 'march_status_cache'):
+                app.march_status_cache = {}
+            
+            app.march_status_cache[instance_id] = {
+                'current_marches': current_marches,
+                'max_marches': march_limit,
+                'march_limit': march_limit,
+                'march_size': march_size,
+                'last_updated': timestamp,
+                'account_name': account_name
+            }
+
             # Send march status notification if there's a significant change
             if current_marches != previous_marches:
                 march_status_message = f"March Status: {current_marches}/{march_limit} marches active"
