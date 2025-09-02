@@ -21,12 +21,26 @@
       {
         "enabled": true,
         "interval": {
+          "start": 5,
+          "end": 5
+        },
+        "kwargs": {
+          "gift_claim": false,
+          "help_all": true,
+          "research_donate": false,
+          "shop_auto_buy_item_code_list": []
+        },
+        "name": "alliance_farmer"
+      },
+      {
+        "enabled": true,
+        "interval": {
           "start": 120,
           "end": 200
         },
         "kwargs": {
           "gift_claim": true,
-          "help_all": true,
+          "help_all": false,
           "research_donate": true,
           "shop_auto_buy_item_code_list": [
             10101008
