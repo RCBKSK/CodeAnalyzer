@@ -1703,15 +1703,7 @@
                     </div>
                 </div>
 
-                <!-- Alliance Farmer Features Section -->
-                <div style="margin-bottom: 32px;">
-                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
-                        <i class="fas fa-users"></i> Alliance Farmer Features
-                    </h3>
-                    <div id="alliance-farmer-features">
-                        <!-- Alliance farmer feature toggles will be loaded here -->
-                    </div>
-                </div>
+                <!-- Alliance activities are now configured in the dedicated Alliance Activities tab -->
 
                 <!-- Threads Section -->
                 <div>
@@ -4735,7 +4727,6 @@
                 const jobDescriptions = {
                     'hospital_recover': 'Automatically heal wounded troops in the hospital',
                     'wall_repair': 'Automatically repair wall damage',
-                    'alliance_farmer': 'Perform alliance activities like helping and donating',
                     'mail_claim': 'Automatically claim mail rewards',
                     'caravan_farmer': 'Manage caravan trading activities',
                     'use_resource_in_item_list': 'Use resource items from inventory',
@@ -4746,8 +4737,8 @@
                 };
 
                 jobs.forEach(job => {
-                    // Skip DSA VIP chest claim as it has its own dedicated tab
-                    if (job.name === 'dsavip_chest_claim') {
+                    // Skip DSA VIP chest claim and alliance farmer as they have their own dedicated tabs
+                    if (job.name === 'dsavip_chest_claim' || job.name === 'alliance_farmer') {
                         return;
                     }
 
@@ -4767,130 +4758,8 @@
                 });
             }
 
-            // Populate alliance farmer features
-            const allianceFarmerFeatures = document.getElementById('alliance-farmer-features');
-            if (allianceFarmerFeatures) {
-                allianceFarmerFeatures.innerHTML = '';
-
-                // Find alliance_farmer job to get its kwargs
-                const allianceFarmerJob = jobs.find(job => job.name === 'alliance_farmer');
-                const kwargs = allianceFarmerJob?.kwargs || {};
-
-                const features = {
-                    'gift_claim': 'Claim gifts from alliance members',
-                    'help_all': 'Help all alliance members with their activities',
-                    'research_donate': 'Donate to alliance research projects'
-                };
-
-                Object.entries(features).forEach(([featureName, description]) => {
-                    const featureItem = document.createElement('div');
-                    featureItem.className = 'job-item';
-                    featureItem.innerHTML = `
-                        <div>
-                            <div class="job-name">${featureName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
-                            <div class="job-description">${description}</div>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" ${kwargs[featureName] ? 'checked' : ''} onchange="toggleAllianceFarmerFeature('${featureName}', this.checked)">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    `;
-                    allianceFarmerFeatures.appendChild(featureItem);
-                });
-
-                // Add Alliance Shop Configuration Section
-                const shopConfigSection = document.createElement('div');
-                shopConfigSection.className = 'shop-config-section';
-                shopConfigSection.style.cssText = `
-                    margin-top: 24px;
-                    padding: 20px;
-                    background: var(--bg-secondary);
-                    border: 1px solid var(--border-color);
-                    border-radius: 12px;
-                    box-shadow: var(--shadow);
-                `;
-                
-                shopConfigSection.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 0; color: var(--text-primary);">
-                            <i class="fas fa-shopping-cart"></i> Alliance Shop Auto-Buy
-                        </h4>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="shop-buying-enabled" onchange="toggleShopBuying(this.checked)">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div id="shop-config-content" style="display: none;">
-                        <div style="margin-bottom: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
-                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary);">
-                                Configure which items to automatically buy from your alliance shop. Items are purchased in priority order (1 = highest priority).
-                            </p>
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <button class="btn btn-secondary" onclick="loadAllianceShopItems()" style="font-size: 12px; padding: 8px 16px;">
-                                <i class="fas fa-refresh"></i> Load Available Items
-                            </button>
-                            <button class="btn btn-accent" onclick="addShopItem()" style="font-size: 12px; padding: 8px 16px; margin-left: 8px;">
-                                <i class="fas fa-plus"></i> Add Item
-                            </button>
-                        </div>
-                        
-                        <div id="shop-items-list" style="max-height: 300px; overflow-y: auto;">
-                            <!-- Shop items will be loaded here -->
-                        </div>
-                    </div>
-                `;
-                
-                allianceFarmerFeatures.appendChild(shopConfigSection);
-                
-                // Add Caravan Configuration Section
-                const caravanConfigSection = document.createElement('div');
-                caravanConfigSection.className = 'caravan-config-section';
-                caravanConfigSection.style.cssText = `
-                    margin-top: 24px;
-                    padding: 20px;
-                    background: var(--bg-secondary);
-                    border: 1px solid var(--border-color);
-                    border-radius: 12px;
-                    box-shadow: var(--shadow);
-                `;
-                
-                caravanConfigSection.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 0; color: var(--text-primary);">
-                            <i class="fas fa-truck"></i> Caravan Auto-Buy
-                        </h4>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="caravan-buying-enabled" onchange="toggleCaravanBuying(this.checked)">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div id="caravan-config-content" style="display: none;">
-                        <div style="margin-bottom: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
-                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary);">
-                                Configure which items to automatically buy from caravans. Items are purchased in priority order (1 = highest priority). Caravan items rotate regularly.
-                            </p>
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <button class="btn btn-secondary" onclick="loadCaravanItems()" style="font-size: 12px; padding: 8px 16px;">
-                                <i class="fas fa-refresh"></i> Load Available Items
-                            </button>
-                            <button class="btn btn-accent" onclick="addCaravanItem()" style="font-size: 12px; padding: 8px 16px; margin-left: 8px;">
-                                <i class="fas fa-plus"></i> Add Item
-                            </button>
-                        </div>
-                        
-                        <div id="caravan-items-list" style="max-height: 300px; overflow-y: auto;">
-                            <!-- Caravan items will be loaded here -->
-                        </div>
-                    </div>
-                `;
-                
-                allianceFarmerFeatures.appendChild(caravanConfigSection);
+            // Alliance farmer features are now handled in the dedicated Alliance Activities tab
+            // This section has been removed to eliminate duplication
                 
                 // Load existing configurations
                 loadAllianceShopConfig();
@@ -5190,14 +5059,7 @@
                 toggleThread(threadName, checkbox.checked);
             });
 
-            // Collect alliance farmer feature toggles
-            const allianceFeatureCheckboxes = document.querySelectorAll('#alliance-farmer-features input[type="checkbox"]');
-            allianceFeatureCheckboxes.forEach(checkbox => {
-                const match = checkbox.getAttribute('onchange').match(/toggleAllianceFarmerFeature\('([^']+)'/);
-                if (!match) return;
-                const featureName = match[1];
-                toggleAllianceFarmerFeature(featureName, checkbox.checked);
-            });
+            // Alliance activities are now handled in the dedicated Alliance Activities tab
 
             console.log('Settings collection completed');
         }
