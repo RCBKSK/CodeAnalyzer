@@ -922,6 +922,9 @@
             <button class="tab" onclick="switchTab('buff-management')">
                 <i class="fas fa-magic"></i> Buff Management
             </button>
+            <button class="tab" onclick="switchTab('alliance-activities')">
+                <i class="fas fa-handshake"></i> Alliance Activities
+            </button>
             <button class="tab" onclick="switchTab('skills')">
                 <i class="fas fa-bolt"></i> Skills
             </button>
@@ -1349,6 +1352,119 @@
                 <div class="save-section">
                     <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('buff-management')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alliance Activities Configuration -->
+        <div id="alliance-activities" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-handshake"></i>
+                    Alliance Activities Configuration
+                </h2>
+                <div style="color: #64748b; font-size: 14px; margin-bottom: 30px;">
+                    Configure each alliance activity to run on its own thread with custom intervals
+                </div>
+
+                <!-- Alliance Help All -->
+                <div class="monster-card">
+                    <div class="monster-header">
+                        <i class="fas fa-hands-helping" style="color: #10b981;"></i>
+                        <span class="monster-name">Alliance Help All</span>
+                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alliance-help-enabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
+                        Automatically help alliance members with their buildings and research
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
+                        <input type="number" id="alliance-help-interval" value="5" min="1" max="1440" 
+                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        <small style="color: #64748b;">How often to check for help requests</small>
+                    </div>
+                </div>
+
+                <!-- Alliance Gift Claim -->
+                <div class="monster-card">
+                    <div class="monster-header">
+                        <i class="fas fa-gift" style="color: #f59e0b;"></i>
+                        <span class="monster-name">Alliance Gift Claim</span>
+                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alliance-gift-enabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
+                        Automatically claim alliance gifts from other members
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
+                        <input type="number" id="alliance-gift-interval" value="30" min="5" max="1440" 
+                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        <small style="color: #64748b;">How often to check for new gifts</small>
+                    </div>
+                </div>
+
+                <!-- Alliance Research Donate -->
+                <div class="monster-card">
+                    <div class="monster-header">
+                        <i class="fas fa-flask" style="color: #8b5cf6;"></i>
+                        <span class="monster-name">Alliance Research Donate</span>
+                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alliance-research-enabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
+                        Automatically donate resources to alliance research
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
+                        <input type="number" id="alliance-research-interval" value="60" min="10" max="1440" 
+                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        <small style="color: #64748b;">How often to donate to research</small>
+                    </div>
+                </div>
+
+                <!-- Alliance Shop Auto-Buy -->
+                <div class="monster-card">
+                    <div class="monster-header">
+                        <i class="fas fa-shopping-cart" style="color: #ef4444;"></i>
+                        <span class="monster-name">Alliance Shop Auto-Buy</span>
+                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alliance-shop-enabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
+                        Automatically purchase items from alliance shop (configured in Alliance Shop tab)
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
+                        <input type="number" id="alliance-shop-interval" value="120" min="30" max="1440" 
+                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        <small style="color: #64748b;">How often to check shop for items</small>
+                    </div>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('alliance-activities')">
                         <i class="fas fa-save"></i>
                         Save Configuration
                     </button>
@@ -2702,6 +2818,7 @@
                     populateMonsterAttackConfig(response.main?.normal_monsters || {});
                     populateSocfObjectsConfig(response.main?.jobs || []);
                     populateBuffManagementConfig(response.buff_management || {});
+                    populateAllianceActivitiesConfig(response.alliance_activities || {});
                     populateSkillsConfig(response.main?.skills || {});
                     populateTreasureConfig(response.main?.treasure || {});
                     populateDsavipConfig(response.main?.jobs || []);
@@ -3643,6 +3760,37 @@
                 fullConfigData.main.object_scanning.skin_change_settings.skin_item_id = socfSkinItemId;
 
 
+            } else if (configType === 'alliance-activities') {
+                if (!fullConfigData.alliance_activities) {
+                    fullConfigData.alliance_activities = {};
+                }
+
+                // Alliance Help All
+                fullConfigData.alliance_activities.help_all = {
+                    enabled: document.getElementById('alliance-help-enabled').checked,
+                    interval_minutes: parseInt(document.getElementById('alliance-help-interval').value) || 5
+                };
+
+                // Alliance Gift Claim
+                fullConfigData.alliance_activities.gift_claim = {
+                    enabled: document.getElementById('alliance-gift-enabled').checked,
+                    interval_minutes: parseInt(document.getElementById('alliance-gift-interval').value) || 30
+                };
+
+                // Alliance Research Donate
+                fullConfigData.alliance_activities.research_donate = {
+                    enabled: document.getElementById('alliance-research-enabled').checked,
+                    interval_minutes: parseInt(document.getElementById('alliance-research-interval').value) || 60
+                };
+
+                // Alliance Shop Auto-Buy
+                fullConfigData.alliance_activities.shop_auto_buy = {
+                    enabled: document.getElementById('alliance-shop-enabled').checked,
+                    interval_minutes: parseInt(document.getElementById('alliance-shop-interval').value) || 120
+                };
+
+                console.log('Alliance activities config being saved:', fullConfigData.alliance_activities);
+
             } else if (configType === 'buff-management') {
                 if (!fullConfigData.buff_management) {
                     fullConfigData.buff_management = {
@@ -4436,6 +4584,30 @@
             });
 
             return buffs;
+        }
+
+        function populateAllianceActivitiesConfig(config) {
+            console.log('Loading alliance activities config:', config);
+
+            // Alliance Help All
+            const helpConfig = config.help_all || {};
+            document.getElementById('alliance-help-enabled').checked = helpConfig.enabled !== false;
+            document.getElementById('alliance-help-interval').value = helpConfig.interval_minutes || 5;
+
+            // Alliance Gift Claim
+            const giftConfig = config.gift_claim || {};
+            document.getElementById('alliance-gift-enabled').checked = giftConfig.enabled !== false;
+            document.getElementById('alliance-gift-interval').value = giftConfig.interval_minutes || 30;
+
+            // Alliance Research Donate
+            const researchConfig = config.research_donate || {};
+            document.getElementById('alliance-research-enabled').checked = researchConfig.enabled !== false;
+            document.getElementById('alliance-research-interval').value = researchConfig.interval_minutes || 60;
+
+            // Alliance Shop Auto-Buy
+            const shopConfig = config.shop_auto_buy || {};
+            document.getElementById('alliance-shop-enabled').checked = shopConfig.enabled !== false;
+            document.getElementById('alliance-shop-interval').value = shopConfig.interval_minutes || 120;
         }
 
         function populateSkillsConfig(config) {

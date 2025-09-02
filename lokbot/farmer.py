@@ -236,15 +236,35 @@ class LokFarmer:
         except Exception as e:
             logger.error(f"Failed to start skills management thread: {e}")
 
-        # Start alliance help thread (only if alliance exists)
+        # Start alliance activity threads (only if alliance exists)
         if self.alliance_id:
             try:
+                # Alliance help thread
                 help_thread = threading.Thread(target=self._alliance_help_thread)
                 help_thread.daemon = True
                 help_thread.start()
                 logger.info("Alliance help thread started")
+                
+                # Alliance gift claim thread
+                gift_thread = threading.Thread(target=self._alliance_gift_thread)
+                gift_thread.daemon = True
+                gift_thread.start()
+                logger.info("Alliance gift claim thread started")
+                
+                # Alliance research donate thread
+                research_thread = threading.Thread(target=self._alliance_research_thread)
+                research_thread.daemon = True
+                research_thread.start()
+                logger.info("Alliance research donate thread started")
+                
+                # Alliance shop auto-buy thread
+                shop_thread = threading.Thread(target=self._alliance_shop_thread)
+                shop_thread.daemon = True
+                shop_thread.start()
+                logger.info("Alliance shop auto-buy thread started")
+                
             except Exception as e:
-                logger.error(f"Failed to start alliance help thread: {e}")
+                logger.error(f"Failed to start alliance threads: {e}")
 
         # Initialize job registry
         try:
@@ -5656,24 +5676,120 @@ Status: {status}"""
             return getattr(self, 'active_buffs', [])
 
     def _alliance_help_thread(self):
-        """Thread to periodically help alliance members every 5 minutes"""
-        logger.info("Alliance help thread started - checking every 5 minutes")
+        """Thread to periodically help alliance members"""
+        from lokbot import config
         
         while True:
             try:
                 if self.alliance_id:
-                    logger.debug("Running alliance help_all")
-                    self._alliance_help_all()
+                    # Get interval from config, default to 5 minutes
+                    interval = config.get('alliance_activities', {}).get('help_all', {}).get('interval_minutes', 5)
+                    enabled = config.get('alliance_activities', {}).get('help_all', {}).get('enabled', True)
+                    
+                    if enabled:
+                        logger.debug("Running alliance help_all")
+                        self._alliance_help_all()
+                    else:
+                        logger.debug("Alliance help_all is disabled")
+                    
+                    # Sleep for configured interval
+                    time.sleep(interval * 60)
                 else:
                     logger.debug("No alliance ID available, skipping help_all")
-                
-                # Sleep for 5 minutes (300 seconds)
-                time.sleep(300)
+                    time.sleep(300)  # 5 minutes default when no alliance
                 
             except Exception as e:
                 logger.error(f"Error in alliance help thread: {str(e)}")
-                # Sleep longer on error to avoid spam
-                time.sleep(600)
+                time.sleep(600)  # 10 minutes on error
+
+    def _alliance_gift_thread(self):
+        """Thread to periodically claim alliance gifts"""
+        from lokbot import config
+        
+        while True:
+            try:
+                if self.alliance_id:
+                    # Get interval from config, default to 30 minutes
+                    interval = config.get('alliance_activities', {}).get('gift_claim', {}).get('interval_minutes', 30)
+                    enabled = config.get('alliance_activities', {}).get('gift_claim', {}).get('enabled', True)
+                    
+                    if enabled:
+                        logger.debug("Running alliance gift claim")
+                        self._alliance_gift_claim_all()
+                    else:
+                        logger.debug("Alliance gift claim is disabled")
+                    
+                    # Sleep for configured interval
+                    time.sleep(interval * 60)
+                else:
+                    logger.debug("No alliance ID available, skipping gift claim")
+                    time.sleep(1800)  # 30 minutes default when no alliance
+                
+            except Exception as e:
+                logger.error(f"Error in alliance gift thread: {str(e)}")
+                time.sleep(1800)  # 30 minutes on error
+
+    def _alliance_research_thread(self):
+        """Thread to periodically donate to alliance research"""
+        from lokbot import config
+        
+        while True:
+            try:
+                if self.alliance_id:
+                    # Get interval from config, default to 60 minutes
+                    interval = config.get('alliance_activities', {}).get('research_donate', {}).get('interval_minutes', 60)
+                    enabled = config.get('alliance_activities', {}).get('research_donate', {}).get('enabled', True)
+                    
+                    if enabled:
+                        logger.debug("Running alliance research donate")
+                        self._alliance_research_donate_all()
+                    else:
+                        logger.debug("Alliance research donate is disabled")
+                    
+                    # Sleep for configured interval
+                    time.sleep(interval * 60)
+                else:
+                    logger.debug("No alliance ID available, skipping research donate")
+                    time.sleep(3600)  # 60 minutes default when no alliance
+                
+            except Exception as e:
+                logger.error(f"Error in alliance research thread: {str(e)}")
+                time.sleep(3600)  # 60 minutes on error
+
+    def _alliance_shop_thread(self):
+        """Thread to periodically buy items from alliance shop"""
+        from lokbot import config
+        
+        while True:
+            try:
+                if self.alliance_id:
+                    # Get interval from config, default to 120 minutes
+                    interval = config.get('alliance_activities', {}).get('shop_auto_buy', {}).get('interval_minutes', 120)
+                    enabled = config.get('alliance_activities', {}).get('shop_auto_buy', {}).get('enabled', True)
+                    
+                    if enabled:
+                        logger.debug("Running alliance shop auto-buy")
+                        # Get shop items config
+                        shop_items_config = config.get('alliance_activities', {}).get('shop_auto_buy', {}).get('items_config', {})
+                        if shop_items_config:
+                            self._alliance_shop_autobuy_enhanced(shop_items_config)
+                        else:
+                            # Fallback to legacy item list
+                            item_list = config.get('alliance_activities', {}).get('shop_auto_buy', {}).get('item_codes', [])
+                            if item_list:
+                                self._alliance_shop_autobuy(item_list)
+                    else:
+                        logger.debug("Alliance shop auto-buy is disabled")
+                    
+                    # Sleep for configured interval
+                    time.sleep(interval * 60)
+                else:
+                    logger.debug("No alliance ID available, skipping shop auto-buy")
+                    time.sleep(7200)  # 120 minutes default when no alliance
+                
+            except Exception as e:
+                logger.error(f"Error in alliance shop thread: {str(e)}")
+                time.sleep(7200)  # 120 minutes on error
 
     def _buff_management_thread(self):
         """Thread to monitor and automatically reactivate buffs based on configuration"""
