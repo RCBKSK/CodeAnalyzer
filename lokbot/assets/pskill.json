@@ -1,0 +1,2872 @@
+[
+  {
+    "code": 21001,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21002,
+    "ability": 6,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21003,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21004,
+    "ability": 7,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21005,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21006,
+    "ability": 8,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21007,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21008,
+    "ability": 9,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21009,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21010,
+    "ability": 21,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21011,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21012,
+    "ability": 22,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21013,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21014,
+    "ability": 23,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21015,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21016,
+    "ability": 24,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 21017,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21018,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21019,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21020,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21021,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21022,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21023,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21024,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21025,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21026,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21027,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 21028,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.015,
+    "level_value_3": 0.02,
+    "level_value_4": 0.025,
+    "level_value_5": 0.03
+  },
+  {
+    "code": 22001,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22002,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22003,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22004,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22005,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22006,
+    "ability": 21,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22007,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22008,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22009,
+    "ability": 22,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22010,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22011,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22012,
+    "ability": 23,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22013,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22014,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22015,
+    "ability": 24,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22016,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 22017,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 22018,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 22019,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22020,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22021,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22022,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22023,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22024,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22025,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22026,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22027,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22028,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22029,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22030,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22031,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22032,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22033,
+    "ability": 68,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 22034,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22035,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22036,
+    "ability": 69,
+    "ability_type": 2,
+    "level_value_1": 0.01,
+    "level_value_2": 0.02,
+    "level_value_3": 0.03,
+    "level_value_4": 0.04,
+    "level_value_5": 0.05
+  },
+  {
+    "code": 22037,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22038,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22039,
+    "ability": 62,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22040,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22041,
+    "ability": 63,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22042,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22043,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 22044,
+    "ability": 64,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 22045,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.04,
+    "level_value_4": 0.06,
+    "level_value_5": 0.08
+  },
+  {
+    "code": 23001,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23002,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23003,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23004,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23005,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23006,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23007,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23008,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23009,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23010,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23011,
+    "ability": 6,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23012,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23013,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23014,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23015,
+    "ability": 7,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23016,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23017,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23018,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23019,
+    "ability": 8,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23020,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23021,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23022,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23023,
+    "ability": 9,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23024,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23025,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23026,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23027,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23028,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23029,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23030,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23031,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23032,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23033,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23034,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23035,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23036,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23037,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23038,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23039,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23040,
+    "ability": 22,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23041,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23042,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23043,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23044,
+    "ability": 23,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23045,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23046,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23047,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23048,
+    "ability": 21,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23049,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23050,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23051,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23052,
+    "ability": 24,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23053,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23054,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23055,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23056,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23057,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23058,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23059,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23060,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23061,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23062,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23063,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23064,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23065,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23066,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23067,
+    "ability": 69,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23068,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23069,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23070,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23071,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23072,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23073,
+    "ability": 35,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23074,
+    "ability": 65,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23075,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23076,
+    "ability": 62,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23077,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23078,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23079,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23080,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23081,
+    "ability": 14,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23082,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23083,
+    "ability": 9,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23084,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 23085,
+    "ability": 36,
+    "ability_type": 2,
+    "level_value_1": 0.02,
+    "level_value_2": 0.03,
+    "level_value_3": 0.05,
+    "level_value_4": 0.07,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23086,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23087,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23088,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23089,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23090,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23091,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23092,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23093,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23094,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23095,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23096,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23097,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23098,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23099,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23100,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.025,
+    "level_value_2": 0.04,
+    "level_value_3": 0.06,
+    "level_value_4": 0.08,
+    "level_value_5": 0.1
+  },
+  {
+    "code": 23101,
+    "ability": 35,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23102,
+    "ability": 109,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23103,
+    "ability": 119,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 23104,
+    "ability": 15,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 24001,
+    "ability": 100,
+    "ability_type": 1,
+    "level_value_1": 5,
+    "level_value_2": 7,
+    "level_value_3": 10,
+    "level_value_4": 14,
+    "level_value_5": 20
+  },
+  {
+    "code": 24002,
+    "ability": 112,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.12,
+    "level_value_4": 0.17,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24003,
+    "ability": 113,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.12,
+    "level_value_4": 0.17,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24004,
+    "ability": 114,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.12,
+    "level_value_4": 0.17,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24005,
+    "ability": 30,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.08,
+    "level_value_4": 0.12,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24006,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24007,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24008,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24009,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24010,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24011,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24012,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24013,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24014,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24015,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24016,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24017,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24018,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24019,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24020,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24021,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24022,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24023,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24024,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24025,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24026,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24027,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24028,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24029,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24030,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24031,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24032,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24033,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24034,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24035,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24036,
+    "ability": 91,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24037,
+    "ability": 92,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24038,
+    "ability": 93,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24039,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24040,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24041,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24042,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24043,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24044,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24045,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24046,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24047,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24048,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24049,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24050,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24051,
+    "ability": 2,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24052,
+    "ability": 5,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24053,
+    "ability": 37,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24054,
+    "ability": 40,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24055,
+    "ability": 24,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24056,
+    "ability": 3,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24057,
+    "ability": 4,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24058,
+    "ability": 38,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24059,
+    "ability": 39,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24060,
+    "ability": 22,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24061,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24062,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 24063,
+    "ability": 55,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 24064,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24065,
+    "ability": 64,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24066,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.13,
+    "level_value_4": 0.18,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24067,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24068,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 24069,
+    "ability": 60,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.13,
+    "level_value_4": 0.18,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24070,
+    "ability": 63,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24071,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 24072,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.17,
+    "level_value_4": 0.24,
+    "level_value_5": 0.35
+  },
+  {
+    "code": 24073,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.17,
+    "level_value_4": 0.24,
+    "level_value_5": 0.35
+  },
+  {
+    "code": 24074,
+    "ability": 59,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 24075,
+    "ability": 62,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.13,
+    "level_value_4": 0.18,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24076,
+    "ability": 65,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 24077,
+    "ability": 66,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.09,
+    "level_value_5": 0.12
+  },
+  {
+    "code": 24078,
+    "ability": 67,
+    "ability_type": 2,
+    "level_value_1": 0.04,
+    "level_value_2": 0.06,
+    "level_value_3": 0.09,
+    "level_value_4": 0.13,
+    "level_value_5": 0.18
+  },
+  {
+    "code": 24079,
+    "ability": 68,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24080,
+    "ability": 69,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.13,
+    "level_value_4": 0.18,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24081,
+    "ability": 50,
+    "ability_type": 2,
+    "level_value_1": 0.08,
+    "level_value_2": 0.13,
+    "level_value_3": 0.21,
+    "level_value_4": 0.34,
+    "level_value_5": 0.55
+  },
+  {
+    "code": 24082,
+    "ability": 56,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.17,
+    "level_value_4": 0.24,
+    "level_value_5": 0.35
+  },
+  {
+    "code": 24083,
+    "ability": 53,
+    "ability_type": 2,
+    "level_value_1": 0.09,
+    "level_value_2": 0.14,
+    "level_value_3": 0.23,
+    "level_value_4": 0.37,
+    "level_value_5": 0.6
+  },
+  {
+    "code": 24084,
+    "ability": 195,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.17,
+    "level_value_4": 0.24,
+    "level_value_5": 0.35
+  },
+  {
+    "code": 24085,
+    "ability": 196,
+    "ability_type": 2,
+    "level_value_1": 0.08,
+    "level_value_2": 0.13,
+    "level_value_3": 0.21,
+    "level_value_4": 0.34,
+    "level_value_5": 0.55
+  },
+  {
+    "code": 24086,
+    "ability": 52,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.18,
+    "level_value_4": 0.25,
+    "level_value_5": 0.4
+  },
+  {
+    "code": 24087,
+    "ability": 58,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.18,
+    "level_value_4": 0.25,
+    "level_value_5": 0.4
+  },
+  {
+    "code": 24088,
+    "ability": 61,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.17,
+    "level_value_4": 0.24,
+    "level_value_5": 0.35
+  },
+  {
+    "code": 24089,
+    "ability": 141,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.18,
+    "level_value_4": 0.25,
+    "level_value_5": 0.4
+  },
+  {
+    "code": 24090,
+    "ability": 157,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.18,
+    "level_value_4": 0.25,
+    "level_value_5": 0.4
+  },
+  {
+    "code": 24091,
+    "ability": 51,
+    "ability_type": 2,
+    "level_value_1": 0.07,
+    "level_value_2": 0.12,
+    "level_value_3": 0.19,
+    "level_value_4": 0.31,
+    "level_value_5": 0.5
+  },
+  {
+    "code": 24092,
+    "ability": 57,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.11,
+    "level_value_3": 0.18,
+    "level_value_4": 0.27,
+    "level_value_5": 0.45
+  },
+  {
+    "code": 24093,
+    "ability": 54,
+    "ability_type": 2,
+    "level_value_1": 0.07,
+    "level_value_2": 0.12,
+    "level_value_3": 0.19,
+    "level_value_4": 0.31,
+    "level_value_5": 0.5
+  },
+  {
+    "code": 24094,
+    "ability": 138,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.11,
+    "level_value_3": 0.18,
+    "level_value_4": 0.27,
+    "level_value_5": 0.45
+  },
+  {
+    "code": 24095,
+    "ability": 136,
+    "ability_type": 2,
+    "level_value_1": 0.07,
+    "level_value_2": 0.12,
+    "level_value_3": 0.19,
+    "level_value_4": 0.31,
+    "level_value_5": 0.5
+  },
+  {
+    "code": 24096,
+    "ability": 179,
+    "ability_type": 2,
+    "level_value_1": 0.09,
+    "level_value_2": 0.14,
+    "level_value_3": 0.23,
+    "level_value_4": 0.37,
+    "level_value_5": 0.6
+  },
+  {
+    "code": 24097,
+    "ability": 181,
+    "ability_type": 2,
+    "level_value_1": 0.07,
+    "level_value_2": 0.12,
+    "level_value_3": 0.19,
+    "level_value_4": 0.31,
+    "level_value_5": 0.5
+  },
+  {
+    "code": 24098,
+    "ability": 180,
+    "ability_type": 2,
+    "level_value_1": 0.09,
+    "level_value_2": 0.14,
+    "level_value_3": 0.23,
+    "level_value_4": 0.37,
+    "level_value_5": 0.6
+  },
+  {
+    "code": 24099,
+    "ability": 29,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.13,
+    "level_value_4": 0.18,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24100,
+    "ability": 30,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24101,
+    "ability": 19,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24102,
+    "ability": 12,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.1,
+    "level_value_4": 0.14,
+    "level_value_5": 0.2
+  },
+  {
+    "code": 24103,
+    "ability": 31,
+    "ability_type": 2,
+    "level_value_1": 0.03,
+    "level_value_2": 0.05,
+    "level_value_3": 0.07,
+    "level_value_4": 0.1,
+    "level_value_5": 0.15
+  },
+  {
+    "code": 24104,
+    "ability": 68,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24105,
+    "ability": 66,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.18,
+    "level_value_4": 0.25,
+    "level_value_5": 0.4
+  },
+  {
+    "code": 24106,
+    "ability": 14,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.07,
+    "level_value_3": 0.13,
+    "level_value_4": 0.18,
+    "level_value_5": 0.25
+  },
+  {
+    "code": 24107,
+    "ability": 36,
+    "ability_type": 2,
+    "level_value_1": 0.05,
+    "level_value_2": 0.08,
+    "level_value_3": 0.15,
+    "level_value_4": 0.2,
+    "level_value_5": 0.3
+  },
+  {
+    "code": 24108,
+    "ability": 35,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.18,
+    "level_value_4": 0.25,
+    "level_value_5": 0.4
+  },
+  {
+    "code": 24109,
+    "ability": 84,
+    "ability_type": 2,
+    "level_value_1": -0.05,
+    "level_value_2": -0.07,
+    "level_value_3": -0.13,
+    "level_value_4": -0.18,
+    "level_value_5": -0.25
+  },
+  {
+    "code": 24110,
+    "ability": 82,
+    "ability_type": 2,
+    "level_value_1": 0.06,
+    "level_value_2": 0.1,
+    "level_value_3": 0.17,
+    "level_value_4": 0.24,
+    "level_value_5": 0.35
+  }
+]

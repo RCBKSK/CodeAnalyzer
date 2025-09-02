@@ -3,7 +3,15 @@
 
 LokBot is a comprehensive automation bot for League of the Kingdoms game, imported from https://github.com/RCBKSK/new-dev/. This sophisticated system features 4335+ lines of game automation logic, Discord bot integration, and a full-featured web control panel. The bot automates various game activities including rally participation, monster attacks, resource gathering, and advanced object scanning.
 
-## Recent Changes (September 1, 2025)
+## Recent Changes (September 2, 2025)
+- ✅ **Added complete game data from latest table file**
+- ✅ **Integrated 712 items with stats, abilities, costs, categories**
+- ✅ **Added 254 abilities for optimization calculations**
+- ✅ **Included 105 alliance skills (askill) for coordination**
+- ✅ **Added 287 personal skills (pskill) for progression**
+- ✅ **Enhanced bot capabilities with comprehensive item management**
+
+## Previous Changes (September 1, 2025)
 - ✅ **Enhanced Alliance Shop Farmer with comprehensive item selection**
 - ✅ **Added 80+ alliance shop items with descriptions and categories**
 - ✅ **Implemented priority-based purchasing system**
