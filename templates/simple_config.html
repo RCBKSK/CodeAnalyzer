@@ -2832,11 +2832,57 @@
                         level_ranges: [{
                             min_level: Array.isArray(monster.level_ranges) ? Math.min(...monster.level_ranges) : 1,
                             max_level: Array.isArray(monster.level_ranges) ? Math.max(...monster.level_ranges) : 10,
-                            troops: []
+                            troops: monster.troops || []
                         }]
                     };
                     const card = createMonsterCardFromConfig(standardMonster, 'monster-attack');
                     container.appendChild(card);
+                    
+                    // After creating the card, populate the troops into the UI
+                    if (monster.troops && monster.troops.length > 0) {
+                        const troopsContainer = card.querySelector('.troops-list');
+                        monster.troops.forEach(troop => {
+                            const troopItem = document.createElement('div');
+                            troopItem.className = 'troop-item';
+                            troopItem.innerHTML = `
+                                <select class="troop-select">
+                                    <!-- Tier 6 Troops -->
+                                    <option value="50100106">Paladin (Tier 6 Infantry)</option>
+                                    <option value="50100107">Destroyer (Tier 6 Infantry)</option>
+                                    <option value="50100206">Marksman (Tier 6 Ranged)</option>
+                                    <option value="50100207">Musketeer (Tier 6 Ranged)</option>
+                                    <option value="50100306">Marauder (Tier 6 Cavalry)</option>
+                                    <option value="50100307">Valkyrie (Tier 6 Cavalry)</option>
+                                    <!-- Tier 5 Troops -->
+                                    <option value="50100105">Crusader (Tier 5 Infantry)</option>
+                                    <option value="50100205">Sniper (Tier 5 Ranged)</option>
+                                    <option value="50100305">Dragoon (Tier 5 Cavalry)</option>
+                                    <!-- Tier 4 Troops -->
+                                    <option value="50100104">Guardian (Tier 4 Infantry)</option>
+                                    <option value="50100204">Crossbow Man (Tier 4 Ranged)</option>
+                                    <option value="50100304">Iron Cavalry (Tier 4 Cavalry)</option>
+                                    <!-- Tier 3 Troops -->
+                                    <option value="50100103">Knight (Tier 3 Infantry)</option>
+                                    <option value="50100203">Ranger (Tier 3 Ranged)</option>
+                                    <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
+                                </select>
+                                <div class="fixed-amounts-container">
+                                    <label class="input-label">Fixed Amounts (comma-separated):</label>
+                                    <input type="text" class="fixed-amounts-input" value="${troop.fixed_amounts ? troop.fixed_amounts.join(', ') : ''}" placeholder="e.g., 10000, 15000, 20000">
+                                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                                        Bot will randomly select one amount from the list
+                                    </small>
+                                </div>
+                                <button class="btn btn-danger" onclick="removeTroopItem(this)">Remove</button>
+                            `;
+                            
+                            // Set the correct troop selection
+                            const troopSelect = troopItem.querySelector('.troop-select');
+                            troopSelect.value = troop.code;
+                            
+                            troopsContainer.appendChild(troopItem);
+                        });
+                    }
                 });
             }
 

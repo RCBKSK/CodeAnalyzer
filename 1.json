@@ -319,7 +319,17 @@
             2,
             3
           ],
-          "troops": []
+          "troops": [
+            {
+              "code": 50100106,
+              "name": "Paladin (Tier 6 Infantry)",
+              "fixed_amounts": [
+                10000,
+                15000,
+                200
+              ]
+            }
+          ]
         },
         {
           "monster_code": 20200104,
