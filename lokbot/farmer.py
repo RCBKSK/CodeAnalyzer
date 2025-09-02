@@ -236,6 +236,16 @@ class LokFarmer:
         except Exception as e:
             logger.error(f"Failed to start skills management thread: {e}")
 
+        # Start alliance help thread (only if alliance exists)
+        if self.alliance_id:
+            try:
+                help_thread = threading.Thread(target=self._alliance_help_thread)
+                help_thread.daemon = True
+                help_thread.start()
+                logger.info("Alliance help thread started")
+            except Exception as e:
+                logger.error(f"Failed to start alliance help thread: {e}")
+
         # Initialize job registry
         try:
             self.jobs = {
@@ -5644,6 +5654,26 @@ Status: {status}"""
         except Exception as e:
             logger.debug(f"Failed to get buff data: {e}")
             return getattr(self, 'active_buffs', [])
+
+    def _alliance_help_thread(self):
+        """Thread to periodically help alliance members every 5 minutes"""
+        logger.info("Alliance help thread started - checking every 5 minutes")
+        
+        while True:
+            try:
+                if self.alliance_id:
+                    logger.debug("Running alliance help_all")
+                    self._alliance_help_all()
+                else:
+                    logger.debug("No alliance ID available, skipping help_all")
+                
+                # Sleep for 5 minutes (300 seconds)
+                time.sleep(300)
+                
+            except Exception as e:
+                logger.error(f"Error in alliance help thread: {str(e)}")
+                # Sleep longer on error to avoid spam
+                time.sleep(600)
 
     def _buff_management_thread(self):
         """Thread to monitor and automatically reactivate buffs based on configuration"""
