@@ -3134,7 +3134,6 @@ Expected End: {ended_time}"""
             try:
                 import requests
                 import os
-                import time
 
                 # Get user ID and instance info from environment
                 user_id = os.getenv('LOKBOT_USER_ID', config.get('discord', {}).get('user_id', 'web_user'))
