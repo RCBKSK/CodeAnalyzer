@@ -2782,7 +2782,7 @@ Expected End: {ended_time}"""
 
         return True
 
-    def join_rally(self, rally_id, march_troops, battle_data=None):
+    def join_rally(self, rally_id, march_troops=None, battle_data=None):
         """Join an existing rally following optimized sequence:
         1. Get battle info
         2. Check march queue capacity
@@ -2857,7 +2857,9 @@ Expected End: {ended_time}"""
                 'level_based_troops', False)
 
             # Prepare march troops based on configuration
-            march_troops = []
+            # Only calculate march_troops if not provided as parameter
+            if march_troops is None:
+                march_troops = []
 
             if level_based_troops and monster_level is not None:
                 # Convert level to integer
