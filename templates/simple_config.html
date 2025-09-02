@@ -4031,20 +4031,25 @@
                     "troops": []
                 };
 
-                // Collect troops configuration
-                card.querySelectorAll('.troop-item').forEach(troopItem => {
+                // Collect troops configuration from the troops-list container
+                card.querySelectorAll('.troops-list .troop-item').forEach(troopItem => {
                     const troopSelect = troopItem.querySelector('.troop-select');
-                    const amountInput = troopItem.querySelector('.troop-amount-input, .troop-amount');
+                    const fixedAmountsInput = troopItem.querySelector('.fixed-amounts-input');
 
-                    if (troopSelect && amountInput && troopSelect.value && amountInput.value !== '') {
+                    if (troopSelect && fixedAmountsInput && troopSelect.value && fixedAmountsInput.value.trim()) {
                         const troopCode = parseInt(troopSelect.value);
-                        const amount = parseInt(amountInput.value) || 0;
+                        
+                        // Parse comma-separated fixed amounts
+                        const fixedAmounts = fixedAmountsInput.value
+                            .split(',')
+                            .map(amount => parseInt(amount.trim()))
+                            .filter(amount => !isNaN(amount) && amount > 0);
 
-                        if (amount > 0) {
+                        if (fixedAmounts.length > 0) {
                             monster.troops.push({
                                 "code": troopCode,
                                 "name": troopSelect.options[troopSelect.selectedIndex].text,
-                                "amount": amount
+                                "fixed_amounts": fixedAmounts
                             });
                         }
                     }
