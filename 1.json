@@ -293,8 +293,8 @@
     "normal_monsters": {
       "common_troops": [
         {
-          "code": 50100304,
-          "name": "Iron Cavalry (Tier 4 Cavalry)",
+          "code": 50100106,
+          "name": "Paladin (Tier 6 Infantry)",
           "amount": 0
         },
         {

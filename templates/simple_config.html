@@ -4027,8 +4027,28 @@
                 const monster = {
                     "monster_code": monsterCode,
                     "monster_name": monsterName,
-                    "level_ranges": levelRanges
+                    "level_ranges": levelRanges,
+                    "troops": []
                 };
+
+                // Collect troops configuration
+                card.querySelectorAll('.troop-item').forEach(troopItem => {
+                    const troopSelect = troopItem.querySelector('.troop-select');
+                    const amountInput = troopItem.querySelector('.troop-amount-input, .troop-amount');
+
+                    if (troopSelect && amountInput && troopSelect.value && amountInput.value !== '') {
+                        const troopCode = parseInt(troopSelect.value);
+                        const amount = parseInt(amountInput.value) || 0;
+
+                        if (amount > 0) {
+                            monster.troops.push({
+                                "code": troopCode,
+                                "name": troopSelect.options[troopSelect.selectedIndex].text,
+                                "amount": amount
+                            });
+                        }
+                    }
+                });
 
                 monsters.push(monster);
             });
