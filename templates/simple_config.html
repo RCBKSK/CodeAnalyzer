@@ -5175,21 +5175,14 @@
         }
 
         function updateShopConfigDisplay() {
-            const enabledCheckbox = document.getElementById('shop-buying-enabled');
-            const configContent = document.getElementById('shop-config-content');
-            
-            if (enabledCheckbox) {
-                enabledCheckbox.checked = currentShopConfig.enabled || false;
-                configContent.style.display = currentShopConfig.enabled ? 'block' : 'none';
-            }
-            
+            // No longer need to manage toggles since it's integrated in Alliance Activities
             renderShopItemsList();
         }
 
         function toggleShopBuying(enabled) {
+            // This function is no longer needed since shop configuration is integrated
+            // in Alliance Activities tab with direct controls
             currentShopConfig.enabled = enabled;
-            const configContent = document.getElementById('shop-config-content');
-            configContent.style.display = enabled ? 'block' : 'none';
             
             if (enabled && Object.keys(availableShopItems).length === 0) {
                 loadAllianceShopItems();
@@ -5197,7 +5190,7 @@
         }
 
         function renderShopItemsList() {
-            const itemsList = document.getElementById('shop-items-list');
+            const itemsList = document.getElementById('alliance-shop-items-list');
             itemsList.innerHTML = '';
             
             if (!currentShopConfig.items || currentShopConfig.items.length === 0) {
@@ -5493,10 +5486,7 @@
 
         function toggleCaravanBuying(enabled) {
             currentCaravanConfig.enabled = enabled;
-            const content = document.getElementById('caravan-config-content');
-            if (content) {
-                content.style.display = enabled ? 'block' : 'none';
-            }
+            // No longer need to manage toggles since it's integrated in Alliance Activities
         }
 
         function addCaravanItem() {
@@ -5736,12 +5726,8 @@
                 if (data.success) {
                     currentCaravanConfig = data.config || { enabled: false, items: [] };
                     
-                    // Update UI
-                    const enabledCheckbox = document.getElementById('caravan-buying-enabled');
-                    if (enabledCheckbox) {
-                        enabledCheckbox.checked = currentCaravanConfig.enabled;
-                        toggleCaravanBuying(currentCaravanConfig.enabled);
-                    }
+                    // Update UI - caravan config is now integrated in Alliance Activities tab
+                    // The checkbox state is managed by the Alliance Activities configuration
                     
                     updateCaravanItemsList();
                 }
