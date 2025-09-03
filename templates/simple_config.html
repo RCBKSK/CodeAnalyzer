@@ -4615,7 +4615,7 @@
 
             // Initialize shop and caravan item configurations from main config
             await initializeAllianceShopConfig();
-            initializeCaravanConfig();
+            await initializeCaravanConfig();
         }
 
         function populateSkillsConfig(config) {
@@ -5079,6 +5079,10 @@
         let availableShopItems = {};
         let currentShopConfig = { enabled: false, items: [] };
 
+        // Caravan Configuration Functions  
+        let availableCaravanItems = {};
+        let currentCaravanConfig = { enabled: false, items: [] };
+
         async function loadAllianceShopItems() {
             try {
                 const response = await fetch('/api/alliance_shop/items');
@@ -5092,6 +5096,22 @@
                 }
             } catch (error) {
                 showNotification('Error loading shop items: ' + error.message, 'error');
+            }
+        }
+
+        async function loadCaravanItems() {
+            try {
+                const response = await fetch('/api/caravan/items');
+                const data = await response.json();
+                
+                if (data.success) {
+                    availableCaravanItems = data.categories;
+                    showNotification('Available caravan items loaded successfully', 'success');
+                } else {
+                    showNotification('Failed to load available caravan items: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Error loading caravan items: ' + error.message, 'error');
             }
         }
 
@@ -5864,14 +5884,49 @@
             }
         }
 
-        function initializeCaravanConfig() {
+        async function initializeCaravanConfig() {
             // Extract caravan config from main fullConfigData
             try {
                 console.log('Initializing Caravan Config from main config');
                 
-                // Check main config structure for caravan items
-                if (fullConfigData.main && fullConfigData.main.caravan_items) {
-                    currentCaravanConfig = fullConfigData.main.caravan_items;
+                // Load caravan items first if not already loaded
+                if (!availableCaravanItems || Object.keys(availableCaravanItems).length === 0) {
+                    console.log('Loading caravan items for config initialization...');
+                    await loadCaravanItems();
+                }
+                
+                // Get caravan_farmer job from main config
+                const jobs = fullConfigData.main?.jobs || [];
+                const caravanJob = jobs.find(job => job.name === 'caravan_farmer');
+                
+                if (caravanJob && caravanJob.kwargs && caravanJob.kwargs.caravan_items_config) {
+                    currentCaravanConfig = caravanJob.kwargs.caravan_items_config;
+                    
+                    // Enrich items with display information if missing
+                    if (currentCaravanConfig.items && availableCaravanItems && Object.keys(availableCaravanItems).length > 0) {
+                        currentCaravanConfig.items = currentCaravanConfig.items.map(item => {
+                            if (!item.name || !item.description) {
+                                // Find full item info from availableCaravanItems
+                                let itemInfo = null;
+                                for (const category in availableCaravanItems) {
+                                    const foundItem = availableCaravanItems[category].find(availItem => availItem.item_code === item.item_code);
+                                    if (foundItem) {
+                                        itemInfo = foundItem;
+                                        break;
+                                    }
+                                }
+                                
+                                return {
+                                    ...item,
+                                    name: itemInfo?.name || `Item ${item.item_code}`,
+                                    description: itemInfo?.description || '',
+                                    category: itemInfo?.category || 'Other'
+                                };
+                            }
+                            return item;
+                        });
+                    }
+                    
                     console.log('Found existing caravan config:', currentCaravanConfig);
                 } else {
                     // Use defaults

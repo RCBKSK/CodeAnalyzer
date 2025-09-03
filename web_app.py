@@ -4142,6 +4142,7 @@ def get_alliance_shop_items():
         return jsonify({'error': str(e)}), 500
 
 
+
 @app.route('/api/config/socf_objects', methods=['GET', 'POST'])
 def handle_socf_objects_config():
     """Manage socf_thread objects configuration"""
