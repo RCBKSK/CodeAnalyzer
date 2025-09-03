@@ -5706,18 +5706,22 @@
         // Combined save function for all configurations
         window.saveConfig = async function(tabName) {
             try {
-                // Save shop config if it's enabled or has items
+                // First, call original save function to save main config
+                const mainSaveResult = await originalSaveConfig(tabName);
+                if (!mainSaveResult) {
+                    return false;
+                }
+                
+                // Then save specialized configs (they append to the saved config)
                 if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
                     await saveAllianceShopConfig();
                 }
                 
-                // Save caravan config if it's enabled or has items
                 if (currentCaravanConfig.enabled || (currentCaravanConfig.items && currentCaravanConfig.items.length > 0)) {
                     await saveCaravanConfig();
                 }
                 
-                // Call original save function
-                return originalSaveConfig(tabName);
+                return true;
             } catch (error) {
                 showNotification('Error saving configurations: ' + error.message, 'error');
                 return false;
