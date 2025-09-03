@@ -1595,28 +1595,11 @@
 
                 <!-- Individual Skills Section -->
                 <div style="margin-top: 30px;">
-                    <!-- Instant Harvest -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e2e8f0;">
-                        <div>
-                            <div style="font-weight: 500; color: #1e293b;">Instant Harvest</div>
-                            <small style="color: #64748b; font-size: 12px;">Code: 10001 - Auto-activate when available</small>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="skill-10001-enabled" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
+                    <div style="margin-bottom: 15px; padding: 10px; background: #f8fafc; border-radius: 6px; border-left: 3px solid #3b82f6;">
+                        <small style="color: #64748b; font-size: 12px;">Configure which alliance skills should be automatically activated during gameplay</small>
                     </div>
-
-                    <!-- Accelerated Gathering -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e2e8f0;">
-                        <div>
-                            <div style="font-weight: 500; color: #1e293b;">Accelerated Gathering</div>
-                            <small style="color: #64748b; font-size: 12px;">Code: 10002 - Auto-activate when available</small>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="skill-10002-enabled" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
+                    <div id="skills-container">
+                        <!-- Skills will be dynamically loaded here -->
                     </div>
                 </div>
 
@@ -1852,6 +1835,219 @@
         let fullConfigData = {};  // Store the complete config file structure
         let configLoaded = false;
 
+        // All available alliance skills from askill.json
+        const ALL_SKILLS = [
+          {
+            "code": 10001,
+            "name": "Instant harvest",
+            "type": 1
+          },
+          {
+            "code": 10002,
+            "name": "Gathering boost",
+            "type": 2
+          },
+          {
+            "code": 10003,
+            "name": "Instant return",
+            "type": 1
+          },
+          {
+            "code": 10004,
+            "name": "Attack Boost",
+            "type": 2
+          },
+          {
+            "code": 10005,
+            "name": "Defense Boost",
+            "type": 2
+          },
+          {
+            "code": 10006,
+            "name": "HP boost",
+            "type": 2
+          },
+          {
+            "code": 10007,
+            "name": "Speed Boost",
+            "type": 2
+          },
+          {
+            "code": 10008,
+            "name": "Teleport",
+            "type": 1
+          },
+          {
+            "code": 10009,
+            "name": "Weakened attack",
+            "type": 3
+          },
+          {
+            "code": 10010,
+            "name": "Weakened Defense",
+            "type": 3
+          },
+          {
+            "code": 10011,
+            "name": "Weakened HP",
+            "type": 3
+          },
+          {
+            "code": 10012,
+            "name": "Weakened Speed",
+            "type": 3
+          },
+          {
+            "code": 10013,
+            "name": "Reduced resource production",
+            "type": 3
+          },
+          {
+            "code": 10014,
+            "name": "Reduced gathering speed",
+            "type": 3
+          },
+          {
+            "code": 10015,
+            "name": "Reduced Training Speed",
+            "type": 3
+          },
+          {
+            "code": 10016,
+            "name": "Reduced Research speed",
+            "type": 3
+          },
+          {
+            "code": 10017,
+            "name": "Reduced construction speed",
+            "type": 3
+          },
+          {
+            "code": 10018,
+            "name": "Resource production boost",
+            "type": 2
+          },
+          {
+            "code": 10020,
+            "name": "Training boost",
+            "type": 2
+          },
+          {
+            "code": 10021,
+            "name": "Research boost",
+            "type": 2
+          },
+          {
+            "code": 10022,
+            "name": "Construction boost",
+            "type": 2
+          },
+          {
+            "code": 10023,
+            "name": "Summon Monster",
+            "type": 1
+          },
+          {
+            "code": 10024,
+            "name": "Create Resource area",
+            "type": 1
+          },
+          {
+            "code": 10025,
+            "name": "Infantry's ability boost",
+            "type": 2
+          },
+          {
+            "code": 10026,
+            "name": "Archer's Ability boost",
+            "type": 2
+          },
+          {
+            "code": 10027,
+            "name": "Cavalry's ability boost",
+            "type": 2
+          },
+          {
+            "code": 10028,
+            "name": "dispel",
+            "type": 1
+          },
+          {
+            "code": 10029,
+            "name": "march speedup",
+            "type": 4
+          },
+          {
+            "code": 10030,
+            "name": "Battle cry(Infantry)",
+            "type": 5
+          },
+          {
+            "code": 10031,
+            "name": "Battle cry(Ranged)",
+            "type": 5
+          },
+          {
+            "code": 10032,
+            "name": "Battle cry(Cavalry)",
+            "type": 5
+          },
+          {
+            "code": 10033,
+            "name": "Battle cry(Attack)",
+            "type": 5
+          },
+          {
+            "code": 10034,
+            "name": "Battle cry(Speed)",
+            "type": 5
+          },
+          {
+            "code": 10035,
+            "name": "Meteor Strike",
+            "type": 1
+          },
+          {
+            "code": 10036,
+            "name": "Heaven's Judgment",
+            "type": 1
+          }
+        ];
+
+        // Function to populate skills in the UI
+        function populateSkills() {
+            const skillsContainer = document.getElementById('skills-container');
+            if (!skillsContainer) return;
+
+            skillsContainer.innerHTML = '';
+
+            ALL_SKILLS.forEach(skill => {
+                const skillElement = document.createElement('div');
+                skillElement.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e2e8f0;';
+                
+                const typeLabels = {
+                    1: 'Instant',
+                    2: 'Buff',
+                    3: 'Debuff',
+                    4: 'March',
+                    5: 'Battle Cry'
+                };
+                
+                skillElement.innerHTML = `
+                    <div>
+                        <div style="font-weight: 500; color: #1e293b;">${skill.name}</div>
+                        <small style="color: #64748b; font-size: 12px;">Code: ${skill.code} - Type: ${typeLabels[skill.type] || 'Unknown'}</small>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="skill-${skill.code}-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                `;
+                
+                skillsContainer.appendChild(skillElement);
+            });
+        }
+
         // Tab switching functionality
         function switchTab(tabName) {
             if (!configLoaded) {
@@ -1874,6 +2070,11 @@
 
             // Add active class to clicked tab
             event.target.classList.add('active');
+
+            // Populate skills when skills tab is selected
+            if (tabName === 'skills') {
+                populateSkills();
+            }
         }
 
         // Dark mode functionality
@@ -3838,26 +4039,18 @@
                 const skillsEnabledElement = document.getElementById('skills-enabled');
                 const skillsEnabled = skillsEnabledElement ? skillsEnabledElement.checked : false;
                 
-                // Get individual skill checkboxes by their IDs
-                const skill10001 = document.getElementById('skill-10001-enabled');
-                const skill10002 = document.getElementById('skill-10002-enabled');
-
+                // Get all skill checkboxes dynamically
                 const skillsConfig = [];
                 
-                // Add skills if checkboxes exist
-                if (skill10001) {
+                // Collect all skills from the dynamic list
+                const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
+                skillCheckboxes.forEach(checkbox => {
+                    const skillCode = parseInt(checkbox.id.replace('skill-', '').replace('-enabled', ''));
                     skillsConfig.push({
-                        code: 10001,
-                        enabled: skill10001.checked
+                        code: skillCode,
+                        enabled: checkbox.checked
                     });
-                }
-                
-                if (skill10002) {
-                    skillsConfig.push({
-                        code: 10002,
-                        enabled: skill10002.checked
-                    });
-                }
+                });
 
                 // Ensure main.skills structure exists
                 if (!fullConfigData.main) {
@@ -4633,23 +4826,23 @@
             document.getElementById('skills-treasure-page-1').value = config.treasure_page_1 || 1;
             document.getElementById('skills-treasure-page-2').value = config.treasure_page_2 || 2;
 
-            // Set individual skill checkboxes based on config
-            const skill10001 = document.getElementById('skill-10001-enabled');
-            const skill10002 = document.getElementById('skill-10002-enabled');
+            // Populate skills first if not already done
+            populateSkills();
             
             // Set skill states based on config
             if (config.skills && config.skills.length > 0) {
                 config.skills.forEach(skill => {
-                    if (skill.code === 10001 && skill10001) {
-                        skill10001.checked = skill.enabled;
-                    } else if (skill.code === 10002 && skill10002) {
-                        skill10002.checked = skill.enabled;
+                    const skillCheckbox = document.getElementById(`skill-${skill.code}-enabled`);
+                    if (skillCheckbox) {
+                        skillCheckbox.checked = skill.enabled;
                     }
                 });
             } else {
-                // Set default states for skills if none configured
-                if (skill10001) skill10001.checked = false;
-                if (skill10002) skill10002.checked = false;
+                // Set default states for all skills if none configured
+                const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
+                skillCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
             }
         }
 
@@ -4691,23 +4884,15 @@
         function collectSkillsFromUI() {
             const skills = [];
             
-            // Collect from individual skill checkboxes
-            const skill10001 = document.getElementById('skill-10001-enabled');
-            const skill10002 = document.getElementById('skill-10002-enabled');
-            
-            if (skill10001) {
+            // Collect from all skill checkboxes
+            const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
+            skillCheckboxes.forEach(checkbox => {
+                const skillCode = parseInt(checkbox.id.replace('skill-', '').replace('-enabled', ''));
                 skills.push({
-                    "code": 10001,
-                    "enabled": skill10001.checked
+                    "code": skillCode,
+                    "enabled": checkbox.checked
                 });
-            }
-            
-            if (skill10002) {
-                skills.push({
-                    "code": 10002,
-                    "enabled": skill10002.checked
-                });
-            }
+            });
 
             return skills;
         }
