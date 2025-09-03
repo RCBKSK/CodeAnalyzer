@@ -4,68 +4,22 @@
       {
         "enabled": true,
         "item_codes": [
-          10102001,
-          10102002
-        ],
-        "min_duration_minutes": 20,
-        "name": "Food Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102003,
-          10102004
-        ],
-        "min_duration_minutes": 20,
-        "name": "Wood Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102005,
-          10102006
-        ],
-        "min_duration_minutes": 20,
-        "name": "Stone Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102007,
-          10102008
-        ],
-        "min_duration_minutes": 20,
-        "name": "Gold Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102009,
-          10102010
+          10102009
         ],
         "min_duration_minutes": 20,
         "name": "Gathering Speed Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102026,
-          10102027
-        ],
-        "min_duration_minutes": 20,
-        "name": "Kingdom Shield"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102021,
-          10102022
-        ],
-        "min_duration_minutes": 20,
-        "name": "Anti Spying Shield"
       }
     ],
-    "enabled": false
+    "enabled": false,
+    "production_boosts": {
+      "10102009": {
+        "enabled": true,
+        "name": "Gathering boost 8hours",
+        "item_code": 10102009,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      }
+    }
   },
   "discord": {
     "chat_webhook_url": "",

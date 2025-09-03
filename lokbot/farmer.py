@@ -206,11 +206,11 @@ class LokFarmer:
             thread.start()
             logger.info("Rally monitoring thread started")
 
-        # Start buff management thread
-        buff_thread = threading.Thread(target=self._buff_management_thread)
+        # Start buff management thread - will wait for hospital recovery to complete first
+        buff_thread = threading.Thread(target=self._buff_management_thread_delayed)
         buff_thread.daemon = True
         buff_thread.start()
-        logger.info("Buff management thread started")
+        logger.info("Buff management thread started (will wait for hospital recovery)")
 
         # Start march status update thread
         march_status_thread = threading.Thread(target=self._march_status_update_thread)
@@ -5791,6 +5791,46 @@ Status: {status}"""
                 logger.error(f"Error in alliance shop thread: {str(e)}")
                 time.sleep(7200)  # 120 minutes on error
 
+    def _buff_management_thread_delayed(self):
+        """Thread wrapper that waits for hospital recovery before starting buff management"""
+        logger.info("Buff management thread waiting for hospital recovery to complete first...")
+        
+        # Wait for hospital recovery to run at least once
+        max_wait_time = 1800  # 30 minutes maximum wait
+        start_wait = time.time()
+        
+        while time.time() - start_wait < max_wait_time:
+            try:
+                # Check if hospital recovery has completed by seeing if the lock is available
+                if not self.hospital_recover_lock.locked():
+                    # Try to run hospital recovery if it hasn't run yet
+                    hospital_job = None
+                    jobs = config.get('main', {}).get('jobs', [])
+                    for job in jobs:
+                        if job.get('name') == 'hospital_recover' and job.get('enabled', False):
+                            hospital_job = job
+                            break
+                    
+                    if hospital_job:
+                        logger.info("Running hospital recovery before starting buff management...")
+                        self.hospital_recover()
+                        logger.info("Hospital recovery completed, starting buff management thread")
+                        break
+                    else:
+                        logger.info("Hospital recovery not enabled, starting buff management immediately")
+                        break
+                        
+                time.sleep(10)  # Wait 10 seconds before checking again
+            except Exception as e:
+                logger.warning(f"Error while waiting for hospital recovery: {e}")
+                break
+        
+        if time.time() - start_wait >= max_wait_time:
+            logger.warning("Maximum wait time reached, starting buff management anyway")
+        
+        # Now start the actual buff management thread
+        self._buff_management_thread()
+    
     def _buff_management_thread(self):
         """Thread to monitor and automatically reactivate buffs based on configuration"""
         logger.info("Buff management thread started - checking every 10 minutes")
