@@ -6471,9 +6471,51 @@
                 
                 // Ensure main structure exists
                 if (!fullConfigData.main) fullConfigData.main = {};
+                if (!fullConfigData.main.jobs) fullConfigData.main.jobs = [];
                 
                 // Save VIP shop config to main structure
                 fullConfigData.main.vip_shop = currentVipShopConfig;
+                
+                // Handle vip_shop_farmer job based on enabled status
+                const jobs = fullConfigData.main.jobs;
+                let vipShopJobIndex = jobs.findIndex(job => job.name === 'vip_shop_farmer');
+                
+                if (currentVipShopConfig.enabled) {
+                    // Create or update vip_shop_farmer job
+                    const vipShopJob = {
+                        "enabled": true,
+                        "interval": {
+                            "start": 120,
+                            "end": 200
+                        },
+                        "name": "vip_shop_farmer",
+                        "kwargs": {
+                            "vip_shop_config": currentVipShopConfig
+                        }
+                    };
+                    
+                    if (vipShopJobIndex >= 0) {
+                        // Update existing job
+                        jobs[vipShopJobIndex] = vipShopJob;
+                        console.log('Updated existing vip_shop_farmer job');
+                    } else {
+                        // Add new job after caravan_farmer if possible
+                        const caravanIndex = jobs.findIndex(job => job.name === 'caravan_farmer');
+                        if (caravanIndex >= 0) {
+                            jobs.splice(caravanIndex + 1, 0, vipShopJob);
+                            console.log('Added vip_shop_farmer job after caravan_farmer');
+                        } else {
+                            jobs.push(vipShopJob);
+                            console.log('Added vip_shop_farmer job at end of jobs array');
+                        }
+                    }
+                } else {
+                    // Disable existing job if VIP shop is disabled
+                    if (vipShopJobIndex >= 0) {
+                        jobs[vipShopJobIndex].enabled = false;
+                        console.log('Disabled vip_shop_farmer job');
+                    }
+                }
                 
                 return true;
             } catch (error) {
