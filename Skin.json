@@ -59,6 +59,21 @@
     "webhook_url": ""
   },
   "main": {
+    "caravan_items": {
+      "enabled": true,
+      "items": [
+        {
+          "category": "Boosts",
+          "description": "1 Day Food Production Boost",
+          "enabled": true,
+          "item_code": 10102002,
+          "max_buy": 999999,
+          "min_buy": 1,
+          "name": "Food Boost (1D)",
+          "priority": 1
+        }
+      ]
+    },
     "jobs": [
       {
         "enabled": true,
@@ -94,14 +109,20 @@
                 "item_code": 10101008,
                 "max_buy": 999999,
                 "min_buy": 1,
-                "priority": 1
+                "priority": 1,
+                "name": "Vip Point +100",
+                "description": "100 VIP Points for premium features",
+                "category": "VIP"
               },
               {
-                "item_code": 10101052,
                 "enabled": true,
-                "priority": 1,
+                "item_code": 10101052,
+                "max_buy": 999999,
                 "min_buy": 1,
-                "max_buy": 999999
+                "priority": 1,
+                "name": "Action point refill 100",
+                "description": "100 Action Points",
+                "category": "Action Points"
               }
             ]
           }
@@ -122,24 +143,24 @@
           "end": 200,
           "start": 120
         },
-        "name": "caravan_farmer",
         "kwargs": {
           "caravan_items_config": {
             "enabled": true,
             "items": [
               {
-                "item_code": 10102002,
-                "enabled": true,
-                "priority": 1,
-                "min_buy": 1,
-                "max_buy": 999999,
-                "name": "Food Boost (1D)",
+                "category": "Boosts",
                 "description": "1 Day Food Production Boost",
-                "category": "Boosts"
+                "enabled": true,
+                "item_code": 10102002,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Food Boost (1D)",
+                "priority": 1
               }
             ]
           }
-        }
+        },
+        "name": "caravan_farmer"
       },
       {
         "enabled": false,
@@ -341,18 +362,20 @@
       "enabled": false,
       "page": 1
     },
-    "caravan_items": {
+    "vip_shop": {
       "enabled": true,
       "items": [
         {
-          "item_code": 10102002,
-          "enabled": true,
+          "item_code": 10101008,
+          "name": "Vip Point +100",
+          "description": "Vip Point +100 - VIP 1 required",
+          "category": "VIP",
+          "vip_level": 1,
+          "discount": 0.5,
           "priority": 1,
-          "min_buy": 1,
+          "min_buy": 10,
           "max_buy": 999999,
-          "name": "Food Boost (1D)",
-          "description": "1 Day Food Production Boost",
-          "category": "Boosts"
+          "enabled": true
         }
       ]
     }
