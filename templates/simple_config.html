@@ -1337,28 +1337,8 @@
                     </small>
                 </div>
 
-                <div class="tabs" style="margin-top: 20px;">
-                    <button class="tab active" onclick="switchBuffTab('short-duration')">
-                        <i class="fas fa-clock"></i> Short (≤1h)
-                    </button>
-                    <button class="tab" onclick="switchBuffTab('medium-duration')">
-                        <i class="fas fa-hourglass-half"></i> Medium (1-24h)
-                    </button>
-                    <button class="tab" onclick="switchBuffTab('long-duration')">
-                        <i class="fas fa-hourglass-end"></i> Long (>24h)
-                    </button>
-                </div>
-
-                <div id="short-duration" class="tab-content active" style="margin-top: 20px;">
-                    <div id="short-duration-list"></div>
-                </div>
-                
-                <div id="medium-duration" class="tab-content" style="margin-top: 20px;">
-                    <div id="medium-duration-list"></div>
-                </div>
-                
-                <div id="long-duration" class="tab-content" style="margin-top: 20px;">
-                    <div id="long-duration-list"></div>
+                <div id="buff-management-list" style="margin-top: 20px;">
+                    <!-- Individual buff dropdowns will be loaded here -->
                 </div>
 
                 <div class="save-section">
@@ -3830,8 +3810,26 @@
                 // Sync to toggles structure
                 fullConfigData.toggles.features.buff_management = buffEnabled;
 
-                // Update production boosts
+                // Update production boosts in new format
                 fullConfigData.buff_management.production_boosts = collectBuffManagementFromUI();
+                
+                // Create legacy buffs array for backward compatibility
+                const legacyBuffs = [];
+                Object.values(collectBuffManagementFromUI()).forEach(buff => {
+                    // Find buff type from the enabled buffs
+                    for (const [buffType, options] of Object.entries(BUFF_TYPES)) {
+                        if (options['8hr'].code === buff.item_code || options['24hr'].code === buff.item_code) {
+                            legacyBuffs.push({
+                                enabled: true,
+                                item_codes: [buff.item_code],
+                                min_duration_minutes: buff.min_duration_minutes,
+                                name: buffType + ' Boost'
+                            });
+                            break;
+                        }
+                    }
+                });
+                fullConfigData.buff_management.buffs = legacyBuffs;
 
             } else if (configType === 'skills') {
                 const skillsEnabledElement = document.getElementById('skills-enabled');
@@ -4429,77 +4427,42 @@
             }
         }
 
-        // Production Boost Data
-        const PRODUCTION_BOOST_DATA = {
-            short_duration: [
-                {"code": 10102011, "name": "March size boost", "ability_name": "Marching troop capacity", "ability_id": 12, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 2, "category": 2},
-                {"code": 10102012, "name": "Advanced march size boost", "ability_name": "Marching troop capacity", "ability_id": 12, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 3, "category": 2},
-                {"code": 10102040, "name": "legendary March size boost", "ability_name": "Marching troop capacity", "ability_id": 12, "duration_hours": 0.5, "duration_seconds": 1800, "grade": 4, "category": 2},
-                {"code": 10102041, "name": "mythic march size boost", "ability_name": "Marching troop capacity", "ability_id": 12, "duration_hours": 0.17, "duration_seconds": 600, "grade": 5, "category": 2},
-                {"code": 10102017, "name": "Troop attack boost", "ability_name": "Troops Attack", "ability_id": 67, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 2, "category": 2},
-                {"code": 10102018, "name": "Advanced Troop attack boost", "ability_name": "Troops Attack", "ability_id": 67, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 3, "category": 2},
-                {"code": 10102046, "name": "legendary Troop attack boost", "ability_name": "Troops Attack", "ability_id": 67, "duration_hours": 0.5, "duration_seconds": 1800, "grade": 4, "category": 2},
-                {"code": 10102047, "name": "mythic Troop attack boost", "ability_name": "Troops Attack", "ability_id": 67, "duration_hours": 0.17, "duration_seconds": 600, "grade": 5, "category": 2},
-                {"code": 10102015, "name": "Troop defense boost", "ability_name": "Troops Defense", "ability_id": 66, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 2, "category": 2},
-                {"code": 10102016, "name": "Advanced Troop defense boost", "ability_name": "Troops Defense", "ability_id": 66, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 3, "category": 2},
-                {"code": 10102044, "name": "legendary Troop defense boost", "ability_name": "Troops Defense", "ability_id": 66, "duration_hours": 0.5, "duration_seconds": 1800, "grade": 4, "category": 2},
-                {"code": 10102045, "name": "mythic Troop defense boost", "ability_name": "Troops Defense", "ability_id": 66, "duration_hours": 0.17, "duration_seconds": 600, "grade": 5, "category": 2},
-                {"code": 10102013, "name": "Troop Hp boost", "ability_name": "Troops HP", "ability_id": 65, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 2, "category": 2},
-                {"code": 10102014, "name": "Advanced Troop Hp boost", "ability_name": "Troops HP", "ability_id": 65, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 3, "category": 2},
-                {"code": 10102042, "name": "legendary Troop Hp boost", "ability_name": "Troops HP", "ability_id": 65, "duration_hours": 0.5, "duration_seconds": 1800, "grade": 4, "category": 2},
-                {"code": 10102043, "name": "mythic Troop Hp boost", "ability_name": "Troops HP", "ability_id": 65, "duration_hours": 0.17, "duration_seconds": 600, "grade": 5, "category": 2},
-                {"code": 10102019, "name": "Troop speed boost", "ability_name": "Troops Speed", "ability_id": 68, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 2, "category": 2},
-                {"code": 10102020, "name": "Advanced Troop speed boost", "ability_name": "Troops Speed", "ability_id": 68, "duration_hours": 1.0, "duration_seconds": 3600, "grade": 3, "category": 2},
-                {"code": 10102048, "name": "legendary Troop speed boost", "ability_name": "Troops Speed", "ability_id": 68, "duration_hours": 0.5, "duration_seconds": 1800, "grade": 4, "category": 2},
-                {"code": 10102049, "name": "mythic Troop speed boost", "ability_name": "Troops Speed", "ability_id": 68, "duration_hours": 0.17, "duration_seconds": 600, "grade": 5, "category": 2}
-            ],
-            medium_duration: [
-                {"code": 10102001, "name": "Food boost 8hours", "ability_name": "Food Production", "ability_id": 2, "duration_hours": 8.0, "duration_seconds": 28800, "grade": 1, "category": 2},
-                {"code": 10102002, "name": "Food boost 1day", "ability_name": "Food Production", "ability_id": 2, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 2, "category": 2},
-                {"code": 10102030, "name": "Advanced food boost 1day", "ability_name": "Food Production", "ability_id": 2, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 3, "category": 2},
-                {"code": 10102031, "name": "legendary food boost 1day", "ability_name": "Food Production", "ability_id": 2, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 4, "category": 2},
-                {"code": 10102009, "name": "Gathering boost 8hours", "ability_name": "Gathering Speed", "ability_id": 35, "duration_hours": 8.0, "duration_seconds": 28800, "grade": 1, "category": 2},
-                {"code": 10102010, "name": "Gathering boost 1day", "ability_name": "Gathering Speed", "ability_id": 35, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 2, "category": 2},
-                {"code": 10102038, "name": "Advanced gathering boost 1day", "ability_name": "Gathering Speed", "ability_id": 35, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 3, "category": 2},
-                {"code": 10102039, "name": "legendary gathering boost 1day", "ability_name": "Gathering Speed", "ability_id": 35, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 4, "category": 2},
-                {"code": 10102007, "name": "Gold boost 8hours", "ability_name": "Gold Production", "ability_id": 5, "duration_hours": 8.0, "duration_seconds": 28800, "grade": 1, "category": 2},
-                {"code": 10102008, "name": "Gold boost 1day", "ability_name": "Gold Production", "ability_id": 5, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 2, "category": 2},
-                {"code": 10102036, "name": "Advanced gold boost 1day", "ability_name": "Gold Production", "ability_id": 5, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 3, "category": 2},
-                {"code": 10102037, "name": "legendary gold boost 1day", "ability_name": "Gold Production", "ability_id": 5, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 4, "category": 2},
-                {"code": 10102026, "name": "Kingdom Shield 8hours", "ability_name": "King's Shield", "ability_id": 111, "duration_hours": 8.0, "duration_seconds": 28800, "grade": 2, "category": 2},
-                {"code": 10102027, "name": "Kingdom Shield 1day", "ability_name": "King's Shield", "ability_id": 111, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 3, "category": 2},
-                {"code": 10102003, "name": "Wood boost 8hours", "ability_name": "Lumber Production", "ability_id": 3, "duration_hours": 8.0, "duration_seconds": 28800, "grade": 1, "category": 2},
-                {"code": 10102004, "name": "Wood boost 1day", "ability_name": "Lumber Production", "ability_id": 3, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 2, "category": 2},
-                {"code": 10102032, "name": "Advanced wood boost 1day", "ability_name": "Lumber Production", "ability_id": 3, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 3, "category": 2},
-                {"code": 10102033, "name": "legendary wood boost 1day", "ability_name": "Lumber Production", "ability_id": 3, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 4, "category": 2},
-                {"code": 10102021, "name": "Anti Spying 8hours", "ability_name": "Scout limit", "ability_id": 18, "duration_hours": 8.0, "duration_seconds": 28800, "grade": 2, "category": 2},
-                {"code": 10102022, "name": "Anti Spying 1day", "ability_name": "Scout limit", "ability_id": 18, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 3, "category": 2},
-                {"code": 10102005, "name": "Stone boost 8hours", "ability_name": "Stone Production", "ability_id": 4, "duration_hours": 8.0, "duration_seconds": 28800, "grade": 1, "category": 2},
-                {"code": 10102006, "name": "Stone boost 1day", "ability_name": "Stone Production", "ability_id": 4, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 2, "category": 2},
-                {"code": 10102034, "name": "Advanced stone boost 1day", "ability_name": "Stone Production", "ability_id": 4, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 3, "category": 2},
-                {"code": 10102035, "name": "legendary stone boost 1day", "ability_name": "Stone Production", "ability_id": 4, "duration_hours": 24.0, "duration_seconds": 86400, "grade": 4, "category": 2}
-            ],
-            long_duration: [
-                {"code": 10102024, "name": "Golden hammer 3days", "ability_name": "Additional building queue", "ability_id": 17, "duration_hours": 72.0, "duration_seconds": 259200, "grade": 3, "category": 2},
-                {"code": 10102025, "name": "Golden hammer 7days", "ability_name": "Additional building queue", "ability_id": 17, "duration_hours": 168.0, "duration_seconds": 604800, "grade": 4, "category": 2},
-                {"code": 10102028, "name": "Kingdom Shield 7days", "ability_name": "King's Shield", "ability_id": 111, "duration_hours": 168.0, "duration_seconds": 604800, "grade": 4, "category": 2}
-            ]
+        // Production Boost Data - Organized by buff type with 8hr/24hr options
+        const BUFF_TYPES = {
+            "Food Production": {
+                "8hr": {"code": 10102001, "name": "Food boost 8hours", "duration_hours": 8.0},
+                "24hr": {"code": 10102002, "name": "Food boost 1day", "duration_hours": 24.0}
+            },
+            "Wood Production": {
+                "8hr": {"code": 10102003, "name": "Wood boost 8hours", "duration_hours": 8.0},
+                "24hr": {"code": 10102004, "name": "Wood boost 1day", "duration_hours": 24.0}
+            },
+            "Stone Production": {
+                "8hr": {"code": 10102005, "name": "Stone boost 8hours", "duration_hours": 8.0},
+                "24hr": {"code": 10102006, "name": "Stone boost 1day", "duration_hours": 24.0}
+            },
+            "Gold Production": {
+                "8hr": {"code": 10102007, "name": "Gold boost 8hours", "duration_hours": 8.0},
+                "24hr": {"code": 10102008, "name": "Gold boost 1day", "duration_hours": 24.0}
+            },
+            "Gathering Speed": {
+                "8hr": {"code": 10102009, "name": "Gathering boost 8hours", "duration_hours": 8.0},
+                "24hr": {"code": 10102010, "name": "Gathering boost 1day", "duration_hours": 24.0}
+            },
+            "Kingdom Shield": {
+                "8hr": {"code": 10102026, "name": "Kingdom Shield 8hours", "duration_hours": 8.0},
+                "24hr": {"code": 10102027, "name": "Kingdom Shield 1day", "duration_hours": 24.0}
+            },
+            "Anti Spying Shield": {
+                "8hr": {"code": 10102021, "name": "Anti Spying 8hours", "duration_hours": 8.0},
+                "24hr": {"code": 10102022, "name": "Anti Spying 1day", "duration_hours": 24.0}
+            }
         };
 
         function switchBuffTab(tabName) {
-            // Hide all tab contents
-            const tabContents = document.querySelectorAll('#buff-management .tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Remove active class from all tabs
-            const tabs = document.querySelectorAll('#buff-management .tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            // Show selected tab content
-            document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked tab
-            event.target.classList.add('active');
+            // This function is no longer needed since we removed the tabs
+            // Keeping for backward compatibility
+            console.log('switchBuffTab called but tabs have been replaced with individual dropdowns');
         }
 
         function populateBuffManagementConfig(buffConfig) {
@@ -4508,111 +4471,111 @@
             // Set enabled state
             document.getElementById('buff-management-enabled').checked = buffConfig?.enabled || false;
 
-            // Clear and populate each duration category
-            const containers = {
-                'short-duration-list': 'short_duration',
-                'medium-duration-list': 'medium_duration', 
-                'long-duration-list': 'long_duration'
-            };
-
-            Object.entries(containers).forEach(([containerId, dataKey]) => {
-                const container = document.getElementById(containerId);
-                container.innerHTML = '';
+            // Clear and populate buff list
+            const container = document.getElementById('buff-management-list');
+            container.innerHTML = '';
+            
+            // Create cards for each buff type
+            Object.entries(BUFF_TYPES).forEach(([buffType, options]) => {
+                const card = document.createElement('div');
+                card.className = 'monster-card';
                 
-                const boosts = PRODUCTION_BOOST_DATA[dataKey] || [];
+                // Check if this buff type is enabled in config
+                let selectedOption = 'disabled';
+                let isEnabled = false;
                 
-                // Group boosts by ability type
-                const groupedBoosts = {};
-                boosts.forEach(boost => {
-                    if (!groupedBoosts[boost.ability_name]) {
-                        groupedBoosts[boost.ability_name] = [];
+                // Check old format for backward compatibility
+                if (buffConfig?.buffs) {
+                    const buffEntry = buffConfig.buffs.find(buff => buff.name === buffType + ' Boost');
+                    if (buffEntry?.enabled) {
+                        isEnabled = true;
+                        // Determine duration based on item codes
+                        if (buffEntry.item_codes?.includes(options['8hr'].code)) {
+                            selectedOption = '8hr';
+                        } else if (buffEntry.item_codes?.includes(options['24hr'].code)) {
+                            selectedOption = '24hr';
+                        }
                     }
-                    groupedBoosts[boost.ability_name].push(boost);
-                });
+                }
                 
-                // Create cards for each ability group
-                Object.entries(groupedBoosts).forEach(([abilityName, abilityBoosts]) => {
-                    const card = document.createElement('div');
-                    card.className = 'monster-card';
+                // Check new format
+                if (buffConfig?.production_boosts) {
+                    const isEnabled8hr = buffConfig.production_boosts[options['8hr'].code]?.enabled;
+                    const isEnabled24hr = buffConfig.production_boosts[options['24hr'].code]?.enabled;
                     
-                    // Check if any boost in this group is enabled
-                    const savedBoosts = buffConfig?.production_boosts?.[dataKey] || {};
-                    const isAnyEnabled = abilityBoosts.some(boost => 
-                        savedBoosts[boost.code]?.enabled || false
-                    );
-                    
-                    card.innerHTML = `
-                        <div class="monster-header">
-                            <i class="fas fa-magic" style="color: #3b82f6;"></i>
-                            <span class="monster-name">${abilityName}</span>
-                            <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" class="ability-enabled" data-ability="${abilityName}" data-duration="${dataKey}" ${isAnyEnabled ? 'checked' : ''}>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
+                    if (isEnabled8hr) {
+                        selectedOption = '8hr';
+                        isEnabled = true;
+                    } else if (isEnabled24hr) {
+                        selectedOption = '24hr';
+                        isEnabled = true;
+                    }
+                }
+                
+                card.innerHTML = `
+                    <div class="monster-header">
+                        <i class="fas fa-magic" style="color: #3b82f6;"></i>
+                        <span class="monster-name">${buffType}</span>
+                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="buff-enabled" data-buff-type="${buffType}" ${isEnabled ? 'checked' : ''} onchange="toggleBuffEnabled('${buffType}', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
-                        <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
-                            Available grades: ${abilityBoosts.map(b => `Grade ${b.grade} (${b.duration_hours}h)`).join(', ')}
-                        </div>
-                        <div class="boost-selection">
-                            <label class="input-label">Priority Selection:</label>
-                            <select class="dropdown-field boost-priority" data-ability="${abilityName}" data-duration="${dataKey}">
-                                <option value="disabled">Disabled</option>
-                                ${abilityBoosts.map(boost => {
-                                    const selected = savedBoosts[boost.code]?.enabled ? 'selected' : '';
-                                    return `<option value="${boost.code}" ${selected}>Grade ${boost.grade} - ${boost.name} (${boost.duration_hours}h)</option>`;
-                                }).join('')}
-                            </select>
-                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
-                                Select which grade to use for this boost type
-                            </small>
-                        </div>
-                    `;
-                    
-                    container.appendChild(card);
-                });
+                    </div>
+                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
+                        Choose between 8-hour or 24-hour duration for this production boost
+                    </div>
+                    <div class="boost-selection">
+                        <label class="input-label">Duration Selection:</label>
+                        <select class="dropdown-field buff-duration" data-buff-type="${buffType}" ${!isEnabled ? 'disabled' : ''}>
+                            <option value="disabled" ${selectedOption === 'disabled' ? 'selected' : ''}>Disabled</option>
+                            <option value="8hr" ${selectedOption === '8hr' ? 'selected' : ''}>8 Hours (${options['8hr'].name})</option>
+                            <option value="24hr" ${selectedOption === '24hr' ? 'selected' : ''}>24 Hours (${options['24hr'].name})</option>
+                        </select>
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                            Select duration for ${buffType.toLowerCase()} boost
+                        </small>
+                    </div>
+                `;
+                
+                container.appendChild(card);
             });
+        }
 
+        function toggleBuffEnabled(buffType, enabled) {
+            const container = document.getElementById('buff-management-list');
+            const dropdown = container.querySelector(`select[data-buff-type="${buffType}"]`);
+            
+            if (dropdown) {
+                dropdown.disabled = !enabled;
+                if (!enabled) {
+                    dropdown.value = 'disabled';
+                }
+            }
         }
 
         function collectBuffManagementFromUI() {
-            const result = {
-                short_duration: {},
-                medium_duration: {}, 
-                long_duration: {}
-            };
+            const result = {};
             
-            const containers = {
-                'short-duration-list': 'short_duration',
-                'medium-duration-list': 'medium_duration',
-                'long-duration-list': 'long_duration'
-            };
+            const container = document.getElementById('buff-management-list');
+            const dropdowns = container.querySelectorAll('.buff-duration');
             
-            Object.entries(containers).forEach(([containerId, dataKey]) => {
-                const container = document.getElementById(containerId);
-                const dropdowns = container.querySelectorAll('.boost-priority');
+            dropdowns.forEach(dropdown => {
+                const buffType = dropdown.dataset.buffType;
+                const selectedDuration = dropdown.value;
+                const isEnabled = container.querySelector(`input[data-buff-type="${buffType}"]`).checked;
                 
-                dropdowns.forEach(dropdown => {
-                    const selectedValue = dropdown.value;
-                    if (selectedValue !== 'disabled') {
-                        const itemCode = parseInt(selectedValue);
-                        const abilityName = dropdown.dataset.ability;
-                        
-                        // Find the boost data
-                        const boostData = PRODUCTION_BOOST_DATA[dataKey].find(b => b.code === itemCode);
-                        if (boostData) {
-                            result[dataKey][itemCode] = {
-                                enabled: true,
-                                name: boostData.name,
-                                ability_name: boostData.ability_name,
-                                duration_hours: boostData.duration_hours,
-                                grade: boostData.grade,
-                                min_duration_minutes: 20 // Default minimum duration
-                            };
-                        }
-                    }
-                });
+                if (isEnabled && selectedDuration !== 'disabled' && BUFF_TYPES[buffType] && BUFF_TYPES[buffType][selectedDuration]) {
+                    const buffData = BUFF_TYPES[buffType][selectedDuration];
+                    result[buffData.code] = {
+                        enabled: true,
+                        name: buffData.name,
+                        item_code: buffData.code,
+                        duration_hours: buffData.duration_hours,
+                        min_duration_minutes: 20 // Default minimum duration
+                    };
+                }
             });
             
             return result;
