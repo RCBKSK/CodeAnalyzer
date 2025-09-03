@@ -289,6 +289,7 @@ class LokFarmer:
                 'alliance_farmer': self.alliance_farmer,
                 'mail_claim': self.mail_claim,
                 'caravan_farmer': self.caravan_farmer,
+                'vip_shop_farmer': self.vip_shop_farmer,
                 'use_resource_in_item_list': self.use_resource_in_item_list,
                 'vip_chest_claim': self.vip_chest_claim,
                 'dsavip_chest_claim': self.dsavip_chest_claim,
@@ -5424,6 +5425,115 @@ Status: {status}"""
 
         except Exception as e:
             logger.error(f'Error in caravan_farmer: {str(e)}')
+
+    def vip_shop_farmer(self, vip_shop_config=None):
+        """
+        VIP shop farmer with priority-based purchasing and quantity controls
+        """
+        try:
+            from lokbot.enum import VIP_SHOP_ITEMS
+            
+            # Use enhanced buying with configuration
+            if vip_shop_config and isinstance(vip_shop_config, dict):
+                self._vip_shop_autobuy_enhanced(vip_shop_config, VIP_SHOP_ITEMS)
+            else:
+                logger.debug('VIP shop farming not configured')
+
+        except Exception as e:
+            logger.error(f'Error in vip_shop_farmer: {str(e)}')
+
+    def _vip_shop_autobuy_enhanced(self, config, available_items):
+        """
+        Enhanced VIP shop buying with priority system and quantity controls
+        """
+        try:
+            if not config.get('enabled', False):
+                logger.debug('VIP shop buying is disabled')
+                return
+
+            configured_items = config.get('items', [])
+            if not configured_items:
+                logger.info('No VIP shop items configured for purchase')
+                return
+
+            # Filter and sort items by priority (1 = highest priority)
+            enabled_items = [item for item in configured_items if item.get('enabled', False)]
+            if not enabled_items:
+                logger.info('No VIP shop items enabled for purchase')
+                return
+
+            # Sort by priority (ascending, so 1 comes first)
+            enabled_items.sort(key=lambda x: x.get('priority', 999))
+
+            total_purchased = 0
+            purchase_summary = []
+
+            for config_item in enabled_items:
+                item_code = config_item.get('item_code')
+                if not item_code:
+                    continue
+
+                # Check if item exists in VIP shop catalog
+                if item_code not in available_items:
+                    logger.debug(f'VIP shop item {item_code} not found in catalog')
+                    continue
+
+                item_info = available_items[item_code]
+                
+                # Get purchase parameters
+                min_buy = config_item.get('min_buy', 1)
+                max_buy = config_item.get('max_buy', 999999)
+                priority = config_item.get('priority', 999)
+
+                # Calculate amount to buy (start with min_buy, up to max_buy)
+                amount_to_buy = min_buy
+                
+                if amount_to_buy < 1:
+                    continue
+
+                # Try to purchase
+                try:
+                    logger.info(f"Attempting to buy {amount_to_buy}x {item_info.get('name', f'Item {item_code}')} from VIP shop")
+                    
+                    result = self.api.kingdom_vipshop_buy(item_code, amount_to_buy)
+                    
+                    if result and result.get('result'):
+                        total_purchased += amount_to_buy
+                        purchase_summary.append({
+                            'name': item_info.get('name', f'Item {item_code}'),
+                            'amount': amount_to_buy,
+                            'priority': priority,
+                            'vip_level': item_info.get('vip_level', 1)
+                        })
+                        
+                        logger.info(f"✅ Successfully purchased {amount_to_buy}x {item_info.get('name', f'Item {item_code}')}")
+                        
+                        # Small delay between purchases
+                        time.sleep(random.uniform(1, 3))
+                    else:
+                        error_msg = result.get('errorMsg', 'Purchase failed') if result else 'No response from server'
+                        logger.warning(f"❌ Failed to purchase {item_info.get('name', f'Item {item_code}')}: {error_msg}")
+                        
+                        # Stop trying if we hit an error (might be insufficient resources/VIP level)
+                        if 'vip' in error_msg.lower() or 'not enough' in error_msg.lower():
+                            logger.info("Stopping VIP shop purchases due to insufficient VIP level or resources")
+                            break
+
+                except Exception as purchase_error:
+                    logger.error(f"Error purchasing VIP shop item {item_code}: {str(purchase_error)}")
+                    continue
+
+            # Summary logging
+            if purchase_summary:
+                logger.info(f"VIP Shop Purchase Summary:")
+                logger.info(f"   • Total items purchased: {total_purchased}")
+                for purchase in purchase_summary:
+                    logger.info(f"   • {purchase['amount']}x {purchase['name']} (Priority {purchase['priority']}, VIP {purchase['vip_level']})")
+            else:
+                logger.info("No VIP shop purchases were made")
+
+        except Exception as e:
+            logger.error(f'Error in VIP shop autobuy: {str(e)}')
 
     def _caravan_autobuy_enhanced(self, config, available_items):
         """

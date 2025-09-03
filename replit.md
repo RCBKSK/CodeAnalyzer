@@ -4,6 +4,8 @@
 LokBot is a comprehensive automation bot for League of the Kingdoms game, imported from https://github.com/RCBKSK/new-dev/. This sophisticated system features 4335+ lines of game automation logic, Discord bot integration, and a full-featured web control panel. The bot automates various game activities including rally participation, monster attacks, resource gathering, and advanced object scanning.
 
 ## Recent Changes (September 3, 2025)
+- ✅ **Implemented VIP Shop Farmer Thread - runs after caravan**
+- ✅ **Added automatic VIP shop purchasing with priority system**
 - ✅ **Added VIP Shop Buy API Endpoint (`/api/vip_shop/buy`)**
 - ✅ **Implemented complete VIP shop purchase functionality**
 - ✅ **Added security validation and instance ownership checks**
