@@ -1805,8 +1805,8 @@ Expected End: {ended_time}"""
                 )
                 return []
 
-            # Check if level_based_troops is enabled for more dynamic troop selection
-            level_based_troops = target_monster.get('level_based_troops', False)
+            # Determine if we're using level-based troops configuration (same as rally join)
+            level_based_troops = normal_monsters_config.get('level_based_troops', False)
             
             # Build available troops dictionary from march info
             available_troops = {}
@@ -1816,136 +1816,92 @@ Expected End: {ended_time}"""
                 available_troops[troop_code] = troop_count
 
             march_troops = []
-            total_troops_needed = 0
 
             if level_based_troops and monster_level is not None:
-                logger.info(f'Using LEVEL-BASED TROOPS for monster {monster_code} level {monster_level}')
+                # Convert level to integer
+                monster_level = int(monster_level)
+                logger.info(f'Using level-based troop configuration for monster level {monster_level}')
                 
-                # Import the smart troop selection function
-                from lokbot.rally_utils import get_best_troops_for_monster
-                
-                # Get troop configuration for this specific level from target config
-                level_troops_config = None
-                for target_config in target_monster.get('troops', []):
-                    level_ranges = target_config.get('level_ranges', [])
-                    if monster_level in level_ranges:
-                        level_troops_config = target_config
+                # Find the appropriate level range configuration (same structure as rally join)
+                level_range_config = None
+                for level_range in target_monster.get('level_ranges', []):
+                    min_level = level_range.get('min_level', 0)
+                    max_level = level_range.get('max_level', 0)
+                    if min_level <= monster_level <= max_level:
+                        level_range_config = level_range
+                        logger.info(f'Found matching level range: {min_level}-{max_level}')
                         break
                 
-                if level_troops_config:
-                    # Use configured troops for this level range
-                    logger.info(f'Found level-specific troop config for level {monster_level}')
-                    troop_configs = level_troops_config.get('troop_list', [])
-                    
-                    for troop_config in troop_configs:
-                        troop_code = troop_config.get('code')
-                        configured_amount = troop_config.get('amount', 0)
-                        
-                        if configured_amount <= 0:
+                if level_range_config:
+                    # Use the level-specific troop configuration (same as rally join)
+                    for troop in level_range_config.get('troops', []):
+                        # Use fixed amounts system - randomly select one amount (same as rally join)
+                        fixed_amounts = troop.get('fixed_amounts', [])
+                        if fixed_amounts:
+                            random_amount = random.choice(fixed_amounts)
+                            logger.info(f'Selected {random_amount} troops of code {troop.get("code")} from fixed amounts: {fixed_amounts}')
+                        else:
+                            logger.warning(f'No fixed_amounts configured for troop {troop.get("code")}, skipping')
                             continue
                             
-                        available = available_troops.get(troop_code, 0)
-                        if available < configured_amount:
-                            logger.info(f'Not enough troops {troop_code}: need {configured_amount}, have {available}')
-                            return []
+                        if random_amount > 0:
+                            # Check if we have enough troops available
+                            available = available_troops.get(troop.get('code'), 0)
+                            if available < random_amount:
+                                logger.info(f'Not enough troops {troop.get("code")}: need {random_amount}, have {available}')
+                                return []
                             
-                        march_troops.append({
-                            'code': troop_code,
-                            'level': 0,
-                            'select': 0,
-                            'amount': configured_amount,
-                            'dead': 0,
-                            'wounded': 0,
-                            'hp': 0,
-                            'attack': 0,
-                            'defense': 0,
-                            'seq': 0
-                        })
-                        total_troops_needed += configured_amount
-                        
+                            march_troops.append({
+                                'code': troop.get('code'),
+                                'level': 0,
+                                'select': 0,
+                                'amount': random_amount,
+                                'dead': 0,
+                                'wounded': 0,
+                                'hp': 0,
+                                'attack': 0,
+                                'defense': 0,
+                                'seq': 0
+                            })
                 else:
-                    # No level-specific config found, use smart recommendations
-                    logger.info(f'No level-specific config found, using smart troop recommendations for monster {monster_code}')
-                    
-                    # Get total available troops
-                    total_available = sum(available_troops.values())
-                    max_troops_to_use = min(total_available, 50000)  # Cap at reasonable amount
-                    
-                    # Get smart troop recommendations
-                    recommended_troops = get_best_troops_for_monster(monster_code, max_troops_to_use)
-                    
-                    if not recommended_troops:
-                        logger.info(f'No troop recommendations found for monster {monster_code}, using fallback')
-                        # Fallback to common troops if available
-                        common_troops_config = normal_monsters_config.get('common_troops', [])
-                        if common_troops_config:
-                            logger.info('Falling back to common troops configuration')
-                            recommended_troops = {tc.get('code'): tc.get('amount', 0) for tc in common_troops_config if tc.get('amount', 0) > 0}
-                    
-                    # Apply the recommended troops
-                    for troop_code, recommended_amount in recommended_troops.items():
-                        available = available_troops.get(troop_code, 0)
-                        if available < recommended_amount:
-                            logger.info(f'Not enough recommended troops {troop_code}: need {recommended_amount}, have {available}')
-                            continue
-                            
-                        march_troops.append({
-                            'code': troop_code,
-                            'level': 0,
-                            'select': 0,
-                            'amount': recommended_amount,
-                            'dead': 0,
-                            'wounded': 0,
-                            'hp': 0,
-                            'attack': 0,
-                            'defense': 0,
-                            'seq': 0
-                        })
-                        total_troops_needed += recommended_amount
-                        logger.info(f'Added {recommended_amount} smart troops (code: {troop_code}) for monster')
-                        
+                    logger.warning(f'No matching level range found for monster level {monster_level}')
+                    return []
             else:
-                # Fallback to common troops configuration
-                logger.info(f'Using COMMON TROOPS for monster {monster_code} level {monster_level}')
+                # Use the common troops configuration if level-based is not enabled (same as rally join legacy)
+                logger.info('Using common troop configuration')
                 common_troops_config = normal_monsters_config.get('common_troops', [])
                 if not common_troops_config:
                     logger.info(f'No common troops configuration found for normal monsters')
                     return []
+                    
+                for troop in common_troops_config:
+                    # Only add troops that have a non-zero amount (same as rally join)
+                    if troop.get('amount', 0) > 0:
+                        # Check if we have enough troops available
+                        available = available_troops.get(troop.get('code'), 0)
+                        if available < troop.get('amount', 0):
+                            logger.info(f'Not enough troops {troop.get("code")}: need {troop.get("amount", 0)}, have {available}')
+                            return []
+                            
+                        march_troops.append({
+                            'code': troop.get('code'),
+                            'level': 0,
+                            'select': 0,
+                            'amount': troop.get('amount', 0),
+                            'dead': 0,
+                            'wounded': 0,
+                            'hp': 0,
+                            'attack': 0,
+                            'defense': 0,
+                            'seq': 0
+                        })
 
-                for troop_config in common_troops_config:
-                    troop_code = troop_config.get('code')
-                    configured_amount = troop_config.get('amount', 0)
-                    troop_name = troop_config.get('name', f'Troop {troop_code}')
-
-                    if configured_amount <= 0:
-                        logger.debug(f'Skipping {troop_name} - amount is 0 in common troops config')
-                        continue
-
-                    available = available_troops.get(troop_code, 0)
-                    if available < configured_amount:
-                        logger.info(f'Not enough {troop_name}: need {configured_amount}, have {available}')
-                        return []
-
-                    march_troops.append({
-                        'code': troop_code,
-                        'level': 0,
-                        'select': 0,
-                        'amount': configured_amount,
-                        'dead': 0,
-                        'wounded': 0,
-                        'hp': 0,
-                        'attack': 0,
-                        'defense': 0,
-                        'seq': 0
-                    })
-                    total_troops_needed += configured_amount
-                    logger.debug(f'Added {configured_amount} {troop_name} to march')
-
+            # Check if we have any troops to send (same as rally join)
             if not march_troops:
-                logger.info('No troops configured with non-zero amounts for this monster')
+                logger.warning(f'No troops configured with non-zero amounts for monster {monster_code}')
                 return []
 
-            logger.info(f'Prepared {total_troops_needed} total troops for monster {monster_code} level {monster_level}')
+            logger.info(f'Prepared {len(march_troops)} troop types for monster {monster_code} level {monster_level}')
             return march_troops
 
         # For non-deathkar monsters and resources, use original logic
