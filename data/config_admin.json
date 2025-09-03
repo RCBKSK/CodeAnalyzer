@@ -106,24 +106,24 @@
             "enabled": true,
             "items": [
               {
+                "category": "VIP",
+                "description": "100 VIP Points for premium features",
                 "enabled": true,
                 "item_code": 10101008,
                 "max_buy": 999999,
                 "min_buy": 1,
-                "priority": 1,
                 "name": "Vip Point +100",
-                "description": "100 VIP Points for premium features",
-                "category": "VIP"
+                "priority": 1
               },
               {
+                "category": "Action Points",
+                "description": "100 Action Points",
                 "enabled": true,
                 "item_code": 10101052,
                 "max_buy": 999999,
                 "min_buy": 1,
-                "priority": 1,
                 "name": "Action point refill 100",
-                "description": "100 Action Points",
-                "category": "Action Points"
+                "priority": 1
               }
             ]
           }
@@ -162,6 +162,33 @@
           }
         },
         "name": "caravan_farmer"
+      },
+      {
+        "enabled": true,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "name": "vip_shop_farmer",
+        "kwargs": {
+          "vip_shop_config": {
+            "enabled": true,
+            "items": [
+              {
+                "item_code": 10101008,
+                "name": "Vip Point +100",
+                "description": "Vip Point +100 - VIP 1 required",
+                "category": "VIP",
+                "vip_level": 1,
+                "discount": 0.5,
+                "priority": 1,
+                "min_buy": 10,
+                "max_buy": 999999,
+                "enabled": true
+              }
+            ]
+          }
+        }
       },
       {
         "enabled": false,
