@@ -5435,6 +5435,13 @@ Status: {status}"""
                     logger.debug(f'No cost currency for item {item_code}')
                     continue
 
+                # Restrict crystal purchases for Resources and Action Points
+                item_info = CARAVAN_ITEMS.get(item_code, {})
+                item_category = item_info.get('category', '')
+                if cost_item_code == 10100005 and item_category in ['Resources', 'Action Points']:
+                    logger.debug(f'Skipping {item_category} item {item_code} - costs crystals (restricted)')
+                    continue
+
                 # Get current resource amount
                 resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
                 if resource_index == -1:
@@ -5522,6 +5529,14 @@ Status: {status}"""
 
                 cost_item_code = each_item.get('costItemCode')
                 if not cost_item_code:
+                    continue
+
+                # Restrict crystal purchases for Resources and Action Points
+                item_code = each_item.get('code')
+                item_info = CARAVAN_ITEMS.get(item_code, {})
+                item_category = item_info.get('category', '')
+                if cost_item_code == 10100005 and item_category in ['Resources', 'Action Points']:
+                    logger.debug(f'Skipping {item_category} item {item_code} - costs crystals (restricted)')
                     continue
 
                 resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
