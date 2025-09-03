@@ -87,7 +87,7 @@
           "help_all": true,
           "research_donate": true,
           "shop_items_config": {
-            "enabled": false,
+            "enabled": true,
             "items": [
               {
                 "enabled": true,
@@ -95,6 +95,13 @@
                 "max_buy": 999999,
                 "min_buy": 1,
                 "priority": 1
+              },
+              {
+                "item_code": 10101052,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999
               }
             ]
           }
@@ -115,7 +122,24 @@
           "end": 200,
           "start": 120
         },
-        "name": "caravan_farmer"
+        "name": "caravan_farmer",
+        "kwargs": {
+          "caravan_items_config": {
+            "enabled": true,
+            "items": [
+              {
+                "item_code": 10102002,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Food Boost (1D)",
+                "description": "1 Day Food Production Boost",
+                "category": "Boosts"
+              }
+            ]
+          }
+        }
       },
       {
         "enabled": false,
@@ -316,6 +340,21 @@
     "treasure": {
       "enabled": false,
       "page": 1
+    },
+    "caravan_items": {
+      "enabled": true,
+      "items": [
+        {
+          "item_code": 10102002,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Food Boost (1D)",
+          "description": "1 Day Food Production Boost",
+          "category": "Boosts"
+        }
+      ]
     }
   },
   "rally": {

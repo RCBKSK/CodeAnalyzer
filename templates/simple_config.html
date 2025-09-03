@@ -5305,11 +5305,24 @@
                 return;
             }
             
-            // Add new item
+            // Find full item information from availableShopItems
+            let itemInfo = null;
+            for (const category in availableShopItems) {
+                const foundItem = availableShopItems[category].find(item => item.item_code === itemCode);
+                if (foundItem) {
+                    itemInfo = foundItem;
+                    break;
+                }
+            }
+            
+            // Add new item with full information
             const newItem = {
                 item_code: itemCode,
+                name: itemInfo?.name || itemName,
+                description: itemInfo?.description || '',
+                category: itemInfo?.category || 'Other',
                 enabled: true,
-                priority: defaultPriority || 1,
+                priority: defaultPriority || itemInfo?.default_priority || 1,
                 min_buy: 1,
                 max_buy: 999999
             };
@@ -5751,6 +5764,32 @@
                 
                 if (allianceJob && allianceJob.kwargs && allianceJob.kwargs.shop_items_config) {
                     currentShopConfig = allianceJob.kwargs.shop_items_config;
+                    
+                    // Enrich items with display information if missing
+                    if (currentShopConfig.items && availableShopItems && Object.keys(availableShopItems).length > 0) {
+                        currentShopConfig.items = currentShopConfig.items.map(item => {
+                            if (!item.name || !item.description) {
+                                // Find full item info from availableShopItems
+                                let itemInfo = null;
+                                for (const category in availableShopItems) {
+                                    const foundItem = availableShopItems[category].find(availItem => availItem.item_code === item.item_code);
+                                    if (foundItem) {
+                                        itemInfo = foundItem;
+                                        break;
+                                    }
+                                }
+                                
+                                return {
+                                    ...item,
+                                    name: itemInfo?.name || `Item ${item.item_code}`,
+                                    description: itemInfo?.description || '',
+                                    category: itemInfo?.category || 'Other'
+                                };
+                            }
+                            return item;
+                        });
+                    }
+                    
                     console.log('Found existing shop config:', currentShopConfig);
                 } else {
                     // Check for old format or use defaults
@@ -5759,6 +5798,9 @@
                         enabled: oldItemList.length > 0,
                         items: oldItemList.map(item_code => ({
                             item_code: item_code,
+                            name: `Item ${item_code}`,
+                            description: '',
+                            category: 'Other',
                             enabled: true,
                             priority: 1,
                             min_buy: 1,
