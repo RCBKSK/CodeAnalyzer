@@ -5873,13 +5873,6 @@ Status: {status}"""
                     continue
 
                 logger.info("Checking buff status and reactivating if needed (using socc_thread data)...")
-                
-                # Add detailed logging for debugging
-                logger.debug(f"Current active buffs count: {len(current_active_buffs)}")
-                for i, buff in enumerate(current_active_buffs):
-                    item_code = buff.get('param', {}).get('itemCode', 'N/A')
-                    expired_date = buff.get('expiredDate', 'N/A')
-                    logger.debug(f"Active buff {i+1}: itemCode={item_code}, expiredDate={expired_date}")
 
                 # Wait for initial startup before activating buffs
                 while self.started_at + 10 > time.time():
@@ -5891,6 +5884,13 @@ Status: {status}"""
                 # Get fresh active buffs data with enhanced validation (prioritizes socc_thread data)
                 current_active_buffs = self._get_current_active_buffs()
                 logger.debug(f"Buff management using data source: {'socc_thread' if hasattr(self, 'active_buffs') and self.active_buffs else 'API fallback'}")
+                
+                # Add detailed logging for debugging
+                logger.debug(f"Current active buffs count: {len(current_active_buffs)}")
+                for i, buff in enumerate(current_active_buffs):
+                    item_code = buff.get('param', {}).get('itemCode', 'N/A')
+                    expired_date = buff.get('expiredDate', 'N/A')
+                    logger.debug(f"Active buff {i+1}: itemCode={item_code}, expiredDate={expired_date}")
 
                 # Get available items in inventory
                 item_list = self.api.item_list().get('items', [])
