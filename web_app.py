@@ -4701,14 +4701,22 @@ def favicon():
 @app.route('/api/caravan/items', methods=['GET'])
 @login_required
 def get_caravan_items():
-    """Get available caravan items with descriptions"""
+    """Get available caravan items with descriptions - filtered for simple config"""
     try:
         from lokbot.enum import CARAVAN_ITEMS
+        
+        # Only include these specific categories for simple config
+        allowed_categories = {'Resources', 'Action Points', 'Speedups', 'VIP'}
         
         # Group items by category for better organization
         categorized_items = {}
         for item_code, item_info in CARAVAN_ITEMS.items():
             category = item_info.get('category', 'Other')
+            
+            # Filter to only include allowed categories
+            if category not in allowed_categories:
+                continue
+                
             if category not in categorized_items:
                 categorized_items[category] = []
             
@@ -4724,10 +4732,13 @@ def get_caravan_items():
         for category in categorized_items:
             categorized_items[category].sort(key=lambda x: x['priority'])
         
+        # Count total filtered items
+        total_filtered_items = sum(len(items) for items in categorized_items.values())
+        
         return jsonify({
             'success': True,
             'categories': categorized_items,
-            'total_items': len(CARAVAN_ITEMS)
+            'total_items': total_filtered_items
         })
         
     except Exception as e:
