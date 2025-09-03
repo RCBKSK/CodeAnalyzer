@@ -4610,9 +4610,9 @@
             document.getElementById('caravan-auto-buy-enabled').checked = caravanConfig.enabled !== false;
             document.getElementById('caravan-interval').value = caravanConfig.interval_minutes || 180;
 
-            // Load existing shop and caravan item configurations
-            loadAllianceShopConfig();
-            loadCaravanConfig();
+            // Initialize shop and caravan item configurations from main config
+            initializeAllianceShopConfig();
+            initializeCaravanConfig();
         }
 
         function populateSkillsConfig(config) {
@@ -5389,7 +5389,7 @@
         window.selectShopItem = selectShopItem;
         window.updateShopItem = updateShopItem;
         window.removeShopItem = removeShopItem;
-        window.loadAllianceShopConfig = loadAllianceShopConfig;
+        window.initializeAllianceShopConfig = initializeAllianceShopConfig;
 
         // ===============================
         // CARAVAN CONFIGURATION FUNCTIONS
@@ -5703,25 +5703,22 @@
             }
         }
 
-        // Combined save function for all configurations
-        window.saveConfig = async function(tabName) {
+        // Integrated save function for all configurations
+        window.saveConfig = function(tabName) {
             try {
-                // First, call original save function to save main config
-                const mainSaveResult = await originalSaveConfig(tabName);
-                if (!mainSaveResult) {
-                    return false;
-                }
+                console.log(`Saving config for: ${tabName}`);
                 
-                // Then save specialized configs (they append to the saved config)
+                // Update alliance shop and caravan configs in main structure
                 if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
-                    await saveAllianceShopConfig();
+                    saveAllianceShopConfig(); // This now updates fullConfigData directly
                 }
                 
                 if (currentCaravanConfig.enabled || (currentCaravanConfig.items && currentCaravanConfig.items.length > 0)) {
-                    await saveCaravanConfig();
+                    saveCaravanConfig(); // This now updates fullConfigData directly
                 }
                 
-                return true;
+                // Call original save function with integrated data
+                return originalSaveConfig(tabName);
             } catch (error) {
                 showNotification('Error saving configurations: ' + error.message, 'error');
                 return false;
@@ -5738,7 +5735,135 @@
         window.editCaravanItem = editCaravanItem;
         window.updateCaravanItem = updateCaravanItem;
         window.removeCaravanItem = removeCaravanItem;
-        window.loadCaravanConfig = loadCaravanConfig;
+        
+        // ===============================
+        // INTEGRATED CONFIG FUNCTIONS
+        // ===============================
+        
+        function initializeAllianceShopConfig() {
+            // Extract alliance shop config from main fullConfigData
+            try {
+                console.log('Initializing Alliance Shop Config from main config');
+                
+                // Get alliance_farmer job from main config
+                const jobs = fullConfigData.main?.jobs || [];
+                const allianceJob = jobs.find(job => job.name === 'alliance_farmer');
+                
+                if (allianceJob && allianceJob.kwargs && allianceJob.kwargs.shop_items_config) {
+                    currentShopConfig = allianceJob.kwargs.shop_items_config;
+                    console.log('Found existing shop config:', currentShopConfig);
+                } else {
+                    // Check for old format or use defaults
+                    const oldItemList = allianceJob?.kwargs?.shop_auto_buy_item_code_list || [];
+                    currentShopConfig = {
+                        enabled: oldItemList.length > 0,
+                        items: oldItemList.map(item_code => ({
+                            item_code: item_code,
+                            enabled: true,
+                            priority: 1,
+                            min_buy: 1,
+                            max_buy: 999999
+                        }))
+                    };
+                    console.log('Using default shop config:', currentShopConfig);
+                }
+                
+                updateShopConfigDisplay();
+            } catch (error) {
+                console.error('Error initializing alliance shop config:', error);
+                currentShopConfig = { enabled: false, items: [] };
+                updateShopConfigDisplay();
+            }
+        }
+
+        function saveAllianceShopConfig() {
+            // Save alliance shop config to main fullConfigData structure
+            try {
+                console.log('Integrating Alliance Shop Config into main config:', JSON.stringify(currentShopConfig, null, 2));
+                
+                // Ensure main structure exists
+                if (!fullConfigData.main) fullConfigData.main = {};
+                if (!fullConfigData.main.jobs) fullConfigData.main.jobs = [];
+                
+                // Find or create alliance_farmer job
+                let allianceJob = fullConfigData.main.jobs.find(job => job.name === 'alliance_farmer');
+                if (!allianceJob) {
+                    allianceJob = {
+                        name: 'alliance_farmer',
+                        enabled: true,
+                        interval: { start: 120, end: 200 },
+                        kwargs: {}
+                    };
+                    fullConfigData.main.jobs.push(allianceJob);
+                }
+                
+                // Update kwargs with shop config
+                if (!allianceJob.kwargs) allianceJob.kwargs = {};
+                allianceJob.kwargs.shop_items_config = currentShopConfig;
+                
+                // Remove old format for compatibility
+                if (allianceJob.kwargs.shop_auto_buy_item_code_list) {
+                    delete allianceJob.kwargs.shop_auto_buy_item_code_list;
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Error integrating alliance shop configuration:', error);
+                return false;
+            }
+        }
+
+        function initializeCaravanConfig() {
+            // Extract caravan config from main fullConfigData
+            try {
+                console.log('Initializing Caravan Config from main config');
+                
+                // Check main config structure for caravan items
+                if (fullConfigData.main && fullConfigData.main.caravan_items) {
+                    currentCaravanConfig = fullConfigData.main.caravan_items;
+                    console.log('Found existing caravan config:', currentCaravanConfig);
+                } else {
+                    // Use defaults
+                    currentCaravanConfig = { enabled: false, items: [] };
+                    console.log('Using default caravan config:', currentCaravanConfig);
+                }
+                
+                updateCaravanItemsList();
+            } catch (error) {
+                console.error('Error initializing caravan config:', error);
+                currentCaravanConfig = { enabled: false, items: [] };
+                updateCaravanItemsList();
+            }
+        }
+
+        function saveCaravanConfig() {
+            // Save caravan config to main fullConfigData structure
+            try {
+                console.log('Integrating Caravan Config into main config:', JSON.stringify(currentCaravanConfig, null, 2));
+                
+                // Ensure main structure exists
+                if (!fullConfigData.main) fullConfigData.main = {};
+                
+                // Save caravan config to main structure
+                fullConfigData.main.caravan_items = currentCaravanConfig;
+                
+                // Also update caravan_farmer job kwargs if it exists
+                if (fullConfigData.main.jobs) {
+                    const caravanJob = fullConfigData.main.jobs.find(job => job.name === 'caravan_farmer');
+                    if (caravanJob) {
+                        if (!caravanJob.kwargs) caravanJob.kwargs = {};
+                        caravanJob.kwargs.caravan_items_config = currentCaravanConfig;
+                    }
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Error integrating caravan configuration:', error);
+                return false;
+            }
+        }
+
+        window.initializeCaravanConfig = initializeCaravanConfig;
     </script>
 </body>
 
