@@ -2830,51 +2830,54 @@
 
 
 
-        function loadExistingConfig() {
+        async function loadExistingConfig() {
             // Show loading state
             const loadBtn = document.getElementById('load-config-btn');
             const originalText = loadBtn.innerHTML;
             loadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
             loadBtn.disabled = true;
 
-            // Load the complete config file first
-            $.ajax({
-                url: '/api/config',
-                method: 'GET',
-                data: {config_file: currentConfigFile},
-                success: function (response) {
-                    fullConfigData = response;  // Store the complete config
-                    configLoaded = true;
+            try {
+                // Load the complete config file first
+                const response = await new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: '/api/config',
+                        method: 'GET',
+                        data: {config_file: currentConfigFile},
+                        success: resolve,
+                        error: reject
+                    });
+                });
 
-                    // Enable tabs and select first tab
-                    enableConfigTabs();
-                    document.querySelector('.tab').classList.add('active');
-                    document.getElementById('rally-join').classList.add('active');
+                fullConfigData = response;  // Store the complete config
+                configLoaded = true;
 
-                    // Populate the simplified interface
-                    populateRallyJoinConfig(response.rally?.join || {});
-                    populateRallyStartConfig(response.rally?.start || {});
-                    populateMonsterAttackConfig(response.main?.normal_monsters || {});
-                    populateSocfObjectsConfig(response.main?.jobs || []);
-                    populateBuffManagementConfig(response.buff_management || {});
-                    populateAllianceActivitiesConfig(response.alliance_activities || {});
-                    populateSkillsConfig(response.main?.skills || {});
-                    populateTreasureConfig(response.main?.treasure || {});
-                    populateDsavipConfig(response.main?.jobs || []);
-                    populateSettingsConfig(response.main?.jobs || [], response.main?.threads || []);
+                // Enable tabs and select first tab
+                enableConfigTabs();
+                document.querySelector('.tab').classList.add('active');
+                document.getElementById('rally-join').classList.add('active');
 
-                    alert(`Configuration file '${currentConfigFile}' loaded successfully!`);
-                },
-                error: function (xhr) {
-                    console.error('Error loading configuration:', xhr);
-                    alert('Error loading configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
-                    configLoaded = false;
-                },
-                complete: function () {
-                    loadBtn.innerHTML = originalText;
-                    loadBtn.disabled = false;
-                }
-            });
+                // Populate the simplified interface
+                populateRallyJoinConfig(response.rally?.join || {});
+                populateRallyStartConfig(response.rally?.start || {});
+                populateMonsterAttackConfig(response.main?.normal_monsters || {});
+                populateSocfObjectsConfig(response.main?.jobs || []);
+                populateBuffManagementConfig(response.buff_management || {});
+                await populateAllianceActivitiesConfig(response.alliance_activities || {});
+                populateSkillsConfig(response.main?.skills || {});
+                populateTreasureConfig(response.main?.treasure || {});
+                populateDsavipConfig(response.main?.jobs || []);
+                populateSettingsConfig(response.main?.jobs || [], response.main?.threads || []);
+
+                alert(`Configuration file '${currentConfigFile}' loaded successfully!`);
+            } catch (xhr) {
+                console.error('Error loading configuration:', xhr);
+                alert('Error loading configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
+                configLoaded = false;
+            } finally {
+                loadBtn.innerHTML = originalText;
+                loadBtn.disabled = false;
+            }
         }
 
         function populateRallyJoinConfig(config) {
@@ -4582,7 +4585,7 @@
         }
 
 
-        function populateAllianceActivitiesConfig(config) {
+        async function populateAllianceActivitiesConfig(config) {
             console.log('Loading alliance activities config:', config);
 
             // Alliance Help All
@@ -4611,7 +4614,7 @@
             document.getElementById('caravan-interval').value = caravanConfig.interval_minutes || 180;
 
             // Initialize shop and caravan item configurations from main config
-            initializeAllianceShopConfig();
+            await initializeAllianceShopConfig();
             initializeCaravanConfig();
         }
 
@@ -5753,10 +5756,16 @@
         // INTEGRATED CONFIG FUNCTIONS
         // ===============================
         
-        function initializeAllianceShopConfig() {
+        async function initializeAllianceShopConfig() {
             // Extract alliance shop config from main fullConfigData
             try {
                 console.log('Initializing Alliance Shop Config from main config');
+                
+                // Load shop items first if not already loaded
+                if (!availableShopItems || Object.keys(availableShopItems).length === 0) {
+                    console.log('Loading shop items for config initialization...');
+                    await loadAllianceShopItems();
+                }
                 
                 // Get alliance_farmer job from main config
                 const jobs = fullConfigData.main?.jobs || [];
