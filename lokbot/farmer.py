@@ -2289,14 +2289,17 @@ Expected End: {ended_time}"""
         """
         try:
             import requests
+            import os
             
-            # Get account name for notification
-            account_name = getattr(self, 'account_name', 'Bot Instance')
+            # Get proper instance context like object notifications do
+            user_id = os.getenv('LOKBOT_USER_ID', self._id)
+            instance_id = os.getenv('LOKBOT_INSTANCE_ID', self._id)
+            account_name = os.getenv('LOKBOT_ACCOUNT_NAME', getattr(self, 'account_name', 'Bot Instance'))
             
             # Prepare notification data
             notification_data = {
-                'user_id': self._id,
-                'instance_id': self._id,
+                'user_id': user_id,
+                'instance_id': instance_id,
                 'account_name': account_name,
                 'notification_type': notification_type,
                 'title': title,
@@ -2307,7 +2310,7 @@ Expected End: {ended_time}"""
             # Send to web app notification endpoint
             response = requests.post('http://localhost:5000/api/skills_notification', json=notification_data, timeout=5)
             if response.status_code == 200:
-                logger.debug(f"Notification sent successfully: {notification_type}")
+                logger.debug(f"Notification sent successfully: {notification_type} for {account_name} (instance: {instance_id})")
             else:
                 logger.warning(f"Failed to send notification: {response.status_code}")
                 
