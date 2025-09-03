@@ -10,7 +10,7 @@
         "name": "Gathering Speed Boost"
       }
     ],
-    "enabled": false,
+    "enabled": true,
     "production_boosts": {
       "10102009": {
         "enabled": true,
@@ -318,7 +318,7 @@
   },
   "toggles": {
     "features": {
-      "buff_management": false,
+      "buff_management": true,
       "chat_monitoring": true,
       "discord": true,
       "enable_chat_monitoring": true,

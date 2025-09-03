@@ -189,6 +189,9 @@ class LokFarmer:
         # Initialize buff management tracking
         self.buff_last_activation = {}
         self.buff_activation_cooldown = 1800  # 30 minutes in seconds
+        
+        # Thread tracking to prevent duplicates
+        self.active_threads = {}
 
         # Initialize skin change tracking
         self.skin_last_change = 0
@@ -201,22 +204,34 @@ class LokFarmer:
         if self.alliance_id:
             logger.info("Alliance detected, setting up rally monitoring")
             time.sleep(60)  # Wait 1 minute
-            thread = threading.Thread(target=self._check_rallies_thread)
-            thread.daemon = True
-            thread.start()
-            logger.info("Rally monitoring thread started")
+            if 'rally_monitoring' not in self.active_threads or not self.active_threads['rally_monitoring'].is_alive():
+                thread = threading.Thread(target=self._check_rallies_thread, name='rally_monitoring_thread')
+                thread.daemon = True
+                thread.start()
+                self.active_threads['rally_monitoring'] = thread
+                logger.info("Rally monitoring thread started")
+            else:
+                logger.info("Rally monitoring thread already running, skipping duplicate")
 
         # Start buff management thread - will wait for hospital recovery to complete first
-        buff_thread = threading.Thread(target=self._buff_management_thread_delayed)
-        buff_thread.daemon = True
-        buff_thread.start()
-        logger.info("Buff management thread started (will wait for hospital recovery)")
+        if 'buff_management' not in self.active_threads or not self.active_threads['buff_management'].is_alive():
+            buff_thread = threading.Thread(target=self._buff_management_thread_delayed, name='buff_management_thread')
+            buff_thread.daemon = True
+            buff_thread.start()
+            self.active_threads['buff_management'] = buff_thread
+            logger.info("Buff management thread started (will wait for hospital recovery)")
+        else:
+            logger.info("Buff management thread already running, skipping duplicate")
 
         # Start march status update thread
-        march_status_thread = threading.Thread(target=self._march_status_update_thread)
-        march_status_thread.daemon = True
-        march_status_thread.start()
-        logger.info("March status update thread started")
+        if 'march_status' not in self.active_threads or not self.active_threads['march_status'].is_alive():
+            march_status_thread = threading.Thread(target=self._march_status_update_thread, name='march_status_thread')
+            march_status_thread.daemon = True
+            march_status_thread.start()
+            self.active_threads['march_status'] = march_status_thread
+            logger.info("March status update thread started")
+        else:
+            logger.info("March status thread already running, skipping duplicate")
 
         # Start skin change thread
         try:
