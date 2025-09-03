@@ -5873,6 +5873,13 @@ Status: {status}"""
                     continue
 
                 logger.info("Checking buff status and reactivating if needed (using socc_thread data)...")
+                
+                # Add detailed logging for debugging
+                logger.debug(f"Current active buffs count: {len(current_active_buffs)}")
+                for i, buff in enumerate(current_active_buffs):
+                    item_code = buff.get('param', {}).get('itemCode', 'N/A')
+                    expired_date = buff.get('expiredDate', 'N/A')
+                    logger.debug(f"Active buff {i+1}: itemCode={item_code}, expiredDate={expired_date}")
 
                 # Wait for initial startup before activating buffs
                 while self.started_at + 10 > time.time():
@@ -5930,7 +5937,27 @@ Status: {status}"""
                     if active_buff:
                         # Check remaining time with enhanced validation
                         remaining_time = active_buff.get('remainingTime', 0)
-                        remaining_minutes = remaining_time / 60 if remaining_time else 0
+                        remaining_minutes = 0
+                        
+                        if remaining_time:
+                            # Use remainingTime if available (from kingdom_enter API)
+                            remaining_minutes = remaining_time / 60
+                        else:
+                            # Calculate from expiredDate if remainingTime not available (from socc_thread)
+                            expired_date = active_buff.get('expiredDate')
+                            if expired_date:
+                                try:
+                                    import arrow
+                                    expired_arrow = arrow.get(expired_date)
+                                    current_time = arrow.utcnow()
+                                    if expired_arrow > current_time:
+                                        diff = expired_arrow - current_time
+                                        remaining_minutes = diff.total_seconds() / 60
+                                    else:
+                                        remaining_minutes = 0  # Expired
+                                except Exception as time_error:
+                                    logger.warning(f"Error calculating remaining time for {buff_name}: {time_error}")
+                                    remaining_minutes = 0
 
                         # Additional safety check - don't activate if remaining time is > 8 hours (suspicious)
                         if remaining_minutes > 480:
@@ -5941,7 +5968,7 @@ Status: {status}"""
                             should_activate = True
                             activation_reason = f"Low remaining time: {remaining_minutes:.1f}min < {min_duration_minutes}min threshold"
                         else:
-                            logger.debug(f"{buff_name} buff still active with {remaining_minutes:.1f} minutes remaining")
+                            logger.info(f"{buff_name} buff still active with {remaining_minutes:.1f} minutes remaining (threshold: {min_duration_minutes} min) - skipping activation")
                     else:
                         should_activate = True
                         activation_reason = "Buff not active"
