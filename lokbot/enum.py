@@ -631,6 +631,64 @@ CARAVAN_ITEMS = {
 # Keep backward compatibility with old list format
 BUYABLE_CARAVAN_ITEM_CODE_LIST = tuple(CARAVAN_ITEMS.keys())
 
+# VIP Shop Item Information Mapping
+VIP_SHOP_ITEMS = {
+    10101007: {"name": "Vip Point +10", "category": "VIP", "description": "Vip Point +10 - VIP 4 required", "priority": 3, "vip_level": 4, "discount": 0.5},
+    10101008: {"name": "Vip Point +100", "category": "VIP", "description": "Vip Point +100 - VIP 1 required", "priority": 1, "vip_level": 1, "discount": 0.5},
+    10101009: {"name": "Vip Point +500", "category": "VIP", "description": "Vip Point +500 - VIP 9 required", "priority": 3, "vip_level": 9, "discount": 0.5},
+    10101017: {"name": "Food +100K", "category": "Resources", "description": "Food +100K - VIP 2 required", "priority": 2, "vip_level": 2, "discount": 0.8},
+    10101019: {"name": "Food +1M", "category": "Resources", "description": "Food +1M - VIP 8 required", "priority": 3, "vip_level": 8, "discount": 0.8},
+    10101026: {"name": "Wood +100K", "category": "Resources", "description": "Wood +100K - VIP 2 required", "priority": 2, "vip_level": 2, "discount": 0.8},
+    10101028: {"name": "Wood +1M", "category": "Resources", "description": "Wood +1M - VIP 8 required", "priority": 3, "vip_level": 8, "discount": 0.8},
+    10101035: {"name": "Stone +100K", "category": "Resources", "description": "Stone +100K - VIP 2 required", "priority": 2, "vip_level": 2, "discount": 0.8},
+    10101037: {"name": "Stone +1M", "category": "Resources", "description": "Stone +1M - VIP 8 required", "priority": 3, "vip_level": 8, "discount": 0.8},
+    10101044: {"name": "Gold +100K", "category": "Resources", "description": "Gold +100K - VIP 2 required", "priority": 2, "vip_level": 2, "discount": 0.8},
+    10101046: {"name": "Gold +1M", "category": "Resources", "description": "Gold +1M - VIP 8 required", "priority": 3, "vip_level": 8, "discount": 0.8},
+    10101049: {"name": "Action point refill 10", "category": "Action Points", "description": "Action point refill 10 - VIP 3 required", "priority": 3, "vip_level": 3, "discount": 0.5},
+    10101051: {"name": "Action point refill 50", "category": "Action Points", "description": "Action point refill 50 - VIP 4 required", "priority": 3, "vip_level": 4, "discount": 0.8},
+    10102001: {"name": "Food boost 8hours", "category": "Boosts", "description": "Food boost 8hours - VIP 6 required", "priority": 3, "vip_level": 6, "discount": 0.8},
+    10102002: {"name": "Food boost 1day", "category": "Boosts", "description": "Food boost 1day - VIP 7 required", "priority": 3, "vip_level": 7, "discount": 0.8},
+    10102003: {"name": "Wood boost 8hours", "category": "Boosts", "description": "Wood boost 8hours - VIP 6 required", "priority": 3, "vip_level": 6, "discount": 0.8},
+    10102004: {"name": "Wood boost 1day", "category": "Boosts", "description": "Wood boost 1day - VIP 7 required", "priority": 3, "vip_level": 7, "discount": 0.8},
+    10102005: {"name": "Stone boost 8hours", "category": "Boosts", "description": "Stone boost 8hours - VIP 6 required", "priority": 3, "vip_level": 6, "discount": 0.8},
+    10102006: {"name": "Stone boost 1day", "category": "Boosts", "description": "Stone boost 1day - VIP 7 required", "priority": 3, "vip_level": 7, "discount": 0.8},
+    10102007: {"name": "Gold boost 8hours", "category": "Boosts", "description": "Gold boost 8hours - VIP 6 required", "priority": 3, "vip_level": 6, "discount": 0.8},
+    10102008: {"name": "Gold boost 1day", "category": "Boosts", "description": "Gold boost 1day - VIP 7 required", "priority": 3, "vip_level": 7, "discount": 0.8},
+    10102009: {"name": "Gathering boost 8hours", "category": "Boosts", "description": "Gathering boost 8hours - VIP 4 required", "priority": 3, "vip_level": 4, "discount": 0.8},
+    10102010: {"name": "Gathering boost 1day", "category": "Boosts", "description": "Gathering boost 1day - VIP 8 required", "priority": 3, "vip_level": 8, "discount": 0.8},
+    10102011: {"name": "March size boost", "category": "Boosts", "description": "March size boost - VIP 9 required", "priority": 3, "vip_level": 9, "discount": 0.8},
+    10102012: {"name": "March speed boost", "category": "Boosts", "description": "March speed boost - VIP 11 required", "priority": 3, "vip_level": 11, "discount": 0.8},
+    10102013: {"name": "Troop attack boost", "category": "Boosts", "description": "Troop attack boost - VIP 3 required", "priority": 3, "vip_level": 3, "discount": 0.5},
+    10102014: {"name": "Advanced Troop attack boost", "category": "Boosts", "description": "Advanced Troop attack boost - VIP 9 required", "priority": 3, "vip_level": 9, "discount": 0.6},
+    10102015: {"name": "Troop defense boost", "category": "Boosts", "description": "Troop defense boost - VIP 3 required", "priority": 3, "vip_level": 3, "discount": 0.5},
+    10102016: {"name": "Advanced Troop defense boost", "category": "Boosts", "description": "Advanced Troop defense boost - VIP 9 required", "priority": 3, "vip_level": 9, "discount": 0.6},
+    10102017: {"name": "Troop HP boost", "category": "Boosts", "description": "Troop HP boost - VIP 3 required", "priority": 3, "vip_level": 3, "discount": 0.5},
+    10102018: {"name": "Advanced Troop attack boost", "category": "Boosts", "description": "Advanced Troop attack boost - VIP 9 required", "priority": 3, "vip_level": 9, "discount": 0.6},
+    10102019: {"name": "Troop speed boost", "category": "Boosts", "description": "Troop speed boost - VIP 3 required", "priority": 3, "vip_level": 3, "discount": 0.5},
+    10102020: {"name": "Advanced Troop speed boost", "category": "Boosts", "description": "Advanced Troop speed boost - VIP 11 required", "priority": 3, "vip_level": 11, "discount": 0.6},
+    10103002: {"name": "Speedup 5min", "category": "Speedups", "description": "Speedup 5min - VIP 1 required", "priority": 1, "vip_level": 1, "discount": 0.4},
+    10103004: {"name": "Speedup 30min", "category": "Speedups", "description": "Speedup 30min - VIP 4 required", "priority": 3, "vip_level": 4, "discount": 0.4},
+    10103005: {"name": "Speedup 1hour", "category": "Speedups", "description": "Speedup 1hour - VIP 5 required", "priority": 3, "vip_level": 5, "discount": 0.5},
+    10103007: {"name": "Speedup 8hour", "category": "Speedups", "description": "Speedup 8hour - VIP 5 required", "priority": 3, "vip_level": 5, "discount": 0.5},
+    10103011: {"name": "Speedup 30days", "category": "Speedups", "description": "Speedup 30days - VIP 15 required", "priority": 3, "vip_level": 15, "discount": 0.5},
+    10103029: {"name": "Research Speedup 1day", "category": "Speedups", "description": "Research Speedup 1day - VIP 12 required", "priority": 3, "vip_level": 12, "discount": 0.5},
+    10103030: {"name": "Research Speedup 3days", "category": "Speedups", "description": "Research Speedup 3days - VIP 13 required", "priority": 3, "vip_level": 13, "discount": 0.5},
+    10103031: {"name": "Research Speedup 7days", "category": "Speedups", "description": "Research Speedup 7days - VIP 14 required", "priority": 3, "vip_level": 14, "discount": 0.5},
+    10103039: {"name": "Training Speedup 1day", "category": "Speedups", "description": "Training Speedup 1day - VIP 12 required", "priority": 3, "vip_level": 12, "discount": 0.5},
+    10103040: {"name": "Training Speedup 3days", "category": "Speedups", "description": "Training Speedup 3days - VIP 13 required", "priority": 3, "vip_level": 13, "discount": 0.5},
+    10103041: {"name": "Training Speedup 7days", "category": "Speedups", "description": "Training Speedup 7days - VIP 14 required", "priority": 3, "vip_level": 14, "discount": 0.5},
+    10103049: {"name": "Healing Speedup 1day", "category": "Speedups", "description": "Healing Speedup 1day - VIP 12 required", "priority": 3, "vip_level": 12, "discount": 0.5},
+    10103050: {"name": "Healing Speedup 3days", "category": "Speedups", "description": "Healing Speedup 3days - VIP 13 required", "priority": 3, "vip_level": 13, "discount": 0.5},
+    10103051: {"name": "Healing Speedup 7days", "category": "Speedups", "description": "Healing Speedup 7days - VIP 14 required", "priority": 3, "vip_level": 14, "discount": 0.5},
+    10104023: {"name": "Piece of lengendary", "category": "Advanced", "description": "Piece of lengendary - VIP 10 required", "priority": 3, "vip_level": 10, "discount": 0.5},
+    10104025: {"name": "Gold chest", "category": "Advanced", "description": "Gold chest - VIP 10 required", "priority": 3, "vip_level": 10, "discount": 0.8},
+    10104142: {"name": "platinum chest", "category": "Advanced", "description": "platinum chest - VIP 16 required", "priority": 3, "vip_level": 16, "discount": 0.5},
+    10104150: {"name": "messenger horn", "category": "Advanced", "description": "messenger horn - VIP 13 required", "priority": 3, "vip_level": 13, "discount": 0.5},
+    10603001: {"name": "orb of portal", "category": "Special", "description": "orb of portal - VIP 6 required", "priority": 3, "vip_level": 6, "discount": 0.8},
+}
+
+BUYABLE_VIP_SHOP_ITEM_CODE_LIST = tuple(VIP_SHOP_ITEMS.keys())
+
 # Alliance Shop Item Information Mapping
 ALLIANCE_SHOP_ITEMS = {
     # VIP Points

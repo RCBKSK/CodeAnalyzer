@@ -4745,6 +4745,58 @@ def get_caravan_items():
         logger.error(f"Error getting caravan items: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/vip_shop/items', methods=['GET'])
+@login_required
+def get_vip_shop_items():
+    """Get available VIP shop items with descriptions - filtered for simple config"""
+    try:
+        from lokbot.enum import VIP_SHOP_ITEMS
+        
+        # Only include these specific categories for simple config
+        allowed_categories = {'Resources', 'Action Points', 'Speedups', 'VIP', 'Boosts', 'Advanced', 'Special'}
+        
+        # Group items by category for better organization
+        categorized_items = {}
+        for item_code, item_info in VIP_SHOP_ITEMS.items():
+            category = item_info.get('category', 'Other')
+            
+            # Filter to only include allowed categories
+            if category not in allowed_categories:
+                continue
+                
+            if category not in categorized_items:
+                categorized_items[category] = []
+            
+            categorized_items[category].append({
+                'item_code': item_code,
+                'name': item_info.get('name', f'Item {item_code}'),
+                'description': item_info.get('description', ''),
+                'priority': item_info.get('priority', 3),
+                'category': category,
+                'vip_level': item_info.get('vip_level', 1),
+                'discount': item_info.get('discount', 1.0)
+            })
+        
+        # Sort items within each category by VIP level, then priority
+        for category in categorized_items:
+            categorized_items[category].sort(key=lambda x: (x['vip_level'], x['priority']))
+        
+        # Count total filtered items
+        total_filtered_items = sum(len(items) for items in categorized_items.values())
+        
+        logger.info(f"VIP shop items endpoint called, returning {total_filtered_items} items across {len(categorized_items)} categories")
+        
+        return jsonify({
+            'success': True,
+            'data': categorized_items,
+            'total_items': total_filtered_items,
+            'categories': list(categorized_items.keys())
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting VIP shop items: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     # Ensure data directory exists

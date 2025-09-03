@@ -928,6 +928,9 @@
             <button class="tab" onclick="switchTab('skills')">
                 <i class="fas fa-bolt"></i> Skills
             </button>
+            <button class="tab" onclick="switchTab('vip-shop')">
+                <i class="fas fa-crown"></i> VIP Shop
+            </button>
             <button class="tab" onclick="switchTab('treasure')">
                 <i class="fas fa-gem"></i> Treasure
             </button>
@@ -1606,6 +1609,54 @@
                 <div class="save-section">
                     <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('skills')">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIP Shop Configuration -->
+        <div id="vip-shop" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-crown"></i>
+                    VIP Shop Configuration
+                </h2>
+
+                <!-- Enable VIP Shop Toggle -->
+                <div class="toggle-section">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="vip-shop-enabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="troops-title">Enable VIP Shop Auto Buy</span>
+                    <small style="display: block; color: #64748b; margin-top: 5px;">
+                        Automatically purchase items from the VIP shop
+                    </small>
+                </div>
+
+                <!-- VIP Shop Configuration -->
+                <div style="margin-top: 20px; padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                    <h4 style="margin: 0 0 10px 0; color: #374151; font-size: 14px;">
+                        <i class="fas fa-cog"></i> VIP Shop Configuration
+                    </h4>
+                    <div style="margin-bottom: 12px;">
+                        <button class="btn btn-secondary" onclick="loadVipShopItems()" style="font-size: 12px; padding: 6px 12px;">
+                            <i class="fas fa-refresh"></i> Load Available Items
+                        </button>
+                        <button class="btn btn-accent" onclick="addVipShopItem()" style="font-size: 12px; padding: 6px 12px; margin-left: 8px;">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                    <div id="vip-shop-items-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; background: white;">
+                        <!-- VIP shop items will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="save-section">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveConfig('vip-shop')">
                         <i class="fas fa-save"></i>
                         Save Configuration
                     </button>
@@ -4081,6 +4132,16 @@
 
                 console.log('Skills config being saved:', fullConfigData.main.skills);
 
+            } else if (configType === 'vip-shop') {
+                // Get VIP shop enabled state
+                currentVipShopConfig.enabled = document.getElementById('vip-shop-enabled').checked;
+                
+                // Save VIP shop configuration
+                if (!saveVipShopConfig()) {
+                    showNotification('Failed to save VIP shop configuration!', 'error');
+                    return;
+                }
+
             } else if (configType === 'treasure') {
                 if (!fullConfigData.main) fullConfigData.main = {};
                 if (!fullConfigData.main.treasure) {
@@ -6156,6 +6217,280 @@
         }
 
         window.initializeCaravanConfig = initializeCaravanConfig;
+
+        // ===============================
+        // VIP SHOP FUNCTIONS
+        // ===============================
+        
+        let availableVipShopItems = {};
+        let currentVipShopConfig = {
+            enabled: false,
+            items: []
+        };
+
+        async function loadVipShopItems() {
+            try {
+                const response = await fetch('/api/vip_shop/items');
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.vipShopItemsData = data.data;
+                    availableVipShopItems = data.data;
+                    showNotification('VIP shop items loaded successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to load VIP shop items');
+                }
+            } catch (error) {
+                console.error('Error loading VIP shop items:', error);
+                showNotification('Error loading VIP shop items: ' + error.message, 'error');
+            }
+        }
+
+        function addVipShopItem() {
+            if (!availableVipShopItems || Object.keys(availableVipShopItems).length === 0) {
+                showNotification('Please load available items first', 'warning');
+                return;
+            }
+
+            // Create modal HTML
+            const modalHtml = `
+                <div id="vip-shop-item-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 90%; max-height: 90%; overflow-y: auto;">
+                        <h3 style="margin: 0 0 20px 0; color: #1e293b;">Add VIP Shop Item</h3>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Category</label>
+                            <select id="vip-shop-category-select" onchange="updateVipShopItemOptions()" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                <option value="">Select a category</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Item</label>
+                            <select id="vip-shop-item-select" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                <option value="">Select an item</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Priority (1 = highest)</label>
+                            <input type="number" id="vip-shop-item-priority" min="1" max="10" value="1" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Min Buy</label>
+                            <input type="number" id="vip-shop-item-min-buy" min="1" value="1" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Max Buy</label>
+                            <input type="number" id="vip-shop-item-max-buy" min="1" value="999999" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                            <button onclick="closeVipShopItemModal()" style="padding: 8px 16px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer;">Cancel</button>
+                            <button onclick="saveVipShopItem()" style="padding: 8px 16px; border: none; background: #3b82f6; color: white; border-radius: 6px; cursor: pointer;">Add Item</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Populate categories
+            const categorySelect = document.getElementById('vip-shop-category-select');
+            for (const category in availableVipShopItems) {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            }
+        }
+
+        function updateVipShopItemOptions() {
+            const categorySelect = document.getElementById('vip-shop-category-select');
+            const itemSelect = document.getElementById('vip-shop-item-select');
+            const selectedCategory = categorySelect.value;
+            
+            // Clear existing options
+            itemSelect.innerHTML = '<option value="">Select an item</option>';
+            
+            if (selectedCategory && availableVipShopItems[selectedCategory]) {
+                availableVipShopItems[selectedCategory].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.item_code;
+                    option.textContent = `${item.name} (VIP ${item.vip_level}) - ${Math.round(item.discount * 100)}% off`;
+                    itemSelect.appendChild(option);
+                });
+            }
+        }
+
+        function saveVipShopItem() {
+            const itemCode = parseInt(document.getElementById('vip-shop-item-select').value);
+            const priority = parseInt(document.getElementById('vip-shop-item-priority').value);
+            const minBuy = parseInt(document.getElementById('vip-shop-item-min-buy').value);
+            const maxBuy = parseInt(document.getElementById('vip-shop-item-max-buy').value);
+            
+            if (!itemCode) {
+                showNotification('Please select an item', 'warning');
+                return;
+            }
+            
+            // Find item details
+            let itemInfo = null;
+            for (const category in availableVipShopItems) {
+                const foundItem = availableVipShopItems[category].find(item => item.item_code === itemCode);
+                if (foundItem) {
+                    itemInfo = foundItem;
+                    break;
+                }
+            }
+            
+            if (!itemInfo) {
+                showNotification('Item information not found', 'error');
+                return;
+            }
+            
+            // Check if item already exists
+            const existingIndex = currentVipShopConfig.items.findIndex(item => item.item_code === itemCode);
+            if (existingIndex >= 0) {
+                showNotification('Item already exists in configuration', 'warning');
+                return;
+            }
+            
+            // Add item to configuration
+            const newItem = {
+                item_code: itemCode,
+                name: itemInfo.name,
+                description: itemInfo.description,
+                category: itemInfo.category,
+                vip_level: itemInfo.vip_level,
+                discount: itemInfo.discount,
+                priority: priority,
+                min_buy: minBuy,
+                max_buy: maxBuy,
+                enabled: true
+            };
+            
+            currentVipShopConfig.items.push(newItem);
+            updateVipShopItemsList();
+            closeVipShopItemModal();
+            showNotification('VIP shop item added successfully', 'success');
+        }
+
+        function closeVipShopItemModal() {
+            const modal = document.getElementById('vip-shop-item-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function updateVipShopItemsList() {
+            const container = document.getElementById('vip-shop-items-list');
+            if (!container) return;
+            
+            if (!currentVipShopConfig.items || currentVipShopConfig.items.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">No VIP shop items configured. Click "Add Item" to start.</div>';
+                return;
+            }
+            
+            // Sort items by priority
+            const sortedItems = [...currentVipShopConfig.items].sort((a, b) => a.priority - b.priority);
+            
+            container.innerHTML = sortedItems.map(item => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; color: #1e293b;">${item.name}</div>
+                        <div style="font-size: 12px; color: #64748b;">${item.category} • VIP ${item.vip_level} • Priority ${item.priority} • Buy ${item.min_buy}-${item.max_buy}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                            <input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleVipShopItem(${item.item_code})">
+                            Enabled
+                        </label>
+                        <button onclick="removeVipShopItem(${item.item_code})" style="padding: 4px 8px; border: none; background: #ef4444; color: white; border-radius: 4px; cursor: pointer; font-size: 12px;">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleVipShopItem(itemCode) {
+            const item = currentVipShopConfig.items.find(item => item.item_code === itemCode);
+            if (item) {
+                item.enabled = !item.enabled;
+                updateVipShopItemsList();
+            }
+        }
+
+        function removeVipShopItem(itemCode) {
+            const index = currentVipShopConfig.items.findIndex(item => item.item_code === itemCode);
+            if (index >= 0) {
+                currentVipShopConfig.items.splice(index, 1);
+                updateVipShopItemsList();
+                showNotification('VIP shop item removed', 'success');
+            }
+        }
+
+        function populateVipShopConfig(config) {
+            console.log('Loading VIP shop config:', config);
+            
+            // Load basic settings
+            document.getElementById('vip-shop-enabled').checked = config.enabled || false;
+            
+            // Update configuration and display
+            currentVipShopConfig = config || { enabled: false, items: [] };
+            updateVipShopItemsList();
+        }
+
+        async function initializeVipShopConfig() {
+            try {
+                console.log('Initializing VIP Shop Config from main config');
+                
+                // Load VIP shop items first if not already loaded
+                if (!availableVipShopItems || Object.keys(availableVipShopItems).length === 0) {
+                    console.log('Loading VIP shop items for config initialization...');
+                    await loadVipShopItems();
+                }
+                
+                // Get VIP shop config from main config
+                const vipShopConfig = fullConfigData.main?.vip_shop || { enabled: false, items: [] };
+                currentVipShopConfig = vipShopConfig;
+                
+                console.log('Found VIP shop config:', currentVipShopConfig);
+                updateVipShopItemsList();
+            } catch (error) {
+                console.error('Error initializing VIP shop config:', error);
+                currentVipShopConfig = { enabled: false, items: [] };
+                updateVipShopItemsList();
+            }
+        }
+
+        function saveVipShopConfig() {
+            try {
+                console.log('Integrating VIP Shop Config into main config:', JSON.stringify(currentVipShopConfig, null, 2));
+                
+                // Ensure main structure exists
+                if (!fullConfigData.main) fullConfigData.main = {};
+                
+                // Save VIP shop config to main structure
+                fullConfigData.main.vip_shop = currentVipShopConfig;
+                
+                return true;
+            } catch (error) {
+                console.error('Error integrating VIP shop configuration:', error);
+                return false;
+            }
+        }
+
+        // Add VIP shop functions to global scope
+        window.loadVipShopItems = loadVipShopItems;
+        window.addVipShopItem = addVipShopItem;
+        window.updateVipShopItemOptions = updateVipShopItemOptions;
+        window.saveVipShopItem = saveVipShopItem;
+        window.closeVipShopItemModal = closeVipShopItemModal;
+        window.toggleVipShopItem = toggleVipShopItem;
+        window.removeVipShopItem = removeVipShopItem;
+        window.initializeVipShopConfig = initializeVipShopConfig;
     </script>
 </body>
 
