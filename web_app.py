@@ -4206,6 +4206,9 @@ def handle_alliance_shop_config():
             data = request.json
             new_shop_config = data.get('shop_config', {})
             
+            # Debug: Log received data
+            logger.info(f"Alliance shop config received: {json.dumps(new_shop_config, indent=2)}")
+            
             # Ensure kwargs exists
             if 'kwargs' not in alliance_job:
                 alliance_job['kwargs'] = {}
@@ -4855,6 +4858,9 @@ def handle_caravan_config():
         elif request.method == 'POST':
             # Update caravan configuration
             caravan_config = request.json.get('caravan_config', {})
+            
+            # Debug: Log received data
+            logger.info(f"Caravan config received: {json.dumps(caravan_config, indent=2)}")
             
             # Ensure main section exists
             if 'main' not in config:

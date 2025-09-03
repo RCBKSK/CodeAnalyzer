@@ -5352,6 +5352,10 @@
         async function saveAllianceShopConfig() {
             try {
                 const configFile = getCurrentConfigFile();
+                
+                // Debug: Log the config being saved
+                console.log('Saving Alliance Shop Config:', JSON.stringify(currentShopConfig, null, 2));
+                
                 const response = await fetch('/api/alliance_shop/config', {
                     method: 'POST',
                     headers: {
@@ -5672,6 +5676,10 @@
         async function saveCaravanConfig() {
             try {
                 const configFile = getCurrentConfigFile();
+                
+                // Debug: Log the config being saved
+                console.log('Saving Caravan Config:', JSON.stringify(currentCaravanConfig, null, 2));
+                
                 const response = await fetch('/api/caravan/config', {
                     method: 'POST',
                     headers: {
