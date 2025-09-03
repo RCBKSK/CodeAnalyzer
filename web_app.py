@@ -4797,6 +4797,120 @@ def get_vip_shop_items():
         logger.error(f"Error getting VIP shop items: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/vip_shop/buy', methods=['POST'])
+@login_required
+def vip_shop_buy():
+    """Buy items from VIP shop"""
+    try:
+        data = request.json
+        user_id = session['user_id']
+        username = session.get('username', user_id)
+        
+        # Validate required parameters
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        item_code = data.get('item_code')
+        amount = data.get('amount', 1)
+        instance_id = data.get('instance_id')
+        
+        if not item_code:
+            return jsonify({'error': 'Item code is required'}), 400
+            
+        if not isinstance(amount, int) or amount < 1:
+            return jsonify({'error': 'Amount must be a positive integer'}), 400
+            
+        if not instance_id:
+            return jsonify({'error': 'Instance ID is required'}), 400
+            
+        # Validate instance ownership
+        if not instance_id.startswith(user_id):
+            return jsonify({'error': 'Unauthorized access to instance'}), 403
+            
+        # Check if instance is running
+        if instance_id not in bot_processes:
+            return jsonify({'error': 'Bot instance not found or not running'}), 404
+            
+        # Get instance process info
+        process_info = bot_processes[instance_id]
+        if not process_info['process'].poll() is None:
+            return jsonify({'error': 'Bot instance is not active'}), 404
+            
+        # Validate item exists in VIP shop
+        from lokbot.enum import VIP_SHOP_ITEMS
+        if item_code not in VIP_SHOP_ITEMS:
+            return jsonify({'error': 'Invalid VIP shop item code'}), 400
+            
+        item_info = VIP_SHOP_ITEMS[item_code]
+        
+        # Create bot API client to make the purchase
+        # Get token from the instance's token file
+        token_file = f"data/{process_info.get('account_id', 'unknown')}.token"
+        
+        if not os.path.exists(token_file):
+            return jsonify({'error': 'Bot token not found. Please restart the bot instance.'}), 404
+            
+        with open(token_file, 'r') as f:
+            token = f.read().strip()
+            
+        if not token:
+            return jsonify({'error': 'Invalid bot token. Please restart the bot instance.'}), 404
+            
+        # Initialize bot API client
+        from lokbot.client import LokBotApi
+        bot = LokBotApi()
+        bot.token = token
+        
+        # Make the purchase
+        logger.info(f"User {username} attempting to buy {amount}x {item_info['name']} (code: {item_code}) from VIP shop")
+        
+        result = bot.kingdom_vipshop_buy(item_code, amount)
+        
+        if result and result.get('result'):
+            # Purchase successful
+            logger.info(f"VIP shop purchase successful for user {username}: {amount}x {item_info['name']}")
+            
+            # Add notification
+            account_name = process_info.get('account_name', 'Unknown')
+            add_notification(
+                user_id, 
+                instance_id, 
+                account_name, 
+                f"✅ VIP Shop Purchase: {amount}x {item_info['name']}", 
+                'success'
+            )
+            
+            return jsonify({
+                'success': True,
+                'message': f'Successfully purchased {amount}x {item_info["name"]}',
+                'item_name': item_info['name'],
+                'amount': amount,
+                'result': result
+            })
+        else:
+            # Purchase failed
+            error_msg = result.get('errorMsg', 'Purchase failed') if result else 'No response from game server'
+            logger.error(f"VIP shop purchase failed for user {username}: {error_msg}")
+            
+            # Add notification
+            account_name = process_info.get('account_name', 'Unknown')
+            add_notification(
+                user_id, 
+                instance_id, 
+                account_name, 
+                f"❌ VIP Shop Purchase Failed: {error_msg}", 
+                'error'
+            )
+            
+            return jsonify({
+                'success': False,
+                'error': error_msg
+            }), 400
+            
+    except Exception as e:
+        logger.error(f"Error in VIP shop purchase: {str(e)}")
+        return jsonify({'error': f'Purchase failed: {str(e)}'}), 500
+
 
 if __name__ == '__main__':
     # Ensure data directory exists

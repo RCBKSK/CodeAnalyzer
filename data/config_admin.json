@@ -1,4 +1,26 @@
 {
+  "alliance_activities": {
+    "caravan_auto_buy": {
+      "enabled": true,
+      "interval_minutes": 180
+    },
+    "gift_claim": {
+      "enabled": true,
+      "interval_minutes": 30
+    },
+    "help_all": {
+      "enabled": true,
+      "interval_minutes": 5
+    },
+    "research_donate": {
+      "enabled": true,
+      "interval_minutes": 60
+    },
+    "shop_auto_buy": {
+      "enabled": true,
+      "interval_minutes": 120
+    }
+  },
   "buff_management": {
     "buffs": [
       {
@@ -13,11 +35,11 @@
     "enabled": true,
     "production_boosts": {
       "10102009": {
-        "enabled": true,
-        "name": "Gathering boost 8hours",
-        "item_code": 10102009,
         "duration_hours": 8,
-        "min_duration_minutes": 20
+        "enabled": true,
+        "item_code": 10102009,
+        "min_duration_minutes": 20,
+        "name": "Gathering boost 8hours"
       }
     }
   },
@@ -66,7 +88,7 @@
           "help_all": true,
           "research_donate": true,
           "shop_items_config": {
-            "enabled": false,
+            "enabled": true,
             "items": [
               {
                 "enabled": true,
@@ -74,6 +96,13 @@
                 "max_buy": 999999,
                 "min_buy": 1,
                 "priority": 1
+              },
+              {
+                "item_code": 10101052,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999
               }
             ]
           }
@@ -94,7 +123,24 @@
           "end": 200,
           "start": 120
         },
-        "name": "caravan_farmer"
+        "name": "caravan_farmer",
+        "kwargs": {
+          "caravan_items_config": {
+            "enabled": true,
+            "items": [
+              {
+                "item_code": 10102002,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Food Boost (1D)",
+                "description": "1 Day Food Production Boost",
+                "category": "Boosts"
+              }
+            ]
+          }
+        }
       },
       {
         "enabled": false,
@@ -295,6 +341,21 @@
     "treasure": {
       "enabled": false,
       "page": 1
+    },
+    "caravan_items": {
+      "enabled": true,
+      "items": [
+        {
+          "item_code": 10102002,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Food Boost (1D)",
+          "description": "1 Day Food Production Boost",
+          "category": "Boosts"
+        }
+      ]
     }
   },
   "rally": {
