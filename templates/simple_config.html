@@ -5315,6 +5315,10 @@
             };
             
             currentShopConfig.items.push(newItem);
+            
+            // Enable shop config when items are added
+            currentShopConfig.enabled = true;
+            
             renderShopItemsList();
             document.querySelector('.modal').remove();
             showNotification(`${itemName} added to shop auto-buy list`, 'success');
@@ -5371,22 +5375,8 @@
             }
         }
 
-        // Extend the existing saveConfig function to include shop configuration
+        // Store original save function for later extension
         const originalSaveConfig = window.saveConfig;
-        window.saveConfig = async function(tabName) {
-            try {
-                // Save shop config if it's enabled or has items
-                if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
-                    await saveAllianceShopConfig();
-                }
-                
-                // Call original save function
-                return originalSaveConfig(tabName);
-            } catch (error) {
-                showNotification('Error saving alliance shop configuration: ' + error.message, 'error');
-                return false;
-            }
-        };
 
         // Add shop functions to global scope
         window.loadAllianceShopItems = loadAllianceShopItems;
@@ -5552,6 +5542,10 @@
             };
 
             currentCaravanConfig.items.push(newItem);
+            
+            // Enable caravan config when items are added
+            currentCaravanConfig.enabled = true;
+            
             updateCaravanItemsList();
             document.querySelector('.modal-overlay').remove();
             showNotification('Caravan item added successfully!', 'success');
@@ -5701,17 +5695,21 @@
             }
         }
 
-        // Extend saveConfig to include caravan config saving
-        const previousSaveConfig = window.saveConfig;
+        // Combined save function for all configurations
         window.saveConfig = async function(tabName) {
             try {
+                // Save shop config if it's enabled or has items
+                if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
+                    await saveAllianceShopConfig();
+                }
+                
                 // Save caravan config if it's enabled or has items
                 if (currentCaravanConfig.enabled || (currentCaravanConfig.items && currentCaravanConfig.items.length > 0)) {
                     await saveCaravanConfig();
                 }
                 
-                // Call previous save function (which already includes shop config)
-                return previousSaveConfig(tabName);
+                // Call original save function
+                return originalSaveConfig(tabName);
             } catch (error) {
                 showNotification('Error saving configurations: ' + error.message, 'error');
                 return false;

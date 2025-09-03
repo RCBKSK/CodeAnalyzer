@@ -13,11 +13,11 @@
     "enabled": true,
     "production_boosts": {
       "10102009": {
-        "enabled": true,
-        "name": "Gathering boost 8hours",
-        "item_code": 10102009,
         "duration_hours": 8,
-        "min_duration_minutes": 20
+        "enabled": true,
+        "item_code": 10102009,
+        "min_duration_minutes": 20,
+        "name": "Gathering boost 8hours"
       }
     }
   },
@@ -347,6 +347,28 @@
       "free_chest_farmer_thread": true,
       "quest_monitor_thread": true,
       "train_troop_thread": false
+    }
+  },
+  "alliance_activities": {
+    "help_all": {
+      "enabled": true,
+      "interval_minutes": 5
+    },
+    "gift_claim": {
+      "enabled": true,
+      "interval_minutes": 30
+    },
+    "research_donate": {
+      "enabled": true,
+      "interval_minutes": 60
+    },
+    "shop_auto_buy": {
+      "enabled": true,
+      "interval_minutes": 120
+    },
+    "caravan_auto_buy": {
+      "enabled": true,
+      "interval_minutes": 180
     }
   }
 }
