@@ -1007,18 +1007,18 @@
                         <option value="20200205_Magdar">Magdar</option>
                         <option value="20200206_Pantagruel">Pantagruel</option>
                         <option value="20200207_Gargantua">Gargantua</option>
-                        <option value="20200101_Orc">Orc</option>
-                        <option value="20200102_Skeleton">Skeleton</option>
-                        <option value="20200103_Golem">Golem</option>
-                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+
+
+
+
                         <option value="20700405_Ogre">Ogre</option>
                         <option value="20700406_Wolf">Wolf</option>
                         <option value="20700407_Cyclops">Cyclops</option>
                         <option value="20700506_Spartoi">Spartoi</option>
-                        <option value="20800401_BF Orc">BF Orc</option>
-                        <option value="20800402_BF Skeleton">BF Skeleton</option>
-                        <option value="20800403_BF Golem">BF Golem</option>
-                        <option value="20800404_BF Treasure Goblin">BF Treasure Goblin</option>
+
+
+
+
                     </select>
                     <button class="btn btn-primary" onclick="addSelectedMonster('rally-join')">
                         <i class="fas fa-plus"></i>
@@ -1101,18 +1101,18 @@
                         <option value="20200205_Magdar">Magdar</option>
                         <option value="20200206_Pantagruel">Pantagruel</option>
                         <option value="20200207_Gargantua">Gargantua</option>
-                        <option value="20200101_Orc">Orc</option>
-                        <option value="20200102_Skeleton">Skeleton</option>
-                        <option value="20200103_Golem">Golem</option>
-                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+
+
+
+
                         <option value="20700405_Ogre">Ogre</option>
                         <option value="20700406_Wolf">Wolf</option>
                         <option value="20700407_Cyclops">Cyclops</option>
                         <option value="20700506_Spartoi">Spartoi</option>
-                        <option value="20800401_BF Orc">BF Orc</option>
-                        <option value="20800402_BF Skeleton">BF Skeleton</option>
-                        <option value="20800403_BF Golem">BF Golem</option>
-                        <option value="20800404_BF Treasure Goblin">BF Treasure Goblin</option>
+
+
+
+
                     </select>
                     <button class="btn btn-primary" onclick="addSelectedMonster('rally-start')">
                         <i class="fas fa-plus"></i>
@@ -1171,10 +1171,10 @@
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="monster-attack-monster-select" class="dropdown-field" style="flex: 1;">
                         <option value="">Select a monster to add</option>
-                        <option value="20200101_Orc">Orc</option>
-                        <option value="20200102_Skeleton">Skeleton</option>
-                        <option value="20200103_Golem">Golem</option>
-                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+
+
+
+
                         <option value="20700405_Ogre">Ogre</option>
                         <option value="20700406_Wolf">Wolf</option>
                         <option value="20700407_Cyclops">Cyclops</option>
@@ -1298,11 +1298,11 @@
                         <option value="20100102_Gold Mine">Gold Mine</option>
                         <option value="20100103_Lumber Camp">Lumber Camp</option>
                         <option value="20100104_Quarry">Quarry</option>
-                        <option value="20200103_Golem">Golem</option>
-                        <option value="20200101_Orc">Orc</option>
-                        <option value="20200102_Skeleton">Skeleton</option>
+
+
+
                         <option value="20200201_Deathkar">Deathkar</option>
-                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+
                     </select>
                     <button class="btn btn-primary" onclick="addSelectedSocfObject()">
                         <i class="fas fa-plus"></i>
@@ -2778,9 +2778,6 @@
                                     {"code": 20100102, "enabled": false, "level": [7, 8, 9, 10], "name": "Gold Mine"},
                                     {"code": 20100103, "enabled": false, "level": [7, 8, 9, 10], "name": "Lumber Camp"},
                                     {"code": 20100104, "enabled": false, "level": [7, 8, 9, 10], "name": "Quarry"},
-                                    {"code": 20200103, "enabled": false, "level": [1, 2, 3], "name": "Golem"},
-                                    {"code": 20200301, "enabled": false, "level": [1, 2, 3], "name": "Orc"},
-                                    {"code": 20200302, "enabled": false, "level": [1, 2, 3], "name": "Skeleton"},
                                     {"code": 20200201, "enabled": false, "level": [1, 2, 3, 4], "name": "Deathkar"},
                                     {"code": 20100105, "enabled": true, "level": [2, 3, 4], "name": "Crystal Mine"}
                                 ]
@@ -2797,10 +2794,6 @@
                             {"code": 50100306, "name": "Marauder (Tier 6 Cavalry)", "amount": 0}
                         ],
                         "targets": [
-                            {"monster_code": 20200103, "monster_name": "Golem", "level_ranges": [1, 2, 3]},
-                            {"monster_code": 20200104, "monster_name": "Treasure Goblin", "level_ranges": [1, 2, 3, 4]},
-                            {"monster_code": 20200101, "monster_name": "Orc", "level_ranges": [1, 2, 3]},
-                            {"monster_code": 20200102, "monster_name": "Skeleton", "level_ranges": [1, 2, 3]}
                         ]
                     },
                     "object_scanning": {
@@ -4560,7 +4553,6 @@
 
         function getMonsterCodeByName(monsterName) {
             const codes = {
-                'Orc': 20200101,
                 'Skeleton': 20200102,
                 'Golem': 20200103,
                 'Treasure Goblin': 20200104,
