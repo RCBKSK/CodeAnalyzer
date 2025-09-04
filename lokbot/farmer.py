@@ -2352,8 +2352,13 @@ Expected End: {ended_time}"""
                 'timestamp': time.time()
             }
             
-            # Send to web app notification endpoint
-            response = requests.post('http://localhost:5000/api/skills_notification', json=notification_data, timeout=5)
+            # Send to web app notification endpoint based on notification type
+            if notification_type == 'monster_attack':
+                # Use the monster notification endpoint for monster attacks to get proper counting
+                response = requests.post('http://localhost:5000/api/monster_notification', json=notification_data, timeout=5)
+            else:
+                # Use skills notification endpoint for other notifications
+                response = requests.post('http://localhost:5000/api/skills_notification', json=notification_data, timeout=5)
             if response.status_code == 200:
                 logger.debug(f"Notification sent successfully: {notification_type} for {account_name} (instance: {instance_id})")
             else:
@@ -2793,6 +2798,36 @@ Expected End: {ended_time}"""
                         webhook.send_message(message)
                 except Exception as e:
                     logger.error(f"Failed to send Discord notification: {str(e)}")
+
+            # Send web app notification for monster attack
+            try:
+                from lokbot.rally_utils import get_monster_name_by_code
+                monster_display_name = get_monster_name_by_code(monster_code)
+                total_troops = sum(troop.get('amount', 0) for troop in march_troops)
+                
+                # Determine troop type
+                troop_type = "Unknown"
+                for troop in march_troops:
+                    code = troop.get('code', 0)
+                    if code >= 50100305:  # T5
+                        troop_type = "T5"
+                        break
+                    elif code >= 50100304:  # T4
+                        troop_type = "T4"
+                        break
+                    elif code >= 50100303:  # T3
+                        troop_type = "T3"
+                        break
+                
+                notification_message = f"Attacking {monster_display_name} (Level {monster_level}) at {monster_loc} with {total_troops} {troop_type} troops"
+                
+                self._send_notification(
+                    'monster_attack',
+                    f'Monster Attack Started',
+                    notification_message
+                )
+            except Exception as e:
+                logger.debug(f"Failed to send web app notification: {str(e)}")
 
             self._start_march(monster_loc, march_troops, MARCH_TYPE_MONSTER)
         except NotOnlineException:
