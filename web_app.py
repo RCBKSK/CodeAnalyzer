@@ -2623,28 +2623,6 @@ def rally_notification():
         logger.error(f"Error in rally_notification: {str(e)}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-@app.route('/api/monster_notification', methods=['POST'])
-def monster_notification():
-    """Handle monster attack notifications from bot instances"""
-    try:
-        data = request.json
-        user_id = data.get('user_id')
-        instance_id = data.get('instance_id')
-        account_name = data.get('account_name', 'Bot Instance')
-        title = data.get('title', 'Monster Attack')
-        message = data.get('message', '')
-        
-        if not user_id:
-            return jsonify({'error': 'Missing user_id'}), 400
-            
-        # Add notification using the existing notification system with counter
-        add_notification(user_id, 'monster_attack', title, message, account_name=account_name, instance_id=instance_id)
-        
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Error in monster_notification: {str(e)}")
-        return jsonify({'error': 'Internal server error'}), 500
-
 @app.route('/api/crystal_limit_notification', methods=['POST'])
 def crystal_limit_notification():
     try:
