@@ -6178,10 +6178,21 @@ Status: {status}"""
 
                                 # Send buff activation notification
                                 try:
+                                    # Create specific title based on buff type
+                                    buff_display_name = buff_name.replace("_", " ").title()
+                                    if "production" in buff_name.lower():
+                                        title_icon = "🏭"
+                                    elif "shield" in buff_name.lower() or "anti" in buff_name.lower():
+                                        title_icon = "🛡️"
+                                    elif "gathering" in buff_name.lower():
+                                        title_icon = "⛏️"
+                                    else:
+                                        title_icon = "✨"
+                                    
                                     self._send_notification(
                                         'buff_activated',
-                                        '🛡️ Buff Activated',
-                                        f'Successfully activated {buff_name.replace("_", " ").title()} buff (Code: {item_code}) - {activation_reason}'
+                                        f'{title_icon} {buff_display_name} Activated',
+                                        f'Successfully activated {buff_display_name} buff (Code: {item_code}) - {activation_reason}'
                                     )
                                 except Exception as notif_error:
                                     logger.debug(f"Failed to send buff notification: {notif_error}")
