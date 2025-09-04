@@ -2095,7 +2095,10 @@ def get_status():
                     'current_marches': proc_data.get('current_marches', 0),
                     'march_limit': proc_data.get('march_limit', 0),
                     'march_size': proc_data.get('march_size', 0),
-                    'last_march_update': proc_data.get('last_march_update', 0)
+                    'last_march_update': proc_data.get('last_march_update', 0),
+                    'crystal_limit_reached': proc_data.get('crystal_limit_reached', False),
+                    'crystal_limit_message': proc_data.get('crystal_limit_message', ''),
+                    'crystal_limit_time': proc_data.get('crystal_limit_time', '')
                 }
 
                 # Add auto-stop information if available
@@ -2633,6 +2636,13 @@ def crystal_limit_notification():
         message = data.get('message', 'Crystal limit reached')
 
         logger.info(f"Received crystal limit notification for user_id: {user_id}, instance: {instance_id}")
+
+        # Store crystal limit status in bot process data
+        if instance_id and instance_id in bot_processes:
+            bot_processes[instance_id]['crystal_limit_reached'] = True
+            bot_processes[instance_id]['crystal_limit_message'] = message
+            bot_processes[instance_id]['crystal_limit_time'] = datetime.now().isoformat()
+            logger.info(f"Updated crystal limit status for instance {instance_id}")
 
         # Add to notification system with instance information
         add_notification(user_id, "error", "🚨 Crystal Limit Reached", message,
