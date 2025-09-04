@@ -6189,10 +6189,15 @@ Status: {status}"""
                                     else:
                                         title_icon = "✨"
                                     
+                                    # Clean up activation reason for user-friendly notification
+                                    clean_reason = activation_reason
+                                    if activation_reason == "Buff not active":
+                                        clean_reason = "Buff activated"
+                                    
                                     self._send_notification(
                                         'buff_activated',
                                         f'{title_icon} {buff_display_name} Activated',
-                                        f'Successfully activated {buff_display_name} buff (Code: {item_code}) - {activation_reason}'
+                                        f'Successfully activated {buff_display_name} buff (Code: {item_code}) - {clean_reason}'
                                     )
                                 except Exception as notif_error:
                                     logger.debug(f"Failed to send buff notification: {notif_error}")
