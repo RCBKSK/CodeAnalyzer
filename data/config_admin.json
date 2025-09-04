@@ -34,10 +34,26 @@
       {
         "enabled": true,
         "item_codes": [
+          10102003
+        ],
+        "min_duration_minutes": 20,
+        "name": "Wood Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
           10102005
         ],
         "min_duration_minutes": 20,
         "name": "Stone Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102007
+        ],
+        "min_duration_minutes": 20,
+        "name": "Gold Production Boost"
       }
     ],
     "enabled": true,
@@ -49,10 +65,24 @@
         "duration_hours": 8,
         "min_duration_minutes": 20
       },
+      "10102003": {
+        "enabled": true,
+        "name": "Wood boost 8hours",
+        "item_code": 10102003,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
       "10102005": {
         "enabled": true,
         "name": "Stone boost 8hours",
         "item_code": 10102005,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102007": {
+        "enabled": true,
+        "name": "Gold boost 8hours",
+        "item_code": 10102007,
         "duration_hours": 8,
         "min_duration_minutes": 20
       }
@@ -119,28 +149,7 @@
           "research_donate": true,
           "shop_items_config": {
             "enabled": true,
-            "items": [
-              {
-                "category": "VIP",
-                "description": "100 VIP Points for premium features",
-                "enabled": false,
-                "item_code": 10101008,
-                "max_buy": 999999,
-                "min_buy": 1,
-                "name": "Vip Point +100",
-                "priority": 1
-              },
-              {
-                "category": "Action Points",
-                "description": "100 Action Points",
-                "enabled": false,
-                "item_code": 10101052,
-                "max_buy": 999999,
-                "min_buy": 1,
-                "name": "Action point refill 100",
-                "priority": 1
-              }
-            ]
+            "items": []
           }
         },
         "name": "alliance_farmer"
@@ -254,11 +263,11 @@
           "targets": [
             {
               "code": 20100105,
-              "name": "Crystal Mine",
+              "enabled": true,
               "level": [
                 1
               ],
-              "enabled": true
+              "name": "Crystal Mine"
             }
           ]
         },
