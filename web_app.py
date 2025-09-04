@@ -4710,11 +4710,19 @@ def get_caravan_items():
         
         # Group items by category for better organization
         categorized_items = {}
+        
+        # Define silver item codes to exclude from Resources category
+        silver_item_codes = {10101066, 10101067, 10101068, 10101069, 10101070, 10101071, 10101072, 10101073, 10101074}
+        
         for item_code, item_info in CARAVAN_ITEMS.items():
             category = item_info.get('category', 'Other')
             
             # Filter to only include allowed categories
             if category not in allowed_categories:
+                continue
+            
+            # Exclude silver items from Resources category
+            if category == 'Resources' and item_code in silver_item_codes:
                 continue
                 
             if category not in categorized_items:

@@ -13,11 +13,11 @@
       "interval_minutes": 5
     },
     "research_donate": {
-      "enabled": true,
+      "enabled": false,
       "interval_minutes": 60
     },
     "shop_auto_buy": {
-      "enabled": true,
+      "enabled": false,
       "interval_minutes": 120
     }
   },
@@ -26,20 +26,35 @@
       {
         "enabled": true,
         "item_codes": [
-          10102009
+          10102010
         ],
         "min_duration_minutes": 20,
         "name": "Gathering Speed Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102022
+        ],
+        "min_duration_minutes": 20,
+        "name": "Anti Spying Shield Boost"
       }
     ],
     "enabled": true,
     "production_boosts": {
-      "10102009": {
-        "duration_hours": 8,
+      "10102010": {
         "enabled": true,
-        "item_code": 10102009,
-        "min_duration_minutes": 20,
-        "name": "Gathering boost 8hours"
+        "name": "Gathering boost 1day",
+        "item_code": 10102010,
+        "duration_hours": 24,
+        "min_duration_minutes": 20
+      },
+      "10102022": {
+        "enabled": true,
+        "name": "Anti Spying 1day",
+        "item_code": 10102022,
+        "duration_hours": 24,
+        "min_duration_minutes": 20
       }
     }
   },
@@ -165,29 +180,29 @@
       {
         "enabled": true,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
-        "name": "vip_shop_farmer",
         "kwargs": {
           "vip_shop_config": {
             "enabled": true,
             "items": [
               {
-                "item_code": 10101008,
-                "name": "Vip Point +100",
-                "description": "Vip Point +100 - VIP 1 required",
                 "category": "VIP",
-                "vip_level": 1,
+                "description": "Vip Point +100 - VIP 1 required",
                 "discount": 0.5,
-                "priority": 1,
-                "min_buy": 10,
+                "enabled": true,
+                "item_code": 10101008,
                 "max_buy": 999999,
-                "enabled": true
+                "min_buy": 10,
+                "name": "Vip Point +100",
+                "priority": 1,
+                "vip_level": 1
               }
             ]
           }
-        }
+        },
+        "name": "vip_shop_farmer"
       },
       {
         "enabled": false,
@@ -393,16 +408,16 @@
       "enabled": true,
       "items": [
         {
-          "item_code": 10101008,
-          "name": "Vip Point +100",
-          "description": "Vip Point +100 - VIP 1 required",
           "category": "VIP",
-          "vip_level": 1,
+          "description": "Vip Point +100 - VIP 1 required",
           "discount": 0.5,
-          "priority": 1,
-          "min_buy": 10,
+          "enabled": true,
+          "item_code": 10101008,
           "max_buy": 999999,
-          "enabled": true
+          "min_buy": 10,
+          "name": "Vip Point +100",
+          "priority": 1,
+          "vip_level": 1
         }
       ]
     }

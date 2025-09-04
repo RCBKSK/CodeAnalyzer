@@ -1028,7 +1028,7 @@
 
                 <!-- Save Section -->
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('rally-join')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1121,7 +1121,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('rally-start')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1186,7 +1186,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('monster-attack')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1311,7 +1311,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('socf-objects')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1345,7 +1345,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('buff-management')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1517,7 +1517,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('alliance-activities')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1607,7 +1607,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('skills')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1655,7 +1655,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('vip-shop')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1719,7 +1719,7 @@
 
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('treasure')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1761,7 +1761,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('dsavip')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1801,7 +1801,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('settings')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -6533,6 +6533,24 @@
         window.toggleVipShopItem = toggleVipShopItem;
         window.removeVipShopItem = removeVipShopItem;
         window.initializeVipShopConfig = initializeVipShopConfig;
+
+        // Cancel configuration changes function
+        function cancelConfigChanges() {
+            if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+                // Reload the current configuration to discard changes
+                const currentConfigFile = getCurrentConfigFile();
+                if (currentConfigFile) {
+                    showNotification('Changes cancelled, reloading configuration...', 'info');
+                    location.reload(); // Simple reload to reset everything
+                } else {
+                    showNotification('No configuration loaded to cancel', 'warning');
+                }
+            }
+        }
+
+        // Make cancel function available globally
+        window.cancelConfigChanges = cancelConfigChanges;
+
     </script>
 </body>
 
