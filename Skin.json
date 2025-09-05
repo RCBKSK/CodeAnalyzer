@@ -213,31 +213,43 @@
         "name": "caravan_farmer"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
-          "end": 200,
-          "start": 120
+          "start": 120,
+          "end": 200
         },
+        "name": "vip_shop_farmer",
         "kwargs": {
           "vip_shop_config": {
             "enabled": true,
             "items": [
               {
-                "category": "VIP",
-                "description": "Vip Point +100 - VIP 1 required",
+                "category": "Speedups",
+                "description": "Speedup 8hour - VIP 5 required",
                 "discount": 0.5,
                 "enabled": true,
-                "item_code": 10101008,
+                "item_code": 10103007,
                 "max_buy": 999999,
                 "min_buy": 10,
-                "name": "Vip Point +100",
+                "name": "Speedup 8hour",
                 "priority": 1,
-                "vip_level": 1
+                "vip_level": 5
+              },
+              {
+                "item_code": 10101049,
+                "name": "Action point refill 10",
+                "description": "Action point refill 10 - VIP 3 required",
+                "category": "Action Points",
+                "vip_level": 3,
+                "discount": 0.5,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "enabled": true
               }
             ]
           }
-        },
-        "name": "vip_shop_farmer"
+        }
       },
       {
         "enabled": false,
@@ -571,17 +583,29 @@
       "page": 1
     },
     "vip_shop": {
-      "enabled": false,
+      "enabled": true,
       "items": [
         {
-          "item_code": 10103007,
-          "name": "Speedup 8hour",
-          "description": "Speedup 8hour - VIP 5 required",
           "category": "Speedups",
-          "vip_level": 5,
+          "description": "Speedup 8hour - VIP 5 required",
+          "discount": 0.5,
+          "enabled": true,
+          "item_code": 10103007,
+          "max_buy": 999999,
+          "min_buy": 10,
+          "name": "Speedup 8hour",
+          "priority": 1,
+          "vip_level": 5
+        },
+        {
+          "item_code": 10101049,
+          "name": "Action point refill 10",
+          "description": "Action point refill 10 - VIP 3 required",
+          "category": "Action Points",
+          "vip_level": 3,
           "discount": 0.5,
           "priority": 1,
-          "min_buy": 10,
+          "min_buy": 1,
           "max_buy": 999999,
           "enabled": true
         }

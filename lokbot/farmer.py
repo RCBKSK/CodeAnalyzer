@@ -5420,8 +5420,10 @@ Status: {status}"""
             if caravan_items_config and isinstance(caravan_items_config, dict):
                 self._caravan_autobuy_enhanced(caravan_items_config, available_items)
             else:
-                # Backward compatibility - basic caravan buying
-                self._caravan_autobuy_basic(available_items)
+                # Only use basic mode if no configuration is provided at all
+                # If configuration exists but is disabled, skip buying
+                logger.debug('Caravan farming not configured or disabled')
+                return
 
         except Exception as e:
             logger.error(f'Error in caravan_farmer: {str(e)}')
