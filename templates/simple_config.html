@@ -3142,6 +3142,7 @@
                 populateBuffManagementConfig(response.buff_management || {});
                 await populateAllianceActivitiesConfig(response.alliance_activities || {});
                 populateSkillsConfig(response.main?.skills || {});
+                await initializeVipShopConfig();
                 populateTreasureConfig(response.main?.treasure || {});
                 populateDsavipConfig(response.main?.jobs || []);
                 populateSettingsConfig(response.main?.jobs || [], response.main?.threads || []);
@@ -6000,13 +6001,17 @@
             try {
                 console.log(`Saving config for: ${tabName}`);
                 
-                // Update alliance shop and caravan configs in main structure
+                // Update alliance shop, caravan, and VIP shop configs in main structure
                 if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
                     saveAllianceShopConfig(); // This now updates fullConfigData directly
                 }
                 
                 if (currentCaravanConfig.enabled || (currentCaravanConfig.items && currentCaravanConfig.items.length > 0)) {
                     saveCaravanConfig(); // This now updates fullConfigData directly
+                }
+                
+                if (currentVipShopConfig.enabled || (currentVipShopConfig.items && currentVipShopConfig.items.length > 0)) {
+                    saveVipShopConfig(); // This now updates fullConfigData directly
                 }
                 
                 // Call original save function with integrated data

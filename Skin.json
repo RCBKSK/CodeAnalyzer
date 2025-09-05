@@ -163,7 +163,18 @@
           "research_donate": true,
           "shop_items_config": {
             "enabled": true,
-            "items": []
+            "items": [
+              {
+                "category": "Action Points",
+                "description": "10 Action Points",
+                "enabled": true,
+                "item_code": 10101049,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Action point refill 10",
+                "priority": 3
+              }
+            ]
           }
         },
         "name": "alliance_farmer"
@@ -561,7 +572,20 @@
     },
     "vip_shop": {
       "enabled": false,
-      "items": []
+      "items": [
+        {
+          "item_code": 10103007,
+          "name": "Speedup 8hour",
+          "description": "Speedup 8hour - VIP 5 required",
+          "category": "Speedups",
+          "vip_level": 5,
+          "discount": 0.5,
+          "priority": 1,
+          "min_buy": 10,
+          "max_buy": 999999,
+          "enabled": true
+        }
+      ]
     }
   },
   "rally": {
