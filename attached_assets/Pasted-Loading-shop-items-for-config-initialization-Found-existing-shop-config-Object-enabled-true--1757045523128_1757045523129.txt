@@ -1,0 +1,96 @@
+Loading shop items for config initialization...
+Found existing shop config: 
+Object {enabled: true, items: Array(0)}
+Initializing Caravan Config from main config
+Loading caravan items for config initialization...
+Found existing caravan config: 
+Object {enabled: true, items: Array(1)}
+Loading skills config: 
+Object {enabled: true, skills: Array(35), skin_change_enabled: false, skin_item_id: "1557544", skin_item_id_2: "1864946", …}
+Skills data: 
+(35) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Loading treasure config: 
+Object {enabled: false, page: 1}
+Loading DSA VIP config
+Loading settings config - jobs: 
+(11) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Loading settings config - threads: 
+(5) [{…}, {…}, {…}, {…}, {…}]
+Setting skill checkbox states...
+Config skills array: 
+(35) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Looking for checkbox: skill-10001-enabled, found: 
+<input type="checkbox" id="skill-10001-enabled"></input>
+ setting to: true
+Set skill 10001 to true, checkbox.checked is now: true
+Looking for checkbox: skill-10002-enabled, found: 
+<input type="checkbox" id="skill-10002-enabled"></input>
+ setting to: true
+Set skill 10002 to true, checkbox.checked is now: true
+Looking for checkbox: skill-10003-enabled, found: 
+<input type="checkbox" id="skill-10003-enabled"></input>
+ setting to: false
+Set skill 10003 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10004-enabled, found: 
+<input type="checkbox" id="skill-10004-enabled"></input>
+ setting to: false
+Set skill 10004 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10005-enabled, found: 
+<input type="checkbox" id="skill-10005-enabled"></input>
+ setting to: false
+Set skill 10005 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10006-enabled, found: 
+<input type="checkbox" id="skill-10006-enabled"></input>
+ setting to: false
+Set skill 10006 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10007-enabled, found: 
+<input type="checkbox" id="skill-10007-enabled"></input>
+ setting to: false
+Set skill 10007 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10008-enabled, found: 
+<input type="checkbox" id="skill-10008-enabled"></input>
+ setting to: false
+Set skill 10008 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10009-enabled, found: 
+<input type="checkbox" id="skill-10009-enabled"></input>
+ setting to: false
+Set skill 10009 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10010-enabled, found: 
+<input type="checkbox" id="skill-10010-enabled"></input>
+ setting to: false
+Set skill 10010 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10011-enabled, found: 
+<input type="checkbox" id="skill-10011-enabled"></input>
+ setting to: false
+Set skill 10011 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10012-enabled, found: 
+<input type="checkbox" id="skill-10012-enabled"></input>
+ setting to: false
+Set skill 10012 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10013-enabled, found: 
+<input type="checkbox" id="skill-10013-enabled"></input>
+ setting to: false
+Set skill 10013 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10014-enabled, found: 
+<input type="checkbox" id="skill-10014-enabled"></input>
+ setting to: false
+Set skill 10014 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10015-enabled, found: 
+<input type="checkbox" id="skill-10015-enabled"></input>
+ setting to: false
+Set skill 10015 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10016-enabled, found: 
+<input type="checkbox" id="skill-10016-enabled"></input>
+ setting to: false
+Set skill 10016 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10017-enabled, found: 
+<input type="checkbox" id="skill-10017-enabled"></input>
+ setting to: false
+Set skill 10017 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10018-enabled, found: 
+<input type="checkbox" id="skill-10018-enabled"></input>
+ setting to: false
+Set skill 10018 to false, checkbox.checked is now: false
+Looking for checkbox: skill-10020-enabled, found: 
+<input type="checkbox" id="skill-10020-enabled"></input>
+ setting to: false
