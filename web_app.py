@@ -4327,6 +4327,11 @@ def handle_simple_config():
                     full_config['main'] = {}
                 full_config['main']['normal_monsters'] = config_data
 
+            elif config_type == 'skills':
+                if 'main' not in full_config:
+                    full_config['main'] = {}
+                full_config['main']['skills'] = config_data
+
             # Save the updated config
             with open(selected_config, 'w') as f:
                 json.dump(full_config, f, indent=2)

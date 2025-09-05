@@ -54,37 +54,52 @@
         ],
         "min_duration_minutes": 20,
         "name": "Gold Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102009
+        ],
+        "min_duration_minutes": 20,
+        "name": "Gathering Speed Boost"
       }
     ],
     "enabled": true,
     "production_boosts": {
       "10102001": {
-        "duration_hours": 8,
         "enabled": true,
+        "name": "Food boost 8hours",
         "item_code": 10102001,
-        "min_duration_minutes": 20,
-        "name": "Food boost 8hours"
+        "duration_hours": 8,
+        "min_duration_minutes": 20
       },
       "10102003": {
-        "duration_hours": 8,
         "enabled": true,
+        "name": "Wood boost 8hours",
         "item_code": 10102003,
-        "min_duration_minutes": 20,
-        "name": "Wood boost 8hours"
+        "duration_hours": 8,
+        "min_duration_minutes": 20
       },
       "10102005": {
-        "duration_hours": 8,
         "enabled": true,
+        "name": "Stone boost 8hours",
         "item_code": 10102005,
-        "min_duration_minutes": 20,
-        "name": "Stone boost 8hours"
+        "duration_hours": 8,
+        "min_duration_minutes": 20
       },
       "10102007": {
-        "duration_hours": 8,
         "enabled": true,
+        "name": "Gold boost 8hours",
         "item_code": 10102007,
-        "min_duration_minutes": 20,
-        "name": "Gold boost 8hours"
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102009": {
+        "enabled": true,
+        "name": "Gathering boost 8hours",
+        "item_code": 10102009,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
       }
     }
   },

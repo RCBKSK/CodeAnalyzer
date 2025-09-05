@@ -54,6 +54,14 @@
         ],
         "min_duration_minutes": 20,
         "name": "Gold Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102009
+        ],
+        "min_duration_minutes": 20,
+        "name": "Gathering Speed Boost"
       }
     ],
     "enabled": true,
@@ -85,6 +93,13 @@
         "item_code": 10102007,
         "min_duration_minutes": 20,
         "name": "Gold boost 8hours"
+      },
+      "10102009": {
+        "duration_hours": 8,
+        "enabled": true,
+        "item_code": 10102009,
+        "min_duration_minutes": 20,
+        "name": "Gathering boost 8hours"
       }
     }
   },
@@ -357,15 +372,15 @@
       }
     },
     "skills": {
-      "enabled": false,
+      "enabled": true,
       "skills": [
         {
           "code": 10001,
-          "enabled": false
+          "enabled": true
         },
         {
           "code": 10002,
-          "enabled": false
+          "enabled": true
         },
         {
           "code": 10003,
@@ -377,7 +392,7 @@
         },
         {
           "code": 10005,
-          "enabled": false
+          "enabled": true
         },
         {
           "code": 10006,
@@ -461,7 +476,7 @@
         },
         {
           "code": 10027,
-          "enabled": false
+          "enabled": true
         },
         {
           "code": 10028,
