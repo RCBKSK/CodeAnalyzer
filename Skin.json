@@ -392,7 +392,7 @@
         },
         {
           "code": 10005,
-          "enabled": true
+          "enabled": false
         },
         {
           "code": 10006,
@@ -476,7 +476,7 @@
         },
         {
           "code": 10027,
-          "enabled": true
+          "enabled": false
         },
         {
           "code": 10028,

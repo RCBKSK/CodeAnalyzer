@@ -4900,21 +4900,26 @@
             // Populate skills first if not already done
             populateSkills();
             
-            // Set skill states based on config
-            if (config.skills && config.skills.length > 0) {
-                config.skills.forEach(skill => {
-                    const skillCheckbox = document.getElementById(`skill-${skill.code}-enabled`);
-                    if (skillCheckbox) {
-                        skillCheckbox.checked = skill.enabled;
-                    }
-                });
-            } else {
-                // Set default states for all skills if none configured
-                const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
-                skillCheckboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-            }
+            // Use setTimeout to ensure skills are rendered before setting states
+            setTimeout(() => {
+                // Set skill states based on config
+                if (config.skills && config.skills.length > 0) {
+                    config.skills.forEach(skill => {
+                        const skillCheckbox = document.getElementById(`skill-${skill.code}-enabled`);
+                        if (skillCheckbox) {
+                            skillCheckbox.checked = skill.enabled;
+                        } else {
+                            console.warn(`Skill checkbox not found for code: ${skill.code}`);
+                        }
+                    });
+                } else {
+                    // Set default states for all skills if none configured
+                    const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
+                    skillCheckboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                }
+            }, 100);
         }
 
         function createSkillCard(skill, enabled) {
