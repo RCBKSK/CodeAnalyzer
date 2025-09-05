@@ -1,4 +1,26 @@
 {
+  "alliance_activities": {
+    "caravan_auto_buy": {
+      "enabled": false,
+      "interval_minutes": 180
+    },
+    "gift_claim": {
+      "enabled": true,
+      "interval_minutes": 30
+    },
+    "help_all": {
+      "enabled": true,
+      "interval_minutes": 5
+    },
+    "research_donate": {
+      "enabled": false,
+      "interval_minutes": 60
+    },
+    "shop_auto_buy": {
+      "enabled": false,
+      "interval_minutes": 120
+    }
+  },
   "buff_management": {
     "enabled": true,
     "production_boosts": {
@@ -83,6 +105,33 @@
           "start": 120
         },
         "name": "caravan_farmer"
+      },
+      {
+        "enabled": true,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "name": "vip_shop_farmer",
+        "kwargs": {
+          "vip_shop_config": {
+            "enabled": true,
+            "items": [
+              {
+                "item_code": 10103004,
+                "name": "Speedup 30min",
+                "description": "Speedup 30min - VIP 4 required",
+                "category": "Speedups",
+                "vip_level": 4,
+                "discount": 0.4,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 10,
+                "enabled": true
+              }
+            ]
+          }
+        }
       },
       {
         "enabled": false,
@@ -293,6 +342,23 @@
     "treasure": {
       "enabled": false,
       "page": 1
+    },
+    "vip_shop": {
+      "enabled": true,
+      "items": [
+        {
+          "item_code": 10103004,
+          "name": "Speedup 30min",
+          "description": "Speedup 30min - VIP 4 required",
+          "category": "Speedups",
+          "vip_level": 4,
+          "discount": 0.4,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 10,
+          "enabled": true
+        }
+      ]
     }
   },
   "rally": {
@@ -345,28 +411,6 @@
       "free_chest_farmer_thread": true,
       "quest_monitor_thread": true,
       "train_troop_thread": false
-    }
-  },
-  "alliance_activities": {
-    "help_all": {
-      "enabled": true,
-      "interval_minutes": 5
-    },
-    "gift_claim": {
-      "enabled": true,
-      "interval_minutes": 30
-    },
-    "research_donate": {
-      "enabled": false,
-      "interval_minutes": 60
-    },
-    "shop_auto_buy": {
-      "enabled": false,
-      "interval_minutes": 120
-    },
-    "caravan_auto_buy": {
-      "enabled": false,
-      "interval_minutes": 180
     }
   }
 }

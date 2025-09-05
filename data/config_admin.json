@@ -55,14 +55,14 @@
             "enabled": true,
             "items": [
               {
+                "category": "VIP",
+                "description": "100 VIP Points for premium features",
+                "enabled": false,
                 "item_code": 10101008,
-                "name": "Item 10101008",
-                "description": "",
-                "category": "Other",
-                "enabled": true,
-                "priority": 1,
+                "max_buy": 999999,
                 "min_buy": 1,
-                "max_buy": 999999
+                "name": "Vip Point +100",
+                "priority": 1
               }
             ]
           }
@@ -134,21 +134,21 @@
           "targets": [
             {
               "code": 20200103,
-              "name": "Golem",
+              "enabled": true,
               "level": [
                 1,
                 2
               ],
-              "enabled": true
+              "name": "Golem"
             },
             {
               "code": 20200301,
-              "name": "Orc",
+              "enabled": true,
               "level": [
                 1,
                 2
               ],
-              "enabled": true
+              "name": "Orc"
             }
           ]
         },
@@ -158,63 +158,67 @@
     "normal_monsters": {
       "common_troops": [
         {
+          "amount": 1000,
           "code": 50100304,
-          "name": "Iron Cavalry (Tier 4 Cavalry)",
-          "amount": 1000
+          "name": "Iron Cavalry (Tier 4 Cavalry)"
         },
         {
+          "amount": 0,
           "code": 50100305,
-          "name": "Dragoon (Tier 5 Cavalry)",
-          "amount": 0
+          "name": "Dragoon (Tier 5 Cavalry)"
         },
         {
+          "amount": 0,
           "code": 50100306,
-          "name": "Marauder (Tier 6 Cavalry)",
-          "amount": 0
+          "name": "Marauder (Tier 6 Cavalry)"
         }
       ],
       "enabled": true,
       "max_distance": 250,
       "targets": [
         {
+          "level_ranges": [
+            1,
+            2
+          ],
           "monster_code": 20200103,
           "monster_name": "Golem",
+          "troops": []
+        },
+        {
           "level_ranges": [
             1,
             2
           ],
-          "troops": []
-        },
-        {
           "monster_code": 20200104,
           "monster_name": "Treasure Goblin",
+          "troops": []
+        },
+        {
           "level_ranges": [
             1,
             2
           ],
-          "troops": []
-        },
-        {
           "monster_code": 20200101,
           "monster_name": "Orc",
-          "level_ranges": [
-            1,
-            2
-          ],
           "troops": []
         },
         {
-          "monster_code": 20200102,
-          "monster_name": "Skeleton",
           "level_ranges": [
             1,
             2
           ],
+          "monster_code": 20200102,
+          "monster_name": "Skeleton",
           "troops": []
         }
       ]
     },
     "object_scanning": {
+      "area_restrictions": {
+        "allowed_areas": [],
+        "enabled": false
+      },
       "enable_gathering": false,
       "enable_monster_attack": true,
       "enabled": true,
@@ -228,10 +232,6 @@
       },
       "notify_discord": false,
       "objects": {},
-      "area_restrictions": {
-        "enabled": false,
-        "allowed_areas": []
-      },
       "skin_change_settings": {
         "enabled": false,
         "skin_item_id": ""
@@ -346,6 +346,28 @@
       "free_chest_farmer_thread": true,
       "quest_monitor_thread": true,
       "train_troop_thread": false
+    }
+  },
+  "alliance_activities": {
+    "help_all": {
+      "enabled": true,
+      "interval_minutes": 5
+    },
+    "gift_claim": {
+      "enabled": true,
+      "interval_minutes": 30
+    },
+    "research_donate": {
+      "enabled": false,
+      "interval_minutes": 60
+    },
+    "shop_auto_buy": {
+      "enabled": false,
+      "interval_minutes": 120
+    },
+    "caravan_auto_buy": {
+      "enabled": false,
+      "interval_minutes": 180
     }
   }
 }
