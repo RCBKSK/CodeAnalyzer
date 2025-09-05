@@ -291,3 +291,13 @@ flask
 flask-sqlalchemy
 gunicorn
 psycopg2-binary
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
+apscheduler
+flask
+requests
+schedule
+werkzeug
