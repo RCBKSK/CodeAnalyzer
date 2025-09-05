@@ -3552,6 +3552,44 @@ Status: Available to join"""
                 if data.get('code') in (TASK_CODE_SILVER_HAMMER,
                                         TASK_CODE_GOLD_HAMMER):
                     self.building_queue_available.set()
+                
+                # Handle monster attack completion
+                elif data.get('code') == TASK_CODE_MARCH_MONSTER:
+                    try:
+                        # Send monster attack completion notification to web interface
+                        import requests
+                        import os
+                        import time
+                        
+                        # Get user ID and instance details
+                        user_id = os.getenv('LOKBOT_USER_ID', config.get('discord', {}).get('user_id', 'web_user'))
+                        timestamp = int(time.time() * 1000)
+                        instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{timestamp}")
+                        account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
+                        
+                        # Extract march information if available
+                        march_param = data.get('param', {})
+                        march_location = march_param.get('toLoc', 'Unknown')
+                        
+                        # Create completion message
+                        completion_message = f"Monster attack completed successfully! March returned from {march_location}"
+                        
+                        # Send notification to web interface
+                        response = requests.post('http://localhost:5000/api/monster_attack_completion',
+                            json={
+                                'user_id': user_id,
+                                'notification_type': 'monster_attack_completion',
+                                'message': completion_message,
+                                'location': march_location,
+                                'instance_id': instance_id,
+                                'account_name': account_name,
+                                'task_data': data
+                            },
+                            timeout=2)
+                        logger.info("Monster attack completion notification sent to web app")
+                        
+                    except Exception as e:
+                        logger.error(f"Error sending monster attack completion notification: {str(e)}")
 
             if data.get('status') == STATUS_CLAIMED:
                 if data.get('code') == TASK_CODE_ACADEMY:
