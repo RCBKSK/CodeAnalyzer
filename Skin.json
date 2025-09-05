@@ -376,11 +376,11 @@
       "skills": [
         {
           "code": 10001,
-          "enabled": true
+          "enabled": false
         },
         {
           "code": 10002,
-          "enabled": false
+          "enabled": true
         },
         {
           "code": 10003,
