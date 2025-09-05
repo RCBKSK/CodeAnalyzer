@@ -6119,7 +6119,6 @@ Status: {status}"""
                             expired_date = active_buff.get('expiredDate')
                             if expired_date:
                                 try:
-                                    import arrow
                                     expired_arrow = arrow.get(expired_date)
                                     current_time = arrow.utcnow()
                                     if expired_arrow > current_time:
