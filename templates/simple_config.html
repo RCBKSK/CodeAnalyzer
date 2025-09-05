@@ -2094,13 +2094,20 @@
                     5: 'Battle Cry'
                 };
                 
+                // Check if this skill is enabled in current config
+                let isEnabled = false;
+                if (window.currentConfig && window.currentConfig.skills) {
+                    const configSkill = window.currentConfig.skills.find(s => s.code === skill.code);
+                    isEnabled = configSkill ? configSkill.enabled : false;
+                }
+                
                 skillElement.innerHTML = `
                     <div>
                         <div style="font-weight: 500; color: #1e293b;">${skill.name}</div>
                         <small style="color: #64748b; font-size: 12px;">Code: ${skill.code} - Type: ${typeLabels[skill.type] || 'Unknown'}</small>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox" id="skill-${skill.code}-enabled">
+                        <input type="checkbox" id="skill-${skill.code}-enabled" ${isEnabled ? 'checked' : ''}>
                         <span class="toggle-slider"></span>
                     </label>
                 `;
@@ -4886,6 +4893,9 @@
             console.log('Loading skills config:', config);
             console.log('Skills data:', config.skills);
 
+            // Store config globally BEFORE populating skills
+            window.currentConfig = config;
+
             // Set enabled state
             document.getElementById('skills-enabled').checked = config.enabled || false;
 
@@ -4898,48 +4908,10 @@
             document.getElementById('skills-treasure-page-1').value = config.treasure_page_1 || 1;
             document.getElementById('skills-treasure-page-2').value = config.treasure_page_2 || 2;
 
-            // Populate skills first if not already done
+            // Populate skills with correct states (no need for setTimeout anymore)
             populateSkills();
             
-            // Use setTimeout to ensure skills are rendered before setting states
-            setTimeout(() => {
-                console.log('Setting skill checkbox states...');
-                console.log('Config skills array:', config.skills);
-                
-                // Set skill states based on config
-                if (config.skills && config.skills.length > 0) {
-                    config.skills.forEach(skill => {
-                        const checkboxId = `skill-${skill.code}-enabled`;
-                        const skillCheckbox = document.getElementById(checkboxId);
-                        console.log(`Looking for checkbox: ${checkboxId}, found:`, skillCheckbox, 'setting to:', skill.enabled);
-                        if (skillCheckbox) {
-                            skillCheckbox.checked = skill.enabled;
-                            
-                            // Force visual update for toggle switches by manipulating the DOM
-                            const toggleSlider = skillCheckbox.nextElementSibling;
-                            if (toggleSlider && toggleSlider.classList.contains('toggle-slider')) {
-                                // Force CSS recomputation by temporarily removing and re-adding the checkbox
-                                const parent = skillCheckbox.parentNode;
-                                const nextSibling = skillCheckbox.nextSibling;
-                                parent.removeChild(skillCheckbox);
-                                skillCheckbox.checked = skill.enabled;
-                                parent.insertBefore(skillCheckbox, nextSibling);
-                            }
-                            
-                            console.log(`Set skill ${skill.code} to ${skill.enabled}, checkbox.checked is now:`, skillCheckbox.checked);
-                        } else {
-                            console.warn(`Skill checkbox not found for code: ${skill.code}`);
-                        }
-                    });
-                } else {
-                    console.log('No skills configured, setting all to false');
-                    // Set default states for all skills if none configured
-                    const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
-                    skillCheckboxes.forEach(checkbox => {
-                        checkbox.checked = false;
-                    });
-                }
-            }, 100);
+            console.log('Skills populated with config data');
         }
 
         function createSkillCard(skill, enabled) {
