@@ -4914,8 +4914,18 @@
                         console.log(`Looking for checkbox: ${checkboxId}, found:`, skillCheckbox, 'setting to:', skill.enabled);
                         if (skillCheckbox) {
                             skillCheckbox.checked = skill.enabled;
-                            // Trigger change event to update toggle switch styling
-                            skillCheckbox.dispatchEvent(new Event('change'));
+                            
+                            // Force visual update for toggle switches by manipulating the DOM
+                            const toggleSlider = skillCheckbox.nextElementSibling;
+                            if (toggleSlider && toggleSlider.classList.contains('toggle-slider')) {
+                                // Force CSS recomputation by temporarily removing and re-adding the checkbox
+                                const parent = skillCheckbox.parentNode;
+                                const nextSibling = skillCheckbox.nextSibling;
+                                parent.removeChild(skillCheckbox);
+                                skillCheckbox.checked = skill.enabled;
+                                parent.insertBefore(skillCheckbox, nextSibling);
+                            }
+                            
                             console.log(`Set skill ${skill.code} to ${skill.enabled}, checkbox.checked is now:`, skillCheckbox.checked);
                         } else {
                             console.warn(`Skill checkbox not found for code: ${skill.code}`);
