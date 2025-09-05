@@ -1,0 +1,261 @@
+{
+    "result": true,
+    "pkgs": [
+        {
+            "_id": "68b59c0967ffafb71b00bc08",
+            "todayClaimed": false,
+            "status": 0,
+            "code": 80400101,
+            "numRemain": 1,
+            "expired": "2025-10-01T00:00:00.000Z",
+            "package": {
+                "code": 80400101,
+                "type": 15,
+                "costCode": 4,
+                "crystal1": 2000,
+                "crystal2": 29000,
+                "bonusRate": "1450%",
+                "limitDaily": 0,
+                "limit": 1,
+                "limitTime": 0,
+                "rootCode": 80400101,
+                "asset": 80400101,
+                "duration": 0,
+                "pre": 0,
+                "packageItemCode": 10106138,
+                "klay": 0,
+                "items": [
+                    {
+                        "code": 10100005,
+                        "amount": 4000
+                    },
+                    {
+                        "code": 10105003,
+                        "amount": 1
+                    },
+                    {
+                        "code": 10101010,
+                        "amount": 2
+                    },
+                    {
+                        "code": 10104142,
+                        "amount": 1
+                    },
+                    {
+                        "code": 10101052,
+                        "amount": 4
+                    },
+                    {
+                        "code": 10103008,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10103007,
+                        "amount": 10
+                    },
+                    {
+                        "code": 10101019,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10101028,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10101037,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10101046,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10104002,
+                        "amount": 1
+                    }
+                ],
+                "sku": "lok_pkg_4",
+                "sort": 1,
+                "tag": 0,
+                "active": 1,
+                "spItem": {
+                    "code": 0,
+                    "amount": 0
+                }
+            }
+        },
+        {
+            "_id": "68b59c0967ffafb71b00bc05",
+            "todayClaimed": false,
+            "status": 0,
+            "code": 80400204,
+            "numRemain": 1,
+            "expired": "2025-09-08T00:00:00.000Z",
+            "package": {
+                "code": 80400204,
+                "type": 15,
+                "costCode": 4,
+                "crystal1": 2000,
+                "crystal2": 20000,
+                "bonusRate": "1000%",
+                "limitDaily": 0,
+                "limit": 1,
+                "limitTime": 0,
+                "rootCode": 80400204,
+                "asset": 80400201,
+                "duration": 0,
+                "pre": 0,
+                "packageItemCode": 10106144,
+                "klay": 0,
+                "items": [
+                    {
+                        "code": 10100005,
+                        "amount": 4000
+                    },
+                    {
+                        "code": 10105003,
+                        "amount": 1
+                    },
+                    {
+                        "code": 10101010,
+                        "amount": 2
+                    },
+                    {
+                        "code": 10101019,
+                        "amount": 4
+                    },
+                    {
+                        "code": 10101028,
+                        "amount": 4
+                    },
+                    {
+                        "code": 10101037,
+                        "amount": 4
+                    },
+                    {
+                        "code": 10101046,
+                        "amount": 2
+                    },
+                    {
+                        "code": 10103039,
+                        "amount": 14
+                    }
+                ],
+                "sku": "lok_pkg_4",
+                "sort": 2,
+                "tag": 0,
+                "active": 1,
+                "spItem": {
+                    "code": 0,
+                    "amount": 0
+                }
+            }
+        },
+        {
+            "_id": "68ba94e2f7db7e0e12ffa3e3",
+            "todayClaimed": false,
+            "status": 0,
+            "code": 80400302,
+            "numRemain": 0,
+            "expired": "2025-09-06T00:00:00.000Z",
+            "package": {
+                "code": 80400302,
+                "type": 15,
+                "costCode": 0,
+                "crystal1": 100,
+                "crystal2": 100,
+                "bonusRate": "100%",
+                "limitDaily": 1,
+                "limit": 0,
+                "limitTime": 0,
+                "rootCode": 80400302,
+                "asset": 80400301,
+                "duration": 0,
+                "pre": 0,
+                "packageItemCode": 0,
+                "klay": 0,
+                "items": [
+                    {
+                        "code": 10104099,
+                        "amount": 1
+                    },
+                    {
+                        "code": 10104103,
+                        "amount": 1
+                    }
+                ],
+                "sku": "0",
+                "sort": 4,
+                "tag": 0,
+                "active": 1,
+                "spItem": {
+                    "code": 0,
+                    "amount": 0
+                }
+            }
+        },
+        {
+            "_id": "68ba94e2f7db7e0e12ffa3e6",
+            "todayClaimed": false,
+            "status": 0,
+            "code": 80400705,
+            "numRemain": 1,
+            "expired": "2025-09-06T00:00:00.000Z",
+            "package": {
+                "code": 80400705,
+                "type": 15,
+                "costCode": 5,
+                "crystal1": 5000,
+                "crystal2": 80200,
+                "bonusRate": "1604%",
+                "limitDaily": 0,
+                "limit": 1,
+                "limitTime": 0,
+                "rootCode": 80400705,
+                "asset": 80400401,
+                "duration": 0,
+                "pre": 0,
+                "packageItemCode": 10106127,
+                "klay": 0,
+                "items": [
+                    {
+                        "code": 10100005,
+                        "amount": 15000
+                    },
+                    {
+                        "code": 10105005,
+                        "amount": 1
+                    },
+                    {
+                        "code": 10101012,
+                        "amount": 1
+                    },
+                    {
+                        "code": 10101020,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10101029,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10101038,
+                        "amount": 6
+                    },
+                    {
+                        "code": 10101047,
+                        "amount": 6
+                    }
+                ],
+                "sku": "lok_pkg_5",
+                "sort": 3,
+                "tag": 0,
+                "active": 1,
+                "spItem": {
+                    "code": 0,
+                    "amount": 0
+                }
+            }
+        }
+    ]
+}

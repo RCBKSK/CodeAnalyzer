@@ -1809,12 +1809,31 @@
                 <!-- Alliance activities are now configured in the dedicated Alliance Activities tab -->
 
                 <!-- Threads Section -->
-                <div>
+                <div style="margin-bottom: 32px;">
                     <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
                         <i class="fas fa-code-branch"></i> Threads
                     </h3>
                     <div id="threads-list">
                         <!-- Thread toggles will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Feature Toggles Section -->
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
+                        <i class="fas fa-toggle-on"></i> Feature Toggles
+                    </h3>
+                    
+                    <!-- Daily Free Package Toggle -->
+                    <div class="thread-item">
+                        <div>
+                            <div class="thread-name">Daily Free Package</div>
+                            <div class="thread-description">Automatically claim daily free packages every 30 minutes</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="daily-free-package-enabled" onchange="toggleFeature('daily_free_package', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
 
@@ -4990,6 +5009,13 @@
         function populateSettingsConfig(jobs, threads) {
             console.log('Loading settings config - jobs:', jobs);
             console.log('Loading settings config - threads:', threads);
+            
+            // Populate daily free package toggle
+            const dailyFreePackageEnabled = fullConfigData?.main?.daily_free_package?.enabled || false;
+            const dailyFreePackageCheckbox = document.getElementById('daily-free-package-enabled');
+            if (dailyFreePackageCheckbox) {
+                dailyFreePackageCheckbox.checked = dailyFreePackageEnabled;
+            }
 
             // Populate jobs
             const jobsList = document.getElementById('jobs-list');
@@ -5043,7 +5069,8 @@
                     'quest_monitor_thread': 'Monitor and complete available quests',
                     'building_farmer_thread': 'Automatically upgrade buildings',
                     'academy_farmer_thread': 'Automatically conduct research in academy',
-                    'train_troop_thread': 'Automatically train troops'
+                    'train_troop_thread': 'Automatically train troops',
+                    'daily_free_package': 'Automatically claim daily free packages every 30 minutes'
                 };
 
                 threads.forEach(thread => {
@@ -5135,6 +5162,33 @@
             fullConfigData.toggles.threads[threadName] = enabled;
 
             console.log(`Updated thread ${threadName} enabled status to ${enabled}`);
+        }
+
+        function toggleFeature(featureName, enabled) {
+            console.log(`Toggling feature: ${featureName} to ${enabled}`);
+
+            // Update the feature in fullConfigData
+            if (!fullConfigData.main) {
+                fullConfigData.main = {};
+            }
+
+            if (featureName === 'daily_free_package') {
+                if (!fullConfigData.main.daily_free_package) {
+                    fullConfigData.main.daily_free_package = {};
+                }
+                fullConfigData.main.daily_free_package.enabled = enabled;
+
+                // Also update toggles structure for consistency
+                if (!fullConfigData.toggles) {
+                    fullConfigData.toggles = {};
+                }
+                if (!fullConfigData.toggles.features) {
+                    fullConfigData.toggles.features = {};
+                }
+                fullConfigData.toggles.features.daily_free_package = enabled;
+            }
+
+            console.log(`Updated feature ${featureName} enabled status to ${enabled}`);
         }
 
         function toggleAllianceFarmerFeature(featureName, enabled) {

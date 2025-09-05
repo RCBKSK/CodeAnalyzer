@@ -110,6 +110,9 @@ class ConfigHelper:
                             {"code": 10002, "enabled": True}
                         ]
                     },
+                    "daily_free_package": {
+                        "enabled": True
+                    },
                     "object_scanning": {
                         "enabled": False,
                         "monster_attack": {
@@ -208,6 +211,15 @@ class ConfigHelper:
                     if "monster_attack" not in object_scanning:
                         object_scanning["monster_attack"] = {}
                     object_scanning["monster_attack"]["enabled"] = config["toggles"]["features"]["enable_monster_attack"]
+
+            # Daily free package
+            if "main" in config and "daily_free_package" in config["main"]:
+                daily_package = config["main"]["daily_free_package"]
+                config["toggles"]["features"]["daily_free_package"] = daily_package.get("enabled", False)
+
+                # Bidirectional sync
+                if "daily_free_package" in config["toggles"]["features"]:
+                    daily_package["enabled"] = config["toggles"]["features"]["daily_free_package"]
 
             # Rally join/start
             if "rally" in config:
