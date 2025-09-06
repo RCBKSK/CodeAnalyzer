@@ -5896,16 +5896,49 @@ Status: {status}"""
         try:
             # First priority: Use active_buffs from socc_thread /buff/list WebSocket events
             if hasattr(self, 'active_buffs') and self.active_buffs:
-                logger.debug(f"Using socc_thread buff data: {len(self.active_buffs)} active buffs")
-                return self.active_buffs
+                # Validate and filter expired buffs from socc_thread data
+                valid_buffs = []
+                current_time = arrow.utcnow()
+                
+                for buff in self.active_buffs:
+                    expired_date = buff.get('expiredDate')
+                    if expired_date:
+                        try:
+                            expired_arrow = arrow.get(expired_date)
+                            # Only include buffs that are still active (not expired)
+                            if expired_arrow > current_time:
+                                valid_buffs.append(buff)
+                            else:
+                                logger.debug(f"Filtering out expired buff: {buff.get('param', {}).get('itemCode', 'Unknown')}")
+                        except Exception as date_error:
+                            logger.debug(f"Error parsing buff expiry date, including anyway: {date_error}")
+                            valid_buffs.append(buff)
+                    else:
+                        # If no expiry date available, include it anyway
+                        valid_buffs.append(buff)
+                
+                logger.debug(f"Using socc_thread buff data: {len(valid_buffs)} active buffs (filtered from {len(self.active_buffs)})")
+                return valid_buffs
 
             # Fallback: Try to get fresh buff data from the kingdom enter response
+            logger.debug("No socc_thread buff data available, trying kingdom_enter API...")
             kingdom_response = self.api.kingdom_enter()
             if kingdom_response and 'kingdom' in kingdom_response:
                 buffs = kingdom_response.get('kingdom', {}).get('buffs', [])
                 if buffs:
-                    logger.debug(f"Retrieved {len(buffs)} active buffs from kingdom_enter")
-                    return buffs
+                    # Also validate kingdom_enter buff data for expired buffs
+                    valid_buffs = []
+                    current_time = arrow.utcnow()
+                    
+                    for buff in buffs:
+                        remaining_time = buff.get('remainingTime', 0)
+                        if remaining_time > 0:
+                            valid_buffs.append(buff)
+                        else:
+                            logger.debug(f"Filtering out expired buff from kingdom_enter: {buff.get('param', {}).get('itemCode', 'Unknown')}")
+                    
+                    logger.debug(f"Retrieved {len(valid_buffs)} active buffs from kingdom_enter (filtered from {len(buffs)})")
+                    return valid_buffs
 
             # Final fallback: empty list
             logger.debug("No buff data available from any source")
@@ -5913,7 +5946,32 @@ Status: {status}"""
 
         except Exception as e:
             logger.debug(f"Failed to get buff data: {e}")
+            # Return existing active_buffs if available, otherwise empty list
             return getattr(self, 'active_buffs', [])
+
+    def _calculate_buff_remaining_time(self, buff):
+        """Calculate remaining time for a buff in minutes"""
+        try:
+            # Try remainingTime field first (from kingdom_enter API)
+            remaining_time = buff.get('remainingTime', 0)
+            if remaining_time > 0:
+                return remaining_time / 60
+            
+            # Calculate from expiredDate if remainingTime not available (from socc_thread)
+            expired_date = buff.get('expiredDate')
+            if expired_date:
+                expired_arrow = arrow.get(expired_date)
+                current_time = arrow.utcnow()
+                if expired_arrow > current_time:
+                    diff = expired_arrow - current_time
+                    return diff.total_seconds() / 60
+                else:
+                    return 0  # Expired
+                    
+            return 0  # No time data available
+        except Exception as e:
+            logger.debug(f"Error calculating buff remaining time: {e}")
+            return 0
 
     def _alliance_help_thread(self):
         """Thread to periodically help alliance members"""
@@ -6145,50 +6203,57 @@ Status: {status}"""
                     # Check if buff is currently active with enhanced validation
                     active_buff = None
                     active_buff_count = 0
+                    all_matching_buffs = []
 
                     for buff in current_active_buffs:
                         buff_item_code = buff.get('param', {}).get('itemCode')
-                        if buff_item_code in item_codes:
-                            active_buff = buff
+                        buff_param_code = buff.get('param', {}).get('code')  # Alternative field
+                        
+                        # Check both itemCode and code fields for thorough matching
+                        if buff_item_code in item_codes or buff_param_code in item_codes:
+                            all_matching_buffs.append(buff)
                             active_buff_count += 1
+                            
+                            # Choose the buff with the most remaining time as the primary active buff
+                            if active_buff is None:
+                                active_buff = buff
+                            else:
+                                # Compare remaining times to pick the best one
+                                current_remaining = self._calculate_buff_remaining_time(active_buff)
+                                new_remaining = self._calculate_buff_remaining_time(buff)
+                                if new_remaining > current_remaining:
+                                    active_buff = buff
 
-                    # Log multiple active buffs of same type (potential issue indicator)
+                    # Enhanced logging for multiple active buffs
                     if active_buff_count > 1:
-                        logger.warning(f"Found {active_buff_count} active {buff_name} buffs - possible over-activation detected")
+                        logger.warning(f"Found {active_buff_count} active {buff_name} buffs - potential over-activation detected")
+                        for i, buff in enumerate(all_matching_buffs):
+                            remaining = self._calculate_buff_remaining_time(buff)
+                            item_code = buff.get('param', {}).get('itemCode') or buff.get('param', {}).get('code')
+                            logger.warning(f"  Buff {i+1}: itemCode={item_code}, remaining={remaining:.1f} minutes")
+                    elif active_buff_count == 1:
+                        remaining = self._calculate_buff_remaining_time(active_buff)
+                        item_code = active_buff.get('param', {}).get('itemCode') or active_buff.get('param', {}).get('code')
+                        logger.debug(f"Found 1 active {buff_name} buff: itemCode={item_code}, remaining={remaining:.1f} minutes")
 
                     should_activate = False
                     activation_reason = ""
 
                     if active_buff:
-                        # Check remaining time with enhanced validation
-                        remaining_time = active_buff.get('remainingTime', 0)
-                        remaining_minutes = 0
-                        
-                        if remaining_time:
-                            # Use remainingTime if available (from kingdom_enter API)
-                            remaining_minutes = remaining_time / 60
-                        else:
-                            # Calculate from expiredDate if remainingTime not available (from socc_thread)
-                            expired_date = active_buff.get('expiredDate')
-                            if expired_date:
-                                try:
-                                    expired_arrow = arrow.get(expired_date)
-                                    current_time = arrow.utcnow()
-                                    if expired_arrow > current_time:
-                                        diff = expired_arrow - current_time
-                                        remaining_minutes = diff.total_seconds() / 60
-                                    else:
-                                        remaining_minutes = 0  # Expired
-                                except Exception as time_error:
-                                    logger.warning(f"Error calculating remaining time for {buff_name}: {time_error}")
-                                    remaining_minutes = 0
+                        # Use enhanced remaining time calculation
+                        remaining_minutes = self._calculate_buff_remaining_time(active_buff)
 
-                        # Additional safety check - don't activate if remaining time is > 8 hours (suspicious)
-                        if remaining_minutes > 480:
-                            logger.warning(f"{buff_name} has {remaining_minutes:.1f} minutes remaining (>8h) - skipping activation")
+                        # Additional safety checks before activation
+                        if remaining_minutes > 480:  # > 8 hours (suspicious)
+                            logger.warning(f"{buff_name} has {remaining_minutes:.1f} minutes remaining (>8h) - skipping activation (possible data error)")
                             continue
-
-                        if remaining_minutes < min_duration_minutes:
+                            
+                        # Double-check that the buff is actually still active (not expired)
+                        if remaining_minutes <= 0:
+                            logger.info(f"{buff_name} buff has expired (remaining: {remaining_minutes:.1f} minutes) - will activate")
+                            should_activate = True
+                            activation_reason = "Buff has expired"
+                        elif remaining_minutes < min_duration_minutes:
                             should_activate = True
                             activation_reason = f"Low remaining time: {remaining_minutes:.1f}min < {min_duration_minutes}min threshold"
                         else:
@@ -6214,6 +6279,24 @@ Status: {status}"""
 
                         try:
                             with self.buff_item_use_lock:
+                                # Final validation: Re-check active buffs just before activation to prevent race conditions
+                                final_check_buffs = self._get_current_active_buffs()
+                                final_active_buff = None
+                                
+                                for buff in final_check_buffs:
+                                    buff_item_code = buff.get('param', {}).get('itemCode')
+                                    buff_param_code = buff.get('param', {}).get('code')
+                                    if buff_item_code in item_codes or buff_param_code in item_codes:
+                                        final_remaining = self._calculate_buff_remaining_time(buff)
+                                        if final_remaining >= min_duration_minutes:
+                                            logger.info(f"Buff {buff_name} became active during processing ({final_remaining:.1f} min remaining) - skipping activation")
+                                            final_active_buff = buff
+                                            break
+                                
+                                # Only proceed if final check confirms activation is still needed
+                                if final_active_buff:
+                                    continue  # Skip activation, buff is now active with sufficient time
+                                
                                 # Use the first available item
                                 item_to_use = available_items[0]
                                 item_code = item_to_use.get('code')
