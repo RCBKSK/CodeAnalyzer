@@ -1,6 +1,29 @@
 
 # LokBot - Automated Game Bot for League of the Kingdoms
 
+## ⚠️ CRITICAL WARNING FOR REPLIT AGENTS ⚠️
+
+**HIGH PRIORITY DEVELOPMENT GUIDELINES:**
+
+🚨 **DO NOT MAKE UNAUTHORIZED CHANGES** 🚨
+
+1. **Follow Instructions EXACTLY** - Only implement what is specifically requested by the user
+2. **NO Scope Creep** - Do not add features, modify UI elements, or change functionality that wasn't explicitly asked for  
+3. **ASK Before Major Changes** - Always seek permission before making significant modifications to existing working systems
+4. **Understand Before Acting** - Thoroughly analyze the existing codebase structure before making any changes
+5. **Test Existing Functionality** - Ensure you understand how current features work before attempting modifications
+6. **Preserve Working Features** - Do not break or modify existing functionality while adding new features
+
+**RECENT LESSON LEARNED (Sept 6, 2025):**
+- Rally Join/Start troops were ALREADY configured correctly (per-monster troops)  
+- Agent incorrectly added general troops sections without understanding the existing architecture
+- Caused confusion and required rollback of unnecessary changes
+- Always examine existing code structure before assuming something is missing
+
+**Remember: Users hire agents to be precise and follow directions, not to make arbitrary improvements!**
+
+---
+
 LokBot is a comprehensive automation bot for League of the Kingdoms game, imported from https://github.com/RCBKSK/new-dev/. This sophisticated system features 4335+ lines of game automation logic, Discord bot integration, and a full-featured web control panel. The bot automates various game activities including rally participation, monster attacks, resource gathering, and advanced object scanning.
 
 ## Recent Changes (September 3, 2025)
