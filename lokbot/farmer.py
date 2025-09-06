@@ -2795,6 +2795,52 @@ Expected End: {ended_time}"""
                     logger.error(f"Failed to send Discord notification: {str(e)}")
 
             self._start_march(monster_loc, march_troops, MARCH_TYPE_MONSTER)
+            
+            # Send monster attack notification after successful march start
+            try:
+                from lokbot.rally_utils import get_monster_name_by_code
+                monster_display_name = get_monster_name_by_code(monster_code)
+                
+                # Determine troop type for notification
+                troop_type = "Unknown"
+                for troop in march_troops:
+                    code = troop.get('code', 0)
+                    if code >= 50100305:  # T5
+                        troop_type = "T5"
+                        break
+                    elif code >= 50100304:  # T4
+                        troop_type = "T4"
+                        break
+                    elif code >= 50100303:  # T3
+                        troop_type = "T3"
+                        break
+                    elif code >= 50100203:  # T2
+                        troop_type = "T2"
+                        break
+                    elif code >= 50100103:  # T1
+                        troop_type = "T1"
+                        break
+                
+                total_troops = sum(troop.get('amount', 0) for troop in march_troops)
+                
+                # Create notification message similar to rally join format
+                notification_message = f"Monster: {monster_display_name}\n"
+                notification_message += f"Level: {monster_level}\n"
+                notification_message += f"Location: [{monster_loc[0]}, {monster_loc[1]}, {monster_loc[2]}]\n"
+                notification_message += f"Troops Sent: {total_troops:,} {troop_type}"
+                
+                # Send notification to web app
+                self._send_notification(
+                    'monster_attack',
+                    '👹 Monster Attack Started',
+                    notification_message
+                )
+                
+                logger.info(f"Monster attack notification sent for {monster_display_name} level {monster_level}")
+                
+            except Exception as e:
+                logger.error(f"Failed to send monster attack notification: {str(e)}")
+                
         except NotOnlineException:
             logger.warning(f'Kingdom is not online for monster attack, attempting complete re-initialization...')
 
