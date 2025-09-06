@@ -3,11 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="HelenA QuantumRaid">
-    <meta name="theme-color" content="#3b82f6">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}HelenA QuantumRaid Bot - Simple Config{% endblock %}</title>
 
     <!-- Fonts -->
@@ -275,92 +271,30 @@
         .troop-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-            padding: 24px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .troop-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .troop-item:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-        }
-
-        .troop-item:hover::before {
-            left: 100%;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
         }
 
         .troop-select {
-            flex: 2;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            background: white;
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            transition: all 0.3s ease;
-        }
-
-        .troop-select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .troop-amount,
-        .troop-amount-input {
             flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            text-align: center;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
             font-size: 14px;
-            font-weight: 500;
-            color: #374151;
             background: white;
-            transition: all 0.3s ease;
         }
 
-        .troop-amount:focus,
-        .troop-amount-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .status-enabled {
-            background-color: #10b981;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-        }
-
-        .status-disabled {
-            background-color: #6b7280;
-            box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.2);
+        .troop-amount {
+            width: 80px;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
         }
 
         .fixed-amounts-container {
@@ -743,92 +677,7 @@
                 min-height: 44px;
                 padding: 12px 16px;
                 font-size: 16px;
-                -webkit-tap-highlight-color: transparent;
-                touch-action: manipulation;
             }
-            
-            /* Improve touch targets */
-            .monster-checkbox, .troop-select, input[type="number"], input[type="text"] {
-                min-height: 44px;
-                font-size: 16px; /* Prevents zoom on iOS */
-            }
-            
-            /* Better tab scrolling on mobile */
-            .tabs {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                padding-bottom: 4px;
-            }
-            
-            .tabs::-webkit-scrollbar {
-                display: none;
-            }
-            
-            .tab {
-                flex: 0 0 auto;
-                white-space: nowrap;
-            }
-            
-            /* Optimize config sections for mobile */
-            .config-section {
-                padding: 16px;
-                margin-bottom: 16px;
-            }
-            
-            /* Better modal sizing */
-            .modal-body {
-                max-height: 70vh;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            /* Improve form layouts on mobile */
-            .input-group {
-                margin-bottom: 16px;
-            }
-            
-            /* Monster cards responsive */
-            .monster-card {
-                margin-bottom: 12px;
-                padding: 12px;
-            }
-        }
-        
-        /* Small mobile devices */
-        @media (max-width: 480px) {
-            .container {
-                padding: 8px;
-            }
-            
-            .header {
-                padding: 12px;
-            }
-            
-            .header h1 {
-                font-size: 18px;
-            }
-            
-            .config-section {
-                padding: 12px;
-            }
-            
-            .tab {
-                min-width: 100px;
-                font-size: 12px;
-                padding: 8px 12px;
-            }
-            
-            .monster-card {
-                padding: 8px;
-            }
-            
-            .btn {
-                padding: 10px 14px;
-                font-size: 14px;
-            }
-        }
 
             .input-field,
             .dropdown-field {
@@ -922,14 +771,8 @@
             <button class="tab" onclick="switchTab('buff-management')">
                 <i class="fas fa-magic"></i> Buff Management
             </button>
-            <button class="tab" onclick="switchTab('alliance-activities')">
-                <i class="fas fa-handshake"></i> Alliance Activities
-            </button>
             <button class="tab" onclick="switchTab('skills')">
                 <i class="fas fa-bolt"></i> Skills
-            </button>
-            <button class="tab" onclick="switchTab('vip-shop')">
-                <i class="fas fa-crown"></i> VIP Shop
             </button>
             <button class="tab" onclick="switchTab('treasure')">
                 <i class="fas fa-gem"></i> Treasure
@@ -959,24 +802,6 @@
                     <span class="troops-title">Enable Rally Join</span>
                 </div>
 
-                <!-- Rally Join Skin Change -->
-                <div class="toggle-section">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="rally-join-skin-change-enabled">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="troops-title">Enable Skin Change</span>
-                    <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Change skin before joining rallies
-                    </small>
-                </div>
-
-                <div class="distance-section">
-                    <span class="troops-title">Skin NFT ID</span>
-                    <input type="text" id="rally-join-skin-item-id" class="distance-input" value="" placeholder="e.g., 1883735">
-                    <span class="unit-label">NFT id</span>
-                </div>
-
                 <!-- Number of Marches -->
                 <div class="distance-section">
                     <span class="troops-title">Number of Marches</span>
@@ -996,7 +821,6 @@
                     <span class="unit-label">km</span>
                 </div>
 
-
                 <!-- Add New Monster -->
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="rally-join-monster-select" class="dropdown-field" style="flex: 1;">
@@ -1008,18 +832,18 @@
                         <option value="20200205_Magdar">Magdar</option>
                         <option value="20200206_Pantagruel">Pantagruel</option>
                         <option value="20200207_Gargantua">Gargantua</option>
-
-
-
-
-
-
-
+                        <option value="20200101_Orc">Orc</option>
+                        <option value="20200102_Skeleton">Skeleton</option>
+                        <option value="20200103_Golem">Golem</option>
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+                        <option value="20700405_Ogre">Ogre</option>
+                        <option value="20700406_Wolf">Wolf</option>
+                        <option value="20700407_Cyclops">Cyclops</option>
                         <option value="20700506_Spartoi">Spartoi</option>
-
-
-
-
+                        <option value="20800401_BF Orc">BF Orc</option>
+                        <option value="20800402_BF Skeleton">BF Skeleton</option>
+                        <option value="20800403_BF Golem">BF Golem</option>
+                        <option value="20800404_BF Treasure Goblin">BF Treasure Goblin</option>
                     </select>
                     <button class="btn btn-primary" onclick="addSelectedMonster('rally-join')">
                         <i class="fas fa-plus"></i>
@@ -1029,7 +853,7 @@
 
                 <!-- Save Section -->
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('rally-join')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1055,24 +879,6 @@
                     <span class="troops-title">Enable Rally Start</span>
                 </div>
 
-                <!-- Rally Start Skin Change -->
-                <div class="toggle-section">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="rally-start-skin-change-enabled">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="troops-title">Enable Skin Change</span>
-                    <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Change skin before starting rallies
-                    </small>
-                </div>
-
-                <div class="distance-section">
-                    <span class="troops-title">Skin NFT ID</span>
-                    <input type="text" id="rally-start-skin-item-id" class="distance-input" value="" placeholder="e.g., 1883734">
-                    <span class="unit-label">NFT id</span>
-                </div>
-
                 <!-- Number of Marches -->
                 <div class="distance-section">
                     <span class="troops-title">Number of Marches</span>
@@ -1091,7 +897,6 @@
                     <span class="unit-label">km</span>
                 </div>
 
-
                 <!-- Add New Monster -->
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="rally-start-monster-select" class="dropdown-field" style="flex: 1;">
@@ -1103,18 +908,18 @@
                         <option value="20200205_Magdar">Magdar</option>
                         <option value="20200206_Pantagruel">Pantagruel</option>
                         <option value="20200207_Gargantua">Gargantua</option>
-
-
-
-
-
-
-
+                        <option value="20200101_Orc">Orc</option>
+                        <option value="20200102_Skeleton">Skeleton</option>
+                        <option value="20200103_Golem">Golem</option>
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+                        <option value="20700405_Ogre">Ogre</option>
+                        <option value="20700406_Wolf">Wolf</option>
+                        <option value="20700407_Cyclops">Cyclops</option>
                         <option value="20700506_Spartoi">Spartoi</option>
-
-
-
-
+                        <option value="20800401_BF Orc">BF Orc</option>
+                        <option value="20800402_BF Skeleton">BF Skeleton</option>
+                        <option value="20800403_BF Golem">BF Golem</option>
+                        <option value="20800404_BF Treasure Goblin">BF Treasure Goblin</option>
                     </select>
                     <button class="btn btn-primary" onclick="addSelectedMonster('rally-start')">
                         <i class="fas fa-plus"></i>
@@ -1123,7 +928,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('rally-start')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1155,31 +960,30 @@
 
                 <!-- Max Attack Distance -->
                 <div class="distance-section">
-                    <div class="toggle-section">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="monster-distance-check-enabled">
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <span class="troops-title">Enable Distance Check</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px;">
-                        <span class="troops-title">Max Attack Distance</span>
-                        <input type="number" id="monster-attack-distance" class="distance-input" value="200" min="1">
-                        <span class="unit-label">km</span>
-                    </div>
+                    <span class="troops-title">Max Attack Distance</span>
+                    <input type="number" id="monster-attack-distance" class="distance-input" value="200" min="1">
+                    <span class="unit-label">km</span>
                 </div>
 
                 <!-- Add New Monster -->
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="monster-attack-monster-select" class="dropdown-field" style="flex: 1;">
                         <option value="">Select a monster to add</option>
-
-
-
-
-
-
-
+                        <option value="20200201_Deathkar">Deathkar</option>
+                        <option value="20200202_Green Dragon">Green Dragon</option>
+                        <option value="20200203_Red Dragon">Red Dragon</option>
+                        <option value="20200204_Gold Dragon">Gold Dragon</option>
+                        <option value="20200205_Magdar">Magdar</option>
+                        <option value="20200206_Pantagruel">Pantagruel</option>
+                        <option value="20200207_Gargantua">Gargantua</option>
+                        <option value="20200101_Orc">Orc</option>
+                        <option value="20200102_Skeleton">Skeleton</option>
+                        <option value="20200103_Golem">Golem</option>
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
+                        <option value="20700405_Ogre">Ogre</option>
+                        <option value="20700406_Wolf">Wolf</option>
+                        <option value="20700407_Cyclops">Cyclops</option>
+                        <option value="20700506_Spartoi">Spartoi</option>
                     </select>
                     <button class="btn btn-primary" onclick="addSelectedMonster('monster-attack')">
                         <i class="fas fa-plus"></i>
@@ -1188,7 +992,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('monster-attack')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1226,24 +1030,6 @@
                     </small>
                 </div>
 
-                <!-- Object Scanning Skin Change -->
-                <div class="toggle-section">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="socf-objects-skin-change-enabled">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="troops-title">Enable Skin Change</span>
-                    <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Change skin during object scanning activities
-                    </small>
-                </div>
-
-                <div class="distance-section">
-                    <span class="troops-title">Skin NFT ID</span>
-                    <input type="text" id="socf-objects-skin-item-id" class="distance-input" value="" placeholder="e.g., 1807697">
-                    <span class="unit-label">NFT id</span>
-                </div>
-
                 <div id="socf-objects-list">
                     <!-- Object cards will be loaded here -->
                 </div>
@@ -1264,32 +1050,6 @@
                     <span class="unit-label">tiles</span>
                 </div>
 
-                <!-- Area Restrictions -->
-                <div class="toggle-section">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="area-restrictions-enabled">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="troops-title">Enable Area Restrictions</span>
-                    <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Limit gathering and monster attacks to specific coordinate areas
-                    </small>
-                </div>
-
-                <div id="area-restrictions-container" style="margin-top: 16px; display: none;">
-                    <div id="area-restrictions-list">
-                        <!-- Area restriction cards will be loaded here -->
-                    </div>
-                    
-                    <!-- Add New Area -->
-                    <div style="margin-top: 16px;">
-                        <button class="btn btn-secondary" onclick="addAreaRestriction()">
-                            <i class="fas fa-plus"></i>
-                            Add New Area
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Add New Object -->
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="socf-object-select" class="dropdown-field" style="flex: 1;">
@@ -1300,19 +1060,11 @@
                         <option value="20100102_Gold Mine">Gold Mine</option>
                         <option value="20100103_Lumber Camp">Lumber Camp</option>
                         <option value="20100104_Quarry">Quarry</option>
-                        
-                        <!-- Field Monsters -->
+                        <option value="20200103_Golem">Golem</option>
                         <option value="20200101_Orc">Orc</option>
                         <option value="20200102_Skeleton">Skeleton</option>
-                        <option value="20200103_Golem">Golem</option>
-                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
                         <option value="20200201_Deathkar">Deathkar</option>
-                        <option value="20200202_Green Dragon">Green Dragon</option>
-                        <option value="20200203_Red Dragon">Red Dragon</option>
-                        <option value="20200204_Gold Dragon">Gold Dragon</option>
-                        <option value="20200205_Magdar">Magdar</option>
-                        <option value="20200301_Spartoi">Spartoi</option>
-
+                        <option value="20200104_Treasure Goblin">Treasure Goblin</option>
                     </select>
                     <button class="btn btn-primary" onclick="addSelectedSocfObject()">
                         <i class="fas fa-plus"></i>
@@ -1321,7 +1073,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('socf-objects')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1335,7 +1087,7 @@
             <div class="config-section">
                 <h2 class="section-title">
                     <i class="fas fa-magic"></i>
-                    Production Boost Management
+                    Buff Management Configuration
                 </h2>
 
                 <!-- Enable/Disable Toggle -->
@@ -1344,191 +1096,19 @@
                         <input type="checkbox" id="buff-management-enabled">
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="troops-title">Enable Automatic Production Boost Management</span>
+                    <span class="troops-title">Enable Automatic Buff Management</span>
                     <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Automatically activates production boosts when they expire based on duration and priority settings
+                        Automatically activates buffs when they expire based on minimum duration settings
                     </small>
                 </div>
 
-                <div id="buff-management-list" style="margin-top: 20px;">
-                    <!-- Individual buff dropdowns will be loaded here -->
+                <div id="buff-management-list">
+                    <!-- Buff cards will be loaded here -->
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('buff-management')">
-                        <i class="fas fa-save"></i>
-                        Save Configuration
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Alliance Activities Configuration -->
-        <div id="alliance-activities" class="tab-content">
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-handshake"></i>
-                    Alliance Activities Configuration
-                </h2>
-                <div style="color: #64748b; font-size: 14px; margin-bottom: 30px;">
-                    Configure each alliance activity to run on its own thread with custom intervals
-                </div>
-
-                <!-- Alliance Help All -->
-                <div class="monster-card">
-                    <div class="monster-header">
-                        <i class="fas fa-hands-helping" style="color: #10b981;"></i>
-                        <span class="monster-name">Alliance Help All</span>
-                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="alliance-help-enabled" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
-                        Automatically help alliance members with their buildings and research
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
-                        <input type="number" id="alliance-help-interval" value="5" min="1" max="1440" 
-                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        <small style="color: #64748b;">How often to check for help requests</small>
-                    </div>
-                </div>
-
-                <!-- Alliance Gift Claim -->
-                <div class="monster-card">
-                    <div class="monster-header">
-                        <i class="fas fa-gift" style="color: #f59e0b;"></i>
-                        <span class="monster-name">Alliance Gift Claim</span>
-                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="alliance-gift-enabled" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
-                        Automatically claim alliance gifts from other members
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
-                        <input type="number" id="alliance-gift-interval" value="30" min="5" max="1440" 
-                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        <small style="color: #64748b;">How often to check for new gifts</small>
-                    </div>
-                </div>
-
-                <!-- Alliance Research Donate -->
-                <div class="monster-card">
-                    <div class="monster-header">
-                        <i class="fas fa-flask" style="color: #8b5cf6;"></i>
-                        <span class="monster-name">Alliance Research Donate</span>
-                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="alliance-research-enabled" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
-                        Automatically donate resources to alliance research
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
-                        <input type="number" id="alliance-research-interval" value="60" min="10" max="1440" 
-                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        <small style="color: #64748b;">How often to donate to research</small>
-                    </div>
-                </div>
-
-                <!-- Alliance Shop Auto-Buy -->
-                <div class="monster-card">
-                    <div class="monster-header">
-                        <i class="fas fa-shopping-cart" style="color: #ef4444;"></i>
-                        <span class="monster-name">Alliance Shop Auto-Buy</span>
-                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="alliance-shop-enabled" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
-                        Automatically purchase items from alliance shop (configured in Alliance Shop tab)
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
-                        <input type="number" id="alliance-shop-interval" value="120" min="30" max="1440" 
-                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        <small style="color: #64748b;">How often to check shop for items</small>
-                    </div>
-
-                    <!-- Advanced Alliance Shop Configuration -->
-                    <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #ef4444;">
-                        <h4 style="margin: 0 0 10px 0; color: #374151; font-size: 14px;">
-                            <i class="fas fa-cog"></i> Advanced Shop Configuration
-                        </h4>
-                        <div style="margin-bottom: 12px;">
-                            <button class="btn btn-secondary" onclick="loadAllianceShopItems()" style="font-size: 12px; padding: 6px 12px;">
-                                <i class="fas fa-refresh"></i> Load Available Items
-                            </button>
-                            <button class="btn btn-accent" onclick="addShopItem()" style="font-size: 12px; padding: 6px 12px; margin-left: 8px;">
-                                <i class="fas fa-plus"></i> Add Item
-                            </button>
-                        </div>
-                        <div id="alliance-shop-items-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; background: white;">
-                            <!-- Shop items will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Caravan Auto-Buy -->
-                <div class="monster-card">
-                    <div class="monster-header">
-                        <i class="fas fa-truck" style="color: #10b981;"></i>
-                        <span class="monster-name">Caravan Auto-Buy</span>
-                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="caravan-auto-buy-enabled">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
-                        Automatically purchase items from visiting caravans
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #374151; font-weight: 500;">Interval (minutes):</span>
-                        <input type="number" id="caravan-interval" value="180" min="30" max="1440" 
-                               style="width: 80px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        <small style="color: #64748b;">How often to check for caravans</small>
-                    </div>
-
-                    <!-- Advanced Caravan Configuration -->
-                    <div style="margin-top: 20px; padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
-                        <h4 style="margin: 0 0 10px 0; color: #374151; font-size: 14px;">
-                            <i class="fas fa-cog"></i> Advanced Caravan Configuration
-                        </h4>
-                        <div style="margin-bottom: 12px;">
-                            <button class="btn btn-secondary" onclick="loadCaravanItems()" style="font-size: 12px; padding: 6px 12px;">
-                                <i class="fas fa-refresh"></i> Load Available Items
-                            </button>
-                            <button class="btn btn-accent" onclick="addCaravanItem()" style="font-size: 12px; padding: 6px 12px; margin-left: 8px;">
-                                <i class="fas fa-plus"></i> Add Item
-                            </button>
-                        </div>
-                        <div id="caravan-items-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; background: white;">
-                            <!-- Caravan items will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveConfig('alliance-activities')">
                         <i class="fas fa-save"></i>
                         Save Configuration
                     </button>
@@ -1544,7 +1124,7 @@
                     Skills Configuration
                 </h2>
 
-                <!-- Enable Skills Toggle -->
+                <!-- Enable/Disable Toggle -->
                 <div class="toggle-section">
                     <label class="toggle-switch">
                         <input type="checkbox" id="skills-enabled">
@@ -1556,127 +1136,13 @@
                     </small>
                 </div>
 
-                <!-- Enable Two-Skin Workflow Toggle -->
-                <div class="toggle-section">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="skills-skin-change-enabled">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="troops-title">Enable Two-Skin Workflow</span>
-                    <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Change to Skin 1 → Change treasure page → Activate "Increase Resource Production" + "Instant Harvest" → Wait 2 mins → Change to Skin 2 and Change treasure page again
-                    </small>
-                </div>
-
-                <!-- First Row: First Skin ID and First Treasure Page -->
-                <div style="display: flex; gap: 20px; margin: 20px 0; align-items: center;">
-                    <div style="flex: 1;">
-                        <span class="troops-title">First Skin ID</span>
-                        <input type="text" id="skills-skin-item-id" class="distance-input" value="" placeholder="67b0bf9d6d" style="width: 100%;">
-                        <small style="color: #64748b; font-size: 11px;">first skin id</small>
-                    </div>
-                    <div style="flex: 1;">
-                        <span class="troops-title">First Treasure Page</span>
-                        <select id="skills-treasure-page-1" class="dropdown-field" style="width: 100%;">
-                            <option value="0">Page 0</option>
-                            <option value="1">Page 1</option>
-                            <option value="2">Page 2</option>
-                            <option value="3" selected>Page 3</option>
-                        </select>
-                        <small style="color: #64748b; font-size: 11px;">treasure page 1</small>
-                    </div>
-                </div>
-
-                <!-- Second Row: Second Skin ID and Second Treasure Page -->
-                <div style="display: flex; gap: 20px; margin: 20px 0; align-items: center;">
-                    <div style="flex: 1;">
-                        <span class="troops-title">Second Skin ID</span>
-                        <input type="text" id="skills-skin-item-id-2" class="distance-input" value="" placeholder="1557544" style="width: 100%;">
-                        <small style="color: #64748b; font-size: 11px;">second skin id</small>
-                    </div>
-                    <div style="flex: 1;">
-                        <span class="troops-title">Second Treasure Page</span>
-                        <select id="skills-treasure-page-2" class="dropdown-field" style="width: 100%;">
-                            <option value="0">Page 0</option>
-                            <option value="1" selected>Page 1</option>
-                            <option value="2">Page 2</option>
-                            <option value="3">Page 3</option>
-                        </select>
-                        <small style="color: #64748b; font-size: 11px;">treasure page 2</small>
-                    </div>
-                </div>
-
-                <!-- Individual Skills Section -->
-                <div style="margin-top: 30px;">
-                    <div style="margin-bottom: 15px; padding: 10px; background: #f8fafc; border-radius: 6px; border-left: 3px solid #3b82f6;">
-                        <small style="color: #64748b; font-size: 12px;">Configure which alliance skills should be automatically activated during gameplay</small>
-                    </div>
-                    <div id="skills-container">
-                        <!-- Skills will be dynamically loaded here -->
-                    </div>
+                <div id="skills-list">
+                    <!-- Skills will be loaded here -->
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('skills')">
-                        <i class="fas fa-save"></i>
-                        Save Configuration
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIP Shop Configuration -->
-        <div id="vip-shop" class="tab-content">
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-crown"></i>
-                    VIP Shop Configuration
-                </h2>
-
-                <!-- Enable VIP Shop Toggle -->
-                <div class="toggle-section">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="vip-shop-enabled">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="troops-title">Enable VIP Shop Auto Buy</span>
-                    <small style="display: block; color: #64748b; margin-top: 5px;">
-                        Automatically purchase items from the VIP shop
-                    </small>
-                </div>
-
-                <!-- VIP Shop Warning -->
-                <div style="margin-top: 20px; padding: 15px; background: #fef2f2; border-radius: 8px; border-left: 4px solid #ef4444; border: 1px solid #fecaca;">
-                    <h4 style="margin: 0 0 10px 0; color: #dc2626; font-size: 14px; font-weight: 600;">
-                        <i class="fas fa-exclamation-triangle"></i> CAUTION
-                    </h4>
-                    <p style="margin: 0; color: #dc2626; font-size: 13px; line-height: 1.4;">
-                        If you enable this option bot will buy selected Items in VIP shop when you start the Bot. So if you willing to spend on lands Don't forget to Teleport before using it!
-                    </p>
-                </div>
-
-                <!-- VIP Shop Configuration -->
-                <div style="margin-top: 20px; padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
-                    <h4 style="margin: 0 0 10px 0; color: #374151; font-size: 14px;">
-                        <i class="fas fa-cog"></i> VIP Shop Configuration
-                    </h4>
-                    <div style="margin-bottom: 12px;">
-                        <button class="btn btn-secondary" onclick="loadVipShopItems()" style="font-size: 12px; padding: 6px 12px;">
-                            <i class="fas fa-refresh"></i> Load Available Items
-                        </button>
-                        <button class="btn btn-accent" onclick="addVipShopItem()" style="font-size: 12px; padding: 6px 12px; margin-left: 8px;">
-                            <i class="fas fa-plus"></i> Add Item
-                        </button>
-                    </div>
-                    <div id="vip-shop-items-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; background: white;">
-                        <!-- VIP shop items will be loaded here -->
-                    </div>
-                </div>
-
-                <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveConfig('vip-shop')">
                         <i class="fas fa-save"></i>
                         Save Configuration
                     </button>
@@ -1726,9 +1192,9 @@
                 </div>
 
                 <div class="distance-section">
-                    <span class="troops-title">Skin NFT ID</span>
-                    <input type="text" id="treasure-skin-item-id" class="distance-input" value="" placeholder="e.g., 1726795">
-                    <span class="unit-label">NFT id</span>
+                    <span class="troops-title">Skin Item ID</span>
+                    <input type="text" id="treasure-skin-item-id" class="distance-input" value="" placeholder="e.g., 10101001">
+                    <span class="unit-label">item id</span>
                 </div>
 
                 <div class="distance-section">
@@ -1739,7 +1205,7 @@
 
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('treasure')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1781,7 +1247,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('dsavip')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1808,7 +1274,15 @@
                     </div>
                 </div>
 
-                <!-- Alliance activities are now configured in the dedicated Alliance Activities tab -->
+                <!-- Alliance Farmer Features Section -->
+                <div style="margin-bottom: 32px;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
+                        <i class="fas fa-users"></i> Alliance Farmer Features
+                    </h3>
+                    <div id="alliance-farmer-features">
+                        <!-- Alliance farmer feature toggles will be loaded here -->
+                    </div>
+                </div>
 
                 <!-- Threads Section -->
                 <div>
@@ -1821,7 +1295,7 @@
                 </div>
 
                 <div class="save-section">
-                    <button class="btn btn-secondary" onclick="cancelConfigChanges()">Cancel</button>
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-primary" onclick="saveConfig('settings')">
                         <i class="fas fa-save"></i>
                         Save Configuration
@@ -1906,226 +1380,6 @@
         let fullConfigData = {};  // Store the complete config file structure
         let configLoaded = false;
 
-        // All available alliance skills from askill.json
-        const ALL_SKILLS = [
-          {
-            "code": 10001,
-            "name": "Instant harvest",
-            "type": 1
-          },
-          {
-            "code": 10002,
-            "name": "Gathering boost",
-            "type": 2
-          },
-          {
-            "code": 10003,
-            "name": "Instant return",
-            "type": 1
-          },
-          {
-            "code": 10004,
-            "name": "Attack Boost",
-            "type": 2
-          },
-          {
-            "code": 10005,
-            "name": "Defense Boost",
-            "type": 2
-          },
-          {
-            "code": 10006,
-            "name": "HP boost",
-            "type": 2
-          },
-          {
-            "code": 10007,
-            "name": "Speed Boost",
-            "type": 2
-          },
-          {
-            "code": 10008,
-            "name": "Teleport",
-            "type": 1
-          },
-          {
-            "code": 10009,
-            "name": "Weakened attack",
-            "type": 3
-          },
-          {
-            "code": 10010,
-            "name": "Weakened Defense",
-            "type": 3
-          },
-          {
-            "code": 10011,
-            "name": "Weakened HP",
-            "type": 3
-          },
-          {
-            "code": 10012,
-            "name": "Weakened Speed",
-            "type": 3
-          },
-          {
-            "code": 10013,
-            "name": "Reduced resource production",
-            "type": 3
-          },
-          {
-            "code": 10014,
-            "name": "Reduced gathering speed",
-            "type": 3
-          },
-          {
-            "code": 10015,
-            "name": "Reduced Training Speed",
-            "type": 3
-          },
-          {
-            "code": 10016,
-            "name": "Reduced Research speed",
-            "type": 3
-          },
-          {
-            "code": 10017,
-            "name": "Reduced construction speed",
-            "type": 3
-          },
-          {
-            "code": 10018,
-            "name": "Resource production boost",
-            "type": 2
-          },
-          {
-            "code": 10020,
-            "name": "Training boost",
-            "type": 2
-          },
-          {
-            "code": 10021,
-            "name": "Research boost",
-            "type": 2
-          },
-          {
-            "code": 10022,
-            "name": "Construction boost",
-            "type": 2
-          },
-          {
-            "code": 10023,
-            "name": "Summon Monster",
-            "type": 1
-          },
-          {
-            "code": 10024,
-            "name": "Create Resource area",
-            "type": 1
-          },
-          {
-            "code": 10025,
-            "name": "Infantry's ability boost",
-            "type": 2
-          },
-          {
-            "code": 10026,
-            "name": "Archer's Ability boost",
-            "type": 2
-          },
-          {
-            "code": 10027,
-            "name": "Cavalry's ability boost",
-            "type": 2
-          },
-          {
-            "code": 10028,
-            "name": "dispel",
-            "type": 1
-          },
-          {
-            "code": 10029,
-            "name": "march speedup",
-            "type": 4
-          },
-          {
-            "code": 10030,
-            "name": "Battle cry(Infantry)",
-            "type": 5
-          },
-          {
-            "code": 10031,
-            "name": "Battle cry(Ranged)",
-            "type": 5
-          },
-          {
-            "code": 10032,
-            "name": "Battle cry(Cavalry)",
-            "type": 5
-          },
-          {
-            "code": 10033,
-            "name": "Battle cry(Attack)",
-            "type": 5
-          },
-          {
-            "code": 10034,
-            "name": "Battle cry(Speed)",
-            "type": 5
-          },
-          {
-            "code": 10035,
-            "name": "Meteor Strike",
-            "type": 1
-          },
-          {
-            "code": 10036,
-            "name": "Heaven's Judgment",
-            "type": 1
-          }
-        ];
-
-        // Function to populate skills in the UI
-        function populateSkills() {
-            const skillsContainer = document.getElementById('skills-container');
-            if (!skillsContainer) return;
-
-            skillsContainer.innerHTML = '';
-
-            ALL_SKILLS.forEach(skill => {
-                const skillElement = document.createElement('div');
-                skillElement.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e2e8f0;';
-                
-                const typeLabels = {
-                    1: 'Instant',
-                    2: 'Buff',
-                    3: 'Debuff',
-                    4: 'March',
-                    5: 'Battle Cry'
-                };
-                
-                // Check if this skill is enabled in current config
-                let isEnabled = false;
-                if (window.currentConfig && window.currentConfig.skills) {
-                    const configSkill = window.currentConfig.skills.find(s => s.code === skill.code);
-                    isEnabled = configSkill ? configSkill.enabled : false;
-                }
-                
-                skillElement.innerHTML = `
-                    <div>
-                        <div style="font-weight: 500; color: #1e293b;">${skill.name}</div>
-                        <small style="color: #64748b; font-size: 12px;">Code: ${skill.code} - Type: ${typeLabels[skill.type] || 'Unknown'}</small>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="skill-${skill.code}-enabled" ${isEnabled ? 'checked' : ''}>
-                        <span class="toggle-slider"></span>
-                    </label>
-                `;
-                
-                skillsContainer.appendChild(skillElement);
-            });
-        }
-
         // Tab switching functionality
         function switchTab(tabName) {
             if (!configLoaded) {
@@ -2148,11 +1402,6 @@
 
             // Add active class to clicked tab
             event.target.classList.add('active');
-
-            // Populate skills when skills tab is selected
-            if (tabName === 'skills') {
-                populateSkills();
-            }
         }
 
         // Dark mode functionality
@@ -2287,22 +1536,6 @@
             onConfigFileSelectionChange();
         }
 
-        function getCurrentConfigFile() {
-            // First try to get from the global variable
-            if (typeof currentConfigFile !== 'undefined' && currentConfigFile) {
-                return currentConfigFile;
-            }
-            
-            // Fallback to the dropdown selection
-            const selectedFile = document.getElementById('config-file-select').value;
-            if (selectedFile) {
-                return selectedFile;
-            }
-            
-            // Final fallback to default config
-            return 'config.json';
-        }
-
         function loadSelectedConfig() {
             const selectedFile = document.getElementById('config-file-select').value;
             if (!selectedFile) {
@@ -2369,17 +1602,16 @@
             document.getElementById('new-config-name').focus();
         }
 
+        // Make all modal functions globally accessible
+        function showCreateConfigModal() {
+            document.getElementById('create-config-modal').style.display = 'block';
+            document.getElementById('new-config-name').focus();
+        }
+
         function hideCreateConfigModal() {
             document.getElementById('create-config-modal').style.display = 'none';
             document.getElementById('new-config-name').value = '';
             document.getElementById('template-select').value = '';
-            
-            // Reset the create button state in case it's stuck
-            const createBtns = document.querySelectorAll('button[onclick="createNewConfig()"]');
-            createBtns.forEach(btn => {
-                btn.innerHTML = '<i class="fas fa-plus"></i> Create Config';
-                btn.disabled = false;
-            });
         }
 
         function createNewConfig() {
@@ -2751,11 +1983,15 @@
             return {
                 "buff_management": {
                     "enabled": true,
-                    "production_boosts": {
-                        "short_duration": {},
-                        "medium_duration": {},
-                        "long_duration": {}
-                    }
+                    "buffs": [
+                        {"name": "Food Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102001, 10102002]},
+                        {"name": "Wood Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102003, 10102004]},
+                        {"name": "Stone Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102005, 10102006]},
+                        {"name": "Gold Production Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102007, 10102008]},
+                        {"name": "Gathering Speed Boost", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102009, 10102010]},
+                        {"name": "Kingdom Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102026, 10102027]},
+                        {"name": "Anti Spying Shield", "enabled": true, "min_duration_minutes": 20, "item_codes": [10102021, 10102022]}
+                    ]
                 },
                 "discord": {
                     "enabled": true,
@@ -2842,11 +2078,7 @@
                     },
                     "skills": {
                         "enabled": true,
-                        "skills": [
-                            {"code": 10018, "enabled": true, "name": "Increase Resource Production"}, 
-                            {"code": 10001, "enabled": true, "name": "Instant Harvest"}, 
-                            {"code": 10002, "enabled": true, "name": "Accelerated Gathering"}
-                        ]
+                        "skills": [{"code": 10001, "enabled": true}, {"code": 10002, "enabled": true}]
                     },
                     "threads": [
                         {"enabled": true, "name": "free_chest_farmer_thread"},
@@ -2935,7 +2167,6 @@
                         console.error('Default config validation also failed');
                         createBtn.innerHTML = originalText;
                         createBtn.disabled = false;
-                        hideCreateConfigModal();
                         showNotification('Critical error: unable to create valid config structure', 'error');
                         return;
                     }
@@ -2957,7 +2188,6 @@
                     } else {
                         createBtn.innerHTML = originalText;
                         createBtn.disabled = false;
-                        hideCreateConfigModal();
                         showNotification('Failed to verify config structure', 'error');
                         return;
                     }
@@ -2992,11 +2222,6 @@
                         if (response && response.success) {
                             console.log(`Config file '${fileName}' created successfully`);
                             showNotification(`Config file '${fileName}' created successfully!`, 'success');
-                            
-                            // Reset button state before hiding modal
-                            createBtn.innerHTML = originalText;
-                            createBtn.disabled = false;
-                            
                             hideCreateConfigModal();
 
                             // Verify the file was created by reloading config list
@@ -3039,7 +2264,6 @@
                             showNotification(`Failed to create config file after ${maxRetries} attempts: ${errorMsg}`, 'error');
                             createBtn.innerHTML = originalText;
                             createBtn.disabled = false;
-                            hideCreateConfigModal();
                         }
                     },
                     complete: function () {
@@ -3109,55 +2333,50 @@
 
 
 
-        async function loadExistingConfig() {
+        function loadExistingConfig() {
             // Show loading state
             const loadBtn = document.getElementById('load-config-btn');
             const originalText = loadBtn.innerHTML;
             loadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
             loadBtn.disabled = true;
 
-            try {
-                // Load the complete config file first
-                const response = await new Promise((resolve, reject) => {
-                    $.ajax({
-                        url: '/api/config',
-                        method: 'GET',
-                        data: {config_file: currentConfigFile},
-                        success: resolve,
-                        error: reject
-                    });
-                });
+            // Load the complete config file first
+            $.ajax({
+                url: '/api/config',
+                method: 'GET',
+                data: {config_file: currentConfigFile},
+                success: function (response) {
+                    fullConfigData = response;  // Store the complete config
+                    configLoaded = true;
 
-                fullConfigData = response;  // Store the complete config
-                configLoaded = true;
+                    // Enable tabs and select first tab
+                    enableConfigTabs();
+                    document.querySelector('.tab').classList.add('active');
+                    document.getElementById('rally-join').classList.add('active');
 
-                // Enable tabs and select first tab
-                enableConfigTabs();
-                document.querySelector('.tab').classList.add('active');
-                document.getElementById('rally-join').classList.add('active');
+                    // Populate the simplified interface
+                    populateRallyJoinConfig(response.rally?.join || {});
+                    populateRallyStartConfig(response.rally?.start || {});
+                    populateMonsterAttackConfig(response.main?.normal_monsters || {});
+                    populateSocfObjectsConfig(response.main?.jobs || []);
+                    populateBuffManagementConfig(response.buff_management || {});
+                    populateSkillsConfig(response.main?.skills || {});
+                    populateTreasureConfig(response.main?.treasure || {});
+                    populateDsavipConfig(response.main?.jobs || []);
+                    populateSettingsConfig(response.main?.jobs || [], response.main?.threads || []);
 
-                // Populate the simplified interface
-                populateRallyJoinConfig(response.rally?.join || {});
-                populateRallyStartConfig(response.rally?.start || {});
-                populateMonsterAttackConfig(response.main?.normal_monsters || {});
-                populateSocfObjectsConfig(response.main?.jobs || []);
-                populateBuffManagementConfig(response.buff_management || {});
-                await populateAllianceActivitiesConfig(response.alliance_activities || {});
-                populateSkillsConfig(response.main?.skills || {});
-                await initializeVipShopConfig();
-                populateTreasureConfig(response.main?.treasure || {});
-                populateDsavipConfig(response.main?.jobs || []);
-                populateSettingsConfig(response.main?.jobs || [], response.main?.threads || []);
-
-                alert(`Configuration file '${currentConfigFile}' loaded successfully!`);
-            } catch (xhr) {
-                console.error('Error loading configuration:', xhr);
-                alert('Error loading configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
-                configLoaded = false;
-            } finally {
-                loadBtn.innerHTML = originalText;
-                loadBtn.disabled = false;
-            }
+                    alert(`Configuration file '${currentConfigFile}' loaded successfully!`);
+                },
+                error: function (xhr) {
+                    console.error('Error loading configuration:', xhr);
+                    alert('Error loading configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
+                    configLoaded = false;
+                },
+                complete: function () {
+                    loadBtn.innerHTML = originalText;
+                    loadBtn.disabled = false;
+                }
+            });
         }
 
         function populateRallyJoinConfig(config) {
@@ -3177,13 +2396,6 @@
             if (config.max_rally_distance) {
                 distanceInput.value = config.max_rally_distance;
             }
-
-            // Load skin change settings
-            const skinChangeEnabled = config.skin_change_enabled || false;
-            document.getElementById('rally-join-skin-change-enabled').checked = skinChangeEnabled;
-
-            const skinItemId = config.skin_item_id || '';
-            document.getElementById('rally-join-skin-item-id').value = skinItemId;
 
             // Clear and populate monsters
             const container = document.getElementById('rally-join-monsters');
@@ -3215,13 +2427,6 @@
                 distanceInput.value = config.max_rally_distance;
             }
 
-            // Load skin change settings
-            const skinChangeEnabled = config.skin_change_enabled || false;
-            document.getElementById('rally-start-skin-change-enabled').checked = skinChangeEnabled;
-
-            const skinItemId = config.skin_item_id || '';
-            document.getElementById('rally-start-skin-item-id').value = skinItemId;
-
             // Clear and populate monsters
             const container = document.getElementById('rally-start-monsters');
             container.innerHTML = '';
@@ -3240,21 +2445,11 @@
             // Set enabled state
             document.getElementById('monster-attack-enabled').checked = config.enabled || false;
 
-            // Set distance check enabled state
-            const distanceCheckEnabled = (fullConfigData && fullConfigData.main && 
-                                        fullConfigData.main.object_scanning && 
-                                        fullConfigData.main.object_scanning.monster_distance_check &&
-                                        fullConfigData.main.object_scanning.monster_distance_check.enabled) || false;
-            document.getElementById('monster-distance-check-enabled').checked = distanceCheckEnabled;
-
             // Set distance
             const distanceInput = document.getElementById('monster-attack-distance');
-            const distanceValue = (fullConfigData && fullConfigData.main && 
-                                 fullConfigData.main.object_scanning && 
-                                 fullConfigData.main.object_scanning.monster_distance_check &&
-                                 fullConfigData.main.object_scanning.monster_distance_check.max_distance) || 
-                                config.max_distance || 250;
-            distanceInput.value = distanceValue;
+            if (config.max_distance) {
+                distanceInput.value = config.max_distance;
+            }
 
             // Clear and populate monsters
             const container = document.getElementById('monster-attack-monsters');
@@ -3269,7 +2464,7 @@
                         level_ranges: [{
                             min_level: Array.isArray(monster.level_ranges) ? Math.min(...monster.level_ranges) : 1,
                             max_level: Array.isArray(monster.level_ranges) ? Math.max(...monster.level_ranges) : 10,
-                            troops: monster.troops || []
+                            troops: []
                         }]
                     };
                     const card = createMonsterCardFromConfig(standardMonster, 'monster-attack');
@@ -3277,20 +2472,16 @@
                 });
             }
 
-            // Load common troops section with improved styling
+            // Load common troops section
             const commonTroopsContainer = document.createElement('div');
             commonTroopsContainer.innerHTML = `
-                <div class="monster-card" style="margin-top: 24px;">
-                    <div class="monster-header">
-                        <i class="fas fa-users" style="color: #3b82f6; font-size: 18px;"></i>
-                        <span class="monster-name" style="font-size: 18px;">Common Troops Configuration</span>
-                    </div>
-                    <div style="color: #64748b; font-size: 14px; margin-bottom: 20px;">
-                        Configure default troop compositions for monster attacks
-                    </div>
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151;">
+                        <i class="fas fa-users"></i> Common Troops Configuration
+                    </h3>
                     <div id="common-troops-list"></div>
-                    <button class="btn btn-primary" onclick="addCommonTroop()" style="margin-top: 16px;">
-                        <i class="fas fa-plus"></i> Add Troop Type
+                    <button class="btn btn-primary" onclick="addCommonTroop()">
+                        <i class="fas fa-plus"></i> Add Troop
                     </button>
                 </div>
             `;
@@ -3347,8 +2538,9 @@
                         <!-- Troops will be populated here -->
                     </div>
 
-                    <button class="btn btn-primary" onclick="addTroopToCard(this)" style="margin-top: 12px;">
-                        <i class="fas fa-plus"></i> Add Troop
+                    <button class="btn btn-primary" onclick="addTroopToCard(this)">
+                        <i class="fas fa-plus"></i>
+                        Add Other Troop
                     </button>
                 </div>
             `;
@@ -3511,7 +2703,10 @@
                         <!-- Troops will be added here -->
                     </div>
 
-
+                    <button class="btn btn-primary" onclick="addTroopToCard(this)">
+                        <i class="fas fa-plus"></i>
+                        Add Other Troop
+                    </button>
                 </div>
             `;
             return card;
@@ -3568,60 +2763,6 @@
             button.closest('.troop-item').remove();
         }
 
-        // Area Restrictions Functions
-        function addAreaRestriction() {
-            const container = document.getElementById('area-restrictions-list');
-            const areaDiv = document.createElement('div');
-            areaDiv.className = 'monster-card';
-            areaDiv.innerHTML = `
-                <div class="monster-header">
-                    <input type="text" class="input-field area-name" placeholder="Area name (e.g., Safe Zone North)" style="flex: 1; margin-right: 8px;">
-                    <button class="btn btn-danger" onclick="removeAreaRestriction(this)">Remove</button>
-                </div>
-                <div class="level-inputs" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
-                    <div class="input-group">
-                        <label class="input-label">Min X</label>
-                        <input type="number" class="input-field area-min-x" min="0" max="2047" placeholder="e.g., 800">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Max X</label>
-                        <input type="number" class="input-field area-max-x" min="0" max="2047" placeholder="e.g., 1200">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Min Y</label>
-                        <input type="number" class="input-field area-min-y" min="0" max="2047" placeholder="e.g., 1200">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Max Y</label>
-                        <input type="number" class="input-field area-max-y" min="0" max="2047" placeholder="e.g., 1600">
-                    </div>
-                </div>
-                <small style="display: block; color: #64748b; margin-top: 8px; font-size: 12px;">
-                    Define rectangular areas where gathering and monster attacks are allowed. Coordinates range from 0 to 2047.
-                </small>
-            `;
-            container.appendChild(areaDiv);
-        }
-
-        function removeAreaRestriction(button) {
-            button.closest('.monster-card').remove();
-        }
-
-        function toggleAreaRestrictions() {
-            const enabledElement = document.getElementById('area-restrictions-enabled');
-            const enabled = enabledElement ? enabledElement.checked : false;
-            const container = document.getElementById('area-restrictions-container');
-            container.style.display = enabled ? 'block' : 'none';
-        }
-
-        // Add event listener for area restrictions toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const areaToggle = document.getElementById('area-restrictions-enabled');
-            if (areaToggle) {
-                areaToggle.addEventListener('change', toggleAreaRestrictions);
-            }
-        });
-
         // Save configuration
         function saveConfig(configType) {
             console.log(`Saving config for: ${configType}`);
@@ -3655,9 +2796,8 @@
                     };
                 }
 
-                // Update enabled state with null check
-                const rallyJoinEnabledElement = document.getElementById('rally-join-enabled');
-                const rallyJoinEnabled = rallyJoinEnabledElement ? rallyJoinEnabledElement.checked : false;
+                // Update enabled state
+                const rallyJoinEnabled = document.getElementById('rally-join-enabled').checked;
                 fullConfigData.rally.join.enabled = rallyJoinEnabled;
 
                 // Sync to toggles structure
@@ -3723,15 +2863,6 @@
                 // Update targets
                 fullConfigData.rally.join.targets = collectMonstersFromUI('rally-join');
 
-                // Update skin change settings with null check
-                const rallyJoinSkinEnabledElement = document.getElementById('rally-join-skin-change-enabled');
-                const rallyJoinSkinEnabled = rallyJoinSkinEnabledElement ? rallyJoinSkinEnabledElement.checked : false;
-                fullConfigData.rally.join.skin_change_enabled = rallyJoinSkinEnabled;
-
-                const rallyJoinSkinItemId = document.getElementById('rally-join-skin-item-id').value;
-                fullConfigData.rally.join.skin_item_id = rallyJoinSkinItemId;
-
-
             } else if (configType === 'rally-start') {
                 if (!fullConfigData.rally) fullConfigData.rally = {};
                 if (!fullConfigData.rally.start) {
@@ -3744,8 +2875,7 @@
                 }
 
                 // Update enabled state
-                const rallyStartEnabledElement = document.getElementById('rally-start-enabled');
-                const rallyStartEnabled = rallyStartEnabledElement ? rallyStartEnabledElement.checked : false;
+                const rallyStartEnabled = document.getElementById('rally-start-enabled').checked;
                 fullConfigData.rally.start.enabled = rallyStartEnabled;
 
                 // Sync to toggles structure
@@ -3811,15 +2941,6 @@
                 // Update targets
                 fullConfigData.rally.start.targets = collectMonstersFromUI('rally-start');
 
-                // Update skin change settings
-                const rallyStartSkinEnabledElement = document.getElementById('rally-start-skin-change-enabled');
-                const rallyStartSkinEnabled = rallyStartSkinEnabledElement ? rallyStartSkinEnabledElement.checked : false;
-                fullConfigData.rally.start.skin_change_enabled = rallyStartSkinEnabled;
-
-                const rallyStartSkinItemId = document.getElementById('rally-start-skin-item-id').value;
-                fullConfigData.rally.start.skin_item_id = rallyStartSkinItemId;
-
-
             } else if (configType === 'monster-attack') {
                 if (!fullConfigData.main) fullConfigData.main = {};
                 if (!fullConfigData.main.normal_monsters) {
@@ -3849,9 +2970,8 @@
                 if (!fullConfigData.toggles) fullConfigData.toggles = {};
                 if (!fullConfigData.toggles.features) fullConfigData.toggles.features = {};
 
-                // Get the enabled state from UI with safety checks
-                const enabledElement = document.getElementById('monster-attack-enabled');
-                const isEnabled = enabledElement ? enabledElement.checked : false;
+                // Get the enabled state from UI
+                const isEnabled = document.getElementById('monster-attack-enabled').checked;
 
                 // Update ALL 4 locations for Monster Attack toggle
                 // 1. toggles.features.enable_monster_attack
@@ -3866,26 +2986,9 @@
                 // 4. main.normal_monsters.enabled
                 fullConfigData.main.normal_monsters.enabled = isEnabled;
 
-                // Update distance check settings with safety checks
-                const distanceCheckElement = document.getElementById('monster-distance-check-enabled');
-                const distanceCheckEnabled = distanceCheckElement ? distanceCheckElement.checked : false;
-                
-                const distanceElement = document.getElementById('monster-attack-distance');
-                const distance = distanceElement ? parseInt(distanceElement.value) : 200;
-                
-                // Ensure monster_distance_check section exists in object_scanning
-                if (!fullConfigData.main.object_scanning.monster_distance_check) {
-                    fullConfigData.main.object_scanning.monster_distance_check = {
-                        "enabled": false,
-                        "max_distance": 250
-                    };
-                }
-                
-                // Update monster distance check settings
-                fullConfigData.main.object_scanning.monster_distance_check.enabled = distanceCheckEnabled;
+                // Update distance
+                const distance = parseInt(document.getElementById('monster-attack-distance').value);
                 if (distance) {
-                    fullConfigData.main.object_scanning.monster_distance_check.max_distance = distance;
-                    // Also update the normal_monsters max_distance for backward compatibility
                     fullConfigData.main.normal_monsters.max_distance = distance;
                 }
 
@@ -3927,9 +3030,8 @@
                     fullConfigData.main.jobs.push(socfJob);
                 }
 
-                // Update enabled state with null check
-                const socfEnabledElement = document.getElementById('socf-objects-enabled');
-                const socfEnabled = socfEnabledElement ? socfEnabledElement.checked : false;
+                // Update enabled state
+                const socfEnabled = document.getElementById('socf-objects-enabled').checked;
                 socfJob.enabled = socfEnabled;
                 fullConfigData.main.object_scanning.enabled = socfEnabled;
 
@@ -3937,9 +3039,8 @@
                 fullConfigData.toggles.jobs.socf_thread = socfEnabled;
                 fullConfigData.toggles.features.object_scanning = socfEnabled;
 
-                // Update gathering enabled state with null check
-                const gatheringEnabledElement = document.getElementById('socf-gathering-enabled');
-                const gatheringEnabled = gatheringEnabledElement ? gatheringEnabledElement.checked : false;
+                // Update gathering enabled state
+                const gatheringEnabled = document.getElementById('socf-gathering-enabled').checked;
                 fullConfigData.main.object_scanning.enable_gathering = gatheringEnabled;
 
                 // Sync to toggles structure
@@ -3983,146 +3084,41 @@
                     socfJob.kwargs.radius = radius;
                 }
 
-                // Update area restrictions with null check
-                const areaRestrictionsEnabledElement = document.getElementById('area-restrictions-enabled');
-                const areaRestrictionsEnabled = areaRestrictionsEnabledElement ? areaRestrictionsEnabledElement.checked : false;
-                if (!fullConfigData.main.object_scanning.area_restrictions) {
-                    fullConfigData.main.object_scanning.area_restrictions = {
-                        "enabled": false,
-                        "allowed_areas": []
-                    };
-                }
-                fullConfigData.main.object_scanning.area_restrictions.enabled = areaRestrictionsEnabled;
-
-                // Collect area restrictions from UI
-                const areaRestrictions = [];
-                document.querySelectorAll('#area-restrictions-list .monster-card').forEach(areaCard => {
-                    const name = areaCard.querySelector('.area-name').value;
-                    const minX = parseInt(areaCard.querySelector('.area-min-x').value);
-                    const maxX = parseInt(areaCard.querySelector('.area-max-x').value);
-                    const minY = parseInt(areaCard.querySelector('.area-min-y').value);
-                    const maxY = parseInt(areaCard.querySelector('.area-max-y').value);
-                    
-                    if (name && !isNaN(minX) && !isNaN(maxX) && !isNaN(minY) && !isNaN(maxY)) {
-                        areaRestrictions.push({
-                            name: name,
-                            min_x: minX,
-                            max_x: maxX,
-                            min_y: minY,
-                            max_y: maxY
-                        });
-                    }
-                });
-                fullConfigData.main.object_scanning.area_restrictions.allowed_areas = areaRestrictions;
-
                 // Update targets
                 socfJob.kwargs.targets = collectSocfObjectsFromUI();
-
-                // Update skin change settings with null check
-                const socfSkinEnabledElement = document.getElementById('socf-objects-skin-change-enabled');
-                const socfSkinEnabled = socfSkinEnabledElement ? socfSkinEnabledElement.checked : false;
-                if (!fullConfigData.main.object_scanning.skin_change_settings) {
-                    fullConfigData.main.object_scanning.skin_change_settings = {};
-                }
-                fullConfigData.main.object_scanning.skin_change_settings.enabled = socfSkinEnabled;
-
-                const socfSkinItemId = document.getElementById('socf-objects-skin-item-id').value;
-                fullConfigData.main.object_scanning.skin_change_settings.skin_item_id = socfSkinItemId;
-
-
-            } else if (configType === 'alliance-activities') {
-                if (!fullConfigData.alliance_activities) {
-                    fullConfigData.alliance_activities = {};
-                }
-
-                // Alliance Help All
-                fullConfigData.alliance_activities.help_all = {
-                    enabled: document.getElementById('alliance-help-enabled').checked,
-                    interval_minutes: parseInt(document.getElementById('alliance-help-interval').value) || 5
-                };
-
-                // Alliance Gift Claim
-                fullConfigData.alliance_activities.gift_claim = {
-                    enabled: document.getElementById('alliance-gift-enabled').checked,
-                    interval_minutes: parseInt(document.getElementById('alliance-gift-interval').value) || 30
-                };
-
-                // Alliance Research Donate
-                fullConfigData.alliance_activities.research_donate = {
-                    enabled: document.getElementById('alliance-research-enabled').checked,
-                    interval_minutes: parseInt(document.getElementById('alliance-research-interval').value) || 60
-                };
-
-                // Alliance Shop Auto-Buy
-                fullConfigData.alliance_activities.shop_auto_buy = {
-                    enabled: document.getElementById('alliance-shop-enabled').checked,
-                    interval_minutes: parseInt(document.getElementById('alliance-shop-interval').value) || 120
-                };
-
-                // Caravan Auto-Buy
-                fullConfigData.alliance_activities.caravan_auto_buy = {
-                    enabled: document.getElementById('caravan-auto-buy-enabled').checked,
-                    interval_minutes: parseInt(document.getElementById('caravan-interval').value) || 180
-                };
-
-                console.log('Alliance activities config being saved:', fullConfigData.alliance_activities);
 
             } else if (configType === 'buff-management') {
                 if (!fullConfigData.buff_management) {
                     fullConfigData.buff_management = {
                         "enabled": false,
-                        "production_boosts": {
-                            "short_duration": {},
-                            "medium_duration": {},
-                            "long_duration": {}
-                        }
+                        "buffs": []
                     };
                 }
 
-                // Update enabled state with null check
-                const buffEnabledElement = document.getElementById('buff-management-enabled');
-                const buffEnabled = buffEnabledElement ? buffEnabledElement.checked : false;
+                // Update enabled state
+                const buffEnabled = document.getElementById('buff-management-enabled').checked;
                 fullConfigData.buff_management.enabled = buffEnabled;
 
                 // Sync to toggles structure
                 fullConfigData.toggles.features.buff_management = buffEnabled;
 
-                // Update production boosts in new format
-                fullConfigData.buff_management.production_boosts = collectBuffManagementFromUI();
-                
-                // Create legacy buffs array for backward compatibility
-                const legacyBuffs = [];
-                Object.values(collectBuffManagementFromUI()).forEach(buff => {
-                    // Find buff type from the enabled buffs
-                    for (const [buffType, options] of Object.entries(BUFF_TYPES)) {
-                        if (options['8hr'].code === buff.item_code || options['24hr'].code === buff.item_code) {
-                            legacyBuffs.push({
-                                enabled: true,
-                                item_codes: [buff.item_code],
-                                min_duration_minutes: buff.min_duration_minutes,
-                                name: buffType + ' Boost'
-                            });
-                            break;
-                        }
-                    }
-                });
-                fullConfigData.buff_management.buffs = legacyBuffs;
+                // Update buffs
+                fullConfigData.buff_management.buffs = collectBuffManagementFromUI();
 
             } else if (configType === 'skills') {
-                const skillsEnabledElement = document.getElementById('skills-enabled');
-                const skillsEnabled = skillsEnabledElement ? skillsEnabledElement.checked : false;
-                
-                // Get all skill checkboxes dynamically
+                const skillsEnabled = document.getElementById('skills-enabled').checked;
+                const skillCheckboxes = document.querySelectorAll('#skills-list input[type="checkbox"][data-skill-code]');
+
                 const skillsConfig = [];
-                
-                // Collect all skills from the dynamic list
-                const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
                 skillCheckboxes.forEach(checkbox => {
-                    const skillCode = parseInt(checkbox.id.replace('skill-', '').replace('-enabled', ''));
-                    skillsConfig.push({
-                        code: skillCode,
-                        enabled: checkbox.checked
-                    });
+                    const skillCode = parseInt(checkbox.dataset.skillCode);
+                    const enabled = checkbox.checked;
+                    if (!isNaN(skillCode)) {
+                        skillsConfig.push({
+                            code: skillCode,
+                            enabled: enabled
+                        });
+                    }
                 });
 
                 // Ensure main.skills structure exists
@@ -4135,34 +3131,7 @@
                     skills: skillsConfig
                 };
 
-                // Update skin change settings for Skills (special workflow)
-                const skillsSkinEnabled = document.getElementById('skills-skin-change-enabled').checked;
-                fullConfigData.main.skills.skin_change_enabled = skillsSkinEnabled;
-
-                const skillsSkinItemId = document.getElementById('skills-skin-item-id').value;
-                fullConfigData.main.skills.skin_item_id = skillsSkinItemId;
-
-                const skillsSkinItemId2 = document.getElementById('skills-skin-item-id-2').value;
-                fullConfigData.main.skills.skin_item_id_2 = skillsSkinItemId2;
-
-                // Update treasure page settings for Skills workflow
-                const skillsTreasurePage1 = document.getElementById('skills-treasure-page-1').value;
-                fullConfigData.main.skills.treasure_page_1 = parseInt(skillsTreasurePage1);
-
-                const skillsTreasurePage2 = document.getElementById('skills-treasure-page-2').value;
-                fullConfigData.main.skills.treasure_page_2 = parseInt(skillsTreasurePage2);
-
                 console.log('Skills config being saved:', fullConfigData.main.skills);
-
-            } else if (configType === 'vip-shop') {
-                // Get VIP shop enabled state
-                currentVipShopConfig.enabled = document.getElementById('vip-shop-enabled').checked;
-                
-                // Save VIP shop configuration
-                if (!saveVipShopConfig()) {
-                    showNotification('Failed to save VIP shop configuration!', 'error');
-                    return;
-                }
 
             } else if (configType === 'treasure') {
                 if (!fullConfigData.main) fullConfigData.main = {};
@@ -4174,8 +3143,7 @@
                 }
 
                 // Update enabled state
-                const treasureEnabledElement = document.getElementById('treasure-enabled');
-                const treasureEnabled = treasureEnabledElement ? treasureEnabledElement.checked : false;
+                const treasureEnabled = document.getElementById('treasure-enabled').checked;
                 fullConfigData.main.treasure.enabled = treasureEnabled;
 
                 // Sync to toggles structure
@@ -4186,8 +3154,7 @@
                 fullConfigData.main.treasure.page = parseInt(treasurePageSelect.value);
 
                 // Update skin change settings
-                const skinChangeEnabledElement = document.getElementById('treasure-skin-change-enabled');
-                const skinChangeEnabled = skinChangeEnabledElement ? skinChangeEnabledElement.checked : false;
+                const skinChangeEnabled = document.getElementById('treasure-skin-change-enabled').checked;
                 fullConfigData.main.treasure.skin_change_enabled = skinChangeEnabled;
 
                 const skinItemId = document.getElementById('treasure-skin-item-id').value;
@@ -4200,10 +3167,8 @@
 
 
             } else if (configType === 'dsavip') {
-                const dsavipChestEnabledElement = document.getElementById('dsavip-chest-enabled');
-                const dsavipChestEnabled = dsavipChestEnabledElement ? dsavipChestEnabledElement.checked : false;
-                const dsavipJobEnabledElement = document.getElementById('dsavip-job-enabled');
-                const dsavipJobEnabled = dsavipJobEnabledElement ? dsavipJobEnabledElement.checked : false;
+                const dsavipChestEnabled = document.getElementById('dsavip-chest-enabled').checked;
+                const dsavipJobEnabled = document.getElementById('dsavip-job-enabled').checked;
 
                 // Ensure main structure exists
                 if (!fullConfigData.main) {
@@ -4312,15 +3277,11 @@
                 });
             }
 
-            // Show saving state (only if called from an event)
-            let saveBtn = null;
-            let originalText = '';
-            if (event && event.target) {
-                saveBtn = event.target;
-                originalText = saveBtn.innerHTML;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                saveBtn.disabled = true;
-            }
+            // Show saving state
+            const saveBtn = event.target;
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
 
             $.ajax({
                 url: '/api/config',
@@ -4337,10 +3298,8 @@
                     alert('Error saving configuration: ' + (xhr.responseJSON?.error || 'Unknown error'));
                 },
                 complete: function () {
-                    if (saveBtn) {
-                        saveBtn.innerHTML = originalText;
-                        saveBtn.disabled = false;
-                    }
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
                 }
             });
         }
@@ -4442,7 +3401,7 @@
 
             container.querySelectorAll('.monster-card').forEach(card => {
                 const checkbox = card.querySelector('.monster-checkbox');
-                if (!checkbox || !checkbox.checked) return;
+                if (!checkbox.checked) return;
 
                 const monsterNameElement = card.querySelector('.monster-name');
                 const monsterName = monsterNameElement.value || monsterNameElement.textContent;
@@ -4504,7 +3463,7 @@
 
             container.querySelectorAll('.monster-card').forEach(card => {
                 const checkbox = card.querySelector('.monster-checkbox');
-                if (!checkbox || !checkbox.checked) return;
+                if (!checkbox.checked) return;
 
                 const monsterNameElement = card.querySelector('.monster-name');
                 const monsterName = monsterNameElement.value || monsterNameElement.textContent;
@@ -4521,33 +3480,8 @@
                 const monster = {
                     "monster_code": monsterCode,
                     "monster_name": monsterName,
-                    "level_ranges": levelRanges,
-                    "troops": []
+                    "level_ranges": levelRanges
                 };
-
-                // Collect troops configuration from the troops-list container
-                card.querySelectorAll('.troops-list .troop-item').forEach(troopItem => {
-                    const troopSelect = troopItem.querySelector('.troop-select');
-                    const fixedAmountsInput = troopItem.querySelector('.fixed-amounts-input');
-
-                    if (troopSelect && fixedAmountsInput && troopSelect.value && fixedAmountsInput.value.trim()) {
-                        const troopCode = parseInt(troopSelect.value);
-                        
-                        // Parse comma-separated fixed amounts
-                        const fixedAmounts = fixedAmountsInput.value
-                            .split(',')
-                            .map(amount => parseInt(amount.trim()))
-                            .filter(amount => !isNaN(amount) && amount > 0);
-
-                        if (fixedAmounts.length > 0) {
-                            monster.troops.push({
-                                "code": troopCode,
-                                "name": troopSelect.options[troopSelect.selectedIndex].text,
-                                "fixed_amounts": fixedAmounts
-                            });
-                        }
-                    }
-                });
 
                 monsters.push(monster);
             });
@@ -4564,7 +3498,7 @@
                     const troopSelect = troopItem.querySelector('.troop-select');
                     const amountInput = troopItem.querySelector('.troop-amount-input');
 
-                    if (troopSelect && amountInput && troopSelect.value && amountInput.value !== '') {
+                    if (troopSelect.value && amountInput.value !== '') {
                         const troopCode = parseInt(troopSelect.value);
                         const amount = parseInt(amountInput.value) || 0;
 
@@ -4580,13 +3514,18 @@
             return troops;
         }
 
-
         function getMonsterCodeByName(monsterName) {
             const codes = {
+                'Deathkar': 20200201,
+                'Green Dragon': 20200202,
+                'Red Dragon': 20200203,
+                'Gold Dragon': 20200204,
+                'Magdar': 20200205,
                 'Orc': 20200101,
                 'Skeleton': 20200102,
                 'Golem': 20200103,
                 'Treasure Goblin': 20200104,
+                'Spartoi': 20700506,
                 'Ogre': 20700405,
                 'BF Orc': 20800401,
                 'BF Skeleton': 20800402,
@@ -4619,59 +3558,6 @@
             const radiusInput = document.getElementById('socf-objects-radius');
             if (socfJob?.kwargs?.radius) {
                 radiusInput.value = socfJob.kwargs.radius;
-            }
-
-            // Load skin change settings
-            const skinChangeSettings = fullConfigData.main?.object_scanning?.skin_change_settings || {};
-            document.getElementById('socf-objects-skin-change-enabled').checked = skinChangeSettings.enabled || false;
-            document.getElementById('socf-objects-skin-item-id').value = skinChangeSettings.skin_item_id || '';
-
-            // Load area restrictions
-            const areaRestrictions = fullConfigData.main?.object_scanning?.area_restrictions || {};
-            const areaRestrictionsEnabled = areaRestrictions.enabled || false;
-            document.getElementById('area-restrictions-enabled').checked = areaRestrictionsEnabled;
-            
-            // Show/hide area restrictions container
-            const areaRestrictionsContainer = document.getElementById('area-restrictions-container');
-            areaRestrictionsContainer.style.display = areaRestrictionsEnabled ? 'block' : 'none';
-
-            // Clear and populate area restrictions
-            const areaContainer = document.getElementById('area-restrictions-list');
-            areaContainer.innerHTML = '';
-
-            if (areaRestrictions.allowed_areas && areaRestrictions.allowed_areas.length > 0) {
-                areaRestrictions.allowed_areas.forEach(area => {
-                    const areaDiv = document.createElement('div');
-                    areaDiv.className = 'monster-card';
-                    areaDiv.innerHTML = `
-                        <div class="monster-header">
-                            <input type="text" class="input-field area-name" placeholder="Area name (e.g., Safe Zone North)" style="flex: 1; margin-right: 8px;" value="${area.name || ''}">
-                            <button class="btn btn-danger" onclick="removeAreaRestriction(this)">Remove</button>
-                        </div>
-                        <div class="level-inputs" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
-                            <div class="input-group">
-                                <label class="input-label">Min X</label>
-                                <input type="number" class="input-field area-min-x" min="0" max="2047" placeholder="e.g., 800" value="${area.min_x || ''}">
-                            </div>
-                            <div class="input-group">
-                                <label class="input-label">Max X</label>
-                                <input type="number" class="input-field area-max-x" min="0" max="2047" placeholder="e.g., 1200" value="${area.max_x || ''}">
-                            </div>
-                            <div class="input-group">
-                                <label class="input-label">Min Y</label>
-                                <input type="number" class="input-field area-min-y" min="0" max="2047" placeholder="e.g., 1200" value="${area.min_y || ''}">
-                            </div>
-                            <div class="input-group">
-                                <label class="input-label">Max Y</label>
-                                <input type="number" class="input-field area-max-y" min="0" max="2047" placeholder="e.g., 1600" value="${area.max_y || ''}">
-                            </div>
-                        </div>
-                        <small style="display: block; color: #64748b; margin-top: 8px; font-size: 12px;">
-                            Define rectangular areas where gathering and monster attacks are allowed. Coordinates range from 0 to 2047.
-                        </small>
-                    `;
-                    areaContainer.appendChild(areaDiv);
-                });
             }
 
             // Clear and populate objects
@@ -4707,217 +3593,235 @@
             }
         }
 
-        // Production Boost Data - Organized by buff type with 8hr/24hr options
-        const BUFF_TYPES = {
-            "Food Production": {
-                "8hr": {"code": 10102001, "name": "Food boost 8hours", "duration_hours": 8.0},
-                "24hr": {"code": 10102002, "name": "Food boost 1day", "duration_hours": 24.0}
-            },
-            "Wood Production": {
-                "8hr": {"code": 10102003, "name": "Wood boost 8hours", "duration_hours": 8.0},
-                "24hr": {"code": 10102004, "name": "Wood boost 1day", "duration_hours": 24.0}
-            },
-            "Stone Production": {
-                "8hr": {"code": 10102005, "name": "Stone boost 8hours", "duration_hours": 8.0},
-                "24hr": {"code": 10102006, "name": "Stone boost 1day", "duration_hours": 24.0}
-            },
-            "Gold Production": {
-                "8hr": {"code": 10102007, "name": "Gold boost 8hours", "duration_hours": 8.0},
-                "24hr": {"code": 10102008, "name": "Gold boost 1day", "duration_hours": 24.0}
-            },
-            "Gathering Speed": {
-                "8hr": {"code": 10102009, "name": "Gathering boost 8hours", "duration_hours": 8.0},
-                "24hr": {"code": 10102010, "name": "Gathering boost 1day", "duration_hours": 24.0}
-            },
-            "Kingdom Shield": {
-                "8hr": {"code": 10102026, "name": "Kingdom Shield 8hours", "duration_hours": 8.0},
-                "24hr": {"code": 10102027, "name": "Kingdom Shield 1day", "duration_hours": 24.0}
-            },
-            "Anti Spying Shield": {
-                "8hr": {"code": 10102021, "name": "Anti Spying 8hours", "duration_hours": 8.0},
-                "24hr": {"code": 10102022, "name": "Anti Spying 1day", "duration_hours": 24.0}
-            }
-        };
-
-        function switchBuffTab(tabName) {
-            // This function is no longer needed since we removed the tabs
-            // Keeping for backward compatibility
-            console.log('switchBuffTab called but tabs have been replaced with individual dropdowns');
-        }
-
         function populateBuffManagementConfig(buffConfig) {
-            console.log('Loading production boost management config:', buffConfig);
+            console.log('Loading buff management config:', buffConfig);
 
             // Set enabled state
             document.getElementById('buff-management-enabled').checked = buffConfig?.enabled || false;
 
-            // Clear and populate buff list
+            // Clear and populate buffs
             const container = document.getElementById('buff-management-list');
             container.innerHTML = '';
-            
-            // Create cards for each buff type
-            Object.entries(BUFF_TYPES).forEach(([buffType, options]) => {
-                const card = document.createElement('div');
-                card.className = 'monster-card';
-                
-                // Check if this buff type is enabled in config
-                let selectedOption = 'disabled';
-                let isEnabled = false;
-                
-                // Check old format for backward compatibility
-                if (buffConfig?.buffs) {
-                    const buffEntry = buffConfig.buffs.find(buff => buff.name === buffType + ' Boost');
-                    if (buffEntry?.enabled) {
-                        isEnabled = true;
-                        // Determine duration based on item codes
-                        if (buffEntry.item_codes?.includes(options['8hr'].code)) {
-                            selectedOption = '8hr';
-                        } else if (buffEntry.item_codes?.includes(options['24hr'].code)) {
-                            selectedOption = '24hr';
-                        }
-                    }
-                }
-                
-                // Check new format
-                if (buffConfig?.production_boosts) {
-                    const isEnabled8hr = buffConfig.production_boosts[options['8hr'].code]?.enabled;
-                    const isEnabled24hr = buffConfig.production_boosts[options['24hr'].code]?.enabled;
-                    
-                    if (isEnabled8hr) {
-                        selectedOption = '8hr';
-                        isEnabled = true;
-                    } else if (isEnabled24hr) {
-                        selectedOption = '24hr';
-                        isEnabled = true;
-                    }
-                }
-                
-                card.innerHTML = `
-                    <div class="monster-header">
-                        <i class="fas fa-magic" style="color: #3b82f6;"></i>
-                        <span class="monster-name">${buffType}</span>
-                        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
-                            <label class="toggle-switch">
-                                <input type="checkbox" class="buff-enabled" data-buff-type="${buffType}" ${isEnabled ? 'checked' : ''} onchange="toggleBuffEnabled('${buffType}', this.checked)">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
-                        Choose between 8-hour or 24-hour duration for this production boost
-                    </div>
-                    <div class="boost-selection">
-                        <label class="input-label">Duration Selection:</label>
-                        <select class="dropdown-field buff-duration" data-buff-type="${buffType}" ${!isEnabled ? 'disabled' : ''}>
-                            <option value="disabled" ${selectedOption === 'disabled' ? 'selected' : ''}>Disabled</option>
-                            <option value="8hr" ${selectedOption === '8hr' ? 'selected' : ''}>8 Hours (${options['8hr'].name})</option>
-                            <option value="24hr" ${selectedOption === '24hr' ? 'selected' : ''}>24 Hours (${options['24hr'].name})</option>
-                        </select>
-                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
-                            Select duration for ${buffType.toLowerCase()} boost
-                        </small>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
 
-        function toggleBuffEnabled(buffType, enabled) {
-            const container = document.getElementById('buff-management-list');
-            const dropdown = container.querySelector(`select[data-buff-type="${buffType}"]`);
-            
-            if (dropdown) {
-                dropdown.disabled = !enabled;
-                if (!enabled) {
-                    dropdown.value = 'disabled';
+            // Define the ONLY allowed buff types (no old buffs)
+            const allowedBuffTypes = [
+                "Food Production Boost",
+                "Wood Production Boost",
+                "Stone Production Boost",
+                "Gold Production Boost",
+                "Gathering Speed Boost",
+                "Kingdom Shield",
+                "Anti Spying Shield"
+            ];
+
+            const specifiedBuffs = [
+                {
+                    "name": "Food Production Boost",
+                    "item_codes": [10102001, 10102002],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Wood Production Boost",
+                    "item_codes": [10102003, 10102004],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Stone Production Boost",
+                    "item_codes": [10102005, 10102006],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Gold Production Boost",
+                    "item_codes": [10102007, 10102008],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Gathering Speed Boost",
+                    "item_codes": [10102009, 10102010],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Kingdom Shield",
+                    "item_codes": [10102026, 10102027],
+                    "enabled": false,
+                    "min_duration_minutes": 20
+                },
+                {
+                    "name": "Anti Spying Shield",
+                    "item_codes": [10102021, 10102022],
+                    "enabled": false,
+                    "min_duration_minutes": 20
                 }
+            ];
+
+            if (buffConfig?.buffs && buffConfig.buffs.length > 0) {
+                // Only show buffs that are in our allowed list
+                buffConfig.buffs.forEach(buff => {
+                    if (allowedBuffTypes.includes(buff.name)) {
+                        const card = createBuffCard(buff);
+                        container.appendChild(card);
+                    }
+                });
+
+                // Add any missing specified buffs that weren't in the config
+                specifiedBuffs.forEach(specifiedBuff => {
+                    const existingBuff = buffConfig.buffs.find(b => b.name === specifiedBuff.name);
+                    if (!existingBuff) {
+                        const card = createBuffCard(specifiedBuff);
+                        container.appendChild(card);
+                    }
+                });
+            } else {
+                // Add all specified buff types if none exist
+                specifiedBuffs.forEach(buff => {
+                    const card = createBuffCard(buff);
+                    container.appendChild(card);
+                });
             }
         }
 
-        function collectBuffManagementFromUI() {
-            const result = {};
-            
-            const container = document.getElementById('buff-management-list');
-            const dropdowns = container.querySelectorAll('.buff-duration');
-            
-            dropdowns.forEach(dropdown => {
-                const buffType = dropdown.dataset.buffType;
-                const selectedDuration = dropdown.value;
-                const isEnabled = container.querySelector(`input[data-buff-type="${buffType}"]`).checked;
-                
-                if (isEnabled && selectedDuration !== 'disabled' && BUFF_TYPES[buffType] && BUFF_TYPES[buffType][selectedDuration]) {
-                    const buffData = BUFF_TYPES[buffType][selectedDuration];
-                    result[buffData.code] = {
-                        enabled: true,
-                        name: buffData.name,
-                        item_code: buffData.code,
-                        duration_hours: buffData.duration_hours,
-                        min_duration_minutes: 20 // Default minimum duration
-                    };
-                }
-            });
-            
-            return result;
+        function createBuffCard(buff) {
+            const card = document.createElement('div');
+            card.className = 'monster-card';
+
+            card.innerHTML = `
+                <div class="monster-header">
+                    <input type="checkbox" class="monster-checkbox" ${buff.enabled ? 'checked' : ''} data-buff-name="${buff.name}">
+                    <span class="monster-name">${buff.name}</span>
+                </div>
+
+                <div class="level-inputs">
+                    <div class="input-group">
+                        <label class="input-label">Minimum Duration (minutes):</label>
+                        <input type="number" class="input-field min-duration" value="${buff.min_duration_minutes || 20}" min="1" max="1440">
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                            Activate buff if remaining time is less than this
+                        </small>
+                    </div>
+                    <!-- Item codes are now hidden and automatically managed -->
+                    <input type="hidden" class="item-codes" value="${(buff.item_codes || []).join(', ')}">
+                </div>
+            `;
+
+            return card;
         }
 
+        function collectBuffManagementFromUI() {
+            const container = document.getElementById('buff-management-list');
+            const buffs = [];
 
-        async function populateAllianceActivitiesConfig(config) {
-            console.log('Loading alliance activities config:', config);
+            container.querySelectorAll('.monster-card').forEach(card => {
+                const checkbox = card.querySelector('.monster-checkbox');
+                const nameElement = card.querySelector('.monster-name');
+                const durationInput = card.querySelector('.min-duration');
+                const itemCodesInput = card.querySelector('.item-codes');
 
-            // Alliance Help All
-            const helpConfig = config.help_all || {};
-            document.getElementById('alliance-help-enabled').checked = helpConfig.enabled !== false;
-            document.getElementById('alliance-help-interval').value = helpConfig.interval_minutes || 5;
+                const buffName = nameElement.textContent;
+                const enabled = checkbox.checked;
+                const minDuration = parseInt(durationInput.value) || 20;
 
-            // Alliance Gift Claim
-            const giftConfig = config.gift_claim || {};
-            document.getElementById('alliance-gift-enabled').checked = giftConfig.enabled !== false;
-            document.getElementById('alliance-gift-interval').value = giftConfig.interval_minutes || 30;
+                // Parse item codes
+                const itemCodesText = itemCodesInput.value.trim();
+                const itemCodes = itemCodesText ?
+                    itemCodesText.split(',').map(code => parseInt(code.trim())).filter(code => !isNaN(code)) :
+                    [];
 
-            // Alliance Research Donate
-            const researchConfig = config.research_donate || {};
-            document.getElementById('alliance-research-enabled').checked = researchConfig.enabled !== false;
-            document.getElementById('alliance-research-interval').value = researchConfig.interval_minutes || 60;
+                buffs.push({
+                    "name": buffName,
+                    "item_codes": itemCodes,
+                    "enabled": enabled,
+                    "min_duration_minutes": minDuration
+                });
+            });
 
-            // Alliance Shop Auto-Buy
-            const shopConfig = config.shop_auto_buy || {};
-            document.getElementById('alliance-shop-enabled').checked = shopConfig.enabled !== false;
-            document.getElementById('alliance-shop-interval').value = shopConfig.interval_minutes || 120;
-
-            // Caravan Auto-Buy
-            const caravanConfig = config.caravan_auto_buy || {};
-            document.getElementById('caravan-auto-buy-enabled').checked = caravanConfig.enabled !== false;
-            document.getElementById('caravan-interval').value = caravanConfig.interval_minutes || 180;
-
-            // Initialize shop and caravan item configurations from main config
-            await initializeAllianceShopConfig();
-            await initializeCaravanConfig();
+            return buffs;
         }
 
         function populateSkillsConfig(config) {
             console.log('Loading skills config:', config);
-            console.log('Skills data:', config.skills);
-
-            // Store config globally BEFORE populating skills
-            window.currentConfig = config;
 
             // Set enabled state
             document.getElementById('skills-enabled').checked = config.enabled || false;
 
-            // Load skin change settings
-            document.getElementById('skills-skin-change-enabled').checked = config.skin_change_enabled || false;
-            document.getElementById('skills-skin-item-id').value = config.skin_item_id || '';
-            document.getElementById('skills-skin-item-id-2').value = config.skin_item_id_2 || '';
+            // Clear and populate skills
+            const container = document.getElementById('skills-list');
+            container.innerHTML = '';
 
-            // Load treasure page settings
-            document.getElementById('skills-treasure-page-1').value = config.treasure_page_1 || 1;
-            document.getElementById('skills-treasure-page-2').value = config.treasure_page_2 || 2;
+            // Define skill names mapping
+            const skillNames = {
+                10001: "Instant Harvest",
+                10002: "Accelerated Gathering",
+                10003: "Attack Boost",
+                10004: "Defense Boost",
+                10005: "Gathering Speed",
+                10006: "Training Speed"
+            };
 
-            // Populate skills with correct states (no need for setTimeout anymore)
-            populateSkills();
-            
-            console.log('Skills populated with config data');
+            if (config.skills && config.skills.length > 0) {
+                config.skills.forEach(skill => {
+                    const skillCode = skill.code;
+                    const skillName = skillNames[skillCode] || `Skill ${skillCode}`;
+                    const skillItem = document.createElement('div');
+                    skillItem.className = 'job-item';
+                    skillItem.innerHTML = `
+                        <div>
+                            <div class="job-name">${skillName}</div>
+                            <div class="job-description">Code: ${skillCode} - Auto-activate when available</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-skill-code="${skillCode}" ${skill.enabled ? 'checked' : ''}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    container.appendChild(skillItem);
+                });
+            } else {
+                // Add default skills if none configured
+                const defaultSkills = [
+                    {code: 10001, name: "Instant Harvest", enabled: false},
+                    {code: 10002, name: "Accelerated Gathering", enabled: false}
+                ];
+
+                defaultSkills.forEach(skill => {
+                    const skillItem = document.createElement('div');
+                    skillItem.className = 'job-item';
+                    skillItem.innerHTML = `
+                        <div>
+                            <div class="job-name">${skill.name}</div>
+                            <div class="job-description">Code: ${skill.code} - Auto-activate when available</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-skill-code="${skill.code}" ${skill.enabled ? 'checked' : ''}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    container.appendChild(skillItem);
+                });
+            }
+
+            // Add helpful note
+            const noteDiv = document.createElement('div');
+            noteDiv.style.marginTop = '16px';
+            noteDiv.style.padding = '12px';
+            noteDiv.style.backgroundColor = '#f8fafc';
+            noteDiv.style.borderRadius = '6px';
+            noteDiv.style.fontSize = '14px';
+            noteDiv.style.color = '#64748b';
+            noteDiv.innerHTML = `
+                <strong>Note:</strong> Skills will only activate if:
+                <ul style="margin: 8px 0 0 20px;">
+                    <li>The skill system is enabled above</li>
+                    <li>Individual skills are enabled</li>
+                    <li>The skill is not on cooldown</li>
+                    <li>You have sufficient MP</li>
+                </ul>
+            `;
+            container.appendChild(noteDiv);
         }
 
         function createSkillCard(skill, enabled) {
@@ -4956,15 +3860,17 @@
         }
 
         function collectSkillsFromUI() {
+            const container = document.getElementById('skills-list');
             const skills = [];
-            
-            // Collect from all skill checkboxes
-            const skillCheckboxes = document.querySelectorAll('[id^="skill-"][id$="-enabled"]');
-            skillCheckboxes.forEach(checkbox => {
-                const skillCode = parseInt(checkbox.id.replace('skill-', '').replace('-enabled', ''));
+
+            container.querySelectorAll('.monster-card').forEach(card => {
+                const checkbox = card.querySelector('.monster-checkbox');
+                const skillCode = parseInt(checkbox.dataset.skillCode);
+                const enabled = checkbox.checked;
+
                 skills.push({
                     "code": skillCode,
-                    "enabled": checkbox.checked
+                    "enabled": enabled
                 });
             });
 
@@ -5002,6 +3908,7 @@
                 const jobDescriptions = {
                     'hospital_recover': 'Automatically heal wounded troops in the hospital',
                     'wall_repair': 'Automatically repair wall damage',
+                    'alliance_farmer': 'Perform alliance activities like helping and donating',
                     'mail_claim': 'Automatically claim mail rewards',
                     'caravan_farmer': 'Manage caravan trading activities',
                     'use_resource_in_item_list': 'Use resource items from inventory',
@@ -5012,8 +3919,8 @@
                 };
 
                 jobs.forEach(job => {
-                    // Skip DSA VIP chest claim and alliance farmer as they have their own dedicated tabs
-                    if (job.name === 'dsavip_chest_claim' || job.name === 'alliance_farmer') {
+                    // Skip DSA VIP chest claim as it has its own dedicated tab
+                    if (job.name === 'dsavip_chest_claim') {
                         return;
                     }
 
@@ -5033,8 +3940,37 @@
                 });
             }
 
-            // Alliance farmer features are now handled in the dedicated Alliance Activities tab
-            // This section has been removed to eliminate duplication
+            // Populate alliance farmer features
+            const allianceFarmerFeatures = document.getElementById('alliance-farmer-features');
+            if (allianceFarmerFeatures) {
+                allianceFarmerFeatures.innerHTML = '';
+
+                // Find alliance_farmer job to get its kwargs
+                const allianceFarmerJob = jobs.find(job => job.name === 'alliance_farmer');
+                const kwargs = allianceFarmerJob?.kwargs || {};
+
+                const features = {
+                    'gift_claim': 'Claim gifts from alliance members',
+                    'help_all': 'Help all alliance members with their activities',
+                    'research_donate': 'Donate to alliance research projects'
+                };
+
+                Object.entries(features).forEach(([featureName, description]) => {
+                    const featureItem = document.createElement('div');
+                    featureItem.className = 'job-item';
+                    featureItem.innerHTML = `
+                        <div>
+                            <div class="job-name">${featureName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                            <div class="job-description">${description}</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${kwargs[featureName] ? 'checked' : ''} onchange="toggleAllianceFarmerFeature('${featureName}', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    `;
+                    allianceFarmerFeatures.appendChild(featureItem);
+                });
+            }
 
             // Populate threads
             const threadsList = document.getElementById('threads-list');
@@ -5223,7 +4159,6 @@
         // Make addCommonTroop globally available
         window.addCommonTroop = addCommonTroop;
 
-
         function showNotification(message, type = 'info') {
             // Remove any existing notifications
             const existingNotifications = document.querySelectorAll('.notification');
@@ -5247,66 +4182,22 @@
 
         function createCommonTroopItem(troop, index) {
             const troopDiv = document.createElement('div');
-            troopDiv.className = 'troop-item';
+            troopDiv.className = 'form-group';
             troopDiv.innerHTML = `
-                <select class="troop-select" data-troop-code="${troop.code}" onchange="updateTroopData(this)">
-                    <option value="${troop.code}" selected>${troop.name || getTroopNameByCode(troop.code)}</option>
-                    <optgroup label="Tier 6 Troops">
-                        <option value="50100106">Paladin (Tier 6 Infantry)</option>
-                        <option value="50100107">Destroyer (Tier 6 Infantry)</option>
-                        <option value="50100206">Marksman (Tier 6 Ranged)</option>
-                        <option value="50100207">Musketeer (Tier 6 Ranged)</option>
-                        <option value="50100306">Marauder (Tier 6 Cavalry)</option>
-                        <option value="50100307">Valkyrie (Tier 6 Cavalry)</option>
-                    </optgroup>
-                    <optgroup label="Tier 5 Troops">
-                        <option value="50100105">Crusader (Tier 5 Infantry)</option>
-                        <option value="50100205">Sniper (Tier 5 Ranged)</option>
-                        <option value="50100305">Dragoon (Tier 5 Cavalry)</option>
-                    </optgroup>
-                    <optgroup label="Tier 4 Troops">
-                        <option value="50100104">Guardian (Tier 4 Infantry)</option>
-                        <option value="50100204">Crossbow Man (Tier 4 Ranged)</option>
-                        <option value="50100304">Iron Cavalry (Tier 4 Cavalry)</option>
-                    </optgroup>
-                    <optgroup label="Tier 3 Troops">
-                        <option value="50100103">Knight (Tier 3 Infantry)</option>
-                        <option value="50100203">Ranger (Tier 3 Ranged)</option>
-                        <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
-                    </optgroup>
-                </select>
-                <input type="number" class="troop-amount-input" value="${troop.amount || 0}" min="0" placeholder="Amount">
-                <button class="btn btn-danger" onclick="removeTroopItem(this)" style="flex-shrink: 0;">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <label>Troop ${index + 1}: ${troop.name}</label>
+                <input type="number" 
+                       id="commonTroop_${troop.code}_amount" 
+                       value="${troop.amount}" 
+                       min="0" 
+                       placeholder="Amount">
+                <input type="hidden" 
+                       id="commonTroop_${troop.code}_code" 
+                       value="${troop.code}">
+                <input type="hidden" 
+                       id="commonTroop_${troop.code}_name" 
+                       value="${troop.name}">
             `;
             return troopDiv;
-        }
-
-        function updateTroopData(selectElement) {
-            // Update the data-troop-code attribute when selection changes
-            selectElement.setAttribute('data-troop-code', selectElement.value);
-        }
-
-        function getTroopNameByCode(code) {
-            const troopNames = {
-                50100106: "Paladin (Tier 6 Infantry)",
-                50100107: "Destroyer (Tier 6 Infantry)",
-                50100206: "Marksman (Tier 6 Ranged)",
-                50100207: "Musketeer (Tier 6 Ranged)",
-                50100306: "Marauder (Tier 6 Cavalry)",
-                50100307: "Valkyrie (Tier 6 Cavalry)",
-                50100105: "Crusader (Tier 5 Infantry)",
-                50100205: "Sniper (Tier 5 Ranged)",
-                50100305: "Dragoon (Tier 5 Cavalry)",
-                50100104: "Guardian (Tier 4 Infantry)",
-                50100204: "Crossbow Man (Tier 4 Ranged)",
-                50100304: "Iron Cavalry (Tier 4 Cavalry)",
-                50100103: "Knight (Tier 3 Infantry)",
-                50100203: "Ranger (Tier 3 Ranged)",
-                50100303: "Heavy Cavalry (Tier 3 Cavalry)"
-            };
-            return troopNames[code] || `Unknown Troop (${code})`;
         }
 
         function collectSettingsFromUI() {
@@ -5315,1260 +4206,26 @@
             // Collect job toggles
             const jobCheckboxes = document.querySelectorAll('#jobs-list input[type="checkbox"]');
             jobCheckboxes.forEach(checkbox => {
-                const match = checkbox.getAttribute('onchange').match(/toggleJob\('([^']+)'/);
-                if (!match) return;
-                const jobName = match[1];
+                const jobName = checkbox.getAttribute('onchange').match(/toggleJob\('([^']+)'/)[1];
                 toggleJob(jobName, checkbox.checked);
             });
 
             // Collect thread toggles
             const threadCheckboxes = document.querySelectorAll('#threads-list input[type="checkbox"]');
             threadCheckboxes.forEach(checkbox => {
-                const match = checkbox.getAttribute('onchange').match(/toggleThread\('([^']+)'/);
-                if (!match) return;
-                const threadName = match[1];
+                const threadName = checkbox.getAttribute('onchange').match(/toggleThread\('([^']+)'/)[1];
                 toggleThread(threadName, checkbox.checked);
             });
 
-            // Alliance activities are now handled in the dedicated Alliance Activities tab
+            // Collect alliance farmer feature toggles
+            const allianceFeatureCheckboxes = document.querySelectorAll('#alliance-farmer-features input[type="checkbox"]');
+            allianceFeatureCheckboxes.forEach(checkbox => {
+                const featureName = checkbox.getAttribute('onchange').match(/toggleAllianceFarmerFeature\('([^']+)'/)[1];
+                toggleAllianceFarmerFeature(featureName, checkbox.checked);
+            });
 
             console.log('Settings collection completed');
         }
-
-        // Alliance Shop Configuration Functions
-        let availableShopItems = {};
-        let currentShopConfig = { enabled: false, items: [] };
-
-        // Caravan Configuration Functions  
-        let availableCaravanItems = {};
-        let currentCaravanConfig = { enabled: false, items: [] };
-
-        async function loadAllianceShopItems() {
-            try {
-                const response = await fetch('/api/alliance_shop/items');
-                const data = await response.json();
-                
-                if (data.success) {
-                    availableShopItems = data.categories;
-                    showNotification('Available items loaded successfully', 'success');
-                } else {
-                    showNotification('Failed to load available items: ' + data.error, 'error');
-                }
-            } catch (error) {
-                showNotification('Error loading shop items: ' + error.message, 'error');
-            }
-        }
-
-        async function loadCaravanItems() {
-            try {
-                const response = await fetch('/api/caravan/items');
-                const data = await response.json();
-                
-                if (data.success) {
-                    availableCaravanItems = data.categories;
-                    showNotification('Available caravan items loaded successfully', 'success');
-                } else {
-                    showNotification('Failed to load available caravan items: ' + data.error, 'error');
-                }
-            } catch (error) {
-                showNotification('Error loading caravan items: ' + error.message, 'error');
-            }
-        }
-
-        async function loadAllianceShopConfig() {
-            try {
-                const configFile = getCurrentConfigFile();
-                const response = await fetch(`/api/alliance_shop/config?config_file=${encodeURIComponent(configFile)}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentShopConfig = data.config;
-                    updateShopConfigDisplay();
-                } else {
-                    console.warn('No shop config found, using defaults');
-                    currentShopConfig = { enabled: false, items: [] };
-                    updateShopConfigDisplay();
-                }
-            } catch (error) {
-                console.error('Error loading shop config:', error);
-                currentShopConfig = { enabled: false, items: [] };
-                updateShopConfigDisplay();
-            }
-        }
-
-        function updateShopConfigDisplay() {
-            // No longer need to manage toggles since it's integrated in Alliance Activities
-            renderShopItemsList();
-        }
-
-        function toggleShopBuying(enabled) {
-            // This function is no longer needed since shop configuration is integrated
-            // in Alliance Activities tab with direct controls
-            currentShopConfig.enabled = enabled;
-            
-            if (enabled && Object.keys(availableShopItems).length === 0) {
-                loadAllianceShopItems();
-            }
-        }
-
-        function renderShopItemsList() {
-            const itemsList = document.getElementById('alliance-shop-items-list');
-            itemsList.innerHTML = '';
-            
-            if (!currentShopConfig.items || currentShopConfig.items.length === 0) {
-                itemsList.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
-                        <i class="fas fa-shopping-cart" style="font-size: 24px; margin-bottom: 8px; opacity: 0.5;"></i>
-                        <p style="margin: 0;">No items configured for auto-buying</p>
-                        <p style="margin: 4px 0 0 0; font-size: 12px;">Click "Add Item" to get started</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Sort items by priority but keep track of original indices
-            const sortedItems = currentShopConfig.items
-                .map((item, originalIndex) => ({ item, originalIndex }))
-                .sort((a, b) => (a.item.priority || 999) - (b.item.priority || 999));
-            
-            sortedItems.forEach(({ item, originalIndex }) => {
-                const itemElement = createShopItemElement(item, originalIndex);
-                itemsList.appendChild(itemElement);
-            });
-        }
-
-        function createShopItemElement(item, index) {
-            const itemElement = document.createElement('div');
-            itemElement.className = 'shop-item-config';
-            itemElement.style.cssText = `
-                background: var(--bg-primary);
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                padding: 16px;
-                margin-bottom: 12px;
-                position: relative;
-            `;
-            
-            // Find item info from available items
-            let itemInfo = { name: `Item ${item.item_code}`, description: '', category: 'Unknown' };
-            Object.values(availableShopItems).forEach(category => {
-                const found = category.find(i => i.item_code === item.item_code);
-                if (found) itemInfo = found;
-            });
-            
-            itemElement.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">
-                            ${itemInfo.name}
-                        </div>
-                        <div style="font-size: 12px; color: var(--text-secondary);">
-                            ${itemInfo.description} • Code: ${item.item_code}
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <label class="toggle-switch" style="margin: 0;">
-                            <input type="checkbox" ${item.enabled ? 'checked' : ''} 
-                                   onchange="updateShopItem(${index}, 'enabled', this.checked)">
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <button onclick="removeShopItem(${index})" 
-                                style="background: var(--danger-color); color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                    <div>
-                        <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
-                            Priority
-                        </label>
-                        <input type="number" min="1" max="999" value="${item.priority || 1}" 
-                               onchange="updateShopItem(${index}, 'priority', parseInt(this.value))"
-                               style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
-                            Min Buy
-                        </label>
-                        <input type="number" min="1" value="${item.min_buy || 1}" 
-                               onchange="updateShopItem(${index}, 'min_buy', parseInt(this.value))"
-                               style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
-                            Max Buy
-                        </label>
-                        <input type="number" min="1" value="${item.max_buy || 999999}" 
-                               onchange="updateShopItem(${index}, 'max_buy', parseInt(this.value))"
-                               style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
-                    </div>
-                </div>
-            `;
-            
-            return itemElement;
-        }
-
-        function addShopItem() {
-            if (Object.keys(availableShopItems).length === 0) {
-                showNotification('Please load available items first', 'warning');
-                return;
-            }
-            
-            // Create item selection modal
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-            `;
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                background: var(--bg-secondary);
-                border-radius: 12px;
-                padding: 24px;
-                max-width: 500px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
-                position: relative;
-            `;
-            
-            modalContent.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-                    <h3 style="margin: 0; color: var(--text-primary);">Add Shop Item</h3>
-                    <button onclick="this.closest('.modal').remove()" 
-                            style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary);">
-                        ×
-                    </button>
-                </div>
-                
-                <div id="item-categories">
-                    ${Object.entries(availableShopItems).map(([categoryName, items]) => `
-                        <div style="margin-bottom: 20px;">
-                            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">
-                                ${categoryName}
-                            </h4>
-                            <div style="display: grid; gap: 8px;">
-                                ${items.map(item => `
-                                    <div onclick="selectShopItem(${item.item_code}, '${item.name}', ${item.default_priority})" 
-                                         style="padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s;"
-                                         onmouseover="this.style.borderColor = 'var(--accent-color)'"
-                                         onmouseout="this.style.borderColor = 'var(--border-color)'">
-                                        <div style="font-weight: 500; color: var(--text-primary);">${item.name}</div>
-                                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${item.description}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            modal.className = 'modal';
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-        }
-
-        function selectShopItem(itemCode, itemName, defaultPriority) {
-            // Check if item already exists
-            const existingIndex = currentShopConfig.items.findIndex(item => item.item_code === itemCode);
-            if (existingIndex !== -1) {
-                showNotification(`${itemName} is already in the list`, 'warning');
-                document.querySelector('.modal').remove();
-                return;
-            }
-            
-            // Find full item information from availableShopItems
-            let itemInfo = null;
-            for (const category in availableShopItems) {
-                const foundItem = availableShopItems[category].find(item => item.item_code === itemCode);
-                if (foundItem) {
-                    itemInfo = foundItem;
-                    break;
-                }
-            }
-            
-            // Add new item with full information
-            const newItem = {
-                item_code: itemCode,
-                name: itemInfo?.name || itemName,
-                description: itemInfo?.description || '',
-                category: itemInfo?.category || 'Other',
-                enabled: true,
-                priority: defaultPriority || itemInfo?.default_priority || 1,
-                min_buy: 1,
-                max_buy: 999999
-            };
-            
-            currentShopConfig.items.push(newItem);
-            
-            // Enable shop config when items are added
-            currentShopConfig.enabled = true;
-            
-            renderShopItemsList();
-            document.querySelector('.modal').remove();
-            showNotification(`${itemName} added to shop auto-buy list`, 'success');
-        }
-
-        function updateShopItem(index, field, value) {
-            if (currentShopConfig && 
-                currentShopConfig.items && 
-                index >= 0 && 
-                index < currentShopConfig.items.length && 
-                currentShopConfig.items[index]) {
-                currentShopConfig.items[index][field] = value;
-            } else {
-                console.error('Invalid updateShopItem call:', { index, field, value, itemsLength: currentShopConfig?.items?.length });
-            }
-        }
-
-        function removeShopItem(index) {
-            if (currentShopConfig && 
-                currentShopConfig.items && 
-                index >= 0 && 
-                index < currentShopConfig.items.length) {
-                currentShopConfig.items.splice(index, 1);
-                renderShopItemsList();
-                showNotification('Item removed from shop auto-buy list', 'info');
-            } else {
-                console.error('Invalid removeShopItem call:', { index, itemsLength: currentShopConfig?.items?.length });
-            }
-        }
-
-        async function saveAllianceShopConfig() {
-            try {
-                const configFile = getCurrentConfigFile();
-                
-                // Debug: Log the config being saved
-                console.log('Saving Alliance Shop Config:', JSON.stringify(currentShopConfig, null, 2));
-                
-                const response = await fetch('/api/alliance_shop/config', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        config_file: configFile,
-                        shop_config: currentShopConfig
-                    })
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    return true;
-                } else {
-                    throw new Error(data.error || 'Failed to save shop config');
-                }
-            } catch (error) {
-                console.error('Error saving shop config:', error);
-                throw error;
-            }
-        }
-
-        // Store original save function for later extension
-        const originalSaveConfig = window.saveConfig;
-
-        // Add shop functions to global scope
-        window.loadAllianceShopItems = loadAllianceShopItems;
-        window.toggleShopBuying = toggleShopBuying;
-        window.addShopItem = addShopItem;
-        window.selectShopItem = selectShopItem;
-        window.updateShopItem = updateShopItem;
-        window.removeShopItem = removeShopItem;
-        window.initializeAllianceShopConfig = initializeAllianceShopConfig;
-
-        // ===============================
-        // CARAVAN CONFIGURATION FUNCTIONS
-        // ===============================
-        
-        // currentCaravanConfig already declared above, just reset it
-        currentCaravanConfig = {
-            enabled: false,
-            items: []
-        };
-
-        async function loadCaravanItems() {
-            try {
-                const response = await fetch('/api/caravan/items');
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.caravanItemsData = data.categories;
-                    showNotification('Caravan items loaded successfully!', 'success');
-                } else {
-                    throw new Error(data.error || 'Failed to load caravan items');
-                }
-            } catch (error) {
-                console.error('Error loading caravan items:', error);
-                showNotification('Error loading caravan items: ' + error.message, 'error');
-            }
-        }
-
-        function toggleCaravanBuying(enabled) {
-            currentCaravanConfig.enabled = enabled;
-            // No longer need to manage toggles since it's integrated in Alliance Activities
-        }
-
-        function addCaravanItem() {
-            if (!window.caravanItemsData) {
-                showNotification('Please load caravan items first', 'warning');
-                return;
-            }
-
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.style.cssText = `
-                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
-                z-index: 10000;
-            `;
-
-            // Generate category options
-            let categoryOptions = '';
-            for (const category in window.caravanItemsData) {
-                categoryOptions += `<option value="${category}">${category}</option>`;
-            }
-
-            modal.innerHTML = `
-                <div style="background: var(--bg-secondary); padding: 24px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
-                    <h3 style="margin: 0 0 20px 0; color: var(--text-primary);">Add Caravan Item</h3>
-                    
-                    <div style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px; color: var(--text-primary);">Category:</label>
-                        <select id="caravan-category-select" onchange="updateCaravanItemOptions()" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                            <option value="">Select Category</option>
-                            ${categoryOptions}
-                        </select>
-                    </div>
-                    
-                    <div style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px; color: var(--text-primary);">Item:</label>
-                        <select id="caravan-item-select" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                            <option value="">Select Item</option>
-                        </select>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Priority (1-10):</label>
-                            <input type="number" id="caravan-priority" min="1" max="10" value="1" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Min Buy:</label>
-                            <input type="number" id="caravan-min-buy" min="1" value="1" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Max Buy:</label>
-                            <input type="number" id="caravan-max-buy" min="1" value="999999" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 8px 16px; background: var(--bg-primary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer;">Cancel</button>
-                        <button onclick="saveCaravanItem()" style="padding: 8px 16px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Add Item</button>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-            modal.onclick = (e) => {
-                if (e.target === modal) modal.remove();
-            };
-        }
-
-        function updateCaravanItemOptions() {
-            const categorySelect = document.getElementById('caravan-category-select');
-            const itemSelect = document.getElementById('caravan-item-select');
-            const category = categorySelect.value;
-
-            itemSelect.innerHTML = '<option value="">Select Item</option>';
-
-            if (category && window.caravanItemsData[category]) {
-                window.caravanItemsData[category].forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.item_code;
-                    option.textContent = item.name;
-                    option.title = item.description;
-                    itemSelect.appendChild(option);
-                });
-            }
-        }
-
-        function saveCaravanItem() {
-            const itemCode = parseInt(document.getElementById('caravan-item-select').value);
-            const priority = parseInt(document.getElementById('caravan-priority').value);
-            const minBuy = parseInt(document.getElementById('caravan-min-buy').value);
-            const maxBuy = parseInt(document.getElementById('caravan-max-buy').value);
-
-            if (!itemCode) {
-                showNotification('Please select an item', 'warning');
-                return;
-            }
-
-            // Check if item already exists
-            if (currentCaravanConfig.items.some(item => item.item_code === itemCode)) {
-                showNotification('Item already exists in configuration', 'warning');
-                return;
-            }
-
-            // Find item details
-            let itemDetails = null;
-            for (const category in window.caravanItemsData) {
-                const found = window.caravanItemsData[category].find(item => item.item_code === itemCode);
-                if (found) {
-                    itemDetails = found;
-                    break;
-                }
-            }
-
-            const newItem = {
-                item_code: itemCode,
-                enabled: true,
-                priority: priority,
-                min_buy: minBuy,
-                max_buy: maxBuy,
-                name: itemDetails ? itemDetails.name : `Item ${itemCode}`,
-                description: itemDetails ? itemDetails.description : '',
-                category: itemDetails ? itemDetails.category : 'Other'
-            };
-
-            currentCaravanConfig.items.push(newItem);
-            
-            // Enable caravan config when items are added
-            currentCaravanConfig.enabled = true;
-            
-            updateCaravanItemsList();
-            document.querySelector('.modal-overlay').remove();
-            showNotification('Caravan item added successfully!', 'success');
-        }
-
-        function updateCaravanItemsList() {
-            const container = document.getElementById('caravan-items-list');
-            if (!container) return;
-
-            if (currentCaravanConfig.items.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No caravan items configured. Click "Add Item" to get started.</p>';
-                return;
-            }
-
-            container.innerHTML = currentCaravanConfig.items.map(item => `
-                <div style="display: flex; align-items: center; padding: 12px; margin-bottom: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px;">
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${item.name}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">${item.description}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary);">
-                            Priority: ${item.priority} | Min: ${item.min_buy} | Max: ${item.max_buy} | Category: ${item.category}
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <label class="toggle-switch" style="transform: scale(0.8);">
-                            <input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleCaravanItem(${item.item_code}, this.checked)">
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <button onclick="editCaravanItem(${item.item_code})" style="padding: 4px 8px; font-size: 10px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer;">Edit</button>
-                        <button onclick="removeCaravanItem(${item.item_code})" style="padding: 4px 8px; font-size: 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function toggleCaravanItem(itemCode, enabled) {
-            const item = currentCaravanConfig.items.find(item => item.item_code === itemCode);
-            if (item) {
-                item.enabled = enabled;
-            }
-        }
-
-        function editCaravanItem(itemCode) {
-            const item = currentCaravanConfig.items.find(item => item.item_code === itemCode);
-            if (!item) return;
-
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.style.cssText = `
-                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
-                z-index: 10000;
-            `;
-
-            modal.innerHTML = `
-                <div style="background: var(--bg-secondary); padding: 24px; border-radius: 12px; width: 90%; max-width: 400px;">
-                    <h3 style="margin: 0 0 20px 0; color: var(--text-primary);">Edit ${item.name}</h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Priority (1-10):</label>
-                            <input type="number" id="edit-caravan-priority" min="1" max="10" value="${item.priority}" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Min Buy:</label>
-                            <input type="number" id="edit-caravan-min-buy" min="1" value="${item.min_buy}" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 12px;">Max Buy:</label>
-                            <input type="number" id="edit-caravan-max-buy" min="1" value="${item.max_buy}" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);">
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 8px 16px; background: var(--bg-primary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer;">Cancel</button>
-                        <button onclick="updateCaravanItem(${itemCode})" style="padding: 8px 16px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Update</button>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-        }
-
-        function updateCaravanItem(itemCode) {
-            const item = currentCaravanConfig.items.find(item => item.item_code === itemCode);
-            if (!item) return;
-
-            item.priority = parseInt(document.getElementById('edit-caravan-priority').value);
-            item.min_buy = parseInt(document.getElementById('edit-caravan-min-buy').value);
-            item.max_buy = parseInt(document.getElementById('edit-caravan-max-buy').value);
-
-            updateCaravanItemsList();
-            document.querySelector('.modal-overlay').remove();
-            showNotification('Caravan item updated successfully!', 'success');
-        }
-
-        function removeCaravanItem(itemCode) {
-            if (confirm('Are you sure you want to remove this caravan item?')) {
-                currentCaravanConfig.items = currentCaravanConfig.items.filter(item => item.item_code !== itemCode);
-                updateCaravanItemsList();
-                showNotification('Caravan item removed successfully!', 'success');
-            }
-        }
-
-        async function loadCaravanConfig() {
-            try {
-                const configFile = getCurrentConfigFile();
-                const response = await fetch(`/api/caravan/config?config_file=${encodeURIComponent(configFile)}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentCaravanConfig = data.config || { enabled: false, items: [] };
-                    
-                    // Update UI - caravan config is now integrated in Alliance Activities tab
-                    // The checkbox state is managed by the Alliance Activities configuration
-                    
-                    updateCaravanItemsList();
-                }
-            } catch (error) {
-                console.error('Error loading caravan config:', error);
-            }
-        }
-
-        async function saveCaravanConfig() {
-            try {
-                const configFile = getCurrentConfigFile();
-                
-                // Debug: Log the config being saved
-                console.log('Saving Caravan Config:', JSON.stringify(currentCaravanConfig, null, 2));
-                
-                const response = await fetch('/api/caravan/config', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        config_file: configFile,
-                        caravan_config: currentCaravanConfig
-                    })
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    return true;
-                } else {
-                    throw new Error(data.error || 'Failed to save caravan config');
-                }
-            } catch (error) {
-                showNotification('Error saving caravan configuration: ' + error.message, 'error');
-                return false;
-            }
-        }
-
-        // Integrated save function for all configurations
-        window.saveConfig = function(tabName) {
-            try {
-                console.log(`Saving config for: ${tabName}`);
-                
-                // Update alliance shop, caravan, and VIP shop configs in main structure
-                if (currentShopConfig.enabled || (currentShopConfig.items && currentShopConfig.items.length > 0)) {
-                    saveAllianceShopConfig(); // This now updates fullConfigData directly
-                }
-                
-                if (currentCaravanConfig.enabled || (currentCaravanConfig.items && currentCaravanConfig.items.length > 0)) {
-                    saveCaravanConfig(); // This now updates fullConfigData directly
-                }
-                
-                if (currentVipShopConfig.enabled || (currentVipShopConfig.items && currentVipShopConfig.items.length > 0)) {
-                    saveVipShopConfig(); // This now updates fullConfigData directly
-                }
-                
-                // Call original save function with integrated data
-                return originalSaveConfig(tabName);
-            } catch (error) {
-                showNotification('Error saving configurations: ' + error.message, 'error');
-                return false;
-            }
-        };
-
-        // Add caravan functions to global scope
-        window.loadCaravanItems = loadCaravanItems;
-        window.toggleCaravanBuying = toggleCaravanBuying;
-        window.addCaravanItem = addCaravanItem;
-        window.updateCaravanItemOptions = updateCaravanItemOptions;
-        window.saveCaravanItem = saveCaravanItem;
-        window.toggleCaravanItem = toggleCaravanItem;
-        window.editCaravanItem = editCaravanItem;
-        window.updateCaravanItem = updateCaravanItem;
-        window.removeCaravanItem = removeCaravanItem;
-        
-        // ===============================
-        // INTEGRATED CONFIG FUNCTIONS
-        // ===============================
-        
-        async function initializeAllianceShopConfig() {
-            // Extract alliance shop config from main fullConfigData
-            try {
-                console.log('Initializing Alliance Shop Config from main config');
-                
-                // Load shop items first if not already loaded
-                if (!availableShopItems || Object.keys(availableShopItems).length === 0) {
-                    console.log('Loading shop items for config initialization...');
-                    await loadAllianceShopItems();
-                }
-                
-                // Get alliance_farmer job from main config
-                const jobs = fullConfigData.main?.jobs || [];
-                const allianceJob = jobs.find(job => job.name === 'alliance_farmer');
-                
-                if (allianceJob && allianceJob.kwargs && allianceJob.kwargs.shop_items_config) {
-                    currentShopConfig = allianceJob.kwargs.shop_items_config;
-                    
-                    // Enrich items with display information if missing
-                    if (currentShopConfig.items && availableShopItems && Object.keys(availableShopItems).length > 0) {
-                        currentShopConfig.items = currentShopConfig.items.map(item => {
-                            if (!item.name || !item.description) {
-                                // Find full item info from availableShopItems
-                                let itemInfo = null;
-                                for (const category in availableShopItems) {
-                                    const foundItem = availableShopItems[category].find(availItem => availItem.item_code === item.item_code);
-                                    if (foundItem) {
-                                        itemInfo = foundItem;
-                                        break;
-                                    }
-                                }
-                                
-                                return {
-                                    ...item,
-                                    name: itemInfo?.name || `Item ${item.item_code}`,
-                                    description: itemInfo?.description || '',
-                                    category: itemInfo?.category || 'Other'
-                                };
-                            }
-                            return item;
-                        });
-                    }
-                    
-                    console.log('Found existing shop config:', currentShopConfig);
-                } else {
-                    // Check for old format or use defaults
-                    const oldItemList = allianceJob?.kwargs?.shop_auto_buy_item_code_list || [];
-                    currentShopConfig = {
-                        enabled: oldItemList.length > 0,
-                        items: oldItemList.map(item_code => ({
-                            item_code: item_code,
-                            name: `Item ${item_code}`,
-                            description: '',
-                            category: 'Other',
-                            enabled: true,
-                            priority: 1,
-                            min_buy: 1,
-                            max_buy: 999999
-                        }))
-                    };
-                    console.log('Using default shop config:', currentShopConfig);
-                }
-                
-                updateShopConfigDisplay();
-            } catch (error) {
-                console.error('Error initializing alliance shop config:', error);
-                currentShopConfig = { enabled: false, items: [] };
-                updateShopConfigDisplay();
-            }
-        }
-
-        function saveAllianceShopConfig() {
-            // Save alliance shop config to main fullConfigData structure
-            try {
-                console.log('Integrating Alliance Shop Config into main config:', JSON.stringify(currentShopConfig, null, 2));
-                
-                // Ensure main structure exists
-                if (!fullConfigData.main) fullConfigData.main = {};
-                if (!fullConfigData.main.jobs) fullConfigData.main.jobs = [];
-                
-                // Find or create alliance_farmer job
-                let allianceJob = fullConfigData.main.jobs.find(job => job.name === 'alliance_farmer');
-                if (!allianceJob) {
-                    allianceJob = {
-                        name: 'alliance_farmer',
-                        enabled: true,
-                        interval: { start: 120, end: 200 },
-                        kwargs: {}
-                    };
-                    fullConfigData.main.jobs.push(allianceJob);
-                }
-                
-                // Update kwargs with shop config
-                if (!allianceJob.kwargs) allianceJob.kwargs = {};
-                allianceJob.kwargs.shop_items_config = currentShopConfig;
-                
-                // Remove old format for compatibility
-                if (allianceJob.kwargs.shop_auto_buy_item_code_list) {
-                    delete allianceJob.kwargs.shop_auto_buy_item_code_list;
-                }
-                
-                return true;
-            } catch (error) {
-                console.error('Error integrating alliance shop configuration:', error);
-                return false;
-            }
-        }
-
-        async function initializeCaravanConfig() {
-            // Extract caravan config from main fullConfigData
-            try {
-                console.log('Initializing Caravan Config from main config');
-                
-                // Load caravan items first if not already loaded
-                if (!availableCaravanItems || Object.keys(availableCaravanItems).length === 0) {
-                    console.log('Loading caravan items for config initialization...');
-                    await loadCaravanItems();
-                }
-                
-                // Get caravan_farmer job from main config
-                const jobs = fullConfigData.main?.jobs || [];
-                const caravanJob = jobs.find(job => job.name === 'caravan_farmer');
-                
-                if (caravanJob && caravanJob.kwargs && caravanJob.kwargs.caravan_items_config) {
-                    currentCaravanConfig = caravanJob.kwargs.caravan_items_config;
-                    
-                    // Enrich items with display information if missing
-                    if (currentCaravanConfig.items && availableCaravanItems && Object.keys(availableCaravanItems).length > 0) {
-                        currentCaravanConfig.items = currentCaravanConfig.items.map(item => {
-                            if (!item.name || !item.description) {
-                                // Find full item info from availableCaravanItems
-                                let itemInfo = null;
-                                for (const category in availableCaravanItems) {
-                                    const foundItem = availableCaravanItems[category].find(availItem => availItem.item_code === item.item_code);
-                                    if (foundItem) {
-                                        itemInfo = foundItem;
-                                        break;
-                                    }
-                                }
-                                
-                                return {
-                                    ...item,
-                                    name: itemInfo?.name || `Item ${item.item_code}`,
-                                    description: itemInfo?.description || '',
-                                    category: itemInfo?.category || 'Other'
-                                };
-                            }
-                            return item;
-                        });
-                    }
-                    
-                    console.log('Found existing caravan config:', currentCaravanConfig);
-                } else {
-                    // Use defaults
-                    currentCaravanConfig = { enabled: false, items: [] };
-                    console.log('Using default caravan config:', currentCaravanConfig);
-                }
-                
-                updateCaravanItemsList();
-            } catch (error) {
-                console.error('Error initializing caravan config:', error);
-                currentCaravanConfig = { enabled: false, items: [] };
-                updateCaravanItemsList();
-            }
-        }
-
-        function saveCaravanConfig() {
-            // Save caravan config to main fullConfigData structure
-            try {
-                console.log('Integrating Caravan Config into main config:', JSON.stringify(currentCaravanConfig, null, 2));
-                
-                // Ensure main structure exists
-                if (!fullConfigData.main) fullConfigData.main = {};
-                
-                // Save caravan config to main structure
-                fullConfigData.main.caravan_items = currentCaravanConfig;
-                
-                // Also update caravan_farmer job kwargs if it exists
-                if (fullConfigData.main.jobs) {
-                    const caravanJob = fullConfigData.main.jobs.find(job => job.name === 'caravan_farmer');
-                    if (caravanJob) {
-                        if (!caravanJob.kwargs) caravanJob.kwargs = {};
-                        caravanJob.kwargs.caravan_items_config = currentCaravanConfig;
-                    }
-                }
-                
-                return true;
-            } catch (error) {
-                console.error('Error integrating caravan configuration:', error);
-                return false;
-            }
-        }
-
-        window.initializeCaravanConfig = initializeCaravanConfig;
-
-        // ===============================
-        // VIP SHOP FUNCTIONS
-        // ===============================
-        
-        let availableVipShopItems = {};
-        let currentVipShopConfig = {
-            enabled: false,
-            items: []
-        };
-
-        async function loadVipShopItems() {
-            try {
-                const response = await fetch('/api/vip_shop/items');
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.vipShopItemsData = data.data;
-                    availableVipShopItems = data.data;
-                    showNotification('VIP shop items loaded successfully!', 'success');
-                } else {
-                    throw new Error(data.error || 'Failed to load VIP shop items');
-                }
-            } catch (error) {
-                console.error('Error loading VIP shop items:', error);
-                showNotification('Error loading VIP shop items: ' + error.message, 'error');
-            }
-        }
-
-        function addVipShopItem() {
-            if (!availableVipShopItems || Object.keys(availableVipShopItems).length === 0) {
-                showNotification('Please load available items first', 'warning');
-                return;
-            }
-
-            // Create modal HTML
-            const modalHtml = `
-                <div id="vip-shop-item-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
-                    <div style="background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 90%; max-height: 90%; overflow-y: auto;">
-                        <h3 style="margin: 0 0 20px 0; color: #1e293b;">Add VIP Shop Item</h3>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Category</label>
-                            <select id="vip-shop-category-select" onchange="updateVipShopItemOptions()" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
-                                <option value="">Select a category</option>
-                            </select>
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Item</label>
-                            <select id="vip-shop-item-select" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
-                                <option value="">Select an item</option>
-                            </select>
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Priority (1 = highest)</label>
-                            <input type="number" id="vip-shop-item-priority" min="1" max="10" value="1" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Min Buy</label>
-                            <input type="number" id="vip-shop-item-min-buy" min="1" value="1" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Max Buy</label>
-                            <input type="number" id="vip-shop-item-max-buy" min="1" value="999999" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        </div>
-                        
-                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                            <button onclick="closeVipShopItemModal()" style="padding: 8px 16px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer;">Cancel</button>
-                            <button onclick="saveVipShopItem()" style="padding: 8px 16px; border: none; background: #3b82f6; color: white; border-radius: 6px; cursor: pointer;">Add Item</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
-            // Populate categories
-            const categorySelect = document.getElementById('vip-shop-category-select');
-            for (const category in availableVipShopItems) {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                categorySelect.appendChild(option);
-            }
-        }
-
-        function updateVipShopItemOptions() {
-            const categorySelect = document.getElementById('vip-shop-category-select');
-            const itemSelect = document.getElementById('vip-shop-item-select');
-            const selectedCategory = categorySelect.value;
-            
-            // Clear existing options
-            itemSelect.innerHTML = '<option value="">Select an item</option>';
-            
-            if (selectedCategory && availableVipShopItems[selectedCategory]) {
-                availableVipShopItems[selectedCategory].forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.item_code;
-                    option.textContent = `${item.name} (VIP ${item.vip_level}) - ${Math.round(item.discount * 100)}% off`;
-                    itemSelect.appendChild(option);
-                });
-            }
-        }
-
-        function saveVipShopItem() {
-            const itemCode = parseInt(document.getElementById('vip-shop-item-select').value);
-            const priority = parseInt(document.getElementById('vip-shop-item-priority').value);
-            const minBuy = parseInt(document.getElementById('vip-shop-item-min-buy').value);
-            const maxBuy = parseInt(document.getElementById('vip-shop-item-max-buy').value);
-            
-            if (!itemCode) {
-                showNotification('Please select an item', 'warning');
-                return;
-            }
-            
-            // Find item details
-            let itemInfo = null;
-            for (const category in availableVipShopItems) {
-                const foundItem = availableVipShopItems[category].find(item => item.item_code === itemCode);
-                if (foundItem) {
-                    itemInfo = foundItem;
-                    break;
-                }
-            }
-            
-            if (!itemInfo) {
-                showNotification('Item information not found', 'error');
-                return;
-            }
-            
-            // Check if item already exists
-            const existingIndex = currentVipShopConfig.items.findIndex(item => item.item_code === itemCode);
-            if (existingIndex >= 0) {
-                showNotification('Item already exists in configuration', 'warning');
-                return;
-            }
-            
-            // Add item to configuration
-            const newItem = {
-                item_code: itemCode,
-                name: itemInfo.name,
-                description: itemInfo.description,
-                category: itemInfo.category,
-                vip_level: itemInfo.vip_level,
-                discount: itemInfo.discount,
-                priority: priority,
-                min_buy: minBuy,
-                max_buy: maxBuy,
-                enabled: true
-            };
-            
-            currentVipShopConfig.items.push(newItem);
-            updateVipShopItemsList();
-            closeVipShopItemModal();
-            showNotification('VIP shop item added successfully', 'success');
-        }
-
-        function closeVipShopItemModal() {
-            const modal = document.getElementById('vip-shop-item-modal');
-            if (modal) {
-                modal.remove();
-            }
-        }
-
-        function updateVipShopItemsList() {
-            const container = document.getElementById('vip-shop-items-list');
-            if (!container) return;
-            
-            if (!currentVipShopConfig.items || currentVipShopConfig.items.length === 0) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">No VIP shop items configured. Click "Add Item" to start.</div>';
-                return;
-            }
-            
-            // Sort items by priority
-            const sortedItems = [...currentVipShopConfig.items].sort((a, b) => a.priority - b.priority);
-            
-            container.innerHTML = sortedItems.map(item => `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
-                    <div style="flex: 1;">
-                        <div style="font-weight: 500; color: #1e293b;">${item.name}</div>
-                        <div style="font-size: 12px; color: #64748b;">${item.category} • VIP ${item.vip_level} • Priority ${item.priority} • Buy ${item.min_buy}-${item.max_buy}</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <label style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
-                            <input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleVipShopItem(${item.item_code})">
-                            Enabled
-                        </label>
-                        <button onclick="removeVipShopItem(${item.item_code})" style="padding: 4px 8px; border: none; background: #ef4444; color: white; border-radius: 4px; cursor: pointer; font-size: 12px;">Remove</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function toggleVipShopItem(itemCode) {
-            const item = currentVipShopConfig.items.find(item => item.item_code === itemCode);
-            if (item) {
-                item.enabled = !item.enabled;
-                updateVipShopItemsList();
-            }
-        }
-
-        function removeVipShopItem(itemCode) {
-            const index = currentVipShopConfig.items.findIndex(item => item.item_code === itemCode);
-            if (index >= 0) {
-                currentVipShopConfig.items.splice(index, 1);
-                updateVipShopItemsList();
-                showNotification('VIP shop item removed', 'success');
-            }
-        }
-
-        function populateVipShopConfig(config) {
-            console.log('Loading VIP shop config:', config);
-            
-            // Load basic settings
-            document.getElementById('vip-shop-enabled').checked = config.enabled || false;
-            
-            // Update configuration and display
-            currentVipShopConfig = config || { enabled: false, items: [] };
-            updateVipShopItemsList();
-        }
-
-        async function initializeVipShopConfig() {
-            try {
-                console.log('Initializing VIP Shop Config from main config');
-                
-                // Load VIP shop items first if not already loaded
-                if (!availableVipShopItems || Object.keys(availableVipShopItems).length === 0) {
-                    console.log('Loading VIP shop items for config initialization...');
-                    await loadVipShopItems();
-                }
-                
-                // Get VIP shop config from main config
-                const vipShopConfig = fullConfigData.main?.vip_shop || { enabled: false, items: [] };
-                currentVipShopConfig = vipShopConfig;
-                
-                console.log('Found VIP shop config:', currentVipShopConfig);
-                updateVipShopItemsList();
-            } catch (error) {
-                console.error('Error initializing VIP shop config:', error);
-                currentVipShopConfig = { enabled: false, items: [] };
-                updateVipShopItemsList();
-            }
-        }
-
-        function saveVipShopConfig() {
-            try {
-                console.log('Integrating VIP Shop Config into main config:', JSON.stringify(currentVipShopConfig, null, 2));
-                
-                // Ensure main structure exists
-                if (!fullConfigData.main) fullConfigData.main = {};
-                if (!fullConfigData.main.jobs) fullConfigData.main.jobs = [];
-                
-                // Save VIP shop config to main structure
-                fullConfigData.main.vip_shop = currentVipShopConfig;
-                
-                // Handle vip_shop_farmer job based on enabled status
-                const jobs = fullConfigData.main.jobs;
-                let vipShopJobIndex = jobs.findIndex(job => job.name === 'vip_shop_farmer');
-                
-                if (currentVipShopConfig.enabled) {
-                    // Create or update vip_shop_farmer job
-                    const vipShopJob = {
-                        "enabled": true,
-                        "interval": {
-                            "start": 120,
-                            "end": 200
-                        },
-                        "name": "vip_shop_farmer",
-                        "kwargs": {
-                            "vip_shop_config": currentVipShopConfig
-                        }
-                    };
-                    
-                    if (vipShopJobIndex >= 0) {
-                        // Update existing job
-                        jobs[vipShopJobIndex] = vipShopJob;
-                        console.log('Updated existing vip_shop_farmer job');
-                    } else {
-                        // Add new job after caravan_farmer if possible
-                        const caravanIndex = jobs.findIndex(job => job.name === 'caravan_farmer');
-                        if (caravanIndex >= 0) {
-                            jobs.splice(caravanIndex + 1, 0, vipShopJob);
-                            console.log('Added vip_shop_farmer job after caravan_farmer');
-                        } else {
-                            jobs.push(vipShopJob);
-                            console.log('Added vip_shop_farmer job at end of jobs array');
-                        }
-                    }
-                } else {
-                    // Disable existing job if VIP shop is disabled
-                    if (vipShopJobIndex >= 0) {
-                        jobs[vipShopJobIndex].enabled = false;
-                        console.log('Disabled vip_shop_farmer job');
-                    }
-                }
-                
-                return true;
-            } catch (error) {
-                console.error('Error integrating VIP shop configuration:', error);
-                return false;
-            }
-        }
-
-        // Add VIP shop functions to global scope
-        window.loadVipShopItems = loadVipShopItems;
-        window.addVipShopItem = addVipShopItem;
-        window.updateVipShopItemOptions = updateVipShopItemOptions;
-        window.saveVipShopItem = saveVipShopItem;
-        window.closeVipShopItemModal = closeVipShopItemModal;
-        window.toggleVipShopItem = toggleVipShopItem;
-        window.removeVipShopItem = removeVipShopItem;
-        window.initializeVipShopConfig = initializeVipShopConfig;
-
-        // Cancel configuration changes function
-        function cancelConfigChanges() {
-            if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
-                // Reload the current configuration to discard changes
-                const currentConfigFile = getCurrentConfigFile();
-                if (currentConfigFile) {
-                    showNotification('Changes cancelled, reloading configuration...', 'info');
-                    location.reload(); // Simple reload to reset everything
-                } else {
-                    showNotification('No configuration loaded to cancel', 'warning');
-                }
-            }
-        }
-
-        // Make cancel function available globally
-        window.cancelConfigChanges = cancelConfigChanges;
-
     </script>
 </body>
 
