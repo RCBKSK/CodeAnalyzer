@@ -1,10 +1,106 @@
 {
+  "alliance_activities": {
+    "caravan_auto_buy": {
+      "enabled": true,
+      "interval_minutes": 180
+    },
+    "gift_claim": {
+      "enabled": true,
+      "interval_minutes": 30
+    },
+    "help_all": {
+      "enabled": true,
+      "interval_minutes": 5
+    },
+    "research_donate": {
+      "enabled": false,
+      "interval_minutes": 60
+    },
+    "shop_auto_buy": {
+      "enabled": false,
+      "interval_minutes": 120
+    }
+  },
   "buff_management": {
+    "buffs": [
+      {
+        "enabled": true,
+        "item_codes": [
+          10102001
+        ],
+        "min_duration_minutes": 20,
+        "name": "Food Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102003
+        ],
+        "min_duration_minutes": 20,
+        "name": "Wood Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102005
+        ],
+        "min_duration_minutes": 20,
+        "name": "Stone Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102007
+        ],
+        "min_duration_minutes": 20,
+        "name": "Gold Production Boost"
+      },
+      {
+        "enabled": true,
+        "item_codes": [
+          10102009
+        ],
+        "min_duration_minutes": 20,
+        "name": "Gathering Speed Boost"
+      }
+    ],
     "enabled": true,
     "production_boosts": {
-      "long_duration": {},
-      "medium_duration": {},
-      "short_duration": {}
+      "10102001": {
+        "enabled": true,
+        "name": "Food boost 8hours",
+        "item_code": 10102001,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102003": {
+        "enabled": true,
+        "name": "Wood boost 8hours",
+        "item_code": 10102003,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102005": {
+        "enabled": true,
+        "name": "Stone boost 8hours",
+        "item_code": 10102005,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102007": {
+        "enabled": true,
+        "name": "Gold boost 8hours",
+        "item_code": 10102007,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102009": {
+        "enabled": true,
+        "name": "Gathering boost 8hours",
+        "item_code": 10102009,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      }
     }
   },
   "discord": {
@@ -24,6 +120,21 @@
     "user_id": "admin"
   },
   "main": {
+    "caravan_items": {
+      "enabled": true,
+      "items": [
+        {
+          "category": "Boosts",
+          "description": "1 Day Food Production Boost",
+          "enabled": true,
+          "item_code": 10102002,
+          "max_buy": 999999,
+          "min_buy": 1,
+          "name": "Food Boost (1D)",
+          "priority": 1
+        }
+      ]
+    },
     "jobs": [
       {
         "enabled": true,
@@ -53,24 +164,13 @@
           "research_donate": true,
           "shop_items_config": {
             "enabled": true,
-            "items": [
-              {
-                "category": "VIP",
-                "description": "100 VIP Points for premium features",
-                "enabled": false,
-                "item_code": 10101008,
-                "max_buy": 999999,
-                "min_buy": 1,
-                "name": "Vip Point +100",
-                "priority": 1
-              }
-            ]
+            "items": []
           }
         },
         "name": "alliance_farmer"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 200,
           "start": 120
@@ -83,7 +183,51 @@
           "end": 200,
           "start": 120
         },
+        "kwargs": {
+          "caravan_items_config": {
+            "enabled": true,
+            "items": [
+              {
+                "category": "Boosts",
+                "description": "1 Day Food Production Boost",
+                "enabled": true,
+                "item_code": 10102002,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Food Boost (1D)",
+                "priority": 1
+              }
+            ]
+          }
+        },
         "name": "caravan_farmer"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "end": 200,
+          "start": 120
+        },
+        "kwargs": {
+          "vip_shop_config": {
+            "enabled": true,
+            "items": [
+              {
+                "category": "VIP",
+                "description": "Vip Point +100 - VIP 1 required",
+                "discount": 0.5,
+                "enabled": true,
+                "item_code": 10101008,
+                "max_buy": 999999,
+                "min_buy": 10,
+                "name": "Vip Point +100",
+                "priority": 1,
+                "vip_level": 1
+              }
+            ]
+          }
+        },
+        "name": "vip_shop_farmer"
       },
       {
         "enabled": false,
@@ -110,7 +254,7 @@
         "name": "dsavip_chest_claim"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 20,
           "start": 10
@@ -133,22 +277,12 @@
           },
           "targets": [
             {
-              "code": 20200103,
+              "code": 20100105,
               "enabled": true,
               "level": [
-                1,
-                2
+                1
               ],
-              "name": "Golem"
-            },
-            {
-              "code": 20200301,
-              "enabled": true,
-              "level": [
-                1,
-                2
-              ],
-              "name": "Orc"
+              "name": "Crystal Mine"
             }
           ]
         },
@@ -158,7 +292,7 @@
     "normal_monsters": {
       "common_troops": [
         {
-          "amount": 1000,
+          "amount": 0,
           "code": 50100304,
           "name": "Iron Cavalry (Tier 4 Cavalry)"
         },
@@ -173,44 +307,45 @@
           "name": "Marauder (Tier 6 Cavalry)"
         }
       ],
-      "enabled": true,
-      "max_distance": 250,
+      "enabled": false,
+      "max_distance": 200,
       "targets": [
         {
           "level_ranges": [
             1,
-            2
+            2,
+            3
           ],
           "monster_code": 20200103,
-          "monster_name": "Golem",
-          "troops": []
+          "monster_name": "Golem"
         },
         {
           "level_ranges": [
             1,
-            2
+            2,
+            3,
+            4
           ],
           "monster_code": 20200104,
-          "monster_name": "Treasure Goblin",
-          "troops": []
+          "monster_name": "Treasure Goblin"
         },
         {
           "level_ranges": [
             1,
-            2
+            2,
+            3
           ],
           "monster_code": 20200101,
-          "monster_name": "Orc",
-          "troops": []
+          "monster_name": "Orc"
         },
         {
           "level_ranges": [
             1,
-            2
+            2,
+            3
           ],
           "monster_code": 20200102,
-          "monster_name": "Skeleton",
-          "troops": []
+          "monster_name": "Skeleton"
         }
       ]
     },
@@ -219,15 +354,15 @@
         "allowed_areas": [],
         "enabled": false
       },
-      "enable_gathering": false,
-      "enable_monster_attack": true,
+      "enable_gathering": true,
+      "enable_monster_attack": false,
       "enabled": true,
-      "max_marches": 6,
+      "max_marches": 10,
       "monster_attack": {
-        "enabled": true
+        "enabled": false
       },
       "monster_distance_check": {
-        "enabled": true,
+        "enabled": false,
         "max_distance": 250
       },
       "notify_discord": false,
@@ -238,24 +373,154 @@
       }
     },
     "skills": {
-      "enabled": true,
+      "enabled": false,
       "skills": [
         {
-          "code": 10018,
-          "enabled": true,
-          "name": "Increase Resource Production"
-        },
-        {
           "code": 10001,
-          "enabled": true,
-          "name": "Instant Harvest"
+          "enabled": false
         },
         {
           "code": 10002,
-          "enabled": true,
-          "name": "Accelerated Gathering"
+          "enabled": false
+        },
+        {
+          "code": 10003,
+          "enabled": false
+        },
+        {
+          "code": 10004,
+          "enabled": false
+        },
+        {
+          "code": 10005,
+          "enabled": false
+        },
+        {
+          "code": 10006,
+          "enabled": false
+        },
+        {
+          "code": 10007,
+          "enabled": false
+        },
+        {
+          "code": 10008,
+          "enabled": false
+        },
+        {
+          "code": 10009,
+          "enabled": false
+        },
+        {
+          "code": 10010,
+          "enabled": false
+        },
+        {
+          "code": 10011,
+          "enabled": false
+        },
+        {
+          "code": 10012,
+          "enabled": false
+        },
+        {
+          "code": 10013,
+          "enabled": false
+        },
+        {
+          "code": 10014,
+          "enabled": false
+        },
+        {
+          "code": 10015,
+          "enabled": false
+        },
+        {
+          "code": 10016,
+          "enabled": false
+        },
+        {
+          "code": 10017,
+          "enabled": false
+        },
+        {
+          "code": 10018,
+          "enabled": false
+        },
+        {
+          "code": 10020,
+          "enabled": false
+        },
+        {
+          "code": 10021,
+          "enabled": false
+        },
+        {
+          "code": 10022,
+          "enabled": false
+        },
+        {
+          "code": 10023,
+          "enabled": false
+        },
+        {
+          "code": 10024,
+          "enabled": false
+        },
+        {
+          "code": 10025,
+          "enabled": false
+        },
+        {
+          "code": 10026,
+          "enabled": false
+        },
+        {
+          "code": 10027,
+          "enabled": false
+        },
+        {
+          "code": 10028,
+          "enabled": false
+        },
+        {
+          "code": 10029,
+          "enabled": false
+        },
+        {
+          "code": 10030,
+          "enabled": false
+        },
+        {
+          "code": 10031,
+          "enabled": false
+        },
+        {
+          "code": 10032,
+          "enabled": false
+        },
+        {
+          "code": 10033,
+          "enabled": false
+        },
+        {
+          "code": 10034,
+          "enabled": false
+        },
+        {
+          "code": 10035,
+          "enabled": false
+        },
+        {
+          "code": 10036,
+          "enabled": false
         }
-      ]
+      ],
+      "skin_change_enabled": false,
+      "skin_item_id": "1557544",
+      "skin_item_id_2": "1864946",
+      "treasure_page_1": 2,
+      "treasure_page_2": 1
     },
     "threads": [
       {
@@ -294,6 +559,10 @@
     "treasure": {
       "enabled": false,
       "page": 1
+    },
+    "vip_shop": {
+      "enabled": false,
+      "items": []
     }
   },
   "rally": {
@@ -318,11 +587,12 @@
   },
   "toggles": {
     "features": {
+      "buff_management": true,
       "chat_monitoring": true,
       "discord": true,
       "enable_chat_monitoring": true,
-      "enable_gathering": false,
-      "enable_monster_attack": true,
+      "enable_gathering": true,
+      "enable_monster_attack": false,
       "notify_discord": false,
       "object_scanning": true,
       "rally_join": false,
@@ -332,9 +602,9 @@
       "alliance_farmer": true,
       "caravan_farmer": true,
       "dsavip_chest_claim": false,
-      "harvester": false,
+      "harvester": true,
       "hospital_recover": true,
-      "mail_claim": false,
+      "mail_claim": true,
       "socf_thread": true,
       "use_resource_in_item_list": false,
       "vip_chest_claim": true,
@@ -346,28 +616,6 @@
       "free_chest_farmer_thread": true,
       "quest_monitor_thread": true,
       "train_troop_thread": false
-    }
-  },
-  "alliance_activities": {
-    "help_all": {
-      "enabled": true,
-      "interval_minutes": 5
-    },
-    "gift_claim": {
-      "enabled": true,
-      "interval_minutes": 30
-    },
-    "research_donate": {
-      "enabled": false,
-      "interval_minutes": 60
-    },
-    "shop_auto_buy": {
-      "enabled": false,
-      "interval_minutes": 120
-    },
-    "caravan_auto_buy": {
-      "enabled": false,
-      "interval_minutes": 180
     }
   }
 }

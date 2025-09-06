@@ -251,15 +251,6 @@ class LokFarmer:
         except Exception as e:
             logger.error(f"Failed to start skills management thread: {e}")
 
-        # Start daily free package thread
-        try:
-            daily_free_package_thread = threading.Thread(target=self._daily_free_package_farmer_thread)
-            daily_free_package_thread.daemon = True
-            daily_free_package_thread.start()
-            logger.info("Daily free package farmer thread started")
-        except Exception as e:
-            logger.error(f"Failed to start daily free package farmer thread: {e}")
-
         # Start alliance activity threads (only if alliance exists)
         if self.alliance_id:
             try:
@@ -2382,100 +2373,6 @@ Expected End: {ended_time}"""
         except Exception as e:
             logger.error(f"Error sending skills completion notification: {str(e)}")
 
-    def _daily_free_package_farmer_thread(self):
-        """Daily free package farmer thread that runs every 30 minutes and claims available free packages"""
-        logger.info("Daily free package farmer thread started")
-        
-        # Run package claim immediately at startup (if enabled)
-        self._execute_daily_free_package_claim()
-        
-        # Then run every 30 minutes
-        while True:
-            try:
-                time.sleep(1800)  # Wait 30 minutes (1800 seconds)
-                self._execute_daily_free_package_claim()
-            except Exception as e:
-                logger.error(f"Error in daily free package farmer thread: {str(e)}")
-                time.sleep(300)  # Wait 5 minutes on error before retrying
-
-    def _execute_daily_free_package_claim(self):
-        """Execute daily free package claim if enabled in configuration"""
-        try:
-            # Get current config
-            from lokbot import config
-            daily_package_config = config.get('main', {}).get('daily_free_package', {})
-            
-            if not daily_package_config.get('enabled', False):
-                logger.debug("Daily free package system is disabled")
-                return
-                
-            logger.info("Checking for available daily free packages")
-            
-            # Get package list from API
-            package_list = self.api.pkg_list()
-            packages = package_list.get('pkgs', [])
-            
-            logger.info(f"Retrieved {len(packages)} packages from API")
-            
-            # Find free packages that can be claimed
-            free_packages = []
-            for package in packages:
-                pkg_package = package.get('package', {})
-                cost_code = pkg_package.get('costCode', -1)
-                today_claimed = package.get('todayClaimed', True)
-                num_remain = package.get('numRemain', 0)
-                
-                # Check if this is a free package (costCode = 0)
-                if cost_code == 0 and not today_claimed and num_remain > 0:
-                    free_packages.append({
-                        'id': package.get('_id'),
-                        'code': package.get('code'),
-                        'crystal1': pkg_package.get('crystal1', 0),
-                        'crystal2': pkg_package.get('crystal2', 0),
-                        'items': pkg_package.get('items', [])
-                    })
-            
-            logger.info(f"Found {len(free_packages)} claimable free packages")
-            
-            # Claim each free package
-            claimed_count = 0
-            for package in free_packages:
-                try:
-                    package_id = package['id']
-                    package_code = package['code']
-                    
-                    logger.info(f"Attempting to claim free package {package_code} (ID: {package_id})")
-                    
-                    # Claim the package
-                    claim_result = self.api.pkg_daily_free_claim(package_id)
-                    
-                    if claim_result.get('result') == True:
-                        claimed_count += 1
-                        items_received = package.get('items', [])
-                        items_summary = f"{len(items_received)} items" if items_received else "unknown items"
-                        
-                        logger.info(f"✅ Successfully claimed free package {package_code}! Received: {items_summary}")
-                        
-                        # Send notification for successful claim
-                        self._send_notification(
-                            'daily_free_package_claimed',
-                            '🎁 Daily Free Package Claimed',
-                            f'Successfully claimed package {package_code}! Received {items_summary}'
-                        )
-                    else:
-                        logger.warning(f"Failed to claim package {package_code}: {claim_result}")
-                        
-                except Exception as claim_error:
-                    logger.error(f"Error claiming package {package.get('code', 'unknown')}: {claim_error}")
-            
-            if claimed_count > 0:
-                logger.info(f"✅ Daily free package claim completed! Claimed {claimed_count} packages")
-            else:
-                logger.info("No free packages available to claim at this time")
-                
-        except Exception as e:
-            logger.error(f"Error in daily free package claim execution: {str(e)}")
-
     def _skills_management_thread(self):
         """Skills management thread that runs at bot start and every 10 minutes"""
         logger.info("Skills management thread started")
@@ -3655,44 +3552,6 @@ Status: Available to join"""
                 if data.get('code') in (TASK_CODE_SILVER_HAMMER,
                                         TASK_CODE_GOLD_HAMMER):
                     self.building_queue_available.set()
-                
-                # Handle monster attack completion
-                elif data.get('code') == TASK_CODE_MARCH_MONSTER:
-                    try:
-                        # Send monster attack completion notification to web interface
-                        import requests
-                        import os
-                        import time
-                        
-                        # Get user ID and instance details
-                        user_id = os.getenv('LOKBOT_USER_ID', config.get('discord', {}).get('user_id', 'web_user'))
-                        timestamp = int(time.time() * 1000)
-                        instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{timestamp}")
-                        account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
-                        
-                        # Extract march information if available
-                        march_param = data.get('param', {})
-                        march_location = march_param.get('toLoc', 'Unknown')
-                        
-                        # Create completion message
-                        completion_message = f"Monster attack completed successfully! March returned from {march_location}"
-                        
-                        # Send notification to web interface
-                        response = requests.post('http://localhost:5000/api/monster_attack_completion',
-                            json={
-                                'user_id': user_id,
-                                'notification_type': 'monster_attack_completion',
-                                'message': completion_message,
-                                'location': march_location,
-                                'instance_id': instance_id,
-                                'account_name': account_name,
-                                'task_data': data
-                            },
-                            timeout=2)
-                        logger.info("Monster attack completion notification sent to web app")
-                        
-                    except Exception as e:
-                        logger.error(f"Error sending monster attack completion notification: {str(e)}")
 
             if data.get('status') == STATUS_CLAIMED:
                 if data.get('code') == TASK_CODE_ACADEMY:

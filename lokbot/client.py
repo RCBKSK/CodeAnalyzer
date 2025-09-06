@@ -784,40 +784,6 @@ class LokBotApi:
 
         return self.post('chat/new', data)
 
-    @tenacity.retry(
-        wait=tenacity.wait_fixed(1),
-        retry=tenacity.retry_if_exception_type(ratelimit.RateLimitException),
-    )
-    @ratelimit.limits(calls=1, period=2)
-    def pkg_list(self):
-        """
-        Get list of available packages including daily free packages
-        
-        Returns:
-            dict: Package list response containing free and paid packages
-        """
-        return self.post('pkg/list')
-
-    @tenacity.retry(
-        wait=tenacity.wait_fixed(1),
-        retry=tenacity.retry_if_exception_type(ratelimit.RateLimitException),
-    )
-    @ratelimit.limits(calls=1, period=2)
-    def pkg_daily_free_claim(self, pkg_id):
-        """
-        Claim daily free package
-        
-        Args:
-            pkg_id: Package ID to claim
-            
-        Returns:
-            dict: Claim response
-        """
-        data = {
-            "pkgId": pkg_id
-        }
-        return self.post('pkg/dailyFree/claim', data)
-
 
 def get_version():
     first = 1

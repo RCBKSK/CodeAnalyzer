@@ -110,21 +110,9 @@
           "gift_claim": true,
           "help_all": true,
           "research_donate": true,
-          "shop_items_config": {
-            "enabled": true,
-            "items": [
-              {
-                "item_code": 10101008,
-                "name": "Item 10101008",
-                "description": "",
-                "category": "Other",
-                "enabled": true,
-                "priority": 1,
-                "min_buy": 1,
-                "max_buy": 999999
-              }
-            ]
-          }
+          "shop_auto_buy_item_code_list": [
+            10101008
+          ]
         },
         "name": "alliance_farmer"
       },
@@ -305,73 +293,73 @@
     "normal_monsters": {
       "common_troops": [
         {
-          "amount": 0,
           "code": 50100106,
-          "name": "Paladin (Tier 6 Infantry)"
+          "name": "Paladin (Tier 6 Infantry)",
+          "amount": 0
         },
         {
-          "amount": 0,
           "code": 50100305,
-          "name": "Dragoon (Tier 5 Cavalry)"
+          "name": "Dragoon (Tier 5 Cavalry)",
+          "amount": 0
         },
         {
-          "amount": 0,
           "code": 50100306,
-          "name": "Marauder (Tier 6 Cavalry)"
+          "name": "Marauder (Tier 6 Cavalry)",
+          "amount": 0
         }
       ],
       "enabled": true,
       "max_distance": 250,
       "targets": [
         {
+          "monster_code": 20200103,
+          "monster_name": "Golem",
           "level_ranges": [
             1,
             2,
             3
           ],
-          "monster_code": 20200103,
-          "monster_name": "Golem",
           "troops": [
             {
               "code": 50100106,
+              "name": "Paladin (Tier 6 Infantry)",
               "fixed_amounts": [
                 10000,
                 15000,
                 200
-              ],
-              "name": "Paladin (Tier 6 Infantry)"
+              ]
             }
           ]
         },
         {
+          "monster_code": 20200104,
+          "monster_name": "Treasure Goblin",
           "level_ranges": [
             1,
             2,
             3,
             4
           ],
-          "monster_code": 20200104,
-          "monster_name": "Treasure Goblin",
           "troops": []
         },
         {
-          "level_ranges": [
-            1,
-            2,
-            3
-          ],
           "monster_code": 20200101,
           "monster_name": "Orc",
-          "troops": []
-        },
-        {
           "level_ranges": [
             1,
             2,
             3
           ],
+          "troops": []
+        },
+        {
           "monster_code": 20200102,
           "monster_name": "Skeleton",
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
           "troops": []
         }
       ]
@@ -441,9 +429,6 @@
     "treasure": {
       "enabled": false,
       "page": 1
-    },
-    "daily_free_package": {
-      "enabled": true
     }
   },
   "rally": {
@@ -476,8 +461,7 @@
       "notify_discord": false,
       "object_scanning": false,
       "rally_join": false,
-      "rally_start": false,
-      "daily_free_package": true
+      "rally_start": false
     },
     "jobs": {
       "alliance_farmer": true,
