@@ -996,6 +996,21 @@
                     <span class="unit-label">km</span>
                 </div>
 
+                <!-- Common Troops Section -->
+                <div class="monster-card" style="margin-top: 24px;">
+                    <div class="monster-header">
+                        <i class="fas fa-users" style="color: #3b82f6;"></i>
+                        <span class="monster-name">Default Troops Configuration</span>
+                    </div>
+                    <div style="color: #64748b; font-size: 14px; margin-bottom: 20px;">
+                        Configure default troop compositions for rally joining
+                    </div>
+                    <div id="rally-join-troops-list"></div>
+                    <button class="btn btn-primary" onclick="addRallyTroop('rally-join')" style="margin-top: 16px;">
+                        <i class="fas fa-plus"></i> Add Troop Type
+                    </button>
+                </div>
+
                 <!-- Add New Monster -->
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="rally-join-monster-select" class="dropdown-field" style="flex: 1;">
@@ -1088,6 +1103,21 @@
                     <span class="troops-title">Max Rally Distance</span>
                     <input type="number" id="rally-start-distance" class="distance-input" value="500" min="1">
                     <span class="unit-label">km</span>
+                </div>
+
+                <!-- Common Troops Section -->
+                <div class="monster-card" style="margin-top: 24px;">
+                    <div class="monster-header">
+                        <i class="fas fa-flag" style="color: #3b82f6;"></i>
+                        <span class="monster-name">Default Troops Configuration</span>
+                    </div>
+                    <div style="color: #64748b; font-size: 14px; margin-bottom: 20px;">
+                        Configure default troop compositions for rally starting
+                    </div>
+                    <div id="rally-start-troops-list"></div>
+                    <button class="btn btn-primary" onclick="addRallyTroop('rally-start')" style="margin-top: 16px;">
+                        <i class="fas fa-plus"></i> Add Troop Type
+                    </button>
                 </div>
 
                 <!-- Add New Monster -->
