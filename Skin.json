@@ -26,80 +26,20 @@
       {
         "enabled": true,
         "item_codes": [
-          10102001
+          10102021
         ],
         "min_duration_minutes": 20,
-        "name": "Food Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102003
-        ],
-        "min_duration_minutes": 20,
-        "name": "Wood Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102005
-        ],
-        "min_duration_minutes": 20,
-        "name": "Stone Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102007
-        ],
-        "min_duration_minutes": 20,
-        "name": "Gold Production Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102009
-        ],
-        "min_duration_minutes": 20,
-        "name": "Gathering Speed Boost"
+        "name": "Anti Spying Shield Boost"
       }
     ],
     "enabled": true,
     "production_boosts": {
-      "10102001": {
-        "duration_hours": 8,
+      "10102021": {
         "enabled": true,
-        "item_code": 10102001,
-        "min_duration_minutes": 20,
-        "name": "Food boost 8hours"
-      },
-      "10102003": {
+        "name": "Anti Spying 8hours",
+        "item_code": 10102021,
         "duration_hours": 8,
-        "enabled": true,
-        "item_code": 10102003,
-        "min_duration_minutes": 20,
-        "name": "Wood boost 8hours"
-      },
-      "10102005": {
-        "duration_hours": 8,
-        "enabled": true,
-        "item_code": 10102005,
-        "min_duration_minutes": 20,
-        "name": "Stone boost 8hours"
-      },
-      "10102007": {
-        "duration_hours": 8,
-        "enabled": true,
-        "item_code": 10102007,
-        "min_duration_minutes": 20,
-        "name": "Gold boost 8hours"
-      },
-      "10102009": {
-        "duration_hours": 8,
-        "enabled": true,
-        "item_code": 10102009,
-        "min_duration_minutes": 20,
-        "name": "Gathering boost 8hours"
+        "min_duration_minutes": 20
       }
     }
   },
@@ -236,16 +176,16 @@
                 "vip_level": 5
               },
               {
-                "item_code": 10101049,
-                "name": "Action point refill 10",
-                "description": "Action point refill 10 - VIP 3 required",
                 "category": "Action Points",
-                "vip_level": 3,
+                "description": "Action point refill 10 - VIP 3 required",
                 "discount": 0.5,
-                "priority": 1,
-                "min_buy": 1,
+                "enabled": true,
+                "item_code": 10101049,
                 "max_buy": 999999,
-                "enabled": true
+                "min_buy": 1,
+                "name": "Action point refill 10",
+                "priority": 1,
+                "vip_level": 3
               }
             ]
           }
@@ -598,16 +538,16 @@
           "vip_level": 5
         },
         {
-          "item_code": 10101049,
-          "name": "Action point refill 10",
-          "description": "Action point refill 10 - VIP 3 required",
           "category": "Action Points",
-          "vip_level": 3,
+          "description": "Action point refill 10 - VIP 3 required",
           "discount": 0.5,
-          "priority": 1,
-          "min_buy": 1,
+          "enabled": true,
+          "item_code": 10101049,
           "max_buy": 999999,
-          "enabled": true
+          "min_buy": 1,
+          "name": "Action point refill 10",
+          "priority": 1,
+          "vip_level": 3
         }
       ]
     }
