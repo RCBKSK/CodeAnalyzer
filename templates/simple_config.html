@@ -3213,6 +3213,15 @@
             const skinItemId = config.skin_item_id || '';
             document.getElementById('rally-join-skin-item-id').value = skinItemId;
 
+            // Load troops
+            const troopsList = document.getElementById('rally-join-troops-list');
+            troopsList.innerHTML = '';
+            if (config.common_troops && config.common_troops.length > 0) {
+                config.common_troops.forEach((troop, index) => {
+                    const troopItem = createRallyTroopItem(troop, index);
+                    troopsList.appendChild(troopItem);
+                });
+            }
 
             // Clear and populate monsters
             const container = document.getElementById('rally-join-monsters');
@@ -3251,6 +3260,15 @@
             const skinItemId = config.skin_item_id || '';
             document.getElementById('rally-start-skin-item-id').value = skinItemId;
 
+            // Load troops
+            const troopsList = document.getElementById('rally-start-troops-list');
+            troopsList.innerHTML = '';
+            if (config.common_troops && config.common_troops.length > 0) {
+                config.common_troops.forEach((troop, index) => {
+                    const troopItem = createRallyTroopItem(troop, index);
+                    troopsList.appendChild(troopItem);
+                });
+            }
 
             // Clear and populate monsters
             const container = document.getElementById('rally-start-monsters');
@@ -3753,6 +3771,9 @@
                 // Update targets
                 fullConfigData.rally.join.targets = collectMonstersFromUI('rally-join');
 
+                // Update troops
+                fullConfigData.rally.join.common_troops = collectRallyTroopsFromUI('rally-join');
+
                 // Update skin change settings with null check
                 const rallyJoinSkinEnabledElement = document.getElementById('rally-join-skin-change-enabled');
                 const rallyJoinSkinEnabled = rallyJoinSkinEnabledElement ? rallyJoinSkinEnabledElement.checked : false;
@@ -3840,6 +3861,9 @@
 
                 // Update targets
                 fullConfigData.rally.start.targets = collectMonstersFromUI('rally-start');
+
+                // Update troops
+                fullConfigData.rally.start.common_troops = collectRallyTroopsFromUI('rally-start');
 
                 // Update skin change settings
                 const rallyStartSkinEnabledElement = document.getElementById('rally-start-skin-change-enabled');
@@ -4610,6 +4634,31 @@
             return troops;
         }
 
+        function collectRallyTroopsFromUI(rallyType) {
+            const troopsList = document.getElementById(rallyType + '-troops-list');
+            const troops = [];
+
+            if (troopsList) {
+                troopsList.querySelectorAll('.troop-item').forEach(troopItem => {
+                    const troopSelect = troopItem.querySelector('.troop-select');
+                    const amountInput = troopItem.querySelector('.troop-amount-input');
+
+                    if (troopSelect && amountInput && troopSelect.value && amountInput.value !== '') {
+                        const troopCode = parseInt(troopSelect.value);
+                        const amount = parseInt(amountInput.value) || 0;
+
+                        troops.push({
+                            "code": troopCode,
+                            "name": troopSelect.options[troopSelect.selectedIndex].text,
+                            "amount": amount
+                        });
+                    }
+                });
+            }
+
+            return troops;
+        }
+
         function getMonsterCodeByName(monsterName) {
             const codes = {
                 'Orc': 20200101,
@@ -5251,6 +5300,67 @@
 
         // Make addCommonTroop globally available
         window.addCommonTroop = addCommonTroop;
+
+        function addRallyTroop(rallyType) {
+            const troopsList = document.getElementById(rallyType + '-troops-list');
+            if (troopsList) {
+                const newTroop = {
+                    code: 50100305,
+                    name: 'Dragoon (Tier 5 Cavalry)',
+                    amount: 0
+                };
+                const currentIndex = troopsList.children.length;
+                const troopItem = createRallyTroopItem(newTroop, currentIndex);
+                troopsList.appendChild(troopItem);
+            }
+        }
+
+        function createRallyTroopItem(troop, index) {
+            const troopDiv = document.createElement('div');
+            troopDiv.className = 'troop-item';
+            troopDiv.innerHTML = `
+                <select class="troop-select" data-troop-code="${troop.code}" onchange="updateTroopData(this)">
+                    <option value="${troop.code}" selected>${troop.name || getTroopNameByCode(troop.code)}</option>
+                    <optgroup label="Tier 6 Troops">
+                        <option value="50100106">Paladin (Tier 6 Infantry)</option>
+                        <option value="50100107">Destroyer (Tier 6 Infantry)</option>
+                        <option value="50100206">Marksman (Tier 6 Ranged)</option>
+                        <option value="50100207">Musketeer (Tier 6 Ranged)</option>
+                        <option value="50100306">Marauder (Tier 6 Cavalry)</option>
+                        <option value="50100307">Valkyrie (Tier 6 Cavalry)</option>
+                    </optgroup>
+                    <optgroup label="Tier 5 Troops">
+                        <option value="50100105">Crusader (Tier 5 Infantry)</option>
+                        <option value="50100205">Sniper (Tier 5 Ranged)</option>
+                        <option value="50100305">Dragoon (Tier 5 Cavalry)</option>
+                    </optgroup>
+                    <optgroup label="Tier 4 Troops">
+                        <option value="50100104">Guardian (Tier 4 Infantry)</option>
+                        <option value="50100204">Crossbow Man (Tier 4 Ranged)</option>
+                        <option value="50100304">Iron Cavalry (Tier 4 Cavalry)</option>
+                    </optgroup>
+                    <optgroup label="Tier 3 Troops">
+                        <option value="50100103">Knight (Tier 3 Infantry)</option>
+                        <option value="50100203">Ranger (Tier 3 Ranged)</option>
+                        <option value="50100303">Heavy Cavalry (Tier 3 Cavalry)</option>
+                    </optgroup>
+                </select>
+                <input type="number" class="troop-amount-input" value="${troop.amount || 0}" min="0" placeholder="Amount">
+                <button class="btn btn-danger" onclick="removeRallyTroopItem(this)">Remove</button>
+            `;
+            return troopDiv;
+        }
+
+        function removeRallyTroopItem(button) {
+            const troopItem = button.closest('.troop-item');
+            if (troopItem) {
+                troopItem.remove();
+            }
+        }
+
+        // Make rally troop functions globally available
+        window.addRallyTroop = addRallyTroop;
+        window.removeRallyTroopItem = removeRallyTroopItem;
 
         function showNotification(message, type = 'info') {
             // Remove any existing notifications
