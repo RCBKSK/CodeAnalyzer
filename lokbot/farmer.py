@@ -2352,8 +2352,13 @@ Expected End: {ended_time}"""
                 'timestamp': time.time()
             }
             
-            # Send to web app notification endpoint
-            response = requests.post('http://localhost:5000/api/skills_notification', json=notification_data, timeout=5)
+            # Send to appropriate web app notification endpoint based on type
+            if notification_type == 'monster_attack':
+                endpoint = 'http://localhost:5000/api/monster_attack_notification'
+            else:
+                endpoint = 'http://localhost:5000/api/skills_notification'
+                
+            response = requests.post(endpoint, json=notification_data, timeout=5)
             if response.status_code == 200:
                 logger.debug(f"Notification sent successfully: {notification_type} for {account_name} (instance: {instance_id})")
             else:

@@ -2626,6 +2626,54 @@ def rally_notification():
         logger.error(f"Error in rally_notification: {str(e)}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
+@app.route('/api/monster_attack_notification', methods=['POST'])
+def monster_attack_notification():
+    """Receive monster attack notifications from bot instances"""
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id', 'web_user')
+        instance_id = data.get('instance_id')
+        account_name = data.get('account_name')
+        title = data.get('title', 'Monster Attack Started')
+        message = data.get('message', 'Monster attack initiated')
+
+        # Validate and generate proper instance information
+        if not instance_id or instance_id == 'unknown':
+            # Try to get current instance first
+            current_instance_id, current_account_name = get_current_bot_instance()
+            if current_instance_id:
+                instance_id = current_instance_id
+                account_name = account_name or current_account_name
+            else:
+                # Generate a proper instance ID based on existing patterns
+                import time
+                timestamp = int(time.time() * 1000)
+                instance_id = f"{user_id}_{timestamp}"
+
+        # Always prioritize account name from bot_processes if available
+        if instance_id in bot_processes:
+            stored_name = bot_processes[instance_id].get('account_name') or bot_processes[instance_id].get('name')
+            if stored_name and stored_name != 'Bot Instance':
+                account_name = stored_name
+
+        # Only generate generic name if absolutely no account name available
+        if not account_name or account_name in ['Unknown Instance', '']:
+            existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+            instance_number = len(existing_instances) + 1
+            account_name = f"Bot Instance {instance_number}"
+
+        logger.info(f"Received monster attack notification for user_id: {user_id}, instance: {instance_id}, account: {account_name}")
+
+        # Add to notification system with validated instance information
+        add_notification(user_id, "monster_attack", title, message,
+                        account_name=account_name, instance_id=instance_id)
+
+        logger.info(f"Added monster attack notification for user {user_id} instance {instance_id} ({account_name})")
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        logger.error(f"Error in monster_attack_notification: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 @app.route('/api/crystal_limit_notification', methods=['POST'])
 def crystal_limit_notification():
     try:
