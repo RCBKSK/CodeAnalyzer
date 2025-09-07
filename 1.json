@@ -4,8 +4,7 @@
       {
         "enabled": true,
         "item_codes": [
-          10102001,
-          10102002
+          10102001
         ],
         "min_duration_minutes": 20,
         "name": "Food Production Boost"
@@ -13,8 +12,7 @@
       {
         "enabled": true,
         "item_codes": [
-          10102003,
-          10102004
+          10102003
         ],
         "min_duration_minutes": 20,
         "name": "Wood Production Boost"
@@ -22,8 +20,7 @@
       {
         "enabled": true,
         "item_codes": [
-          10102005,
-          10102006
+          10102005
         ],
         "min_duration_minutes": 20,
         "name": "Stone Production Boost"
@@ -31,8 +28,7 @@
       {
         "enabled": true,
         "item_codes": [
-          10102007,
-          10102008
+          10102007
         ],
         "min_duration_minutes": 20,
         "name": "Gold Production Boost"
@@ -40,32 +36,50 @@
       {
         "enabled": true,
         "item_codes": [
-          10102009,
-          10102010
+          10102009
         ],
         "min_duration_minutes": 20,
         "name": "Gathering Speed Boost"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102026,
-          10102027
-        ],
-        "min_duration_minutes": 20,
-        "name": "Kingdom Shield"
-      },
-      {
-        "enabled": true,
-        "item_codes": [
-          10102021,
-          10102022
-        ],
-        "min_duration_minutes": 20,
-        "name": "Anti Spying Shield"
       }
     ],
-    "enabled": true
+    "enabled": true,
+    "production_boosts": {
+      "10102001": {
+        "enabled": true,
+        "name": "Food boost 8hours",
+        "item_code": 10102001,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102003": {
+        "enabled": true,
+        "name": "Wood boost 8hours",
+        "item_code": 10102003,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102005": {
+        "enabled": true,
+        "name": "Stone boost 8hours",
+        "item_code": 10102005,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102007": {
+        "enabled": true,
+        "name": "Gold boost 8hours",
+        "item_code": 10102007,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      },
+      "10102009": {
+        "enabled": true,
+        "name": "Gathering boost 8hours",
+        "item_code": 10102009,
+        "duration_hours": 8,
+        "min_duration_minutes": 20
+      }
+    }
   },
   "discord": {
     "chat_webhook_url": "",
@@ -114,14 +128,14 @@
             "enabled": true,
             "items": [
               {
-                "item_code": 10101008,
-                "name": "Item 10101008",
-                "description": "",
-                "category": "Other",
+                "category": "VIP",
+                "description": "100 VIP Points for premium features",
                 "enabled": true,
-                "priority": 1,
+                "item_code": 10101008,
+                "max_buy": 999999,
                 "min_buy": 1,
-                "max_buy": 999999
+                "name": "Vip Point +100",
+                "priority": 1
               }
             ]
           }
@@ -610,7 +624,8 @@
       "notify_discord": false,
       "object_scanning": false,
       "rally_join": false,
-      "rally_start": false
+      "rally_start": false,
+      "buff_management": true
     },
     "jobs": {
       "alliance_farmer": true,
