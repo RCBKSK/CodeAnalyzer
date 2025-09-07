@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a0a0a">
-    <title>HelenA QuantumRaid Bot - Quantum Access Portal</title>
+    <title>{{ t('login.title') }}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap"
@@ -807,35 +807,35 @@
                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3c3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNzAiIGN5PSI3MCIgcj0iNzAiIGZpbGw9InVybCgjZ3JhZGllbnQpIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwZmZmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwODBmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjx0ZXh0IHg9IjcwIiB5PSI4MCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCI+SDwvdGV4dD48L3N2Zz4='" />
                 </div>
                 <h1 class="app-title">HelenA QuantumRaid Bot</h1>
-                <p class="app-subtitle">Quantum Access Portal</p>
+                <p class="app-subtitle">{{ t('login.heading') }}</p>
             </div>
 
             {% if error %}
             <div class="quantum-alert">
                 <i class="fas fa-exclamation-triangle"></i>
-                {{ error }}
+                {{ t('login.invalid_credentials') if error == 'Invalid credentials' else error }}
             </div>
             {% endif %}
 
             <form method="POST" id="loginForm">
                 <div class="form-group">
                     <label for="username" class="form-label">
-                        <i class="fas fa-user"></i> Quantum ID
+                        <i class="fas fa-user"></i> {{ t('login.username') }}
                     </label>
                     <input type="text" class="form-input" id="username" name="username"
-                        placeholder="Enter your quantum identifier" required autocomplete="username">
+                        placeholder="{{ t('login.username') }}" required autocomplete="username">
                 </div>
 
                 <div class="form-group">
                     <label for="password" class="form-label">
-                        <i class="fas fa-lock"></i> Access Key
+                        <i class="fas fa-lock"></i> {{ t('login.password') }}
                     </label>
                     <input type="password" class="form-input" id="password" name="password"
-                        placeholder="Enter your access key" required autocomplete="current-password">
+                        placeholder="{{ t('login.password') }}" required autocomplete="current-password">
                 </div>
 
                 <button type="submit" class="quantum-btn" id="loginBtn">
-                    <i class="fas fa-rocket"></i> Initialize Quantum Link
+                    <i class="fas fa-rocket"></i> {{ t('login.login') }}
                 </button>
 
                 <!-- Discord Community Link -->

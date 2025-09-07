@@ -5,7 +5,8 @@
     "simple_config": "Cấu hình đơn giản",
     "logs": "Nhật ký",
     "settings": "Cài đặt",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "notifications": "Thông báo"
   },
   "login": {
     "title": "HelenA QuantumRaid Bot - Cổng truy cập lượng tử",

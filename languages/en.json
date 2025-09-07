@@ -5,7 +5,8 @@
     "simple_config": "Simple Config",
     "logs": "Logs",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "notifications": "Notifications"
   },
   "login": {
     "title": "HelenA QuantumRaid Bot - Quantum Access Portal",

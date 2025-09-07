@@ -5,7 +5,8 @@
     "simple_config": "简单配置",
     "logs": "日志",
     "settings": "设置",
-    "logout": "登出"
+    "logout": "登出",
+    "notifications": "通知"
   },
   "login": {
     "title": "HelenA QuantumRaid Bot - 量子访问门户",
