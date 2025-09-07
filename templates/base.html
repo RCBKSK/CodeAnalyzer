@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>{% block title %}HelenA QuantumRaid Bot - Quantum Command Center{% endblock %}</title>
+    <title>{% block title %}{{ t('login.title') if 'login' in request.endpoint else 'HelenA QuantumRaid Bot - Quantum Command Center' }}{% endblock %}</title>
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#00ff88">
@@ -113,6 +113,70 @@
                 transform: translateY(-100px) rotate(360deg);
                 opacity: 0;
             }
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-button {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .language-button:hover {
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-dropdown a {
+            display: block;
+            padding: 8px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .language-dropdown a:hover {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--text-glow);
+        }
+
+        .language-dropdown a.active {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--text-glow);
         }
 
         /* Navigation */
@@ -534,15 +598,30 @@
             <div class="navbar-nav ms-auto" id="navbarNav">
                 {% block nav_links %}
                 <a class="nav-link" href="/notifications">
-                    <i class="fas fa-bell"></i> Notifications
+                    <i class="fas fa-bell"></i> {{ t('nav.notifications') if t('nav.notifications') != 'nav.notifications' else 'Notifications' }}
                 </a>
+                <div class="language-selector">
+                    <div class="language-button" onclick="toggleLanguageDropdown()">
+                        <i class="fas fa-globe"></i>
+                        <span>{{ LANGUAGES[get_current_language()] }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="language-dropdown" id="languageDropdown">
+                        {% for code, name in LANGUAGES.items() %}
+                        <a href="{{ url_for('set_language', language=code) }}" 
+                           class="{{ 'active' if code == get_current_language() else '' }}">
+                            {{ name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
                 <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
                     <div class="theme-toggle-slider">
                         <i class="fas fa-moon" id="theme-icon"></i>
                     </div>
                 </div>
                 <a class="nav-link" href="/logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                    <i class="fas fa-sign-out-alt"></i> {{ t('nav.logout') }}
                 </a>
                 {% endblock %}
             </div>
@@ -652,9 +731,26 @@
             }
         });
 
+        // Language dropdown toggle
+        function toggleLanguageDropdown() {
+            var dropdown = document.getElementById('languageDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close language dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            var dropdown = document.getElementById('languageDropdown');
+            var button = event.target.closest('.language-selector');
+            
+            if (!button && dropdown) {
+                dropdown.classList.remove('show');
+            }
+        });
+
         // Make functions globally available
         window.toggleTheme = toggleTheme;
         window.toggleMobileNav = toggleMobileNav;
+        window.toggleLanguageDropdown = toggleLanguageDropdown;
     </script>
 
     {% block scripts %}{% endblock %}

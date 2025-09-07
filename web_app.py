@@ -1052,6 +1052,13 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/set_language/<language>')
+def set_language(language):
+    """Set user's preferred language"""
+    if language in LANGUAGES:
+        session['language'] = language
+    return redirect(request.referrer or url_for('index'))
+
 @app.route('/health')
 def health_check():
     """Health check endpoint for Replit"""
