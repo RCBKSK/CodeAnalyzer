@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "config": "Configuration",
+    "simple_config": "Simple Config",
+    "logs": "Logs",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "HelenA QuantumRaid Bot - Quantum Access Portal",
+    "heading": "Access Portal",
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "invalid_credentials": "Invalid credentials",
+    "welcome": "Welcome to",
+    "quantum_raid": "QuantumRaid Bot",
+    "description": "Advanced League of Kingdoms automation system"
+  },
+  "dashboard": {
+    "title": "Dashboard - League of Kingdoms Bot",
+    "bot_status": "Bot Status",
+    "game_state": "Game State",
+    "uptime": "Uptime",
+    "actions": "Actions",
+    "stop_bot": "Stop Bot",
+    "start_bot": "Start Bot",
+    "power_level": "Power Level",
+    "no_game_data": "No game state data available",
+    "start_bot_message": "Start the bot to collect game data",
+    "configuration_overview": "Configuration Overview"
+  },
+  "simple_config": {
+    "title": "Simple Configuration",
+    "rally_join": "Rally Join",
+    "rally_start": "Rally Start",
+    "monster_attack": "Monster Attack",
+    "gathering": "Gathering",
+    "socf_objects": "SOCF Objects",
+    "enable": "Enable",
+    "disable": "Disable",
+    "save_configuration": "Save Configuration",
+    "cancel": "Cancel",
+    "add_monster": "Add Monster",
+    "select_monster": "Select a monster to add",
+    "max_attack_distance": "Max Attack Distance",
+    "enable_distance_check": "Enable Distance Check",
+    "object_scanning_configuration": "Object Scanning Configuration"
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "notifications": "Notifications",
+    "advanced": "Advanced"
+  },
+  "logs": {
+    "title": "Logs",
+    "refresh": "Refresh",
+    "clear": "Clear",
+    "download": "Download"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "remove": "Remove",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "running": "Running",
+    "stopped": "Stopped",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "language": "Language"
+  }
+}

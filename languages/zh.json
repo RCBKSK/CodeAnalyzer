@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "dashboard": "仪表板",
+    "config": "配置",
+    "simple_config": "简单配置",
+    "logs": "日志",
+    "settings": "设置",
+    "logout": "登出"
+  },
+  "login": {
+    "title": "HelenA QuantumRaid Bot - 量子访问门户",
+    "heading": "访问门户",
+    "username": "用户名",
+    "password": "密码",
+    "login": "登录",
+    "invalid_credentials": "凭据无效",
+    "welcome": "欢迎使用",
+    "quantum_raid": "QuantumRaid Bot",
+    "description": "高级王国联盟自动化系统"
+  },
+  "dashboard": {
+    "title": "仪表板 - 王国联盟机器人",
+    "bot_status": "机器人状态",
+    "game_state": "游戏状态",
+    "uptime": "运行时间",
+    "actions": "操作次数",
+    "stop_bot": "停止机器人",
+    "start_bot": "启动机器人",
+    "power_level": "力量等级",
+    "no_game_data": "无游戏状态数据",
+    "start_bot_message": "启动机器人以收集游戏数据",
+    "configuration_overview": "配置概览"
+  },
+  "simple_config": {
+    "title": "简单配置",
+    "rally_join": "集结加入",
+    "rally_start": "集结开始",
+    "monster_attack": "怪物攻击",
+    "gathering": "资源采集",
+    "socf_objects": "SOCF对象",
+    "enable": "启用",
+    "disable": "禁用",
+    "save_configuration": "保存配置",
+    "cancel": "取消",
+    "add_monster": "添加怪物",
+    "select_monster": "选择要添加的怪物",
+    "max_attack_distance": "最大攻击距离",
+    "enable_distance_check": "启用距离检查",
+    "object_scanning_configuration": "对象扫描配置"
+  },
+  "settings": {
+    "title": "设置",
+    "general": "常规",
+    "notifications": "通知",
+    "advanced": "高级"
+  },
+  "logs": {
+    "title": "日志",
+    "refresh": "刷新",
+    "clear": "清除",
+    "download": "下载"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "delete": "删除",
+    "add": "添加",
+    "remove": "移除",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "running": "运行中",
+    "stopped": "已停止",
+    "error": "错误",
+    "success": "成功",
+    "warning": "警告",
+    "info": "信息",
+    "language": "语言"
+  }
+}

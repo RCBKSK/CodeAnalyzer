@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "dashboard": "Bảng điều khiển",
+    "config": "Cấu hình",
+    "simple_config": "Cấu hình đơn giản",
+    "logs": "Nhật ký",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất"
+  },
+  "login": {
+    "title": "HelenA QuantumRaid Bot - Cổng truy cập lượng tử",
+    "heading": "Cổng truy cập",
+    "username": "Tên người dùng",
+    "password": "Mật khẩu",
+    "login": "Đăng nhập",
+    "invalid_credentials": "Thông tin đăng nhập không hợp lệ",
+    "welcome": "Chào mừng đến với",
+    "quantum_raid": "QuantumRaid Bot",
+    "description": "Hệ thống tự động hóa League of Kingdoms nâng cao"
+  },
+  "dashboard": {
+    "title": "Bảng điều khiển - Bot League of Kingdoms",
+    "bot_status": "Trạng thái Bot",
+    "game_state": "Trạng thái trò chơi",
+    "uptime": "Thời gian hoạt động",
+    "actions": "Hành động",
+    "stop_bot": "Dừng Bot",
+    "start_bot": "Khởi động Bot",
+    "power_level": "Cấp độ sức mạnh",
+    "no_game_data": "Không có dữ liệu trạng thái trò chơi",
+    "start_bot_message": "Khởi động bot để thu thập dữ liệu trò chơi",
+    "configuration_overview": "Tổng quan cấu hình"
+  },
+  "simple_config": {
+    "title": "Cấu hình đơn giản",
+    "rally_join": "Tham gia Rally",
+    "rally_start": "Bắt đầu Rally",
+    "monster_attack": "Tấn công quái vật",
+    "gathering": "Thu thập tài nguyên",
+    "socf_objects": "Đối tượng SOCF",
+    "enable": "Bật",
+    "disable": "Tắt",
+    "save_configuration": "Lưu cấu hình",
+    "cancel": "Hủy",
+    "add_monster": "Thêm quái vật",
+    "select_monster": "Chọn quái vật để thêm",
+    "max_attack_distance": "Khoảng cách tấn công tối đa",
+    "enable_distance_check": "Bật kiểm tra khoảng cách",
+    "object_scanning_configuration": "Cấu hình quét đối tượng"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "general": "Chung",
+    "notifications": "Thông báo",
+    "advanced": "Nâng cao"
+  },
+  "logs": {
+    "title": "Nhật ký",
+    "refresh": "Làm mới",
+    "clear": "Xóa",
+    "download": "Tải xuống"
+  },
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "add": "Thêm",
+    "remove": "Gỡ bỏ",
+    "enabled": "Đã bật",
+    "disabled": "Đã tắt",
+    "running": "Đang chạy",
+    "stopped": "Đã dừng",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "warning": "Cảnh báo",
+    "info": "Thông tin",
+    "language": "Ngôn ngữ"
+  }
+}

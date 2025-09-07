@@ -55,6 +55,52 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
+# Language system
+LANGUAGES = {'en': 'English', 'zh': '中文', 'vi': 'Tiếng Việt'}
+DEFAULT_LANGUAGE = 'en'
+
+def load_language(lang_code):
+    """Load language file"""
+    try:
+        with open(f'languages/{lang_code}.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        # Fallback to English if language file not found
+        with open(f'languages/{DEFAULT_LANGUAGE}.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+
+def get_current_language():
+    """Get current language from session"""
+    return session.get('language', DEFAULT_LANGUAGE)
+
+def t(key_path, **kwargs):
+    """Translation function"""
+    lang_data = load_language(get_current_language())
+    
+    # Navigate through nested keys using dot notation
+    keys = key_path.split('.')
+    value = lang_data
+    for key in keys:
+        if isinstance(value, dict) and key in value:
+            value = value[key]
+        else:
+            # Return key if translation not found
+            return key_path
+    
+    # Format with kwargs if provided
+    if kwargs:
+        try:
+            return value.format(**kwargs)
+        except:
+            return value
+    
+    return value
+
+# Make translation function available in templates
+app.jinja_env.globals['t'] = t
+app.jinja_env.globals['get_current_language'] = get_current_language
+app.jinja_env.globals['LANGUAGES'] = LANGUAGES
+
 # Bot processes dictionary to track running instances
 bot_processes = {}
 
