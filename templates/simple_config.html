@@ -6665,17 +6665,22 @@
         // Language dropdown toggle
         function togglePageLanguageDropdown() {
             const dropdown = document.getElementById('pageLanguageDropdown');
-            dropdown.classList.toggle('show');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const languageSelector = document.querySelector('.page-language-selector');
-            const dropdown = document.getElementById('pageLanguageDropdown');
-            
-            if (languageSelector && !languageSelector.contains(event.target)) {
-                dropdown.classList.remove('show');
-            }
+        // Initialize language dropdown functionality when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const languageSelector = document.querySelector('.page-language-selector');
+                const dropdown = document.getElementById('pageLanguageDropdown');
+                
+                if (languageSelector && dropdown && !languageSelector.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
         });
 
         window.togglePageLanguageDropdown = togglePageLanguageDropdown;

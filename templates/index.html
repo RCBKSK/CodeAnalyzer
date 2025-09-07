@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>{% block title %}HelenA QuantumRaid Bot - Command Center{% endblock %}</title>
+    <title>{% block title %}HelenA QuantumRaid Bot - {{ t('dashboard.title') if t('dashboard.title') != 'dashboard.title' else 'Command Center' }}{% endblock %}</title>
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#3b82f6">
@@ -1170,7 +1170,7 @@
         </button>
         <div class="nav-links" id="navLinks">
                 <a href="/notifications" class="nav-link">
-                    <i class="fas fa-bell"></i> Notifications
+                    <i class="fas fa-bell"></i> {{ t('nav.notifications') if t('nav.notifications') != 'nav.notifications' else 'Notifications' }}
                     <span id="notification-badge" class="notification-badge hidden">0</span>
                 </a>
                 <div class="timezone-selector" style="display: flex; align-items: center; gap: 8px;">
@@ -1197,7 +1197,7 @@
                     </div>
                 </div>
                 <a href="/logout" class="nav-link">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                    <i class="fas fa-sign-out-alt"></i> {{ t('nav.logout') if t('nav.logout') != 'nav.logout' else 'Logout' }}
                 </a>
             </div>
 
