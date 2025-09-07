@@ -938,15 +938,14 @@
                 <div class="quantum-community">
                     <div class="community-header">
                         <i class="fab fa-discord"></i>
-                        <span>Join the Quantum Collective</span>
+                        <span>{{ t('login.join_quantum_collective') }}</span>
                     </div>
                     <p class="community-description">
-                        Connect with fellow quantum raiders, get real-time support, and access exclusive strategies in
-                        our Discord dimension.
+                        {{ t('login.discord_description') }}
                     </p>
                     <a href="https://discord.gg/FhWUypbMxR" target="_blank" class="discord-btn">
                         <i class="fab fa-discord"></i>
-                        <span>Enter Discord Portal</span>
+                        <span>{{ t('login.enter_discord_portal') }}</span>
                         <div class="quantum-particles">
                             <div class="particle"></div>
                             <div class="particle"></div>
@@ -956,15 +955,15 @@
                     <div class="community-benefits">
                         <div class="benefit">
                             <i class="fas fa-bolt"></i>
-                            <span>Instant Support</span>
+                            <span>{{ t('login.instant_support') }}</span>
                         </div>
                         <div class="benefit">
                             <i class="fas fa-users"></i>
-                            <span>Active Community</span>
+                            <span>{{ t('login.active_community') }}</span>
                         </div>
                         <div class="benefit">
                             <i class="fas fa-star"></i>
-                            <span>Exclusive Tips</span>
+                            <span>{{ t('login.exclusive_tips') }}</span>
                         </div>
                     </div>
                 </div>
@@ -1007,7 +1006,7 @@
             const btn = document.getElementById('loginBtn');
 
             form.classList.add('loading');
-            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Establishing Connection';
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> {{ t('login.establishing_connection') }}';
         });
 
         // Initialize everything on load
