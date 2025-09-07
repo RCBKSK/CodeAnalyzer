@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - League of Kingdoms Bot{% endblock %}
+{% block title %}{{ t('dashboard.title') }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -10,7 +10,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-robot me-2"></i>
-                    Bot Status
+                    {{ t('dashboard.bot_status') }}
                 </h5>
                 <span id="status-indicator" class="badge {% if bot_status.status == 'running' %}bg-success{% elif bot_status.status == 'stopped' %}bg-secondary{% else %}bg-danger{% endif %}">
                     {{ bot_status.status|title }}
@@ -21,12 +21,12 @@
                     <div class="col-6">
                         <div class="border-end">
                             <h4 class="text-info" id="uptime-display">{{ (bot_status.uptime // 3600)|int }}h {{ ((bot_status.uptime % 3600) // 60)|int }}m</h4>
-                            <small class="text-muted">Uptime</small>
+                            <small class="text-muted">{{ t('dashboard.uptime') }}</small>
                         </div>
                     </div>
                     <div class="col-6">
                         <h4 class="text-success" id="actions-display">{{ bot_status.actions_completed or 0 }}</h4>
-                        <small class="text-muted">Actions</small>
+                        <small class="text-muted">{{ t('dashboard.actions') }}</small>
                     </div>
                 </div>
                 
@@ -35,14 +35,14 @@
                         <form method="POST" action="{{ url_for('stop_bot') }}" class="d-inline">
                             <button type="submit" class="btn btn-outline-danger w-100">
                                 <i class="fas fa-stop me-2"></i>
-                                Stop Bot
+                                {{ t('dashboard.stop_bot') }}
                             </button>
                         </form>
                     {% else %}
                         <form method="POST" action="{{ url_for('start_bot') }}" class="d-inline">
                             <button type="submit" class="btn btn-success w-100">
                                 <i class="fas fa-play me-2"></i>
-                                Start Bot
+                                {{ t('dashboard.start_bot') }}
                             </button>
                         </form>
                     {% endif %}
@@ -57,7 +57,7 @@
             <div class="card-header">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-gamepad me-2"></i>
-                    Game State
+                    {{ t('dashboard.game_state') }}
                 </h5>
             </div>
             <div class="card-body">
@@ -94,7 +94,7 @@
                     {% if bot_status.game_state.power_level %}
                     <div class="text-center">
                         <h5 class="text-info">{{ "{:,}".format(bot_status.game_state.power_level) }}</h5>
-                        <small class="text-muted">Power Level</small>
+                        <small class="text-muted">{{ t('dashboard.power_level') }}</small>
                     </div>
                     {% endif %}
                     
@@ -112,8 +112,8 @@
                 {% else %}
                     <div class="text-center text-muted">
                         <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
-                        <p>No game state data available</p>
-                        <small>Start the bot to collect game data</small>
+                        <p>{{ t('dashboard.no_game_data') }}</p>
+                        <small>{{ t('dashboard.start_bot_message') }}</small>
                     </div>
                 {% endif %}
             </div>
