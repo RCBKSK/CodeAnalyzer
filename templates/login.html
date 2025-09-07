@@ -692,6 +692,85 @@
             color: rgba(30, 41, 59, 0.7);
         }
 
+        /* Language selector for login page */
+        .login-language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .login-language-button {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-language-button:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .login-language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            margin-top: 5px;
+        }
+
+        .login-language-dropdown.show {
+            display: block;
+        }
+
+        .login-language-dropdown a {
+            display: block;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .login-language-dropdown a:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .login-language-dropdown a.active {
+            background: rgba(0, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        /* Light theme adjustments */
+        [data-theme="light"] .login-language-button {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .login-language-dropdown {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
         /* Responsive adjustments */
         @media (max-width: 480px) {
             .login-container {
@@ -788,6 +867,23 @@
         <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="login-language-selector">
+        <div class="login-language-button" onclick="toggleLoginLanguageDropdown()">
+            <i class="fas fa-globe"></i>
+            <span>{{ LANGUAGES[get_current_language()] }}</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="login-language-dropdown" id="loginLanguageDropdown">
+            {% for code, name in LANGUAGES.items() %}
+            <a href="{{ url_for('set_language', language=code) }}" 
+               class="{{ 'active' if code == get_current_language() else '' }}">
+                {{ name }}
+            </a>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="login-container">
@@ -941,6 +1037,24 @@
 
         // Make toggleTheme globally available
         window.toggleTheme = toggleTheme;
+
+        // Language dropdown toggle
+        function toggleLoginLanguageDropdown() {
+            const dropdown = document.getElementById('loginLanguageDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const languageSelector = document.querySelector('.login-language-selector');
+            const dropdown = document.getElementById('loginLanguageDropdown');
+            
+            if (languageSelector && !languageSelector.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        window.toggleLoginLanguageDropdown = toggleLoginLanguageDropdown;
     </script>
 </body>
 
