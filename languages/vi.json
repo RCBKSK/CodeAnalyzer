@@ -53,7 +53,29 @@
     "delete_account": "Xóa tài khoản",
     "schedule_tasks": "Nhiệm vụ đã lên lịch",
     "no_tasks": "Không có nhiệm vụ đã lên lịch",
-    "refresh_data": "Làm mới dữ liệu"
+    "refresh_data": "Làm mới dữ liệu",
+    "welcome_back": "Chào mừng trở lại",
+    "loading": "Đang tải...",
+    "online": "Trực tuyến",
+    "status": "Trạng thái",
+    "description": "Hệ thống tự động hóa League of Kingdoms nâng cao - Giám sát và điều khiển các phiên bản bot của bạn",
+    "initialize_instance": "Khởi tạo phiên bản mới",
+    "account_name": "Tên tài khoản",
+    "authentication_method": "Phương thức xác thực",
+    "environment_variables": "Biến môi trường",
+    "token": "Token",
+    "config_file": "Tệp cấu hình",
+    "select_config_file": "Chọn tệp cấu hình...",
+    "loading_bot_status": "Đang tải trạng thái bot...",
+    "loading_users": "Đang tải người dùng...",
+    "select_user_manage": "Chọn người dùng để quản lý phiên bản...",
+    "monitor_activities": "Giám sát hoạt động và cảnh báo của bot",
+    "easy_interface": "Giao diện dễ sử dụng cho cấu hình bot",
+    "super_administrator": "Siêu quản trị viên",
+    "administrator": "Quản trị viên",
+    "test_account": "Tài khoản thử nghiệm 4 giờ",
+    "enabled": "Đã bật",
+    "config_status": "Trạng thái cấu hình"
   },
   "simple_config": {
     "title": "Cấu hình đơn giản",
@@ -70,7 +92,20 @@
     "select_monster": "Chọn quái vật để thêm",
     "max_attack_distance": "Khoảng cách tấn công tối đa",
     "enable_distance_check": "Bật kiểm tra khoảng cách",
-    "object_scanning_configuration": "Cấu hình quét đối tượng"
+    "object_scanning_configuration": "Cấu hình quét đối tượng",
+    "troops_configuration": "Cấu hình quân đội",
+    "level_range": "Phạm vi cấp độ",
+    "from": "Từ",
+    "to": "Đến",
+    "distance": "Khoảng cách",
+    "remove": "Gỡ bỏ",
+    "load_configuration": "Tải cấu hình",
+    "loading_config": "Đang tải cấu hình...",
+    "config_loaded": "Tải cấu hình thành công!",
+    "config_saved": "Lưu cấu hình thành công!",
+    "failed_load_config": "Không thể tải tệp cấu hình",
+    "please_select_config": "Vui lòng chọn tệp cấu hình",
+    "advanced_settings": "Cài đặt nâng cao"
   },
   "settings": {
     "title": "Cài đặt",
@@ -99,6 +134,21 @@
     "success": "Thành công",
     "warning": "Cảnh báo",
     "info": "Thông tin",
-    "language": "Ngôn ngữ"
-  }
+    "language": "Ngôn ngữ",
+    "yes": "Có",
+    "no": "Không",
+    "close": "Đóng",
+    "loading": "Đang tải",
+    "welcome": "Chào mừng",
+    "back": "Quay lại"
+  },
+  "notifications": {
+    "clear_all": "Xóa tất cả thông báo",
+    "auto_refresh": "Tự động làm mới",
+    "real_time_activity": "Hoạt động bot thời gian thực và cảnh báo hệ thống",
+    "connection_status": "Trạng thái kết nối",
+    "connected": "Đã kết nối",
+    "disconnected": "Đã ngắt kết nối",
+    "no_notifications": "Không có thông báo để hiển thị"
+  },
 }

@@ -53,7 +53,29 @@
     "delete_account": "Delete Account",
     "schedule_tasks": "Scheduled Tasks",
     "no_tasks": "No scheduled tasks",
-    "refresh_data": "Refresh Data"
+    "refresh_data": "Refresh Data",
+    "welcome_back": "Welcome back",
+    "loading": "Loading...",
+    "online": "Online",
+    "status": "Status",
+    "description": "Advanced League of Kingdoms automation system - Monitor and control your bot instances",
+    "initialize_instance": "Initialize New Instance",
+    "account_name": "Account Name",
+    "authentication_method": "Authentication Method",
+    "environment_variables": "Environment Variables",
+    "token": "Token",
+    "config_file": "Config File",
+    "select_config_file": "Select config file...",
+    "loading_bot_status": "Loading bot status...",
+    "loading_users": "Loading users...",
+    "select_user_manage": "Select user to manage instances...",
+    "monitor_activities": "Monitor your bot's activities and alerts",
+    "easy_interface": "Easy-to-use interface for bot configuration",
+    "super_administrator": "Super Administrator",
+    "administrator": "Administrator",
+    "test_account": "4-Hour Test Account",
+    "enabled": "Enabled",
+    "config_status": "Config Status"
   },
   "simple_config": {
     "title": "Simple Configuration",
@@ -70,7 +92,20 @@
     "select_monster": "Select a monster to add",
     "max_attack_distance": "Max Attack Distance",
     "enable_distance_check": "Enable Distance Check",
-    "object_scanning_configuration": "Object Scanning Configuration"
+    "object_scanning_configuration": "Object Scanning Configuration",
+    "troops_configuration": "Troops Configuration",
+    "level_range": "Level Range",
+    "from": "From",
+    "to": "To",
+    "distance": "Distance",
+    "remove": "Remove",
+    "load_configuration": "Load Configuration",
+    "loading_config": "Loading configuration...",
+    "config_loaded": "Configuration loaded successfully!",
+    "config_saved": "Configuration saved successfully!",
+    "failed_load_config": "Failed to load configuration files",
+    "please_select_config": "Please select a configuration file",
+    "advanced_settings": "Advanced Settings"
   },
   "settings": {
     "title": "Settings",
@@ -99,6 +134,21 @@
     "success": "Success",
     "warning": "Warning",
     "info": "Info",
-    "language": "Language"
+    "language": "Language",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "loading": "Loading",
+    "welcome": "Welcome",
+    "back": "Back"
+  },
+  "notifications": {
+    "clear_all": "Clear All Notifications",
+    "auto_refresh": "Auto Refresh",
+    "real_time_activity": "Real-time bot activity and system alerts",
+    "connection_status": "Connection Status",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "no_notifications": "No notifications to display"
   }
 }

@@ -1215,13 +1215,13 @@
                         Command Center
                     </h1>
                     <div id="welcomeMessage" style="color: #3b82f6; font-size: 18px; font-weight: 600; margin-bottom: 8px;">
-                        Welcome back, <span id="welcomeUsername">Loading...</span>! 👋
+                        {{ t('dashboard.welcome_back') }}, <span id="welcomeUsername">{{ t('dashboard.loading') }}</span>! 👋
                     </div>
-                    <p style="margin: 0;">Advanced League of Kingdoms automation system - Monitor and control your bot instances</p>
+                    <p style="margin: 0;">{{ t('dashboard.description') }}</p>
                 </div>
                 <div style="text-align: right; font-size: 14px; color: #64748b;">
-                    <div><strong>Status:</strong> <span style="color: #10b981;">Online</span></div>
-                    <div id="currentTime">Loading...</div>
+                    <div><strong>{{ t('dashboard.status') }}:</strong> <span style="color: #10b981;">{{ t('dashboard.online') }}</span></div>
+                    <div id="currentTime">{{ t('dashboard.loading') }}</div>
                 </div>
             </div>
         </div>
@@ -1232,7 +1232,7 @@
                 <h3 style="margin: 0; color: #1e40af;">
                     <i class="fas fa-bell"></i> Notifications Portal
                 </h3>
-                <p style="margin: 4px 0 0 0; color: #1e40af; opacity: 0.8;">Monitor your bot's activities and alerts</p>
+                <p style="margin: 4px 0 0 0; color: #1e40af; opacity: 0.8;">{{ t('dashboard.monitor_activities') }}</p>
             </div>
             <a href="/notifications" class="btn btn-outline">
                 <i class="fas fa-external-link-alt"></i> Open Portal
@@ -1244,7 +1244,7 @@
                 <h3 style="margin: 0; color: #166534;">
                     <i class="fas fa-cog"></i> Simple Configuration
                 </h3>
-                <p style="margin: 4px 0 0 0; color: #166534; opacity: 0.8;">Easy-to-use interface for bot configuration</p>
+                <p style="margin: 4px 0 0 0; color: #166534; opacity: 0.8;">{{ t('dashboard.easy_interface') }}</p>
             </div>
             <a href="/simple-config" class="btn btn-outline" style="color: #166534; border-color: #166534;">
                 <i class="fas fa-external-link-alt"></i> Configure Bot
@@ -1266,20 +1266,20 @@
                     <div class="grid grid-2">
                         <!-- Start Bot Form -->
                         <div>
-                            <h3 style="font-size: 16px; margin-bottom: 20px; color: #374151;">Initialize New Instance</h3>
+                            <h3 style="font-size: 16px; margin-bottom: 20px; color: #374151;">{{ t('dashboard.initialize_instance') }}</h3>
 
                             <form id="startBotForm">
                                 <div class="form-group">
-                                    <label class="form-label">Account Name</label>
+                                    <label class="form-label">{{ t('dashboard.account_name') }}</label>
                                     <input type="text" class="form-input" id="accountName" placeholder="Enter account name">
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label">Authentication Method</label>
+                                    <label class="form-label">{{ t('dashboard.authentication_method') }}</label>
                                     <select class="form-select" id="authMethod">
-                                        <option value="env">Environment Variables</option>
+                                        <option value="env">{{ t('dashboard.environment_variables') }}</option>
                                         <option value="email">Email/Password</option>
-                                        <option value="token">Token</option>
+                                        <option value="token">{{ t('dashboard.token') }}</option>
                                     </select>
                                 </div>
 
@@ -1301,9 +1301,9 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label">Config File</label>
+                                    <label class="form-label">{{ t('dashboard.config_file') }}</label>
                                     <select class="form-select" id="config_file" name="config_file" required>
-                                        <option value="">Select config file...</option>
+                                        <option value="">{{ t('dashboard.select_config_file') }}</option>
                                     </select>
                                 </div>
 
@@ -1325,14 +1325,14 @@
 
                         <!-- Status and Control -->
                         <div>
-                            <h3 style="font-size: 16px; margin-bottom: 20px; color: #374151;">Bot Status</h3>
+                            <h3 style="font-size: 16px; margin-bottom: 20px; color: #374151;">{{ t('dashboard.bot_status') }}</h3>
 
                             <div id="statusContainer">
-                                <p style="color: #64748b;">Loading bot status...</p>
+                                <p style="color: #64748b;">{{ t('dashboard.loading_bot_status') }}</p>
                             </div>
 
                             <button class="btn btn-danger hidden" id="stopAllBtn" style="width: 100%;">
-                                <i class="fas fa-stop"></i> Stop All Bots
+                                <i class="fas fa-stop"></i> {{ t('dashboard.stop_all_bots') }}
                             </button>
                         </div>
                     </div>
@@ -1355,7 +1355,7 @@
                     </div>
 
                     <div id="usersList">
-                        <p style="color: #64748b; font-size: 14px;">Loading users...</p>
+                        <p style="color: #64748b; font-size: 14px;">{{ t('dashboard.loading_users') }}</p>
                     </div>
                 </div>
 
@@ -1368,7 +1368,7 @@
 
                     <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
                         <select class="form-select" id="instanceUserSelect" onchange="loadUserInstances(this.value)">
-                            <option value="">Select user to manage instances...</option>
+                            <option value="">{{ t('dashboard.select_user_manage') }}</option>
                         </select>
                         <button class="btn btn-primary" onclick="showAddInstanceModal()" disabled id="addInstanceBtn">
                             <i class="fas fa-plus"></i> Add Instance
@@ -2006,7 +2006,7 @@
                 html += '<h5 style="color: #10b981; margin-bottom: 12px;"><i class="fas fa-search"></i> Object Scanning</h5>';
                 html += `
                     <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981;">
-                        <strong>Status:</strong> ✅ Enabled<br>
+                        <strong>{{ t('dashboard.status') }}:</strong> ✅ {{ t('dashboard.enabled') }}<br>
                         <strong>Scan Radius:</strong> ${os.radius} tiles<br>
                         <strong>Total Objects:</strong> ${os.total_objects} | <strong>Enabled:</strong> ${os.enabled_objects.length}<br>
                 `;
@@ -2488,13 +2488,13 @@
                         const welcomeMsg = document.getElementById('welcomeMessage');
                         if (welcomeMsg) {
                             if (data.is_super_admin) {
-                                welcomeMsg.innerHTML = `Welcome back, <span style="color: #dc2626; font-weight: 700;">${data.username}</span>! 👑 <span style="font-size: 14px; color: #64748b;">(Super Administrator)</span>`;
+                                welcomeMsg.innerHTML = `{{ t('dashboard.welcome_back') }}, <span style="color: #dc2626; font-weight: 700;">${data.username}</span>! 👑 <span style="font-size: 14px; color: #64748b;">({{ t('dashboard.super_administrator') }})</span>`;
                             } else if (data.is_admin) {
-                                welcomeMsg.innerHTML = `Welcome back, <span style="color: #f59e0b; font-weight: 700;">${data.username}</span>! 🛡️ <span style="font-size: 14px; color: #64748b;">(Administrator)</span>`;
+                                welcomeMsg.innerHTML = `{{ t('dashboard.welcome_back') }}, <span style="color: #f59e0b; font-weight: 700;">${data.username}</span>! 🛡️ <span style="font-size: 14px; color: #64748b;">({{ t('dashboard.administrator') }})</span>`;
                             } else if (data.role === 'test_user') {
-                                welcomeMsg.innerHTML = `Welcome, <span style="color: #8b5cf6; font-weight: 700;">${data.username}</span>! 🧪 <span style="font-size: 14px; color: #64748b;">(4-Hour Test Account)</span>`;
+                                welcomeMsg.innerHTML = `{{ t('common.welcome') }}, <span style="color: #8b5cf6; font-weight: 700;">${data.username}</span>! 🧪 <span style="font-size: 14px; color: #64748b;">({{ t('dashboard.test_account') }})</span>`;
                             } else {
-                                welcomeMsg.innerHTML = `Welcome back, <span style="color: #3b82f6; font-weight: 700;">${data.username}</span>! 👋`;
+                                welcomeMsg.innerHTML = `{{ t('dashboard.welcome_back') }}, <span style="color: #3b82f6; font-weight: 700;">${data.username}</span>! 👋`;
                             }
                         }
 
@@ -2808,8 +2808,8 @@
                                 <div class="instance-details">
                                     <strong>Period:</strong> ${startDateFormatted} → ${endDateFormatted}<br>
                                     <strong>Created:</strong> ${createdDateFormatted}<br>
-                                    <strong>Status:</strong> ${statusDetails}<br>
-                                    <strong>Config Status:</strong> ${instance.status}
+                                    <strong>{{ t('dashboard.status') }}:</strong> ${statusDetails}<br>
+                                    <strong>{{ t('dashboard.config_status') }}:</strong> ${instance.status}
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 8px;">

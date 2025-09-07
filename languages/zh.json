@@ -53,7 +53,29 @@
     "delete_account": "删除账户",
     "schedule_tasks": "计划任务",
     "no_tasks": "没有计划任务",
-    "refresh_data": "刷新数据"
+    "refresh_data": "刷新数据",
+    "welcome_back": "欢迎回来",
+    "loading": "加载中...",
+    "online": "在线",
+    "status": "状态",
+    "description": "高级王国联盟自动化系统 - 监控和控制您的机器人实例",
+    "initialize_instance": "初始化新实例",
+    "account_name": "账户名称",
+    "authentication_method": "认证方法",
+    "environment_variables": "环境变量",
+    "token": "令牌",
+    "config_file": "配置文件",
+    "select_config_file": "选择配置文件...",
+    "loading_bot_status": "加载机器人状态中...",
+    "loading_users": "加载用户中...",
+    "select_user_manage": "选择用户以管理实例...",
+    "monitor_activities": "监控您的机器人活动和警报",
+    "easy_interface": "易于使用的机器人配置界面",
+    "super_administrator": "超级管理员",
+    "administrator": "管理员",
+    "test_account": "4小时测试账户",
+    "enabled": "已启用",
+    "config_status": "配置状态"
   },
   "simple_config": {
     "title": "简单配置",
@@ -70,7 +92,20 @@
     "select_monster": "选择要添加的怪物",
     "max_attack_distance": "最大攻击距离",
     "enable_distance_check": "启用距离检查",
-    "object_scanning_configuration": "对象扫描配置"
+    "object_scanning_configuration": "对象扫描配置",
+    "troops_configuration": "部队配置",
+    "level_range": "等级范围",
+    "from": "从",
+    "to": "到",
+    "distance": "距离",
+    "remove": "移除",
+    "load_configuration": "加载配置",
+    "loading_config": "加载配置中...",
+    "config_loaded": "配置加载成功！",
+    "config_saved": "配置保存成功！",
+    "failed_load_config": "加载配置文件失败",
+    "please_select_config": "请选择配置文件",
+    "advanced_settings": "高级设置"
   },
   "settings": {
     "title": "设置",
@@ -99,6 +134,21 @@
     "success": "成功",
     "warning": "警告",
     "info": "信息",
-    "language": "语言"
-  }
+    "language": "语言",
+    "yes": "是",
+    "no": "否",
+    "close": "关闭",
+    "loading": "加载中",
+    "welcome": "欢迎",
+    "back": "返回"
+  },
+  "notifications": {
+    "clear_all": "清除所有通知",
+    "auto_refresh": "自动刷新",
+    "real_time_activity": "实时机器人活动和系统警报",
+    "connection_status": "连接状态",
+    "connected": "已连接",
+    "disconnected": "已断开",
+    "no_notifications": "没有通知可显示"
+  },
 }

@@ -947,17 +947,17 @@
         <div class="header">
             <div>
                 <h1><i class="fas fa-bell"></i> {{ t('nav.notifications') if t('nav.notifications') != 'nav.notifications' else 'Notifications' }}</h1>
-                <p>Real-time bot activity and system alerts</p>
+                <p>{{ t('notifications.real_time_activity') }}</p>
             </div>
             <div class="header-actions">
                 <a class="nav-link" href="/">
                     <i class="fas fa-home"></i> {{ t('nav.dashboard') if t('nav.dashboard') != 'nav.dashboard' else 'Dashboard' }}
                 </a>
                 <a class="nav-link" href="/simple-config">
-                    <i class="fas fa-cog"></i> Configuration
+                    <i class="fas fa-cog"></i> {{ t('nav.config') }}
                 </a>
                 <a class="nav-link" href="/logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                    <i class="fas fa-sign-out-alt"></i> {{ t('nav.logout') }}
                 </a>
             </div>
         </div>
@@ -1076,7 +1076,7 @@
                     </div>
                     <span id="notificationStats" style="color: #64748b; font-size: 12px; margin-right: 12px;"></span>
                     <button class="btn btn-secondary" onclick="clearNotifications()">
-                        <i class="fas fa-trash"></i> Clear All
+                        <i class="fas fa-trash"></i> {{ t('notifications.clear_all') }}
                     </button>
                     <button class="btn btn-primary" onclick="refreshNotifications()">
                         <i class="fas fa-sync"></i> Refresh
@@ -1098,7 +1098,7 @@
                 <div class="header-controls">
                     <span id="notificationStats" style="color: #64748b; font-size: 12px; margin-right: 12px;"></span>
                     <button class="btn btn-secondary" onclick="clearNotifications()">
-                        <i class="fas fa-trash"></i> Clear All
+                        <i class="fas fa-trash"></i> {{ t('notifications.clear_all') }}
                     </button>
                     <button class="btn btn-primary" onclick="refreshNotifications()">
                         <i class="fas fa-sync"></i> Refresh
