@@ -150,19 +150,5 @@
     "connected": "Đã kết nối",
     "disconnected": "Đã ngắt kết nối",
     "no_notifications": "Không có thông báo để hiển thị"
-  },
-  "dashboard": {
-    "active_settings": "Cài đặt hoạt động",
-    "auto_collect_resources": "Tự động thu thập tài nguyên",
-    "auto_train_troops": "Tự động huấn luyện quân đội",
-    "auto_upgrade_buildings": "Tự động nâng cấp tòa nhà",
-    "auto_alliance_help": "Tự động giúp đỡ liên minh",
-    "edit_settings": "Chỉnh sửa cài đặt",
-    "recent_activity": "Hoạt động gần đây",
-    "view_all_logs": "Xem tất cả nhật ký",
-    "no_recent_activity": "Không có hoạt động gần đây"
-  },
-  "simple_config": {
-    "title": "Cấu hình đơn giản"
   }
 }

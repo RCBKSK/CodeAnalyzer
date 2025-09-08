@@ -150,19 +150,5 @@
     "connected": "Connected",
     "disconnected": "Disconnected",
     "no_notifications": "No notifications to display"
-  },
-  "dashboard": {
-    "active_settings": "Active Settings",
-    "auto_collect_resources": "Auto Collect Resources",
-    "auto_train_troops": "Auto Train Troops",
-    "auto_upgrade_buildings": "Auto Upgrade Buildings",
-    "auto_alliance_help": "Auto Alliance Help",
-    "edit_settings": "Edit Settings",
-    "recent_activity": "Recent Activity",
-    "view_all_logs": "View All Logs",
-    "no_recent_activity": "No recent activity"
-  },
-  "simple_config": {
-    "title": "Simple Configuration"
   }
 }
