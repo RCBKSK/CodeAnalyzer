@@ -966,8 +966,8 @@
         <div class="header">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h1><i class="fas fa-cog"></i> Bot Configuration</h1>
-                    <p>Configure your bot settings with a simple and clean interface</p>
+                    <h1><i class="fas fa-cog"></i> {{ t('simple_config.bot_configuration') if t('simple_config.bot_configuration') != 'simple_config.bot_configuration' else 'Bot Configuration' }}</h1>
+                    <p>{{ t('simple_config.configure_desc') if t('simple_config.configure_desc') != 'simple_config.configure_desc' else 'Configure your bot settings with a simple and clean interface' }}</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode"
@@ -983,7 +983,7 @@
                     </a>
                     <label for="config-file-select" style="font-weight: 500; color: #374151;">Config File:</label>
                     <select id="config-file-select" class="dropdown-field">
-                        <option value="">Select a config file</option>
+                        <option value="">{{ t('simple_config.select_config') if t('simple_config.select_config') != 'simple_config.select_config' else 'Select a config file' }}</option>
                     </select>
                     <button class="btn btn-primary" onclick="loadSelectedConfig()" id="load-config-btn" disabled>
                         <i class="fas fa-download"></i> Load

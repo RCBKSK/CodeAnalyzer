@@ -1020,7 +1020,7 @@
                 <div id="accountFilterContainer" style="display: flex; align-items: center; gap: 8px;">
                     <label style="color: #64748b; font-weight: 500;">Account:</label>
                     <select id="accountSelect" style="padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; color: #1e293b; font-family: 'Inter', sans-serif;">
-                        <option value="all">All Accounts</option>
+                        <option value="all">{{ t('notifications.all_accounts') if t('notifications.all_accounts') != 'notifications.all_accounts' else 'All Accounts' }}</option>
                     </select>
                 </div>
             </div>
@@ -1066,7 +1066,7 @@
         <!-- Unified View -->
         <div class="notifications-section" id="unifiedNotificationsSection">
             <div class="notifications-header">
-                <h2><i class="fas fa-list"></i> Unified Notification Stream</h2>
+                <h2><i class="fas fa-list"></i> {{ t('notifications.unified_stream') if t('notifications.unified_stream') != 'notifications.unified_stream' else 'Unified Notification Stream' }}</h2>
                 <div class="header-controls">
                     <div class="browser-notifications-control" style="margin-right: 12px;">
                         <span id="notificationPermissionStatus" class="notification-permission-status"></span>
@@ -1249,8 +1249,8 @@
                 container.html(`
                     <div class="empty-state">
                         <i class="fas fa-route"></i>
-                        <h6>No Active Bots</h6>
-                        <p>No bot instances are currently running</p>
+                        <h6>{{ t('notifications.no_active_bots') if t('notifications.no_active_bots') != 'notifications.no_active_bots' else 'No Active Bots' }}</h6>
+                        <p>{{ t('notifications.no_bots_running') if t('notifications.no_bots_running') != 'notifications.no_bots_running' else 'No bot instances are currently running' }}</p>
                     </div>
                 `);
                 return;
@@ -1564,7 +1564,7 @@
             container.html(`
                 <div class="empty-state">
                     <i class="${icon}"></i>
-                    <h6>No Notifications</h6>
+                    <h6>{{ t('notifications.no_notifications') }}</h6>
                     <p>${message}</p>
                     <small>Notifications will appear here when bot activities occur...</small>
                 </div>
@@ -1775,7 +1775,7 @@
                 container.html(`
                     <div class="empty-state">
                         <i class="fas fa-bell"></i>
-                        <h6>No Notifications</h6>
+                        <h6>{{ t('notifications.no_notifications') }}</h6>
                         <p>No notifications found for ${accountName}</p>
                         <small>Bot activities for this instance will appear here...</small>
                     </div>
