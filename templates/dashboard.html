@@ -126,39 +126,39 @@
             <div class="card-header">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-cogs me-2"></i>
-                    Active Settings
+                    {{ t('dashboard.active_settings') }}
                 </h5>
             </div>
             <div class="card-body">
                 <div class="mb-2">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" disabled {% if config.auto_collect_resources %}checked{% endif %}>
-                        <label class="form-check-label">Auto Collect Resources</label>
+                        <label class="form-check-label">{{ t('dashboard.auto_collect_resources') }}</label>
                     </div>
                 </div>
                 <div class="mb-2">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" disabled {% if config.auto_train_troops %}checked{% endif %}>
-                        <label class="form-check-label">Auto Train Troops</label>
+                        <label class="form-check-label">{{ t('dashboard.auto_train_troops') }}</label>
                     </div>
                 </div>
                 <div class="mb-2">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" disabled {% if config.auto_upgrade_buildings %}checked{% endif %}>
-                        <label class="form-check-label">Auto Upgrade Buildings</label>
+                        <label class="form-check-label">{{ t('dashboard.auto_upgrade_buildings') }}</label>
                     </div>
                 </div>
                 <div class="mb-3">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" disabled {% if config.auto_alliance_help %}checked{% endif %}>
-                        <label class="form-check-label">Auto Alliance Help</label>
+                        <label class="form-check-label">{{ t('dashboard.auto_alliance_help') }}</label>
                     </div>
                 </div>
                 
                 <div class="text-center">
                     <a href="{{ url_for('settings') }}" class="btn btn-outline-primary">
                         <i class="fas fa-edit me-2"></i>
-                        Edit Settings
+                        {{ t('dashboard.edit_settings') }}
                     </a>
                 </div>
             </div>
@@ -173,10 +173,10 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-list me-2"></i>
-                    Recent Activity
+                    {{ t('dashboard.recent_activity') }}
                 </h5>
                 <a href="{{ url_for('logs') }}" class="btn btn-sm btn-outline-secondary">
-                    View All Logs
+                    {{ t('dashboard.view_all_logs') }}
                 </a>
             </div>
             <div class="card-body">
@@ -191,7 +191,7 @@
                 {% else %}
                     <div class="text-center text-muted">
                         <i class="fas fa-inbox fa-2x mb-2"></i>
-                        <p>No recent activity</p>
+                        <p>{{ t('dashboard.no_recent_activity') }}</p>
                     </div>
                 {% endif %}
             </div>
