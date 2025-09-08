@@ -53,7 +53,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)
+app.secret_key = os.environ.get("SESSION_SECRET", secrets.token_hex(16))
 
 # Language system
 LANGUAGES = {'en': 'English', 'zh': '中文', 'vi': 'Tiếng Việt'}
@@ -66,8 +66,23 @@ def load_language(lang_code):
             return json.load(f)
     except FileNotFoundError:
         # Fallback to English if language file not found
-        with open(f'languages/{DEFAULT_LANGUAGE}.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
+        try:
+            with open(f'languages/{DEFAULT_LANGUAGE}.json', 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Error loading language file {DEFAULT_LANGUAGE}.json: {e}")
+            # Return minimal fallback dictionary
+            return {"login": {"title": "Login"}, "common": {"save": "Save", "cancel": "Cancel"}}
+    except Exception as e:
+        logger.error(f"Error loading language file {lang_code}.json: {e}")
+        # Try fallback to English
+        try:
+            with open(f'languages/{DEFAULT_LANGUAGE}.json', 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as fallback_e:
+            logger.error(f"Error loading fallback language file: {fallback_e}")
+            # Return minimal fallback dictionary
+            return {"login": {"title": "Login"}, "common": {"save": "Save", "cancel": "Cancel"}}
 
 def get_current_language():
     """Get current language from session"""
