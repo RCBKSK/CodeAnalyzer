@@ -150,5 +150,19 @@
     "connected": "已连接",
     "disconnected": "已断开",
     "no_notifications": "没有通知可显示"
+  },
+  "dashboard": {
+    "active_settings": "活动设置",
+    "auto_collect_resources": "自动收集资源",
+    "auto_train_troops": "自动训练部队",
+    "auto_upgrade_buildings": "自动升级建筑",
+    "auto_alliance_help": "自动联盟帮助",
+    "edit_settings": "编辑设置",
+    "recent_activity": "最近活动",
+    "view_all_logs": "查看所有日志",
+    "no_recent_activity": "没有最近活动"
+  },
+  "simple_config": {
+    "title": "简单配置"
   }
 }
