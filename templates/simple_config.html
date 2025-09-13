@@ -3604,7 +3604,9 @@
                         <!-- Troops will be added here -->
                     </div>
 
-
+                    <button class="btn btn-primary" onclick="addTroopToCard(this)" style="margin-top: 12px;">
+                        <i class="fas fa-plus"></i> Add Troop
+                    </button>
                 </div>
             `;
             return card;
@@ -4549,26 +4551,14 @@
                     "troops": []
                 };
 
-                // Add additional fields for rally-start
-                if (configType === 'rally-start') {
-                    levelRange.rally_time = 5;
-                    levelRange.message = `${monsterName} Rally`;
-                }
-
-                const monster = {
-                    "monster_code": monsterCode,
-                    "monster_name": monsterName,
-                    "level_ranges": [levelRange]
-                };
-
-                // Collect troops using fixed_amounts
-                card.querySelectorAll('.troop-item').forEach(troopItem => {
+                // Collect troops configuration from the troops-list container
+                card.querySelectorAll('.troops-list .troop-item').forEach(troopItem => {
                     const troopSelect = troopItem.querySelector('.troop-select');
                     const fixedAmountsInput = troopItem.querySelector('.fixed-amounts-input');
 
-                    if (troopSelect.value && fixedAmountsInput.value.trim()) {
+                    if (troopSelect && fixedAmountsInput && troopSelect.value && fixedAmountsInput.value.trim()) {
                         const troopCode = parseInt(troopSelect.value);
-
+                        
                         // Parse comma-separated fixed amounts
                         const fixedAmounts = fixedAmountsInput.value
                             .split(',')
@@ -4584,6 +4574,18 @@
                         }
                     }
                 });
+
+                // Add additional fields for rally-start
+                if (configType === 'rally-start') {
+                    levelRange.rally_time = 5;
+                    levelRange.message = `${monsterName} Rally`;
+                }
+
+                const monster = {
+                    "monster_code": monsterCode,
+                    "monster_name": monsterName,
+                    "level_ranges": [levelRange]
+                };
 
                 monsters.push(monster);
             });
