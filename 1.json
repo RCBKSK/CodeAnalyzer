@@ -616,6 +616,7 @@
   },
   "toggles": {
     "features": {
+      "buff_management": true,
       "chat_monitoring": true,
       "discord": true,
       "enable_chat_monitoring": true,
@@ -624,8 +625,7 @@
       "notify_discord": false,
       "object_scanning": false,
       "rally_join": false,
-      "rally_start": false,
-      "buff_management": true
+      "rally_start": false
     },
     "jobs": {
       "alliance_farmer": true,
