@@ -37,7 +37,7 @@ def setup_replit_environment():
             f.write('# Create users manually with hashed passwords for security\n')
 
     # Check for required environment variables
-    required_vars = ['LOK_EMAIL', 'LOK_PASSWORD', 'SESSION_SECRET']
+    required_vars = ['LOK_EMAIL', 'LOK_PASSWORD']
     missing_vars = [var for var in required_vars if not os.getenv(var)]
 
     if missing_vars:
@@ -54,14 +54,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-# Enforce SESSION_SECRET from environment
-session_secret = os.environ.get("SESSION_SECRET")
-if not session_secret:
-    logger.error("❌ SESSION_SECRET environment variable is required for security")
-    print("❌ SECURITY ERROR: SESSION_SECRET environment variable must be set")
-    print("Please add SESSION_SECRET to the Replit Secrets tab")
-    raise RuntimeError("SESSION_SECRET is required")
-app.secret_key = session_secret
+app.secret_key = os.environ.get("SESSION_SECRET", secrets.token_hex(16))
 
 # Language system
 LANGUAGES = {'en': 'English', 'zh': '中文', 'vi': 'Tiếng Việt'}

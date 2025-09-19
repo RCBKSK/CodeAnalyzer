@@ -122,6 +122,8 @@ externalPort = 5000
 - Correct workflow execution
 - Proper port configuration for web access
 
+**IMPORTANT NOTE**: All required environment variables (LOK_EMAIL, LOK_PASSWORD, etc.) and dependencies will be installed by the user as needed. The project uses Flask development server for all deployments.
+
 ## Quick Start
 
 1. **Set up environment variables**:
