@@ -117,6 +117,24 @@ app.jinja_env.globals['t'] = t
 app.jinja_env.globals['get_current_language'] = get_current_language
 app.jinja_env.globals['LANGUAGES'] = LANGUAGES
 
+@app.context_processor
+def inject_user_status():
+    """Inject user status information into all templates"""
+    if 'username' in session:
+        try:
+            username = session['username']
+            quota_info = get_combined_quota(username)
+            return {
+                'user_quota_info': quota_info,
+                'user_account_status': quota_info['account_status'],
+                'user_instance_statuses': quota_info['instance_statuses'],
+                'user_has_expiring_soon': quota_info['has_expiring_soon']
+            }
+        except Exception as e:
+            logger.error(f"Error injecting user status: {e}")
+            return {}
+    return {}
+
 # Bot processes dictionary to track running instances
 bot_processes = {}
 
@@ -160,6 +178,110 @@ def cleanup_old_notifications():
     except Exception as e:
         logger.error(f"Error during notification cleanup: {str(e)}")
 
+def evaluate_and_enforce_expiries():
+    """Evaluate expiring accounts/instances and send notifications"""
+    try:
+        logger.info("Running expiry evaluation and enforcement")
+        
+        # Load all users
+        users = load_users()
+        instances_data = load_user_instances()
+        
+        for username in users.keys():
+            try:
+                # Get combined status
+                quota_info = get_combined_quota(username)
+                account_status = quota_info['account_status']
+                instance_statuses = quota_info['instance_statuses']
+                
+                # Check account expiry
+                if account_status.get('days_remaining') is not None:
+                    days_remaining = account_status['days_remaining']
+                    
+                    # Send account notifications at 7, 3, 1 days
+                    if days_remaining in [7, 3, 1]:
+                        add_notification(
+                            username, 
+                            f"⚠️ Account expires in {days_remaining} day{'s' if days_remaining != 1 else ''}",
+                            'warning',
+                            'Account'
+                        )
+                    elif days_remaining == 0:
+                        add_notification(
+                            username,
+                            "❌ Account has expired! Please renew to continue using the service.",
+                            'error',
+                            'Account'
+                        )
+                
+                # Check instance expiries
+                for instance in instance_statuses:
+                    if instance['status'] == 'active' and instance['days_remaining'] is not None:
+                        days_remaining = instance['days_remaining']
+                        instance_name = instance['instance_name']
+                        
+                        # Send instance notifications at 7, 3, 1 days
+                        if days_remaining in [7, 3, 1]:
+                            add_notification(
+                                username,
+                                f"⚠️ Instance '{instance_name}' expires in {days_remaining} day{'s' if days_remaining != 1 else ''}",
+                                'warning',
+                                instance_name
+                            )
+                        elif days_remaining == 0:
+                            add_notification(
+                                username,
+                                f"❌ Instance '{instance_name}' has expired!",
+                                'error',
+                                instance_name
+                            )
+                            
+                            # Mark instance as expired in file
+                            if username in instances_data:
+                                for inst in instances_data[username]:
+                                    if inst['instance_name'] == instance_name and inst['status'] == 'active':
+                                        inst['status'] = 'expired'
+                                        logger.info(f"Marked instance {instance_name} for user {username} as expired")
+                    
+                    elif instance['status'] == 'expired':
+                        # Stop any running bots for expired instances
+                        instance_name = instance['instance_name']
+                        for instance_id, bot_data in list(bot_processes.items()):
+                            if (bot_data.get('user_id') == username and 
+                                bot_data.get('name') == instance_name):
+                                try:
+                                    process = bot_data.get("process")
+                                    if process and process.poll() is None:
+                                        process.terminate()
+                                        process.wait(timeout=5)
+                                        logger.info(f"Stopped expired bot instance {instance_id} for user {username}")
+                                    del bot_processes[instance_id]
+                                except Exception as e:
+                                    logger.error(f"Error stopping expired bot {instance_id}: {e}")
+                
+                # Stop all bots for expired accounts
+                if account_status.get('status') == 'expired':
+                    for instance_id, bot_data in list(bot_processes.items()):
+                        if bot_data.get('user_id') == username:
+                            try:
+                                process = bot_data.get("process")
+                                if process and process.poll() is None:
+                                    process.terminate()
+                                    process.wait(timeout=5)
+                                    logger.info(f"Stopped bot instance {instance_id} for expired account {username}")
+                                del bot_processes[instance_id]
+                            except Exception as e:
+                                logger.error(f"Error stopping bot for expired account {username}: {e}")
+                                
+            except Exception as e:
+                logger.error(f"Error processing expiry for user {username}: {e}")
+        
+        # Save updated instances data
+        save_user_instances(instances_data)
+        
+    except Exception as e:
+        logger.error(f"Error in expiry evaluation: {str(e)}")
+
 # Initialize scheduler
 scheduler.start()
 
@@ -169,6 +291,16 @@ scheduler.add_job(
     'interval',
     hours=6,
     id='cleanup_notifications',
+    replace_existing=True
+)
+
+# Schedule expiry evaluation to run daily at 9 AM (startup evaluation will be done later)
+scheduler.add_job(
+    evaluate_and_enforce_expiries,
+    'cron',
+    hour=9,
+    minute=0,
+    id='expiry_evaluation',
     replace_existing=True
 )
 
@@ -401,6 +533,70 @@ def get_user_account_status(username):
         'days_remaining': days_remaining,
         'role': user.get('role', 'user'),
         'max_instances': user.get('max_instances', 1)
+    }
+
+def get_instance_statuses(username):
+    """Get detailed status information for all user instances"""
+    instances = load_user_instances()
+    user_instances = instances.get(username, [])
+    current_date = datetime.now().date()
+    
+    instance_statuses = []
+    for instance in user_instances:
+        status = 'unknown'
+        days_remaining = None
+        
+        try:
+            start_date = datetime.fromisoformat(instance['start_date']).date()
+            end_date = datetime.fromisoformat(instance['end_date']).date()
+            
+            if current_date < start_date:
+                status = 'not_started'
+                days_remaining = (start_date - current_date).days
+            elif current_date > end_date:
+                status = 'expired'
+                days_remaining = 0
+            else:
+                status = 'active'
+                days_remaining = (end_date - current_date).days
+        except:
+            status = 'invalid_date'
+        
+        instance_statuses.append({
+            'instance_name': instance['instance_name'],
+            'status': status,
+            'days_remaining': days_remaining,
+            'start_date': instance['start_date'],
+            'end_date': instance['end_date'],
+            'created_date': instance['created_date'],
+            'file_status': instance['status']
+        })
+    
+    return instance_statuses
+
+def get_combined_quota(username):
+    """Get combined quota information for user account and instances"""
+    account_status = get_user_account_status(username)
+    instance_statuses = get_instance_statuses(username)
+    
+    # Count active instances
+    active_instances = len([i for i in instance_statuses if i['status'] == 'active'])
+    max_instances = get_user_max_instances(username)
+    
+    # Find next expiring instance
+    next_expiring = None
+    active_instances_list = [i for i in instance_statuses if i['status'] == 'active' and i['days_remaining'] is not None]
+    if active_instances_list:
+        next_expiring = min(active_instances_list, key=lambda x: x['days_remaining'])
+    
+    return {
+        'account_status': account_status,
+        'instance_statuses': instance_statuses,
+        'active_instances': active_instances,
+        'max_instances': max_instances,
+        'quota_used': f"{active_instances}/{max_instances}",
+        'next_expiring': next_expiring,
+        'has_expiring_soon': any(i['status'] == 'active' and i['days_remaining'] is not None and i['days_remaining'] <= 7 for i in instance_statuses)
     }
 
 def get_user_role(username):
@@ -871,6 +1067,8 @@ def add_bot_update(user_id, update_type, title, message):
     """Add a bot status update notification"""
     instance_id, account_name = get_current_bot_instance()
     add_notification(user_id, update_type, title, message, account_name=account_name, instance_id=instance_id)
+
+# Note: Startup expiry evaluation will be called after all functions are defined
 
 def login_required(f):
     @wraps(f)
@@ -5063,6 +5261,13 @@ def vip_shop_buy():
         logger.error(f"Error in VIP shop purchase: {str(e)}")
         return jsonify({'error': f'Purchase failed: {str(e)}'}), 500
 
+
+# Run expiry evaluation on startup after all functions are loaded
+try:
+    evaluate_and_enforce_expiries()
+    logger.info("Initial expiry evaluation completed successfully")
+except Exception as e:
+    logger.error(f"Error running initial expiry evaluation: {e}")
 
 if __name__ == '__main__':
     # Ensure data directory exists

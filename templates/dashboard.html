@@ -120,8 +120,140 @@
         </div>
     </div>
 
+    <!-- Account & Instances Status -->
+    {% if user_quota_info %}
+    <div class="col-md-12 col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user-cog me-2"></i>
+                    Account & Instances Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Account Status -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>Account Status:</strong>
+                            {% if user_account_status.status == 'active' %}
+                                {% if user_account_status.days_remaining and user_account_status.days_remaining <= 7 %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        {{ user_account_status.days_remaining }} days left
+                                    </span>
+                                {% elif user_account_status.days_remaining %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        {{ user_account_status.days_remaining }} days left
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-infinity me-1"></i>
+                                        Active
+                                    </span>
+                                {% endif %}
+                            {% elif user_account_status.status == 'expired' %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    Expired
+                                </span>
+                            {% elif user_account_status.status == 'not_started' %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Starts in {{ user_account_status.days_remaining }} days
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Instance Quota -->
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <div class="text-center border-end">
+                            <h4 class="text-info">{{ user_quota_info.active_instances }}</h4>
+                            <small class="text-muted">Active Instances</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h4 class="text-primary">{{ user_quota_info.max_instances }}</h4>
+                            <small class="text-muted">Max Allowed</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Instance Details -->
+                {% if user_instance_statuses %}
+                <div class="row">
+                    <div class="col-12">
+                        <strong class="mb-2 d-block">Instance Details:</strong>
+                        {% for instance in user_instance_statuses %}
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" 
+                                 style="{% if instance.status == 'expired' %}background-color: rgba(220, 53, 69, 0.1); border-left: 3px solid #dc3545;{% elif instance.status == 'active' and instance.days_remaining and instance.days_remaining <= 7 %}background-color: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107;{% elif instance.status == 'active' %}background-color: rgba(25, 135, 84, 0.1); border-left: 3px solid #198754;{% else %}background-color: rgba(108, 117, 125, 0.1); border-left: 3px solid #6c757d;{% endif %}">
+                                <div>
+                                    <strong>{{ instance.instance_name }}</strong>
+                                    {% if instance.status == 'active' and instance.days_remaining %}
+                                        <br><small class="text-muted">Expires: {{ instance.end_date }}</small>
+                                    {% elif instance.status == 'expired' %}
+                                        <br><small class="text-muted">Expired: {{ instance.end_date }}</small>
+                                    {% elif instance.status == 'not_started' %}
+                                        <br><small class="text-muted">Starts: {{ instance.start_date }}</small>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    {% if instance.status == 'active' %}
+                                        {% if instance.days_remaining and instance.days_remaining <= 7 %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                                {{ instance.days_remaining }}d left
+                                            </span>
+                                        {% elif instance.days_remaining %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                {{ instance.days_remaining }}d left
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-infinity me-1"></i>
+                                                Active
+                                            </span>
+                                        {% endif %}
+                                    {% elif instance.status == 'expired' %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times-circle me-1"></i>
+                                            Expired
+                                        </span>
+                                    {% elif instance.status == 'not_started' %}
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-clock me-1"></i>
+                                            {{ instance.days_remaining }}d to start
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-question me-1"></i>
+                                            {{ instance.status|title }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                    <div class="text-center text-muted">
+                        <i class="fas fa-info-circle mb-2"></i>
+                        <p>No instances configured</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Configuration Overview -->
-    <div class="col-md-12 col-lg-4 mb-4">
+    <div class="col-md-12 col-lg-6 mb-4">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
