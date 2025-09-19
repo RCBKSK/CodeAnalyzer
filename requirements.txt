@@ -464,3 +464,7 @@ requests
 schedule==1.2.*
 tenacity==8.2.*
 werkzeug
+discord.py
+flask-cors
+psutil
+python-dotenv
