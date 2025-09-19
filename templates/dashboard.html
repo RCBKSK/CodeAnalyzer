@@ -351,6 +351,19 @@
 {% endblock %}
 
 {% block scripts %}
+<style>
+@keyframes pulse-critical {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.3);
+        transform: scale(1.02);
+    }
+}
+</style>
+
 <script>
 // Auto-refresh dashboard data every 30 seconds
 setInterval(function() {
