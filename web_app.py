@@ -30,13 +30,14 @@ def setup_replit_environment():
     os.makedirs('templates', exist_ok=True)
     os.makedirs('static', exist_ok=True)
 
-    # Ensure users.txt exists
+    # Ensure users.txt exists (without creating default admin user)
     if not os.path.exists('users.txt'):
         with open('users.txt', 'w') as f:
-            f.write('admin:admin123:10\n')
+            f.write('# User format: username:password_hash:max_instances:role:start_date:end_date:created_date\n')
+            f.write('# Create users manually with hashed passwords for security\n')
 
     # Check for required environment variables
-    required_vars = ['LOK_EMAIL', 'LOK_PASSWORD']
+    required_vars = ['LOK_EMAIL', 'LOK_PASSWORD', 'SESSION_SECRET']
     missing_vars = [var for var in required_vars if not os.getenv(var)]
 
     if missing_vars:
@@ -53,7 +54,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", secrets.token_hex(16))
+# Enforce SESSION_SECRET from environment
+session_secret = os.environ.get("SESSION_SECRET")
+if not session_secret:
+    logger.error("❌ SESSION_SECRET environment variable is required for security")
+    print("❌ SECURITY ERROR: SESSION_SECRET environment variable must be set")
+    print("Please add SESSION_SECRET to the Replit Secrets tab")
+    raise RuntimeError("SESSION_SECRET is required")
+app.secret_key = session_secret
 
 # Language system
 LANGUAGES = {'en': 'English', 'zh': '中文', 'vi': 'Tiếng Việt'}
@@ -438,11 +446,23 @@ def authenticate_user(username, password):
     # Regular user authentication
     users = load_users()
     user = users.get(username)
-    if user and user['password'] == password:
-        # Check if account is within valid date range
-        if not is_user_account_active(username):
-            return False
-        return True
+    if user:
+        stored_password = user['password']
+        
+        # Check if password is already hashed (starts with hash algorithm prefix)
+        if stored_password.startswith(('scrypt:', 'pbkdf2:', 'argon2:', 'bcrypt:')):
+            # Use secure password verification for hashed passwords
+            password_valid = check_password_hash(stored_password, password)
+        else:
+            # Legacy plaintext password comparison (deprecated - migrate to hashed)
+            logger.warning(f"User {username} is using legacy plaintext password - consider migrating to hashed password")
+            password_valid = stored_password == password
+        
+        if password_valid:
+            # Check if account is within valid date range
+            if not is_user_account_active(username):
+                return False
+            return True
     return False
 
 def get_user_max_instances(username):

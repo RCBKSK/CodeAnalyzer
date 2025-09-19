@@ -73,6 +73,55 @@ LokBot is a comprehensive automation bot for League of the Kingdoms game, import
 - **Real-time Notifications**: Live updates on bot activities
 - **Scheduling System**: Schedule bot tasks and maintenance
 
+## ⚠️ CRITICAL REPLIT CONFIGURATION SETTINGS ⚠️
+
+**IMPORTANT**: This project requires specific Replit configuration settings to run properly. The `.replit` file contains essential settings that must always be maintained:
+
+```toml
+modules = ["python-3.11", "web", "nodejs-20"]
+run = "python main.py"
+
+[nix]
+channel = "stable-25_05"
+packages = ["cacert", "geckodriver", "glibcLocales", "libev", "openssl", "postgresql"]
+
+[deployment]
+run = ["python", "main.py"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 5000
+
+[[ports]]
+localPort = 5000
+externalPort = 5000
+
+[agent]
+```
+
+**DO NOT MODIFY** these configuration settings unless absolutely necessary, as they ensure:
+- Proper Python 3.11 environment
+- Required system packages for web scraping and automation
+- Correct workflow execution
+- Proper port configuration for web access
+
 ## Quick Start
 
 1. **Set up environment variables**:
