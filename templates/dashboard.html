@@ -190,48 +190,66 @@
                     <div class="col-12">
                         <strong class="mb-2 d-block">Instance Details:</strong>
                         {% for instance in user_instance_statuses %}
-                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" 
-                                 style="{% if instance.status == 'expired' %}background-color: rgba(220, 53, 69, 0.1); border-left: 3px solid #dc3545;{% elif instance.status == 'active' and instance.days_remaining and instance.days_remaining <= 7 %}background-color: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107;{% elif instance.status == 'active' %}background-color: rgba(25, 135, 84, 0.1); border-left: 3px solid #198754;{% else %}background-color: rgba(108, 117, 125, 0.1); border-left: 3px solid #6c757d;{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded border" 
+                                 style="{% if instance.status == 'expired' %}background-color: rgba(220, 53, 69, 0.15); border-left: 4px solid #dc3545 !important; border-color: #dc3545 !important;{% elif instance.status == 'active' and instance.days_remaining and instance.days_remaining <= 3 %}background-color: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444 !important; border-color: #ef4444 !important; animation: pulse-critical 2s infinite;{% elif instance.status == 'active' and instance.days_remaining and instance.days_remaining <= 7 %}background-color: rgba(255, 193, 7, 0.15); border-left: 4px solid #ffc107 !important; border-color: #ffc107 !important;{% elif instance.status == 'active' %}background-color: rgba(25, 135, 84, 0.1); border-left: 4px solid #198754 !important; border-color: #198754 !important;{% else %}background-color: rgba(108, 117, 125, 0.1); border-left: 4px solid #6c757d !important; border-color: #6c757d !important;{% endif %}">
                                 <div>
-                                    <strong>{{ instance.instance_name }}</strong>
+                                    <strong style="font-size: 16px;">{{ instance.instance_name }}</strong>
                                     {% if instance.status == 'active' and instance.days_remaining %}
                                         <br><small class="text-muted">Expires: {{ instance.end_date }}</small>
+                                        {% if instance.days_remaining <= 3 %}
+                                            <br><strong style="color: #ef4444; font-size: 14px;">⚠️ URGENT: Only {{ instance.days_remaining }} day{{ 's' if instance.days_remaining != 1 else '' }} remaining!</strong>
+                                        {% endif %}
                                     {% elif instance.status == 'expired' %}
                                         <br><small class="text-muted">Expired: {{ instance.end_date }}</small>
+                                        <br><strong style="color: #dc3545;">❌ Instance has expired!</strong>
                                     {% elif instance.status == 'not_started' %}
                                         <br><small class="text-muted">Starts: {{ instance.start_date }}</small>
                                     {% endif %}
                                 </div>
-                                <div>
+                                <div class="text-end">
                                     {% if instance.status == 'active' %}
-                                        {% if instance.days_remaining and instance.days_remaining <= 7 %}
-                                            <span class="badge bg-warning">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                                {{ instance.days_remaining }}d left
-                                            </span>
+                                        {% if instance.days_remaining and instance.days_remaining <= 3 %}
+                                            <div class="mb-1">
+                                                <span class="badge bg-danger" style="font-size: 13px; padding: 8px 12px;">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    <strong>{{ instance.days_remaining }} DAY{{ 'S' if instance.days_remaining != 1 else '' }} LEFT</strong>
+                                                </span>
+                                            </div>
+                                            <small style="color: #ef4444; font-weight: bold;">🚨 CRITICAL</small>
+                                        {% elif instance.days_remaining and instance.days_remaining <= 7 %}
+                                            <div class="mb-1">
+                                                <span class="badge bg-warning" style="font-size: 12px; padding: 6px 10px;">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    {{ instance.days_remaining }} day{{ 's' if instance.days_remaining != 1 else '' }} left
+                                                </span>
+                                            </div>
+                                            <small style="color: #f59e0b; font-weight: bold;">⚠️ Expiring Soon</small>
                                         {% elif instance.days_remaining %}
-                                            <span class="badge bg-success">
-                                                <i class="fas fa-check-circle me-1"></i>
-                                                {{ instance.days_remaining }}d left
-                                            </span>
+                                            <div class="mb-1">
+                                                <span class="badge bg-success" style="font-size: 12px; padding: 6px 10px;">
+                                                    <i class="fas fa-check-circle me-1"></i>
+                                                    {{ instance.days_remaining }} day{{ 's' if instance.days_remaining != 1 else '' }} left
+                                                </span>
+                                            </div>
+                                            <small style="color: #10b981; font-weight: bold;">✅ Active</small>
                                         {% else %}
-                                            <span class="badge bg-success">
+                                            <span class="badge bg-success" style="font-size: 12px; padding: 6px 10px;">
                                                 <i class="fas fa-infinity me-1"></i>
-                                                Active
+                                                Unlimited
                                             </span>
                                         {% endif %}
                                     {% elif instance.status == 'expired' %}
-                                        <span class="badge bg-danger">
+                                        <span class="badge bg-danger" style="font-size: 12px; padding: 6px 10px;">
                                             <i class="fas fa-times-circle me-1"></i>
-                                            Expired
+                                            EXPIRED
                                         </span>
                                     {% elif instance.status == 'not_started' %}
-                                        <span class="badge bg-info">
+                                        <span class="badge bg-info" style="font-size: 12px; padding: 6px 10px;">
                                             <i class="fas fa-clock me-1"></i>
                                             {{ instance.days_remaining }}d to start
                                         </span>
                                     {% else %}
-                                        <span class="badge bg-secondary">
+                                        <span class="badge bg-secondary" style="font-size: 12px; padding: 6px 10px;">
                                             <i class="fas fa-question me-1"></i>
                                             {{ instance.status|title }}
                                         </span>
