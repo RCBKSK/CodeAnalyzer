@@ -220,7 +220,7 @@ def evaluate_and_enforce_expiries():
                         days_remaining = instance['days_remaining']
                         instance_name = instance['instance_name']
                         
-                        # Send instance notifications at 7, 3, 1 days
+                        # Send instance notifications at 7, 3, 1 days (keep original logic)
                         if days_remaining in [7, 3, 1]:
                             add_notification(
                                 username,
@@ -228,6 +228,39 @@ def evaluate_and_enforce_expiries():
                                 'warning',
                                 instance_name
                             )
+                            
+                            # Also notify admins about users' expiring instances
+                            users = load_users()
+                            for admin_user, admin_data in users.items():
+                                if admin_data.get('role') in ['admin', 'super_admin'] and admin_user != username:
+                                    add_notification(
+                                        admin_user,
+                                        f"🔔 User '{username}' has instance '{instance_name}' expiring in {days_remaining} day{'s' if days_remaining != 1 else ''}",
+                                        'admin_alert',
+                                        f"Admin - {username}"
+                                    )
+                        
+                        # NEW: Daily notifications for instances expiring within 3 days
+                        elif days_remaining <= 3 and days_remaining > 0:
+                            # Send daily reminders for critical period (3 days or less)
+                            add_notification(
+                                username,
+                                f"🚨 URGENT: Instance '{instance_name}' expires in {days_remaining} day{'s' if days_remaining != 1 else ''}! Please renew soon.",
+                                'urgent',
+                                instance_name
+                            )
+                            
+                            # Notify admins daily about critically expiring instances
+                            users = load_users()
+                            for admin_user, admin_data in users.items():
+                                if admin_data.get('role') in ['admin', 'super_admin'] and admin_user != username:
+                                    add_notification(
+                                        admin_user,
+                                        f"🚨 CRITICAL: User '{username}' instance '{instance_name}' expires in {days_remaining} day{'s' if days_remaining != 1 else ''}",
+                                        'admin_critical',
+                                        f"Admin - {username}"
+                                    )
+                        
                         elif days_remaining == 0:
                             add_notification(
                                 username,
@@ -235,6 +268,17 @@ def evaluate_and_enforce_expiries():
                                 'error',
                                 instance_name
                             )
+                            
+                            # Notify admins about expired instances
+                            users = load_users()
+                            for admin_user, admin_data in users.items():
+                                if admin_data.get('role') in ['admin', 'super_admin'] and admin_user != username:
+                                    add_notification(
+                                        admin_user,
+                                        f"💥 User '{username}' instance '{instance_name}' has EXPIRED!",
+                                        'admin_error',
+                                        f"Admin - {username}"
+                                    )
                             
                             # Mark instance as expired in file
                             if username in instances_data:
