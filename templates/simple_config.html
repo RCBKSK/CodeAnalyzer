@@ -5954,7 +5954,7 @@
                         <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${item.name}</div>
                         <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">${item.description}</div>
                         <div style="font-size: 11px; color: var(--text-secondary);">
-                            Priority: ${item.priority} | Min: ${item.min_buy} | Max: ${item.max_buy} | Category: ${item.category}
+                            Priority: ${item.priority} | Max Buy: ${item.max_items_to_buy || item.max_buy || 1} | Category: ${item.category}
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
