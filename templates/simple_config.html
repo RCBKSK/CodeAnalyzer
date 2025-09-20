@@ -5574,7 +5574,7 @@
                     </div>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div>
                         <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
                             Priority
@@ -5585,18 +5585,10 @@
                     </div>
                     <div>
                         <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
-                            Min Buy
+                            Max Items to Buy
                         </label>
-                        <input type="number" min="1" value="${item.min_buy || 1}" 
-                               onchange="updateShopItem(${index}, 'min_buy', parseInt(this.value))"
-                               style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-primary);">
-                            Max Buy
-                        </label>
-                        <input type="number" min="1" value="${item.max_buy || 999999}" 
-                               onchange="updateShopItem(${index}, 'max_buy', parseInt(this.value))"
+                        <input type="number" min="1" value="${item.max_items_to_buy || item.max_buy || 1}" 
+                               onchange="updateShopItem(${index}, 'max_items_to_buy', parseInt(this.value))"
                                style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
                     </div>
                 </div>
@@ -6390,14 +6382,9 @@
                             <input type="number" id="vip-shop-item-priority" min="1" max="10" value="1" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
                         </div>
                         
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Min Buy</label>
-                            <input type="number" id="vip-shop-item-min-buy" min="1" value="1" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
-                        </div>
-                        
                         <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Max Buy</label>
-                            <input type="number" id="vip-shop-item-max-buy" min="1" value="999999" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Max Items to Buy</label>
+                            <input type="number" id="vip-shop-item-max-items" min="1" value="1" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;">
                         </div>
                         
                         <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -6441,8 +6428,7 @@
         function saveVipShopItem() {
             const itemCode = parseInt(document.getElementById('vip-shop-item-select').value);
             const priority = parseInt(document.getElementById('vip-shop-item-priority').value);
-            const minBuy = parseInt(document.getElementById('vip-shop-item-min-buy').value);
-            const maxBuy = parseInt(document.getElementById('vip-shop-item-max-buy').value);
+            const maxBuy = parseInt(document.getElementById('vip-shop-item-max-items').value);
             
             if (!itemCode) {
                 showNotification('Please select an item', 'warning');
@@ -6480,8 +6466,7 @@
                 vip_level: itemInfo.vip_level,
                 discount: itemInfo.discount,
                 priority: priority,
-                min_buy: minBuy,
-                max_buy: maxBuy,
+                max_items_to_buy: maxBuy || 1,
                 enabled: true
             };
             
@@ -6514,7 +6499,7 @@
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
                     <div style="flex: 1;">
                         <div style="font-weight: 500; color: #1e293b;">${item.name}</div>
-                        <div style="font-size: 12px; color: #64748b;">${item.category} • VIP ${item.vip_level} • Priority ${item.priority} • Buy ${item.min_buy}-${item.max_buy}</div>
+                        <div style="font-size: 12px; color: #64748b;">${item.category} • VIP ${item.vip_level} • Priority ${item.priority} • Max Buy: ${item.max_items_to_buy || item.max_buy || 1}</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <label style="display: flex; align-items: center; gap: 4px; font-size: 12px;">

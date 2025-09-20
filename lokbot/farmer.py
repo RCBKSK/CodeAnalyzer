@@ -5534,43 +5534,50 @@ Status: {status}"""
                 item_info = available_items[item_code]
                 
                 # Get purchase parameters
-                min_buy = config_item.get('min_buy', 1)
-                max_buy = config_item.get('max_buy', 999999)
+                max_buy = config_item.get('max_buy', config_item.get('min_buy', 1))  # Support both old and new config
                 priority = config_item.get('priority', 999)
 
-                # Calculate amount to buy (start with min_buy, up to max_buy)
-                amount_to_buy = min_buy
+                # Get max items to buy from new field or fallback to old fields
+                if 'max_items_to_buy' in config_item:
+                    max_buy = config_item.get('max_items_to_buy', 1)
                 
-                if amount_to_buy < 1:
+                if max_buy < 1:
                     continue
 
-                # Try to purchase
+                # Try to purchase items one at a time
+                successful_purchases = 0
                 try:
-                    logger.info(f"Attempting to buy {amount_to_buy}x {item_info.get('name', f'Item {item_code}')} from VIP shop")
+                    logger.info(f"Attempting to buy {max_buy}x {item_info.get('name', f'Item {item_code}')} from VIP shop (one at a time)")
                     
-                    result = self.api.kingdom_vipshop_buy(item_code, amount_to_buy)
+                    for purchase_attempt in range(max_buy):
+                        # Buy one item at a time
+                        result = self.api.kingdom_vipshop_buy(item_code, 1)
+                        
+                        if result and result.get('result'):
+                            successful_purchases += 1
+                            total_purchased += 1
+                            logger.debug(f"✅ Purchase {successful_purchases}/{max_buy} successful for {item_info.get('name', f'Item {item_code}')}")
+                            
+                            # Small delay between individual purchases
+                            time.sleep(random.uniform(0.5, 1.5))
+                        else:
+                            error_msg = result.get('errorMsg', 'Purchase failed') if result else 'No response from server'
+                            logger.warning(f"❌ Failed to purchase {item_info.get('name', f'Item {item_code}')}: {error_msg}")
+                            
+                            # Stop trying if we hit an error (might be insufficient resources/VIP level/item not available)
+                            if any(keyword in error_msg.lower() for keyword in ['vip', 'not enough', 'insufficient', 'unavailable', 'not available']):
+                                logger.info(f"Stopping further purchases of {item_info.get('name', f'Item {item_code}')} due to: {error_msg}")
+                                break
                     
-                    if result and result.get('result'):
-                        total_purchased += amount_to_buy
+                    # Add to summary if any purchases were successful
+                    if successful_purchases > 0:
                         purchase_summary.append({
                             'name': item_info.get('name', f'Item {item_code}'),
-                            'amount': amount_to_buy,
+                            'amount': successful_purchases,
                             'priority': priority,
                             'vip_level': item_info.get('vip_level', 1)
                         })
-                        
-                        logger.info(f"✅ Successfully purchased {amount_to_buy}x {item_info.get('name', f'Item {item_code}')}")
-                        
-                        # Small delay between purchases
-                        time.sleep(random.uniform(1, 3))
-                    else:
-                        error_msg = result.get('errorMsg', 'Purchase failed') if result else 'No response from server'
-                        logger.warning(f"❌ Failed to purchase {item_info.get('name', f'Item {item_code}')}: {error_msg}")
-                        
-                        # Stop trying if we hit an error (might be insufficient resources/VIP level)
-                        if 'vip' in error_msg.lower() or 'not enough' in error_msg.lower():
-                            logger.info("Stopping VIP shop purchases due to insufficient VIP level or resources")
-                            break
+                        logger.info(f"✅ Successfully purchased {successful_purchases}x {item_info.get('name', f'Item {item_code}')}")
 
                 except Exception as purchase_error:
                     logger.error(f"Error purchasing VIP shop item {item_code}: {str(purchase_error)}")
