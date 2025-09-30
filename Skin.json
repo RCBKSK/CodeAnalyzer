@@ -46,43 +46,13 @@
       "enabled": true,
       "items": [
         {
-          "item_code": 10101009,
+          "item_code": 10103005,
           "enabled": true,
           "priority": 1,
           "min_buy": 1,
           "max_buy": 999999,
-          "name": "Vip Point +500",
-          "description": "500 VIP Points for premium features",
-          "category": "VIP"
-        },
-        {
-          "item_code": 10101050,
-          "enabled": true,
-          "priority": 1,
-          "min_buy": 1,
-          "max_buy": 999999,
-          "name": "Action point refill 20",
-          "description": "20 Action Points",
-          "category": "Action Points"
-        },
-        {
-          "item_code": 10103007,
-          "enabled": true,
-          "priority": 1,
-          "min_buy": 1,
-          "max_buy": 999999,
-          "name": "Speedup 8hour",
-          "description": "8 Hours General Speedup",
-          "category": "Speedups"
-        },
-        {
-          "item_code": 10103003,
-          "enabled": true,
-          "priority": 1,
-          "min_buy": 1,
-          "max_buy": 999999,
-          "name": "Speedup 10min",
-          "description": "10 Minutes General Speedup",
+          "name": "Speedup 1hour",
+          "description": "1 Hour General Speedup",
           "category": "Speedups"
         }
       ]
@@ -140,43 +110,13 @@
             "enabled": true,
             "items": [
               {
-                "item_code": 10101009,
+                "item_code": 10103005,
                 "enabled": true,
                 "priority": 1,
                 "min_buy": 1,
                 "max_buy": 999999,
-                "name": "Vip Point +500",
-                "description": "500 VIP Points for premium features",
-                "category": "VIP"
-              },
-              {
-                "item_code": 10101050,
-                "enabled": true,
-                "priority": 1,
-                "min_buy": 1,
-                "max_buy": 999999,
-                "name": "Action point refill 20",
-                "description": "20 Action Points",
-                "category": "Action Points"
-              },
-              {
-                "item_code": 10103007,
-                "enabled": true,
-                "priority": 1,
-                "min_buy": 1,
-                "max_buy": 999999,
-                "name": "Speedup 8hour",
-                "description": "8 Hours General Speedup",
-                "category": "Speedups"
-              },
-              {
-                "item_code": 10103003,
-                "enabled": true,
-                "priority": 1,
-                "min_buy": 1,
-                "max_buy": 999999,
-                "name": "Speedup 10min",
-                "description": "10 Minutes General Speedup",
+                "name": "Speedup 1hour",
+                "description": "1 Hour General Speedup",
                 "category": "Speedups"
               }
             ]
@@ -187,10 +127,9 @@
       {
         "enabled": false,
         "interval": {
-          "start": 120,
-          "end": 200
+          "end": 200,
+          "start": 120
         },
-        "name": "vip_shop_farmer",
         "kwargs": {
           "vip_shop_config": {
             "enabled": false,
@@ -209,7 +148,8 @@
               }
             ]
           }
-        }
+        },
+        "name": "vip_shop_farmer"
       },
       {
         "enabled": false,
