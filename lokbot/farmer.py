@@ -5618,6 +5618,16 @@ Status: {status}"""
             # Sort by priority (ascending, so 1 comes first)
             enabled_items.sort(key=lambda x: x.get('priority', 999))
 
+            # Get inventory once for crystal checking
+            inventory_response = self.api.item_list()
+            inventory_items = inventory_response.get('items', []) if inventory_response else []
+            logger.debug(f'Retrieved inventory with {len(inventory_items)} items for caravan purchasing')
+            
+            # Find crystal amount from inventory
+            crystal_items = [item for item in inventory_items if item.get('code') == 10100005]
+            current_crystals = crystal_items[0].get('amount', 0) if crystal_items else 0
+            logger.info(f'Current crystal balance: {current_crystals}')
+
             total_purchased = 0
             purchase_summary = []
 
@@ -5658,10 +5668,6 @@ Status: {status}"""
 
                 # Check affordability based on currency type
                 if cost_item_code == 10100005:
-                    item_list = self.api.item_list().get('items', [])
-                    crystal_items = [item for item in item_list if item.get('code') == 10100005]
-                    current_crystals = crystal_items[0].get('amount', 0) if crystal_items else 0
-                    
                     if cost > current_crystals:
                         logger.debug(f'Cannot afford item {item_code}: costs {cost} crystals, have {current_crystals}')
                         continue
@@ -5724,9 +5730,13 @@ Status: {status}"""
                         purchase_summary.append(f"{item_name} x{purchased_count}")
                         logger.info(f'✅ Bought {purchased_count}x {item_name} from caravan')
                         
-                        # Update resource count for next calculations (only if not crystals)
+                        # Update resource count for next calculations
                         if resource_index != -1:
                             self.resources[resource_index] -= (cost * purchased_count)
+                        else:
+                            # Update crystal count for subsequent purchases
+                            current_crystals -= (cost * purchased_count)
+                            logger.debug(f'Updated crystal balance: {current_crystals}')
 
                 except Exception as e:
                     logger.error(f'Error purchasing caravan item {item_code}: {str(e)}')
@@ -5746,6 +5756,12 @@ Status: {status}"""
         """
         try:
             purchased_count = 0
+            
+            # Get inventory once for crystal checking
+            inventory_response = self.api.item_list()
+            inventory_items = inventory_response.get('items', []) if inventory_response else []
+            crystal_items = [item for item in inventory_items if item.get('code') == 10100005]
+            current_crystals = crystal_items[0].get('amount', 0) if crystal_items else 0
             
             for each_item in available_items:
                 if each_item.get('amount') < 1:
@@ -5768,10 +5784,6 @@ Status: {status}"""
 
                 # Check affordability based on currency type
                 if cost_item_code == 10100005:
-                    item_list = self.api.item_list().get('items', [])
-                    crystal_items = [item for item in item_list if item.get('code') == 10100005]
-                    current_crystals = crystal_items[0].get('amount', 0) if crystal_items else 0
-                    
                     if each_item.get('cost', 0) > current_crystals:
                         continue
                 else:
