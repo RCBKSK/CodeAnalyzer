@@ -5641,6 +5641,15 @@ Status: {status}"""
                     logger.debug(f'Caravan item {item_code} out of stock')
                     continue
 
+                # Check cost currency and restrict crystal purchases for Resources and Action Points
+                cost_item_code = available_item.get('costItemCode')
+                item_info = CARAVAN_ITEMS.get(item_code, {})
+                item_category = item_info.get('category', '')
+                
+                if cost_item_code == 10100005 and item_category in ['Resources', 'Action Points']:
+                    logger.debug(f'Skipping {item_category} item {item_code} - costs crystals (restricted)')
+                    continue
+
                 # Calculate how many we can/should buy
                 min_buy = max(1, config_item.get('min_buy', 1))
                 max_buy = config_item.get('max_buy', 999999)

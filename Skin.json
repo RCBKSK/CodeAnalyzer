@@ -46,14 +46,14 @@
       "enabled": true,
       "items": [
         {
-          "item_code": 10103005,
+          "item_code": 10101007,
           "enabled": true,
           "priority": 1,
           "min_buy": 1,
           "max_buy": 999999,
-          "name": "Speedup 1hour",
-          "description": "1 Hour General Speedup",
-          "category": "Speedups"
+          "name": "Vip Point +10",
+          "description": "10 VIP Points for premium features",
+          "category": "VIP"
         }
       ]
     },
@@ -110,14 +110,14 @@
             "enabled": true,
             "items": [
               {
-                "item_code": 10103005,
+                "item_code": 10101007,
                 "enabled": true,
                 "priority": 1,
                 "min_buy": 1,
                 "max_buy": 999999,
-                "name": "Speedup 1hour",
-                "description": "1 Hour General Speedup",
-                "category": "Speedups"
+                "name": "Vip Point +10",
+                "description": "10 VIP Points for premium features",
+                "category": "VIP"
               }
             ]
           }
