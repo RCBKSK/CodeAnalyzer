@@ -5618,16 +5618,6 @@ Status: {status}"""
             # Sort by priority (ascending, so 1 comes first)
             enabled_items.sort(key=lambda x: x.get('priority', 999))
 
-            # Get inventory once for crystal checking
-            inventory_response = self.api.item_list()
-            inventory_items = inventory_response.get('items', []) if inventory_response else []
-            logger.debug(f'Retrieved inventory with {len(inventory_items)} items for caravan purchasing')
-            
-            # Find crystal amount from inventory
-            crystal_items = [item for item in inventory_items if item.get('code') == 10100005]
-            current_crystals = crystal_items[0].get('amount', 0) if crystal_items else 0
-            logger.info(f'Current crystal balance: {current_crystals}')
-
             total_purchased = 0
             purchase_summary = []
 
@@ -5651,40 +5641,6 @@ Status: {status}"""
                     logger.debug(f'Caravan item {item_code} out of stock')
                     continue
 
-                # Check cost and affordability
-                cost = available_item.get('cost', 0)
-                cost_item_code = available_item.get('costItemCode')
-                
-                if not cost_item_code:
-                    logger.debug(f'No cost currency for item {item_code}')
-                    continue
-
-                # Restrict crystal purchases for Resources and Action Points
-                item_info = CARAVAN_ITEMS.get(item_code, {})
-                item_category = item_info.get('category', '')
-                if cost_item_code == 10100005 and item_category in ['Resources', 'Action Points']:
-                    logger.debug(f'Skipping {item_category} item {item_code} - costs crystals (restricted)')
-                    continue
-
-                # Check affordability based on currency type
-                if cost_item_code == 10100005:
-                    if cost > current_crystals:
-                        logger.debug(f'Cannot afford item {item_code}: costs {cost} crystals, have {current_crystals}')
-                        continue
-                    
-                    current_resources = current_crystals
-                    resource_index = -1
-                else:
-                    resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
-                    if resource_index == -1:
-                        logger.debug(f'Unknown cost currency {cost_item_code} for item {item_code}')
-                        continue
-
-                    current_resources = self.resources[resource_index]
-                    if cost > current_resources:
-                        logger.debug(f'Cannot afford item {item_code}: costs {cost}, have {current_resources}')
-                        continue
-
                 # Calculate how many we can/should buy
                 min_buy = max(1, config_item.get('min_buy', 1))
                 max_buy = config_item.get('max_buy', 999999)
@@ -5697,17 +5653,6 @@ Status: {status}"""
                 if target_amount == 0:
                     logger.debug(f'Purchase amount for item {item_code} is 0 (below minimum)')
                     continue
-
-                # Check if we can afford the minimum amount
-                total_cost = cost * target_amount
-                if total_cost > current_resources:
-                    # Try to buy as many as we can afford
-                    affordable_amount = current_resources // cost
-                    if affordable_amount >= min_buy:
-                        target_amount = min(affordable_amount, max_buy)
-                    else:
-                        logger.debug(f'Cannot afford minimum quantity for item {item_code}')
-                        continue
 
                 # Attempt purchase
                 try:
@@ -5729,14 +5674,6 @@ Status: {status}"""
                         total_purchased += purchased_count
                         purchase_summary.append(f"{item_name} x{purchased_count}")
                         logger.info(f'✅ Bought {purchased_count}x {item_name} from caravan')
-                        
-                        # Update resource count for next calculations
-                        if resource_index != -1:
-                            self.resources[resource_index] -= (cost * purchased_count)
-                        else:
-                            # Update crystal count for subsequent purchases
-                            current_crystals -= (cost * purchased_count)
-                            logger.debug(f'Updated crystal balance: {current_crystals}')
 
                 except Exception as e:
                     logger.error(f'Error purchasing caravan item {item_code}: {str(e)}')
@@ -5745,7 +5682,7 @@ Status: {status}"""
             if total_purchased > 0:
                 logger.info(f'🛒 Caravan purchase complete: {", ".join(purchase_summary)}')
             else:
-                logger.info('No caravan items purchased (none affordable/available)')
+                logger.info('No caravan items purchased (none available)')
 
         except Exception as e:
             logger.error(f'Error in enhanced caravan buying: {str(e)}')
