@@ -22,26 +22,9 @@
     }
   },
   "buff_management": {
-    "buffs": [
-      {
-        "enabled": true,
-        "item_codes": [
-          10102021
-        ],
-        "min_duration_minutes": 20,
-        "name": "Anti Spying Shield Boost"
-      }
-    ],
-    "enabled": true,
-    "production_boosts": {
-      "10102021": {
-        "enabled": true,
-        "name": "Anti Spying 8hours",
-        "item_code": 10102021,
-        "duration_hours": 8,
-        "min_duration_minutes": 20
-      }
-    }
+    "buffs": [],
+    "enabled": false,
+    "production_boosts": {}
   },
   "discord": {
     "chat_webhook_url": "",
@@ -63,14 +46,44 @@
       "enabled": true,
       "items": [
         {
-          "category": "Boosts",
-          "description": "1 Day Food Production Boost",
+          "item_code": 10101009,
           "enabled": true,
-          "item_code": 10102002,
-          "max_buy": 999999,
+          "priority": 1,
           "min_buy": 1,
-          "name": "Food Boost (1D)",
-          "priority": 1
+          "max_buy": 999999,
+          "name": "Vip Point +500",
+          "description": "500 VIP Points for premium features",
+          "category": "VIP"
+        },
+        {
+          "item_code": 10101050,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Action point refill 20",
+          "description": "20 Action Points",
+          "category": "Action Points"
+        },
+        {
+          "item_code": 10103007,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Speedup 8hour",
+          "description": "8 Hours General Speedup",
+          "category": "Speedups"
+        },
+        {
+          "item_code": 10103003,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Speedup 10min",
+          "description": "10 Minutes General Speedup",
+          "category": "Speedups"
         }
       ]
     },
@@ -103,18 +116,7 @@
           "research_donate": true,
           "shop_items_config": {
             "enabled": true,
-            "items": [
-              {
-                "category": "Action Points",
-                "description": "10 Action Points",
-                "enabled": true,
-                "item_code": 10101049,
-                "max_buy": 999999,
-                "min_buy": 1,
-                "name": "Action point refill 10",
-                "priority": 3
-              }
-            ]
+            "items": []
           }
         },
         "name": "alliance_farmer"
@@ -138,14 +140,44 @@
             "enabled": true,
             "items": [
               {
-                "category": "Boosts",
-                "description": "1 Day Food Production Boost",
+                "item_code": 10101009,
                 "enabled": true,
-                "item_code": 10102002,
-                "max_buy": 999999,
+                "priority": 1,
                 "min_buy": 1,
-                "name": "Food Boost (1D)",
-                "priority": 1
+                "max_buy": 999999,
+                "name": "Vip Point +500",
+                "description": "500 VIP Points for premium features",
+                "category": "VIP"
+              },
+              {
+                "item_code": 10101050,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Action point refill 20",
+                "description": "20 Action Points",
+                "category": "Action Points"
+              },
+              {
+                "item_code": 10103007,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Speedup 8hour",
+                "description": "8 Hours General Speedup",
+                "category": "Speedups"
+              },
+              {
+                "item_code": 10103003,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Speedup 10min",
+                "description": "10 Minutes General Speedup",
+                "category": "Speedups"
               }
             ]
           }
@@ -153,7 +185,7 @@
         "name": "caravan_farmer"
       },
       {
-        "enabled": true,
+        "enabled": false,
         "interval": {
           "start": 120,
           "end": 200
@@ -161,7 +193,7 @@
         "name": "vip_shop_farmer",
         "kwargs": {
           "vip_shop_config": {
-            "enabled": true,
+            "enabled": false,
             "items": [
               {
                 "category": "Speedups",
@@ -174,18 +206,6 @@
                 "name": "Speedup 8hour",
                 "priority": 1,
                 "vip_level": 5
-              },
-              {
-                "category": "Action Points",
-                "description": "Action point refill 10 - VIP 3 required",
-                "discount": 0.5,
-                "enabled": true,
-                "item_code": 10101049,
-                "max_buy": 999999,
-                "min_buy": 1,
-                "name": "Action point refill 10",
-                "priority": 1,
-                "vip_level": 3
               }
             ]
           }
@@ -335,7 +355,7 @@
       }
     },
     "skills": {
-      "enabled": true,
+      "enabled": false,
       "skills": [
         {
           "code": 10001,
@@ -523,7 +543,7 @@
       "page": 1
     },
     "vip_shop": {
-      "enabled": true,
+      "enabled": false,
       "items": [
         {
           "category": "Speedups",
@@ -536,18 +556,6 @@
           "name": "Speedup 8hour",
           "priority": 1,
           "vip_level": 5
-        },
-        {
-          "category": "Action Points",
-          "description": "Action point refill 10 - VIP 3 required",
-          "discount": 0.5,
-          "enabled": true,
-          "item_code": 10101049,
-          "max_buy": 999999,
-          "min_buy": 1,
-          "name": "Action point refill 10",
-          "priority": 1,
-          "vip_level": 3
         }
       ]
     }
@@ -574,7 +582,7 @@
   },
   "toggles": {
     "features": {
-      "buff_management": true,
+      "buff_management": false,
       "chat_monitoring": true,
       "discord": true,
       "enable_chat_monitoring": true,

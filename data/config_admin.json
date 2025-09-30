@@ -1,7 +1,7 @@
 {
   "alliance_activities": {
     "caravan_auto_buy": {
-      "enabled": false,
+      "enabled": true,
       "interval_minutes": 180
     },
     "gift_claim": {
@@ -43,6 +43,51 @@
     "user_id": "admin"
   },
   "main": {
+    "caravan_items": {
+      "enabled": true,
+      "items": [
+        {
+          "item_code": 10101009,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Vip Point +500",
+          "description": "500 VIP Points for premium features",
+          "category": "VIP"
+        },
+        {
+          "item_code": 10101050,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Action point refill 20",
+          "description": "20 Action Points",
+          "category": "Action Points"
+        },
+        {
+          "item_code": 10103007,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Speedup 8hour",
+          "description": "8 Hours General Speedup",
+          "category": "Speedups"
+        },
+        {
+          "item_code": 10103003,
+          "enabled": true,
+          "priority": 1,
+          "min_buy": 1,
+          "max_buy": 999999,
+          "name": "Speedup 10min",
+          "description": "10 Minutes General Speedup",
+          "category": "Speedups"
+        }
+      ]
+    },
     "jobs": [
       {
         "enabled": true,
@@ -78,7 +123,7 @@
         "name": "alliance_farmer"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 200,
           "start": 120
@@ -91,7 +136,81 @@
           "end": 200,
           "start": 120
         },
+        "kwargs": {
+          "caravan_items_config": {
+            "enabled": true,
+            "items": [
+              {
+                "item_code": 10101009,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Vip Point +500",
+                "description": "500 VIP Points for premium features",
+                "category": "VIP"
+              },
+              {
+                "item_code": 10101050,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Action point refill 20",
+                "description": "20 Action Points",
+                "category": "Action Points"
+              },
+              {
+                "item_code": 10103007,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Speedup 8hour",
+                "description": "8 Hours General Speedup",
+                "category": "Speedups"
+              },
+              {
+                "item_code": 10103003,
+                "enabled": true,
+                "priority": 1,
+                "min_buy": 1,
+                "max_buy": 999999,
+                "name": "Speedup 10min",
+                "description": "10 Minutes General Speedup",
+                "category": "Speedups"
+              }
+            ]
+          }
+        },
         "name": "caravan_farmer"
+      },
+      {
+        "enabled": false,
+        "interval": {
+          "start": 120,
+          "end": 200
+        },
+        "name": "vip_shop_farmer",
+        "kwargs": {
+          "vip_shop_config": {
+            "enabled": false,
+            "items": [
+              {
+                "category": "Speedups",
+                "description": "Speedup 8hour - VIP 5 required",
+                "discount": 0.5,
+                "enabled": true,
+                "item_code": 10103007,
+                "max_buy": 999999,
+                "min_buy": 10,
+                "name": "Speedup 8hour",
+                "priority": 1,
+                "vip_level": 5
+              }
+            ]
+          }
+        }
       },
       {
         "enabled": false,
@@ -118,7 +237,7 @@
         "name": "dsavip_chest_claim"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 20,
           "start": 10
@@ -141,34 +260,12 @@
           },
           "targets": [
             {
-              "code": 20200101,
-              "name": "Orc",
+              "code": 20100105,
+              "enabled": true,
               "level": [
-                3,
-                4,
-                5
+                1
               ],
-              "enabled": true
-            },
-            {
-              "code": 20200102,
-              "name": "Skeleton",
-              "level": [
-                3,
-                4,
-                5
-              ],
-              "enabled": true
-            },
-            {
-              "code": 20200103,
-              "name": "Golem",
-              "level": [
-                3,
-                4,
-                5
-              ],
-              "enabled": true
+              "name": "Crystal Mine"
             }
           ]
         },
@@ -178,53 +275,60 @@
     "normal_monsters": {
       "common_troops": [
         {
-          "amount": 200000,
+          "amount": 0,
+          "code": 50100304,
+          "name": "Iron Cavalry (Tier 4 Cavalry)"
+        },
+        {
+          "amount": 0,
+          "code": 50100305,
+          "name": "Dragoon (Tier 5 Cavalry)"
+        },
+        {
+          "amount": 0,
           "code": 50100306,
           "name": "Marauder (Tier 6 Cavalry)"
         }
       ],
-      "enabled": true,
-      "max_distance": 250,
+      "enabled": false,
+      "max_distance": 200,
       "targets": [
         {
           "level_ranges": [
-            4,
-            5,
-            6
+            1,
+            2,
+            3
           ],
           "monster_code": 20200103,
-          "monster_name": "Golem",
-          "troops": []
+          "monster_name": "Golem"
         },
         {
           "level_ranges": [
-            4,
-            5,
-            6
+            1,
+            2,
+            3,
+            4
           ],
           "monster_code": 20200104,
-          "monster_name": "Treasure Goblin",
-          "troops": []
+          "monster_name": "Treasure Goblin"
         },
         {
           "level_ranges": [
-            4,
-            5,
-            6
+            1,
+            2,
+            3
           ],
           "monster_code": 20200101,
-          "monster_name": "Orc",
-          "troops": []
+          "monster_name": "Orc"
         },
         {
           "level_ranges": [
-            4,
-            5,
-            6
+            1,
+            2,
+            3
           ],
           "monster_code": 20200102,
-          "monster_name": "Skeleton",
-          "troops": []
+          "monster_name": "Skeleton"
         }
       ]
     },
@@ -233,15 +337,15 @@
         "allowed_areas": [],
         "enabled": false
       },
-      "enable_gathering": false,
-      "enable_monster_attack": true,
+      "enable_gathering": true,
+      "enable_monster_attack": false,
       "enabled": true,
       "max_marches": 10,
       "monster_attack": {
-        "enabled": true
+        "enabled": false
       },
       "monster_distance_check": {
-        "enabled": true,
+        "enabled": false,
         "max_distance": 250
       },
       "notify_discord": false,
@@ -252,24 +356,154 @@
       }
     },
     "skills": {
-      "enabled": true,
+      "enabled": false,
       "skills": [
         {
-          "code": 10018,
-          "enabled": true,
-          "name": "Increase Resource Production"
-        },
-        {
           "code": 10001,
-          "enabled": true,
-          "name": "Instant Harvest"
+          "enabled": false
         },
         {
           "code": 10002,
-          "enabled": true,
-          "name": "Accelerated Gathering"
+          "enabled": true
+        },
+        {
+          "code": 10003,
+          "enabled": false
+        },
+        {
+          "code": 10004,
+          "enabled": false
+        },
+        {
+          "code": 10005,
+          "enabled": false
+        },
+        {
+          "code": 10006,
+          "enabled": false
+        },
+        {
+          "code": 10007,
+          "enabled": false
+        },
+        {
+          "code": 10008,
+          "enabled": false
+        },
+        {
+          "code": 10009,
+          "enabled": false
+        },
+        {
+          "code": 10010,
+          "enabled": false
+        },
+        {
+          "code": 10011,
+          "enabled": false
+        },
+        {
+          "code": 10012,
+          "enabled": false
+        },
+        {
+          "code": 10013,
+          "enabled": false
+        },
+        {
+          "code": 10014,
+          "enabled": false
+        },
+        {
+          "code": 10015,
+          "enabled": false
+        },
+        {
+          "code": 10016,
+          "enabled": false
+        },
+        {
+          "code": 10017,
+          "enabled": false
+        },
+        {
+          "code": 10018,
+          "enabled": false
+        },
+        {
+          "code": 10020,
+          "enabled": false
+        },
+        {
+          "code": 10021,
+          "enabled": false
+        },
+        {
+          "code": 10022,
+          "enabled": false
+        },
+        {
+          "code": 10023,
+          "enabled": false
+        },
+        {
+          "code": 10024,
+          "enabled": false
+        },
+        {
+          "code": 10025,
+          "enabled": false
+        },
+        {
+          "code": 10026,
+          "enabled": false
+        },
+        {
+          "code": 10027,
+          "enabled": false
+        },
+        {
+          "code": 10028,
+          "enabled": false
+        },
+        {
+          "code": 10029,
+          "enabled": false
+        },
+        {
+          "code": 10030,
+          "enabled": false
+        },
+        {
+          "code": 10031,
+          "enabled": false
+        },
+        {
+          "code": 10032,
+          "enabled": false
+        },
+        {
+          "code": 10033,
+          "enabled": false
+        },
+        {
+          "code": 10034,
+          "enabled": false
+        },
+        {
+          "code": 10035,
+          "enabled": false
+        },
+        {
+          "code": 10036,
+          "enabled": false
         }
-      ]
+      ],
+      "skin_change_enabled": false,
+      "skin_item_id": "1557544",
+      "skin_item_id_2": "1864946",
+      "treasure_page_1": 2,
+      "treasure_page_2": 1
     },
     "threads": [
       {
@@ -308,6 +542,23 @@
     "treasure": {
       "enabled": false,
       "page": 1
+    },
+    "vip_shop": {
+      "enabled": false,
+      "items": [
+        {
+          "category": "Speedups",
+          "description": "Speedup 8hour - VIP 5 required",
+          "discount": 0.5,
+          "enabled": true,
+          "item_code": 10103007,
+          "max_buy": 999999,
+          "min_buy": 10,
+          "name": "Speedup 8hour",
+          "priority": 1,
+          "vip_level": 5
+        }
+      ]
     }
   },
   "rally": {
@@ -336,8 +587,8 @@
       "chat_monitoring": true,
       "discord": true,
       "enable_chat_monitoring": true,
-      "enable_gathering": false,
-      "enable_monster_attack": true,
+      "enable_gathering": true,
+      "enable_monster_attack": false,
       "notify_discord": false,
       "object_scanning": true,
       "rally_join": false,
@@ -347,9 +598,9 @@
       "alliance_farmer": true,
       "caravan_farmer": true,
       "dsavip_chest_claim": false,
-      "harvester": false,
+      "harvester": true,
       "hospital_recover": true,
-      "mail_claim": false,
+      "mail_claim": true,
       "socf_thread": true,
       "use_resource_in_item_list": false,
       "vip_chest_claim": true,

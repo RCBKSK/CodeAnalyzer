@@ -5656,16 +5656,28 @@ Status: {status}"""
                     logger.debug(f'Skipping {item_category} item {item_code} - costs crystals (restricted)')
                     continue
 
-                # Get current resource amount
-                resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
-                if resource_index == -1:
-                    logger.debug(f'Unknown cost currency {cost_item_code} for item {item_code}')
-                    continue
+                # Check affordability based on currency type
+                if cost_item_code == 10100005:
+                    item_list = self.api.item_list().get('items', [])
+                    crystal_items = [item for item in item_list if item.get('code') == 10100005]
+                    current_crystals = crystal_items[0].get('amount', 0) if crystal_items else 0
+                    
+                    if cost > current_crystals:
+                        logger.debug(f'Cannot afford item {item_code}: costs {cost} crystals, have {current_crystals}')
+                        continue
+                    
+                    current_resources = current_crystals
+                    resource_index = -1
+                else:
+                    resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
+                    if resource_index == -1:
+                        logger.debug(f'Unknown cost currency {cost_item_code} for item {item_code}')
+                        continue
 
-                current_resources = self.resources[resource_index]
-                if cost > current_resources:
-                    logger.debug(f'Cannot afford item {item_code}: costs {cost}, have {current_resources}')
-                    continue
+                    current_resources = self.resources[resource_index]
+                    if cost > current_resources:
+                        logger.debug(f'Cannot afford item {item_code}: costs {cost}, have {current_resources}')
+                        continue
 
                 # Calculate how many we can/should buy
                 min_buy = max(1, config_item.get('min_buy', 1))
@@ -5712,8 +5724,9 @@ Status: {status}"""
                         purchase_summary.append(f"{item_name} x{purchased_count}")
                         logger.info(f'✅ Bought {purchased_count}x {item_name} from caravan')
                         
-                        # Update resource count for next calculations
-                        self.resources[resource_index] -= (cost * purchased_count)
+                        # Update resource count for next calculations (only if not crystals)
+                        if resource_index != -1:
+                            self.resources[resource_index] -= (cost * purchased_count)
 
                 except Exception as e:
                     logger.error(f'Error purchasing caravan item {item_code}: {str(e)}')
@@ -5753,12 +5766,21 @@ Status: {status}"""
                     logger.debug(f'Skipping {item_category} item {item_code} - costs crystals (restricted)')
                     continue
 
-                resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
-                if resource_index == -1:
-                    continue
+                # Check affordability based on currency type
+                if cost_item_code == 10100005:
+                    item_list = self.api.item_list().get('items', [])
+                    crystal_items = [item for item in item_list if item.get('code') == 10100005]
+                    current_crystals = crystal_items[0].get('amount', 0) if crystal_items else 0
+                    
+                    if each_item.get('cost', 0) > current_crystals:
+                        continue
+                else:
+                    resource_index = lokbot.util.get_resource_index_by_item_code(cost_item_code)
+                    if resource_index == -1:
+                        continue
 
-                if each_item.get('cost', 0) > self.resources[resource_index]:
-                    continue
+                    if each_item.get('cost', 0) > self.resources[resource_index]:
+                        continue
 
                 try:
                     self.api.kingdom_caravan_buy(each_item.get('_id'))
