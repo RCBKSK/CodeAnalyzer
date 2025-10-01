@@ -2612,22 +2612,30 @@
 
             try {
                 const date = new Date(isoString);
+                
+                if (isNaN(date.getTime())) {
+                    return isoString;
+                }
 
-                if (userTimezone === 'local') {
+                if (userTimezone === 'local' || !userTimezone) {
                     return date.toLocaleString();
                 } else if (userTimezone === 'UTC') {
                     return date.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
                 } else {
-                    return date.toLocaleString('en-US', {
-                        timeZone: userTimezone,
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    }) + ` (${userTimezone.split('/').pop()})`;
+                    try {
+                        return date.toLocaleString('en-US', {
+                            timeZone: userTimezone,
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        }) + ` (${userTimezone.split('/').pop()})`;
+                    } catch (timezoneError) {
+                        return date.toLocaleString();
+                    }
                 }
             } catch (error) {
                 console.error('Error formatting time:', error);
@@ -2968,6 +2976,11 @@
             const instanceName = document.getElementById('newInstanceName').value;
             const startDate = document.getElementById('newInstanceStartDate').value;
             const endDate = document.getElementById('newInstanceEndDate').value;
+
+            if (!selectedUser) {
+                alert('Please select a user first');
+                return;
+            }
 
             if (!instanceName || !startDate || !endDate) {
                 alert('Please fill in all fields');
