@@ -164,3 +164,8 @@ schedule
 tenacity
 websocket-client
 werkzeug
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
