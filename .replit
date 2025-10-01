@@ -6,7 +6,7 @@ channel = "stable-25_05"
 packages = ["cacert", "geckodriver", "glibcLocales", "libev", "openssl", "postgresql"]
 
 [deployment]
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "--reuse-port", "web_app:app"]
 deploymentTarget = "autoscale"
 
 [workflows]
