@@ -506,6 +506,8 @@
       "level_based_troops": true,
       "max_rally_distance": 500,
       "numMarch": 8,
+      "skin_change_enabled": false,
+      "skin_item_id": "",
       "targets": [
         {
           "monster_code": 20200201,
@@ -516,8 +518,8 @@
               "max_level": 10,
               "troops": [
                 {
-                  "code": 50100303,
-                  "name": "Heavy Cavalry (Tier 3 Cavalry)",
+                  "code": 50100304,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)",
                   "fixed_amounts": [
                     1000,
                     1500,
@@ -528,9 +530,7 @@
             }
           ]
         }
-      ],
-      "skin_change_enabled": false,
-      "skin_item_id": ""
+      ]
     },
     "start": {
       "enabled": false,
