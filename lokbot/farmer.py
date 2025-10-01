@@ -4303,7 +4303,6 @@ Status: Available to join"""
 
                                     # Check if target already has a rally
                                     try:
-                                        import time
                                         distance = 0  # Initialize distance
                                         march_info = self.api.field_march_info({
                                             'fromId':
