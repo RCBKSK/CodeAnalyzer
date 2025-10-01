@@ -1711,7 +1711,6 @@ class LokFarmer:
                 try:
                     import requests
                     import os
-                    import time
                     user_id = os.getenv('LOKBOT_USER_ID', 'web_user')
 
                     # Generate instance_id and account_name based on current process
@@ -1995,7 +1994,6 @@ Expected End: {ended_time}"""
                 user_id = os.getenv('LOKBOT_USER_ID', 'web_user')
 
                 # Generate instance_id and account_name based on current process
-                import time
                 timestamp = int(time.time() * 1000)
                 instance_id = os.getenv('LOKBOT_INSTANCE_ID', f"{user_id}_{timestamp}")
                 account_name = os.getenv('LOKBOT_ACCOUNT_NAME', 'Bot Instance')
@@ -3556,7 +3554,6 @@ Rally ID: {rally_id}"""
             try:
                 import requests
                 import os
-                import time
 
                 # Get user ID from environment or config
                 user_id = os.getenv('LOKBOT_USER_ID', config.get('discord', {}).get('user_id', 'web_user'))
@@ -4572,7 +4569,6 @@ Status: {status}"""
                         try:
                             import requests
                             import os
-                            import time
                             user_id = os.getenv('LOKBOT_USER_ID', 'web_user')
 
                             # Generate instance_id and account_name based on current process
