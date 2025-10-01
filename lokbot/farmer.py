@@ -6455,7 +6455,7 @@ Status: {status}"""
                             # Find target configuration for this monster code
                             target_config = next((
                                 target
-                                for target in rally_config.get('targets', [])
+                                for target in targets
                                 if target.get('monster_code') == monster_code),
                                                  None)
 
