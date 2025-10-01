@@ -2155,7 +2155,7 @@ def start_bot():
                                                "Authentication token issue detected - attempting restart...", account_name=account_name, instance_id=instance_id)
                                 threading.Thread(target=restart_bot_on_auth_failure, args=[user_id, instance_id], daemon=True).start()
                                 continue
-                            elif "error" in line_lower and not any(x in line_lower for x in ["debug", "info", "lokbot"]):
+                            elif "error" in line_lower and not any(x in line_lower for x in ["debug", "info", "lokbot", "socc_thread", "connectionerror"]):
                                 add_notification(user_id, "error", "Bot Error", line_content, account_name=account_name, instance_id=instance_id)
                             elif "failed" in line_lower and not any(x in line_lower for x in ["debug", "info", "lokbot"]):
                                 add_notification(user_id, "warning", "Bot Warning", line_content, account_name=account_name, instance_id=instance_id)
