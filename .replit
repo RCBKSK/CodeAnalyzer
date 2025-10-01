@@ -6,8 +6,7 @@ channel = "stable-25_05"
 packages = ["cacert", "geckodriver", "glibcLocales", "libev", "openssl", "postgresql"]
 
 [deployment]
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "--reuse-port", "web_app:app"]
-deploymentTarget = "autoscale"
+run = ["python", "main.py"]
 
 [workflows]
 runButton = "Project"
@@ -27,19 +26,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload web_app:app"
+args = "python main.py"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[ports]]
 localPort = 5000
-externalPort = 80
+externalPort = 5000
 
 [[ports]]
-localPort = 45609
-externalPort = 3000
+localPort = 36129
+externalPort = 80
 
 [agent]
-expertMode = true

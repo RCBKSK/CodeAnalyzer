@@ -6360,9 +6360,10 @@ Status: {status}"""
                     )
 
                 # Get target monster codes from config
+                targets = rally_config.get('targets') or []
                 target_codes = [
                     target.get('monster_code')
-                    for target in rally_config.get('targets', [])
+                    for target in targets
                 ]
 
                 if not target_codes:
@@ -6460,12 +6461,12 @@ Status: {status}"""
 
                             if target_config:
                                 # Check if we have a level range that matches this monster's level
+                                level_ranges = target_config.get('level_ranges') or []
                                 level_range_match = any(
                                     level_range.get('min_level', 0) <=
                                     monster_level <= level_range.get(
                                         'max_level', 0)
-                                    for level_range in target_config.get(
-                                        'level_ranges', []))
+                                    for level_range in level_ranges)
 
                                 if not level_range_match:
                                     logger.info(
