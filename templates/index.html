@@ -1550,6 +1550,47 @@
         </div>
     </div>
 
+    <!-- Edit Instance Modal -->
+    <div id="editInstanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Instance</h3>
+                <button class="modal-close" onclick="hideEditInstanceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editInstanceForm" onsubmit="saveEditedInstance(); return false;">
+                    <input type="hidden" id="editInstanceUsername" />
+                    <input type="hidden" id="editInstanceIndex" />
+                    <div class="form-group">
+                        <label class="form-label">Instance Name</label>
+                        <input type="text" class="form-input" id="editInstanceName" placeholder="e.g., Premium Package, Basic Plan" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="datetime-local" class="form-input" id="editInstanceStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Date</label>
+                        <input type="datetime-local" class="form-input" id="editInstanceEndDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="editInstanceStatus" required>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                        <small style="color: #64748b;">Status is automatically managed based on dates, but can be manually set if needed</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideEditInstanceModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditedInstance()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
     <!-- User Details Modal -->
     <div id="userDetailsModal" class="modal">
         <div class="modal-content">
@@ -2643,37 +2684,127 @@
                             const startDate = user.start_date ? new Date(user.start_date + 'T00:00:00').toLocaleDateString() : 'No restriction';
                             const endDate = user.end_date ? new Date(user.end_date + 'T23:59:59').toLocaleDateString() : 'No restriction';
 
+                            // Build instances HTML
+                            let instancesHtml = '';
+                            const now = new Date();
+                            
+                            if (user.instances && user.instances.length > 0) {
+                                user.instances.forEach((instance, index) => {
+                                    const startDate = new Date(instance.start_date);
+                                    const endDate = new Date(instance.end_date);
+                                    const createdDate = new Date(instance.created_date);
+
+                                    // Format dates for display
+                                    const startDateFormatted = formatTimeInUserTimezone(instance.start_date);
+                                    const endDateFormatted = formatTimeInUserTimezone(instance.end_date);
+                                    const createdDateFormatted = formatTimeInUserTimezone(instance.created_date);
+
+                                    // Calculate status
+                                    let statusColor = '#6b7280';
+                                    let statusText = 'Inactive';
+                                    let statusDetails = '';
+
+                                    if (instance.status === 'active') {
+                                        if (now < startDate) {
+                                            statusColor = '#f59e0b';
+                                            statusText = 'Pending';
+                                            const daysUntilStart = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24));
+                                            statusDetails = `Starts in ${daysUntilStart} day${daysUntilStart !== 1 ? 's' : ''}`;
+                                        } else if (now > endDate) {
+                                            statusColor = '#ef4444';
+                                            statusText = 'Expired';
+                                            const daysExpired = Math.ceil((now - endDate) / (1000 * 60 * 60 * 24));
+                                            statusDetails = `Expired ${daysExpired} day${daysExpired !== 1 ? 's' : ''} ago`;
+                                        } else {
+                                            statusColor = '#10b981';
+                                            statusText = 'Active';
+                                            const daysRemaining = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                                            statusDetails = `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} remaining`;
+                                        }
+                                    } else {
+                                        statusText = 'Disabled';
+                                        statusDetails = 'Manually disabled';
+                                    }
+
+                                    instancesHtml += `
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid ${statusColor}; border-radius: 6px; padding: 12px; margin-bottom: 8px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                                <div style="flex: 1;">
+                                                    <div style="font-weight: 600; color: #1e293b; font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                                                        <i class="fas fa-server" style="color: ${statusColor}; font-size: 12px;"></i>
+                                                        ${instance.instance_name}
+                                                        <span style="background: ${statusColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">
+                                                            ${statusText}
+                                                        </span>
+                                                    </div>
+                                                    <div style="font-size: 12px; color: #64748b; line-height: 1.6;">
+                                                        <div><strong>Start:</strong> ${startDateFormatted}</div>
+                                                        <div><strong>End:</strong> ${endDateFormatted}</div>
+                                                        <div><strong>Status:</strong> ${statusDetails}</div>
+                                                        <div><strong>Created:</strong> ${createdDateFormatted}</div>
+                                                    </div>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                    <button class="btn btn-secondary" onclick="editInstanceDirect('${user.username}', ${index})" style="padding: 4px 8px; font-size: 11px; white-space: nowrap;">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <button class="btn btn-danger" onclick="deleteInstanceDirect('${user.username}', ${index})" style="padding: 4px 8px; font-size: 11px; white-space: nowrap;">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                instancesHtml = '<div style="color: #64748b; font-size: 12px; padding: 8px; background: #f8fafc; border-radius: 6px; text-align: center;">No instances configured</div>';
+                            }
+
                             html += `
-                                <div class="instance-card">
-                                    <div class="instance-header">
+                                <div class="instance-card" style="margin-bottom: 20px;">
+                                    <div class="instance-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 12px;">
                                         <div style="flex: 1;">
                                             <div class="instance-name" style="display: flex; align-items: center; gap: 8px;">
+                                                <i class="fas fa-user" style="color: #667eea;"></i>
                                                 ${user.username}
                                                 ${user.role !== 'user' ? `<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">${user.role.toUpperCase()}</span>` : ''}
                                                 ${statusBadge}
                                             </div>
-                                            <div class="instance-details">
-                                                Max instances: ${user.max_instances}<br>
-                                                Active instances: ${user.active_instances || 0}/${user.total_instances || 0}<br>
-                                                Created: ${createdDate}<br>
-                                                Valid: ${startDate} to ${endDate}
+                                            <div class="instance-details" style="margin-top: 8px;">
+                                                <strong>Max Instances:</strong> ${user.max_instances} | 
+                                                <strong>Active:</strong> ${user.active_instances || 0}/${user.total_instances || 0}<br>
+                                                <strong>Created:</strong> ${createdDate} | 
+                                                <strong>Valid:</strong> ${startDate} to ${endDate}
                                             </div>
                                         </div>
-                                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                                            <button class="btn btn-secondary" onclick="showUserDetailsModal('${user.username}')" style="padding: 6px 12px; font-size: 12px;">
-                                                <i class="fas fa-info-circle"></i> Details
-                                            </button>
+                                        <div style="display: flex; flex-direction: column; gap: 6px;">
                                             <button class="btn btn-secondary" onclick="editUser('${user.username}', ${user.max_instances}, '${user.start_date || ''}', '${user.end_date || ''}')" style="padding: 6px 12px; font-size: 12px;">
-                                                <i class="fas fa-edit"></i> Edit
+                                                <i class="fas fa-edit"></i> Edit User
                                             </button>
                                             <button class="btn btn-outline" onclick="showResetPasswordModal('${user.username}')" style="padding: 6px 12px; font-size: 12px; color: #f59e0b; border-color: #f59e0b;">
                                                 <i class="fas fa-key"></i> Reset Password
                                             </button>
                                             ${user.username !== 'admin' ? `
                                                 <button class="btn btn-danger" onclick="deleteUser('${user.username}')" style="padding: 6px 12px; font-size: 12px;">
-                                                    <i class="fas fa-trash"></i> Delete
+                                                    <i class="fas fa-trash"></i> Delete User
                                                 </button>
                                             ` : ''}
+                                        </div>
+                                    </div>
+
+                                    <!-- Instances Section -->
+                                    <div style="margin-top: 16px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                            <h4 style="font-size: 14px; font-weight: 600; color: #374151; margin: 0;">
+                                                <i class="fas fa-server" style="color: #667eea; margin-right: 6px;"></i>
+                                                Instances (${user.total_instances || 0})
+                                            </h4>
+                                            <button class="btn btn-primary" onclick="addInstanceDirect('${user.username}')" style="padding: 4px 12px; font-size: 12px;">
+                                                <i class="fas fa-plus"></i> Add Instance
+                                            </button>
+                                        </div>
+                                        <div id="instances-${user.username}">
+                                            ${instancesHtml}
                                         </div>
                                     </div>
                                 </div>
@@ -2957,6 +3088,168 @@
                 if (data.success) {
                     alert('Instance deleted successfully!');
                     loadUserInstances(selectedUser);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting instance:', error);
+                alert('Failed to delete instance');
+            });
+        }
+
+        // Direct instance management functions (from user cards)
+        function addInstanceDirect(username) {
+            document.getElementById('selectedUserForInstance').value = username;
+            document.getElementById('addInstanceModal').style.display = 'block';
+            
+            // Update submit button to reload users instead of selected user instances
+            const form = document.getElementById('addInstanceForm');
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                addUserInstanceDirect(username);
+                return false;
+            };
+        }
+
+        function addUserInstanceDirect(username) {
+            const instanceName = document.getElementById('newInstanceName').value;
+            const startDate = document.getElementById('newInstanceStartDate').value;
+            const endDate = document.getElementById('newInstanceEndDate').value;
+
+            if (!instanceName || !startDate || !endDate) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert('End date must be after start date');
+                return;
+            }
+
+            fetch(`/api/user_instances/${username}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    instance_name: instanceName,
+                    start_date: startDate,
+                    end_date: endDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Instance added successfully!');
+                    hideAddInstanceModal();
+                    loadUsers(); // Reload full user list
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding instance:', error);
+                alert('Failed to add instance');
+            });
+        }
+
+        function editInstanceDirect(username, instanceIndex) {
+            // Load instance data
+            fetch(`/api/user_instances/${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.instances && data.instances[instanceIndex]) {
+                        const instance = data.instances[instanceIndex];
+                        
+                        // Populate edit modal
+                        document.getElementById('editInstanceUsername').value = username;
+                        document.getElementById('editInstanceIndex').value = instanceIndex;
+                        document.getElementById('editInstanceName').value = instance.instance_name;
+                        document.getElementById('editInstanceStartDate').value = instance.start_date.replace(' ', 'T').substring(0, 16);
+                        document.getElementById('editInstanceEndDate').value = instance.end_date.replace(' ', 'T').substring(0, 16);
+                        document.getElementById('editInstanceStatus').value = instance.status;
+                        
+                        // Show modal
+                        document.getElementById('editInstanceModal').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading instance data:', error);
+                    alert('Failed to load instance data');
+                });
+        }
+
+        function saveEditedInstance() {
+            const username = document.getElementById('editInstanceUsername').value;
+            const instanceIndex = parseInt(document.getElementById('editInstanceIndex').value);
+            const instanceName = document.getElementById('editInstanceName').value;
+            const startDate = document.getElementById('editInstanceStartDate').value;
+            const endDate = document.getElementById('editInstanceEndDate').value;
+            const status = document.getElementById('editInstanceStatus').value;
+
+            if (!instanceName || !startDate || !endDate) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert('End date must be after start date');
+                return;
+            }
+
+            fetch(`/api/user_instances/${username}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    instance_index: instanceIndex,
+                    instance_name: instanceName,
+                    start_date: startDate,
+                    end_date: endDate,
+                    status: status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Instance updated successfully!');
+                    hideEditInstanceModal();
+                    loadUsers(); // Reload full user list
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating instance:', error);
+                alert('Failed to update instance');
+            });
+        }
+
+        function hideEditInstanceModal() {
+            document.getElementById('editInstanceModal').style.display = 'none';
+        }
+
+        function deleteInstanceDirect(username, instanceIndex) {
+            if (!confirm('Are you sure you want to delete this instance? This action cannot be undone.')) {
+                return;
+            }
+
+            fetch(`/api/user_instances/${username}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    instance_index: instanceIndex
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Instance deleted successfully!');
+                    loadUsers(); // Reload full user list
                 } else {
                     alert('Error: ' + data.error);
                 }

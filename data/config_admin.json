@@ -185,7 +185,7 @@
         "name": "harvester"
       },
       {
-        "enabled": true,
+        "enabled": false,
         "interval": {
           "end": 1,
           "start": 1
@@ -280,7 +280,7 @@
       },
       "enable_gathering": false,
       "enable_monster_attack": false,
-      "enabled": true,
+      "enabled": false,
       "max_marches": 10,
       "monster_attack": {
         "enabled": false
@@ -504,7 +504,7 @@
   },
   "rally": {
     "join": {
-      "enabled": false,
+      "enabled": true,
       "level_based_troops": true,
       "max_rally_distance": 500,
       "numMarch": 8,
@@ -535,10 +535,12 @@
       ]
     },
     "start": {
-      "enabled": true,
+      "enabled": false,
       "level_based_troops": true,
       "max_rally_distance": 500,
       "numMarch": 6,
+      "skin_change_enabled": false,
+      "skin_item_id": "",
       "targets": [
         {
           "monster_code": 20200201,
@@ -563,9 +565,7 @@
             }
           ]
         }
-      ],
-      "skin_change_enabled": false,
-      "skin_item_id": ""
+      ]
     }
   },
   "socketio": {
@@ -581,9 +581,9 @@
       "enable_gathering": false,
       "enable_monster_attack": false,
       "notify_discord": false,
-      "object_scanning": true,
-      "rally_join": false,
-      "rally_start": true
+      "object_scanning": false,
+      "rally_join": true,
+      "rally_start": false
     },
     "jobs": {
       "alliance_farmer": true,
@@ -592,7 +592,7 @@
       "harvester": true,
       "hospital_recover": true,
       "mail_claim": true,
-      "socf_thread": true,
+      "socf_thread": false,
       "use_resource_in_item_list": false,
       "vip_chest_claim": true,
       "wall_repair": false
