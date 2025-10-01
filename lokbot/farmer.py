@@ -4132,7 +4132,7 @@ Status: Available to join"""
                                 logger.info(
                                     f'Adding initial delay of {initial_delay:.2f} seconds before checking rally conditions'
                                 )
-                                time_module.sleep(initial_delay)
+                                time.sleep(initial_delay)
 
                                 # Get march info first to check available troops
                                 try:
@@ -4303,7 +4303,6 @@ Status: Available to join"""
 
                                     # Check if target already has a rally
                                     try:
-                                        import time as time_module  # Use explicit import to avoid scope conflicts
                                         distance = 0  # Initialize distance
                                         march_info = self.api.field_march_info({
                                             'fromId':
