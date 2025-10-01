@@ -3053,7 +3053,63 @@ Rally ID: {rally_mo_id}"""
                                         logger.error(
                                             f'Rally Data: {rally_data}')
 
-                                        if error_msg in [
+                                        if error_msg == 'insufficient_actionpoint':
+                                            logger.info('Insufficient action points for rally start, checking for AP items...')
+                                            try:
+                                                items = self.api.item_list().get('items', [])
+                                                ap_items = {
+                                                    10101052: {'amount': 2, 'value': 100},  # 100 AP
+                                                    10101051: {'amount': 4, 'value': 50},   # 50 AP
+                                                    10101050: {'amount': 10, 'value': 20},  # 20 AP
+                                                    10101049: {'amount': 20, 'value': 10}   # 10 AP
+                                                }
+
+                                                # Check available AP items from highest to lowest
+                                                ap_used = False
+                                                for item_code, item_config in ap_items.items():
+                                                    available_item = next((item for item in items if item.get('code') == item_code), None)
+                                                    if available_item:
+                                                        use_amount = min(item_config['amount'], available_item.get('amount', 0))
+                                                        if use_amount > 0:
+                                                            logger.info(f'Using {use_amount}x AP item (code: {item_code}, value: {item_config["value"]} AP)')
+                                                            self.api.item_use(item_code, use_amount)
+                                                            # Retry the rally start
+                                                            res = self.api.field_rally_start(rally_data)
+                                                            if res.get('result', False):
+                                                                logger.info(f'Successfully started rally after using AP items: {res}')
+                                                                ap_used = True
+                                                                
+                                                                # Send Discord notification for successful rally start
+                                                                if config.get('discord', {}).get('enabled', False):
+                                                                    try:
+                                                                        from lokbot.discord_webhook import DiscordWebhook
+                                                                        webhook_url = config.get('discord', {}).get('webhook_url')
+                                                                        if config.get('discord', {}).get('rally_webhook_url'):
+                                                                            webhook_url = config.get('discord', {}).get('rally_webhook_url')
+                                                                        
+                                                                        if webhook_url:
+                                                                            webhook = DiscordWebhook(webhook_url)
+                                                                            troop_type = "Troops"
+                                                                            if any(troop.get('code', 0) >= 50100306 for troop in march_troops):
+                                                                                troop_type = "T6"
+                                                                            elif any(troop.get('code', 0) >= 50100305 for troop in march_troops):
+                                                                                troop_type = "T5"
+                                                                            
+                                                                            total_troops = sum(troop.get('amount', 0) for troop in march_troops)
+                                                                            webhook.send_message(
+                                                                                f"Rally Started (AP used) - {monster_config.get('monster_name', 'Monster')} - Level {level} - {total_troops} {troop_type}"
+                                                                            )
+                                                                    except Exception as notif_error:
+                                                                        logger.error(f"Failed to send Discord notification after AP usage: {str(notif_error)}")
+                                                            break
+
+                                                if not ap_used:
+                                                    logger.info('No suitable AP items available for rally start')
+                                                    continue
+                                            except Exception as ap_error:
+                                                logger.error(f'Error using AP items for rally start: {str(ap_error)}')
+                                                continue
+                                        elif error_msg in [
                                                 'full_task',
                                                 'same_target_rally'
                                         ]:
