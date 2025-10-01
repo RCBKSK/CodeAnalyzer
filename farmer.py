@@ -1509,18 +1509,43 @@ Expected End: {ended_time}"""
                         }
                         monster_name = monster_names.get(monster_code, f"Monster {monster_code}")
 
-                        # Determine troop type
+                        # Determine troop type and name
                         troop_type = "Unknown"
+                        troop_name = "Unknown"
+                        troop_code_to_name = {
+                            50100106: "Paladin",
+                            50100206: "Siege Engine", 
+                            50100306: "Marauder",
+                            50100307: "Valkyrie",
+                            50100105: "Knight",
+                            50100205: "Ballista",
+                            50100305: "Dragoon",
+                            50100104: "Heavy Cavalry",
+                            50100204: "Catapult",
+                            50100304: "Trebuchet",
+                            50100103: "Cavalry",
+                            50100203: "Battering Ram",
+                            50100303: "Mangonel"
+                        }
+                        
                         for troop in march_troops:
                             code = troop.get('code', 0)
-                            if code >= 50100305:  # T5
+                            # Check T6 first, then T5, T4, T3
+                            if code >= 50100306:  # T6
+                                troop_type = "T6"
+                                troop_name = troop_code_to_name.get(code, "Unknown T6")
+                                break
+                            elif code >= 50100305:  # T5
                                 troop_type = "T5"
+                                troop_name = troop_code_to_name.get(code, "Unknown T5")
                                 break
                             elif code >= 50100304:  # T4
                                 troop_type = "T4"
+                                troop_name = troop_code_to_name.get(code, "Unknown T4")
                                 break
                             elif code >= 50100303:  # T3
                                 troop_type = "T3"
+                                troop_name = troop_code_to_name.get(code, "Unknown T3")
                                 break
 
                         from lokbot.rally_utils import get_monster_name_by_code
@@ -1530,7 +1555,7 @@ Expected End: {ended_time}"""
                         message += f"Monster: {monster_display_name}\n"
                         message += f"Level: {monster_level}\n"
                         message += f"Location: {monster_loc}\n"
-                        message += f"Troops Sent: {total_troops} {troop_type}\n"
+                        message += f"Troops Sent: {total_troops:,} {troop_name} ({troop_type})\n"
                         message += f"Started: {started_time}"
 
                         webhook.send_message(message)
