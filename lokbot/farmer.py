@@ -4060,8 +4060,7 @@ Status: Available to join"""
                                 has_available_troops = False
                                 for troop in level_range.get('troops', []):
                                     troop_code = troop.get('code')
-                                    min_amount = troop.get('min_amount', 0)
-
+                                    
                                     # Check both regular troops and saveTroops
                                     available = 0
                                     for t in march_info.get('troops', []):
@@ -4074,9 +4073,20 @@ Status: Available to join"""
                                             if t.get('code') == troop_code:
                                                 available += t.get('amount', 0)
 
-                                    if available >= min_amount and min_amount > 0:
-                                        has_available_troops = True
-                                        break
+                                    # Check if using fixed_amounts (new system) or min_amount (legacy)
+                                    fixed_amounts = troop.get('fixed_amounts', [])
+                                    if fixed_amounts:
+                                        # For fixed_amounts, check if we have at least the minimum value
+                                        min_required = min(fixed_amounts)
+                                        if available >= min_required:
+                                            has_available_troops = True
+                                            break
+                                    else:
+                                        # Legacy support for min_amount
+                                        min_amount = troop.get('min_amount', 0)
+                                        if available >= min_amount and min_amount > 0:
+                                            has_available_troops = True
+                                            break
 
                                 if not has_available_troops:
                                     logger.info(

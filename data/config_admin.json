@@ -185,7 +185,7 @@
         "name": "harvester"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 1,
           "start": 1
@@ -200,12 +200,13 @@
           },
           "targets": [
             {
-              "code": 20100105,
-              "enabled": true,
+              "code": 20200201,
+              "name": "Deathkar",
               "level": [
-                1
+                1,
+                2
               ],
-              "name": "Crystal Mine"
+              "enabled": true
             }
           ]
         },
@@ -277,9 +278,9 @@
         "allowed_areas": [],
         "enabled": false
       },
-      "enable_gathering": true,
+      "enable_gathering": false,
       "enable_monster_attack": false,
-      "enabled": false,
+      "enabled": true,
       "max_marches": 10,
       "monster_attack": {
         "enabled": false
@@ -503,10 +504,12 @@
   },
   "rally": {
     "join": {
-      "enabled": true,
+      "enabled": false,
       "level_based_troops": true,
       "max_rally_distance": 500,
       "numMarch": 8,
+      "skin_change_enabled": false,
+      "skin_item_id": "",
       "targets": [
         {
           "monster_code": 20200201,
@@ -517,8 +520,8 @@
               "max_level": 10,
               "troops": [
                 {
-                  "code": 50100303,
-                  "name": "Heavy Cavalry (Tier 3 Cavalry)",
+                  "code": 50100304,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)",
                   "fixed_amounts": [
                     1000,
                     1500,
@@ -529,16 +532,40 @@
             }
           ]
         }
-      ],
-      "skin_change_enabled": false,
-      "skin_item_id": ""
+      ]
     },
     "start": {
-      "enabled": false,
+      "enabled": true,
       "level_based_troops": true,
       "max_rally_distance": 500,
       "numMarch": 6,
-      "targets": []
+      "targets": [
+        {
+          "monster_code": 20200201,
+          "monster_name": "Deathkar",
+          "level_ranges": [
+            {
+              "min_level": 1,
+              "max_level": 2,
+              "troops": [
+                {
+                  "code": 50100304,
+                  "name": "Iron Cavalry (Tier 4 Cavalry)",
+                  "fixed_amounts": [
+                    1000,
+                    1500,
+                    2000
+                  ]
+                }
+              ],
+              "rally_time": 5,
+              "message": "Deathkar Rally"
+            }
+          ]
+        }
+      ],
+      "skin_change_enabled": false,
+      "skin_item_id": ""
     }
   },
   "socketio": {
@@ -551,12 +578,12 @@
       "chat_monitoring": true,
       "discord": true,
       "enable_chat_monitoring": true,
-      "enable_gathering": true,
+      "enable_gathering": false,
       "enable_monster_attack": false,
       "notify_discord": false,
-      "object_scanning": false,
-      "rally_join": true,
-      "rally_start": false
+      "object_scanning": true,
+      "rally_join": false,
+      "rally_start": true
     },
     "jobs": {
       "alliance_farmer": true,
@@ -565,7 +592,7 @@
       "harvester": true,
       "hospital_recover": true,
       "mail_claim": true,
-      "socf_thread": false,
+      "socf_thread": true,
       "use_resource_in_item_list": false,
       "vip_chest_claim": true,
       "wall_repair": false
