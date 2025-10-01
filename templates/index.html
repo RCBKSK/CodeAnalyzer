@@ -1390,6 +1390,88 @@
                         </div>
                     </div>
 
+                    {% if user_account_status %}
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 16px; margin-top: 20px; border: 1px solid #e2e8f0;">
+                        <h3 style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 12px;">
+                            <i class="fas fa-user-clock"></i> Account Information
+                        </h3>
+                        <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
+                            {% if user_account_status.status == 'active' %}
+                                <div style="margin-bottom: 8px;">
+                                    <strong>Status:</strong> <span style="color: #10b981;">✓ Active</span>
+                                </div>
+                                {% if user_account_status.end_date %}
+                                <div style="margin-bottom: 8px;">
+                                    <strong>Expires:</strong> {{ user_account_status.end_date }}
+                                </div>
+                                {% endif %}
+                                {% if user_account_status.days_remaining is not none %}
+                                {% set days_color = '#ef4444' if user_account_status.days_remaining <= 7 else '#f59e0b' if user_account_status.days_remaining <= 30 else '#10b981' %}
+                                <div>
+                                    <strong>Days Remaining:</strong> <span style="color: {{ days_color }}; font-weight: 600;">{{ user_account_status.days_remaining }} days</span>
+                                </div>
+                                {% endif %}
+                            {% elif user_account_status.status == 'expired' %}
+                                <div style="color: #ef4444; font-weight: 600;">
+                                    <i class="fas fa-exclamation-triangle"></i> Account Expired
+                                </div>
+                                {% if user_account_status.end_date %}
+                                <div style="margin-top: 8px;">
+                                    <strong>Expired on:</strong> {{ user_account_status.end_date }}
+                                </div>
+                                {% endif %}
+                            {% elif user_account_status.status == 'not_started' %}
+                                <div style="color: #f59e0b; font-weight: 600;">
+                                    <i class="fas fa-clock"></i> Not Yet Active
+                                </div>
+                                {% if user_account_status.start_date %}
+                                <div style="margin-top: 8px;">
+                                    <strong>Starts:</strong> {{ user_account_status.start_date }}
+                                </div>
+                                {% endif %}
+                                {% if user_account_status.days_remaining is not none %}
+                                <div style="margin-top: 4px;">
+                                    <strong>Starts in:</strong> {{ user_account_status.days_remaining|abs }} days
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if user_instance_statuses and user_instance_statuses|length > 0 %}
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 16px; margin-top: 16px; border: 1px solid #e2e8f0;">
+                        <h3 style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 12px;">
+                            <i class="fas fa-server"></i> Instance Licenses ({{ user_instance_statuses|length }})
+                        </h3>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            {% for instance in user_instance_statuses %}
+                            {% set border_color = '#10b981' if instance.status == 'active' else '#ef4444' if instance.status == 'expired' else '#f59e0b' %}
+                            <div style="background: white; border-radius: 8px; padding: 12px; margin-bottom: 8px; border-left: 4px solid {{ border_color }};">
+                                <div style="font-weight: 600; color: #1e293b; margin-bottom: 6px;">{{ instance.instance_name }}</div>
+                                <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
+                                    {% if instance.status == 'active' %}
+                                        <div><strong>Status:</strong> <span style="color: #10b981;">Active</span></div>
+                                        <div><strong>Expires:</strong> {{ instance.end_date }}</div>
+                                        {% if instance.days_remaining is not none %}
+                                        {% set inst_days_color = '#ef4444' if instance.days_remaining <= 7 else '#f59e0b' if instance.days_remaining <= 30 else '#10b981' %}
+                                        <div><strong>Days Left:</strong> <span style="color: {{ inst_days_color }}; font-weight: 600;">{{ instance.days_remaining }} days</span></div>
+                                        {% endif %}
+                                    {% elif instance.status == 'expired' %}
+                                        <div style="color: #ef4444; font-weight: 600;">Expired on {{ instance.end_date }}</div>
+                                    {% elif instance.status == 'not_started' %}
+                                        <div style="color: #f59e0b;">Starts on {{ instance.start_date }}</div>
+                                        {% if instance.days_remaining is not none %}
+                                        <div>Starts in {{ instance.days_remaining|abs }} days</div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">
                         <strong>Last Sync:</strong> <span id="lastUpdate">Never</span>
                     </p>
