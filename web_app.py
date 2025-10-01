@@ -410,14 +410,37 @@ def load_user_instances():
             logger.info(f"Creating new user instances file: {USER_INSTANCES_FILE}")
             with open(USER_INSTANCES_FILE, 'w') as f:
                 f.write("# User Instance Management File\n")
-                f.write("# Format: username:instance_name:start_date:end_date:created_date:status\n")
+                f.write("# Format: username|instance_name|start_date|end_date|created_date|status\n")
             return instances
 
         with open(USER_INSTANCES_FILE, 'r') as f:
             for line_num, line in enumerate(f, 1):
                 line = line.strip()
                 if line and not line.startswith('#'):
-                    parts = line.split(':')
+                    # Support both old format (colon) and new format (pipe) for backward compatibility
+                    if '|' in line:
+                        parts = line.split('|')
+                    else:
+                        # Old format - try to handle it
+                        parts = line.split(':')
+                        # Try to reconstruct datetime fields if they were split
+                        if len(parts) > 6:
+                            # Likely datetime fields were split, try to merge them back
+                            try:
+                                username = parts[0]
+                                instance_name = parts[1]
+                                # Reconstruct start_date (parts[2]:parts[3]:parts[4])
+                                start_date = f"{parts[2]}:{parts[3]}:{parts[4]}"
+                                # Reconstruct end_date (parts[5]:parts[6]:parts[7])
+                                end_date = f"{parts[5]}:{parts[6]}:{parts[7]}"
+                                # Reconstruct created_date (parts[8]:parts[9]:parts[10])
+                                created_date = f"{parts[8]}:{parts[9]}:{parts[10]}"
+                                status = parts[11] if len(parts) > 11 else 'active'
+                                parts = [username, instance_name, start_date, end_date, created_date, status]
+                            except:
+                                logger.warning(f"Could not parse old format at line {line_num}: {line}")
+                                continue
+                    
                     if len(parts) >= 6:
                         username, instance_name, start_date, end_date, created_date, status = parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]
 
@@ -444,10 +467,10 @@ def save_user_instances(instances):
     try:
         with open(USER_INSTANCES_FILE, 'w') as f:
             f.write("# User Instance Management File\n")
-            f.write("# Format: username:instance_name:start_date:end_date:created_date:status\n")
+            f.write("# Format: username|instance_name|start_date|end_date|created_date|status\n")
             for username, user_instances in instances.items():
                 for instance in user_instances:
-                    f.write(f"{username}:{instance['instance_name']}:{instance['start_date']}:{instance['end_date']}:{instance['created_date']}:{instance['status']}\n")
+                    f.write(f"{username}|{instance['instance_name']}|{instance['start_date']}|{instance['end_date']}|{instance['created_date']}|{instance['status']}\n")
     except Exception as e:
         logger.error(f"Error saving user instances: {str(e)}")
 
