@@ -154,7 +154,7 @@
             },
             {
               "code": 20200103,
-              "enabled": false,
+              "enabled": true,
               "level": [
                 1,
                 2,
@@ -163,8 +163,19 @@
               "name": "Golem"
             },
             {
-              "code": 20200301,
-              "enabled": false,
+              "code": 20200104,
+              "enabled": true,
+              "level": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "name": "Treasure Goblin"
+            },
+            {
+              "code": 20200101,
+              "enabled": true,
               "level": [
                 1,
                 2,
@@ -173,8 +184,8 @@
               "name": "Orc"
             },
             {
-              "code": 20200302,
-              "enabled": false,
+              "code": 20200102,
+              "enabled": true,
               "level": [
                 1,
                 2,
