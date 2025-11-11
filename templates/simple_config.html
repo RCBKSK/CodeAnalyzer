@@ -3760,51 +3760,6 @@
                 // Sync to toggles structure
                 fullConfigData.toggles.features.rally_join = rallyJoinEnabled;
 
-                // If rally join is enabled, disable conflicting features
-                if (rallyJoinEnabled) {
-                    // Disable rally start
-                    if (!fullConfigData.rally.start) {
-                        fullConfigData.rally.start = {
-                            enabled: false,
-                            numMarch: 6,
-                            level_based_troops: true,
-                            targets: []
-                        };
-                    }
-                    fullConfigData.rally.start.enabled = false;
-                    fullConfigData.toggles.features.rally_start = false;
-
-                    // Disable object scanning (socf_thread)
-                    if (fullConfigData.main && fullConfigData.main.jobs) {
-                        fullConfigData.main.jobs.forEach(job => {
-                            if (job.name === 'socf_thread') {
-                                job.enabled = false;
-                                fullConfigData.toggles.jobs.socf_thread = false;
-                            }
-                        });
-                    }
-
-                    // Update main.object_scanning.enabled if it exists
-                    if (fullConfigData.main && fullConfigData.main.object_scanning) {
-                        fullConfigData.main.object_scanning.enabled = false;
-                        fullConfigData.toggles.features.object_scanning = false;
-                    }
-
-                    // Update UI to reflect the changes immediately
-                    const rallyStartToggle = document.getElementById('rally-start-enabled');
-                    const socfToggle = document.getElementById('socf-objects-enabled');
-
-                    if (rallyStartToggle) {
-                        rallyStartToggle.checked = false;
-                    }
-                    if (socfToggle) {
-                        socfToggle.checked = false;
-                    }
-
-                    // Show notification to user
-                    showNotification('Rally Join enabled - Rally Start and Object Scanning have been automatically disabled to prevent conflicts.', 'warning');
-                }
-
                 // Update number of marches
                 const marches = parseInt(document.getElementById('rally-join-marches').value);
                 if (marches) {
@@ -3847,51 +3802,6 @@
 
                 // Sync to toggles structure
                 fullConfigData.toggles.features.rally_start = rallyStartEnabled;
-
-                // If rally start is enabled, disable conflicting features
-                if (rallyStartEnabled) {
-                    // Disable rally join
-                    if (!fullConfigData.rally.join) {
-                        fullConfigData.rally.join = {
-                            enabled: false,
-                            numMarch: 8,
-                            level_based_troops: true,
-                            targets: []
-                        };
-                    }
-                    fullConfigData.rally.join.enabled = false;
-                    fullConfigData.toggles.features.rally_join = false;
-
-                    // Disable object scanning (socf_thread)
-                    if (fullConfigData.main && fullConfigData.main.jobs) {
-                        fullConfigData.main.jobs.forEach(job => {
-                            if (job.name === 'socf_thread') {
-                                job.enabled = false;
-                                fullConfigData.toggles.jobs.socf_thread = false;
-                            }
-                        });
-                    }
-
-                    // Update main.object_scanning.enabled if it exists
-                    if (fullConfigData.main && fullConfigData.main.object_scanning) {
-                        fullConfigData.main.object_scanning.enabled = false;
-                        fullConfigData.toggles.features.object_scanning = false;
-                    }
-
-                    // Update UI to reflect the changes immediately
-                    const rallyJoinToggle = document.getElementById('rally-join-enabled');
-                    const socfToggle = document.getElementById('socf-objects-enabled');
-
-                    if (rallyJoinToggle) {
-                        rallyJoinToggle.checked = false;
-                    }
-                    if (socfToggle) {
-                        socfToggle.checked = false;
-                    }
-
-                    // Show notification to user
-                    showNotification('Rally Start enabled - Rally Join and Object Scanning have been automatically disabled to prevent conflicts.', 'warning');
-                }
 
                 // Update number of marches
                 const marches = parseInt(document.getElementById('rally-start-marches').value);
@@ -4041,32 +3951,6 @@
 
                 // Sync to toggles structure
                 fullConfigData.toggles.features.enable_gathering = gatheringEnabled;
-
-                // If SOCF is enabled, disable rally join only (not rally start)
-                if (socfEnabled) {
-                    // Disable rally join only
-                    if (!fullConfigData.rally) fullConfigData.rally = {};
-                    if (!fullConfigData.rally.join) {
-                        fullConfigData.rally.join = {
-                            "enabled": false,
-                            "numMarch": 8,
-                            "level_based_troops": true,
-                            "targets": []
-                        };
-                    }
-                    fullConfigData.rally.join.enabled = false;
-                    fullConfigData.toggles.features.rally_join = false;
-
-                    // Update UI to reflect the changes immediately
-                    const rallyJoinToggle = document.getElementById('rally-join-enabled');
-
-                    if (rallyJoinToggle) {
-                        rallyJoinToggle.checked = false;
-                    }
-
-                    // Show notification to user
-                    showNotification('Object Scanning enabled - Rally Join has been automatically disabled to prevent conflicts. Rally Start remains available.', 'warning');
-                }
 
                 // Update max marches
                 const maxMarches = parseInt(document.getElementById('socf-objects-max-marches').value);
