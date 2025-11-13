@@ -4452,7 +4452,7 @@ Status: Available to join"""
                                                             'discord',
                                                                 {}).get('user_id', '')
                                                                 webhook.send_message(
-                                                                    f"Rally Started - {monster_config.get('monster_name', 'Monster')} - Level {level} - {total_troops} {troop_type} troops sent"
+                                                                    f"🏴 Rally Started - {monster_config.get('monster_name', 'Monster')} - Level {level} - {total_troops} {troop_type} troops sent"
                                                                 )
                                                         except Exception as e:
                                                             logger.error(
