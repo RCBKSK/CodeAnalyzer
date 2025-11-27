@@ -4004,15 +4004,9 @@ Status: Available to join"""
                                 f'Found target object: code={code} level={level} loc={loc}'
                             )
 
-                        # Share monster location if configured
-                        if share_to and 'chat_channels' in share_to:
-                            for chat_channel in share_to['chat_channels']:
-                                if chat_channel:
-                                    self.api.chat_new(
-                                        chat_channel=chat_channel,
-                                        chat_type=CHAT_TYPE_LOC,
-                                        text='',
-                                        param={'loc': loc})
+                        # Object sharing to chat is disabled
+                        # Previously shared monster/object locations to chat channels
+                        # This feature has been completely disabled
 
                         # Start rally for monsters if rally start is enabled
                         if code in [
