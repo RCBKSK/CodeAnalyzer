@@ -2027,6 +2027,10 @@ def start_bot():
             timestamp = int(time.time() * 1000)
             instance_id = f"{user_id}_{timestamp}"
 
+        # Count existing user instances for proper numbering
+        existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+        instance_count = len(existing_instances)
+
         # Generate account name with proper numbering
         account_name = data.get('account_name', f'Instance {instance_count + 1}')
 
