@@ -726,6 +726,17 @@ def get_user_max_instances(username):
     # Use new instance management system
     return get_user_max_instances_from_active(username)
 
+def can_create_instance(user_id, username):
+    """Strict validation: Check if user can create a new instance (before creating any instance)"""
+    max_instances = get_user_max_instances(username)
+    # Count ALL user instances, regardless of running state
+    user_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id)]
+    instance_count = len(user_instances)
+    
+    if instance_count >= max_instances:
+        return False, f'Maximum of {max_instances} bot instance(s) allowed. Currently have {instance_count} instance(s).'
+    return True, None
+
 def load_user_config_assignments():
     """Load user config assignments from file"""
     assignments = {}
@@ -1942,17 +1953,12 @@ def get_config_summary():
 def start_bot():
     data = request.json
     user_id = session['user_id']
-
-    # Get user's maximum allowed instances
     username = session.get('username', user_id)
-    max_instances = get_user_max_instances(username)
 
-    # Count existing instances
-    existing_instances = [proc_id for proc_id in bot_processes if proc_id.startswith(user_id) and bot_processes[proc_id]["process"].poll() is None]
-    instance_count = len(existing_instances)
-
-    if instance_count >= max_instances:
-        return jsonify({'error': f'Maximum of {max_instances} bot instance(s) allowed for user {username}'}), 400
+    # STRICT instance limit check
+    can_create, error_msg = can_create_instance(user_id, username)
+    if not can_create:
+        return jsonify({'error': error_msg}), 400
 
     try:
         email = data.get('email') or os.getenv('LOK_EMAIL')
