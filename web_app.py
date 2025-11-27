@@ -815,7 +815,11 @@ def has_config_access(username, config_file):
     return False
 
 def restart_bot_on_auth_failure(user_id, instance_id):
-    """Restart bot automatically when authentication fails"""
+    """
+    Restart bot automatically when authentication fails
+    NOTE: No instance limit check here - auto-restarts bypass limits to prevent breaking existing instances
+    Instance limits only apply to manual starts via /api/start_bot
+    """
     try:
         if instance_id in bot_processes:
             # Get bot details before stopping
