@@ -54,6 +54,56 @@
           "min_buy": 1,
           "name": "Vip Point +10",
           "priority": 1
+        },
+        {
+          "category": "VIP",
+          "description": "500 VIP Points for premium features",
+          "enabled": true,
+          "item_code": 10101009,
+          "max_buy": 999999,
+          "min_buy": 1,
+          "name": "Vip Point +500",
+          "priority": 1
+        },
+        {
+          "category": "Resources",
+          "description": "10,000 Stone",
+          "enabled": true,
+          "item_code": 10101033,
+          "max_buy": 999999,
+          "min_buy": 1,
+          "name": "Stone +10K",
+          "priority": 1
+        },
+        {
+          "category": "Resources",
+          "description": "100,000 Gold",
+          "enabled": true,
+          "item_code": 10101044,
+          "max_buy": 999999,
+          "min_buy": 1,
+          "name": "Gold +100K",
+          "priority": 1
+        },
+        {
+          "category": "Speedups",
+          "description": "5 Minutes General Speedup",
+          "enabled": true,
+          "item_code": 10103002,
+          "max_buy": 999999,
+          "min_buy": 1,
+          "name": "Speedup 5min",
+          "priority": 1
+        },
+        {
+          "category": "Speedups",
+          "description": "10 Minutes General Speedup",
+          "enabled": true,
+          "item_code": 10103003,
+          "max_buy": 999999,
+          "min_buy": 1,
+          "name": "Speedup 10min",
+          "priority": 1
         }
       ]
     },
@@ -117,6 +167,56 @@
                 "max_buy": 999999,
                 "min_buy": 1,
                 "name": "Vip Point +10",
+                "priority": 1
+              },
+              {
+                "category": "VIP",
+                "description": "500 VIP Points for premium features",
+                "enabled": true,
+                "item_code": 10101009,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Vip Point +500",
+                "priority": 1
+              },
+              {
+                "category": "Resources",
+                "description": "10,000 Stone",
+                "enabled": true,
+                "item_code": 10101033,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Stone +10K",
+                "priority": 1
+              },
+              {
+                "category": "Resources",
+                "description": "100,000 Gold",
+                "enabled": true,
+                "item_code": 10101044,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Gold +100K",
+                "priority": 1
+              },
+              {
+                "category": "Speedups",
+                "description": "5 Minutes General Speedup",
+                "enabled": true,
+                "item_code": 10103002,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Speedup 5min",
+                "priority": 1
+              },
+              {
+                "category": "Speedups",
+                "description": "10 Minutes General Speedup",
+                "enabled": true,
+                "item_code": 10103003,
+                "max_buy": 999999,
+                "min_buy": 1,
+                "name": "Speedup 10min",
                 "priority": 1
               }
             ]
@@ -200,23 +300,23 @@
           "targets": [
             {
               "code": 20200103,
-              "name": "Golem",
+              "enabled": true,
               "level": [
                 1,
                 2,
                 3
               ],
-              "enabled": true
+              "name": "Golem"
             },
             {
               "code": 20200102,
-              "name": "Skeleton",
+              "enabled": true,
               "level": [
                 1,
                 2,
                 3
               ],
-              "enabled": true
+              "name": "Skeleton"
             }
           ]
         },
@@ -226,52 +326,52 @@
     "normal_monsters": {
       "common_troops": [
         {
-          "amount": 15000,
           "code": 50100306,
-          "name": "Marauder (Tier 6 Cavalry)"
+          "name": "Marauder (Tier 6 Cavalry)",
+          "amount": 15000
         }
       ],
-      "enabled": true,
+      "enabled": false,
       "max_distance": 250,
       "targets": [
         {
-          "level_ranges": [
-            1,
-            2,
-            3
-          ],
           "monster_code": 20200103,
           "monster_name": "Golem",
-          "troops": []
-        },
-        {
           "level_ranges": [
             1,
             2,
             3
           ],
+          "troops": []
+        },
+        {
           "monster_code": 20200104,
           "monster_name": "Treasure Goblin",
-          "troops": []
-        },
-        {
           "level_ranges": [
             1,
             2,
             3
           ],
+          "troops": []
+        },
+        {
           "monster_code": 20200101,
           "monster_name": "Orc",
-          "troops": []
-        },
-        {
           "level_ranges": [
             1,
             2,
             3
           ],
+          "troops": []
+        },
+        {
           "monster_code": 20200102,
           "monster_name": "Skeleton",
+          "level_ranges": [
+            1,
+            2,
+            3
+          ],
           "troops": []
         }
       ]
@@ -282,11 +382,11 @@
         "enabled": false
       },
       "enable_gathering": false,
-      "enable_monster_attack": true,
+      "enable_monster_attack": false,
       "enabled": true,
       "max_marches": 10,
       "monster_attack": {
-        "enabled": true
+        "enabled": false
       },
       "monster_distance_check": {
         "enabled": true,
@@ -582,7 +682,7 @@
       "discord": true,
       "enable_chat_monitoring": true,
       "enable_gathering": false,
-      "enable_monster_attack": true,
+      "enable_monster_attack": false,
       "notify_discord": false,
       "object_scanning": true,
       "rally_join": false,
@@ -598,7 +698,8 @@
       "socf_thread": true,
       "use_resource_in_item_list": false,
       "vip_chest_claim": true,
-      "wall_repair": false
+      "wall_repair": false,
+      "vip_shop_farmer": false
     },
     "threads": {
       "academy_farmer_thread": false,
