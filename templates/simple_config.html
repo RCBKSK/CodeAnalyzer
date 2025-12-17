@@ -1266,6 +1266,13 @@
                     </div>
                 </div>
 
+                <!-- Number of Marches -->
+                <div class="distance-section">
+                    <span class="troops-title">Number of Marches</span>
+                    <input type="number" id="monster-attack-marches" class="distance-input" value="5" min="1" max="10">
+                    <span class="unit-label">marches</span>
+                </div>
+
                 <!-- Add New Monster -->
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
                     <select id="monster-attack-monster-select" class="dropdown-field" style="flex: 1;">
@@ -3351,6 +3358,12 @@
                                 config.max_distance || 250;
             distanceInput.value = distanceValue;
 
+            // Set number of marches
+            const marchesInput = document.getElementById('monster-attack-marches');
+            if (config.numMarch) {
+                marchesInput.value = config.numMarch;
+            }
+
             // Clear and populate monsters
             const container = document.getElementById('monster-attack-monsters');
             container.innerHTML = '';
@@ -3894,6 +3907,13 @@
                     fullConfigData.main.object_scanning.monster_distance_check.max_distance = distance;
                     // Also update the normal_monsters max_distance for backward compatibility
                     fullConfigData.main.normal_monsters.max_distance = distance;
+                }
+
+                // Update number of marches
+                const marchesElement = document.getElementById('monster-attack-marches');
+                const marches = marchesElement ? parseInt(marchesElement.value) : 5;
+                if (marches) {
+                    fullConfigData.main.normal_monsters.numMarch = marches;
                 }
 
                 // Update targets
