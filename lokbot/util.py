@@ -37,7 +37,7 @@ def run_functions_in_random_order(*funcs):
 
 
 def get_zone_id_by_coords(x, y):
-    return (x // 32) + 64 * (y // 32)
+    return (x // 32) + 96 * (y // 32)
 
 
 def decode_jwt(token):

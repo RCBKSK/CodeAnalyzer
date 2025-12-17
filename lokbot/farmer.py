@@ -964,13 +964,13 @@ class LokFarmer:
         return numpy.arange(100000, 165536).reshape(256, 256)
 
     @functools.lru_cache()
-    def _get_land_array_4_by_4(self):
-        return blockshaped(self._get_land_array(), 4, 4)
+    def _get_land_array_6_by_6(self):
+        return blockshaped(self._get_land_array(), 6, 6)
 
     @staticmethod
     @functools.lru_cache()
     def _get_zone_array():
-        return numpy.arange(0, 4096).reshape(64, 64)
+        return numpy.arange(0, 9216).reshape(96, 96)
 
     @functools.lru_cache()
     def _get_nearest_land(self, x, y, radius=32):
@@ -1015,7 +1015,7 @@ class LokFarmer:
 
     @functools.lru_cache()
     def _get_zone_id_by_land_id(self, land_id):
-        land_array = self._get_land_array_4_by_4()
+        land_array = self._get_land_array_6_by_6()
 
         return ndindex(land_array, land_id)[0]
 
