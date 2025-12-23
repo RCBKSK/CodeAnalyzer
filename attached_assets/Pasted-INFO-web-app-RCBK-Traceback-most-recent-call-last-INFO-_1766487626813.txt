@@ -1,0 +1,28 @@
+INFO:web_app:[RCBK] Traceback (most recent call last):
+INFO:web_app:[RCBK] File "<frozen runpy>", line 198, in _run_module_as_main
+INFO:web_app:[RCBK] File "<frozen runpy>", line 88, in _run_code
+INFO:web_app:[RCBK] File "/home/runner/workspace/lokbot/__main__.py", line 7, in <module>
+INFO:web_app:[RCBK] fire.Fire(main)
+INFO:web_app:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fire/core.py", line 141, in Fire
+INFO:web_app:[RCBK] component_trace = _Fire(component, args, parsed_flag_args, context, name)
+INFO:web_app:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:web_app:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fire/core.py", line 475, in _Fire
+INFO:web_app:[RCBK] component, remaining_args = _CallAndUpdateTrace(
+INFO:web_app:[RCBK] ^^^^^^^^^^^^^^^^^^^^
+INFO:web_app:[RCBK] File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fire/core.py", line 691, in _CallAndUpdateTrace
+INFO:web_app:[RCBK] component = fn(*varargs, **kwargs)
+INFO:web_app:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^
+INFO:web_app:[RCBK] File "/home/runner/workspace/lokbot/app.py", line 142, in main
+INFO:web_app:[RCBK] farmer = LokFarmer(token, captcha_solver_config)
+INFO:web_app:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:web_app:[RCBK] File "/home/runner/workspace/lokbot/farmer.py", line 100, in __init__
+INFO:web_app:[RCBK] base64.b64decode(auth_res.get('lstProtect')).decode())
+INFO:web_app:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:web_app:[RCBK] File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/base64.py", line 83, in b64decode
+INFO:web_app:[RCBK] s = _bytes_from_decode_data(s)
+INFO:web_app:[RCBK] ^^^^^^^^^^^^^^^^^^^^^^^^^^
+INFO:web_app:[RCBK] File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/base64.py", line 45, in _bytes_from_decode_data
+INFO:web_app:[RCBK] raise TypeError("argument should be a bytes-like object or ASCII "
+INFO:web_app:Added notification for user admin instance admin_1766487582880 (RCBK): Bot Error (RCBK)
+INFO:web_app:[RCBK] TypeError: argument should be a bytes-like object or ASCII string, not 'NoneType'
+INFO:web_app:Added notification for user admin instance admin_1766487582880 (RCBK): Bot Error (RCBK)

@@ -96,17 +96,30 @@ class LokFarmer:
                              self._request_callback)
 
         auth_res = self.api.auth_connect({"deviceInfo": {"build": "global"}})
-        self.api.protected_api_list = json.loads(
-            base64.b64decode(auth_res.get('lstProtect')).decode())
-        self.api.protected_api_list = [
-            str(api).split('/api/').pop()
-            for api in self.api.protected_api_list
-        ]
-        logger.debug(f'protected_api_list: {self.api.protected_api_list}')
-        self.api.xor_password = json.loads(
-            base64.b64decode(
-                auth_res.get('regionHash')).decode()).split('-')[1]
-        logger.debug(f'xor_password: {self.api.xor_password}')
+        
+        # Handle protected API list
+        lst_protect = auth_res.get('lstProtect')
+        if lst_protect:
+            self.api.protected_api_list = json.loads(
+                base64.b64decode(lst_protect).decode())
+            self.api.protected_api_list = [
+                str(api).split('/api/').pop()
+                for api in self.api.protected_api_list
+            ]
+            logger.debug(f'protected_api_list: {self.api.protected_api_list}')
+        else:
+            logger.warning('lstProtect not found in auth response, using empty list')
+            self.api.protected_api_list = []
+        
+        # Handle XOR password
+        region_hash = auth_res.get('regionHash')
+        if region_hash:
+            self.api.xor_password = json.loads(
+                base64.b64decode(region_hash).decode()).split('-')[1]
+            logger.debug(f'xor_password: {self.api.xor_password}')
+        else:
+            logger.warning('regionHash not found in auth response, xor_password not set')
+            self.api.xor_password = None
         self.token = auth_res.get('token')
         self._id = lokbot.util.decode_jwt(token).get('_id')
         project_root.joinpath(f'data/{self._id}.token').write_text(self.token)
