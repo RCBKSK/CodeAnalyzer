@@ -3965,9 +3965,29 @@ Status: Available to join"""
                     sio.disconnect()
                     return
 
-                packs = data.get('packs')
-                gzip_decompress = gzip.decompress(bytearray(packs))
-                data_decoded = self.api.b64xor_dec(gzip_decompress)
+                # Handle both packed (compressed) and already-decoded formats
+                data_decoded = None
+                
+                # Try packed format first (compressed with gzip + XOR)
+                try:
+                    packs = data.get('packs')
+                    if packs:
+                        gzip_decompress = gzip.decompress(bytearray(packs))
+                        data_decoded = self.api.b64xor_dec(gzip_decompress)
+                        logger.debug('Processed packed/compressed field objects data')
+                except Exception as pack_error:
+                    logger.debug(f'Packed format processing failed: {pack_error}')
+                
+                # Fallback: check if data already has objects field (already decoded)
+                if data_decoded is None and data.get('objects'):
+                    data_decoded = data
+                    logger.debug('Using already-decoded field objects data (direct JSON)')
+                
+                # If still no data, log error and return
+                if data_decoded is None:
+                    logger.warning('Could not process field objects data - no packs or objects field found')
+                    return
+                
                 objects = data_decoded.get('objects')
                 # Only include enabled targets
                 target_code_set = set([
