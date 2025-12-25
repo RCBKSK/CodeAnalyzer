@@ -4734,19 +4734,35 @@ Status: {status}"""
 
                 self.socf_entered = True
 
-            sio.connect(f'{url}?token={self.token}',
-                        transports=["websocket"],
-                        headers=ws_headers)
-            logger.debug(f'entering field: {self.zones}')
+            logger.info(f'[SOCF] Attempting WebSocket connection to: {url}')
+            logger.info(f'[SOCF] Connection params - token present: True, transports: websocket')
+            try:
+                sio.connect(f'{url}?token={self.token}',
+                            transports=["websocket"],
+                            headers=ws_headers)
+                logger.info(f'[SOCF] ✓ WebSocket connected successfully, socket.connected: {sio.connected}')
+            except Exception as e:
+                logger.error(f'[SOCF] ✗ WebSocket connection failed: {e}')
+                logger.error(f'[SOCF] URL: {url}')
+                raise
+                
+            logger.debug(f'[SOCF] entering field with zones: {self.zones}')
             sio.emit('/field/enter/v3',
                      self.api.b64xor_enc({'token': self.token}))
+            logger.info(f'[SOCF] ✓ Emitted /field/enter/v3 event')
 
             while not self.socf_entered:
                 time.sleep(1)
 
-            step = 9
+            # Dynamically adjust step size based on available zones
+            # Default is 9 zones per batch, but support smaller zone counts
+            available_zones_count = len(self.zones)
+            step = min(9, max(1, available_zones_count))  # Use available zones or 1 minimum
             grace = 7  # 9 times enter-leave action will cause ban
             index = 0
+            
+            logger.info(f'SOCF scanning starting with {available_zones_count} total zones, batch size: {step}')
+            
             while self.zones:
                 if index >= grace:
                     logger.info('socf_thread grace exceeded, break')
@@ -4760,10 +4776,17 @@ Status: {status}"""
 
                     zone_ids.append(self.zones.pop(0))
 
-                if len(zone_ids) < step:
-                    logger.info('len(zone_ids) < {step}, break')
-                    self.zones = []
+                # Only require full batches if we have enough zones; otherwise process what we have
+                if len(zone_ids) == 0:
+                    logger.info('No more zones to process')
                     break
+                    
+                if len(zone_ids) < step and self.zones:
+                    # Still have zones left but batch is small - this shouldn't happen
+                    logger.warning(f'Batch size {len(zone_ids)} < {step} but zones remain - continuing anyway')
+                elif len(zone_ids) < step:
+                    # This is the final batch - process it even if smaller
+                    logger.info(f'Final batch: processing {len(zone_ids)} remaining zones')
 
                 if not sio.connected:
                     logger.warning('socf_thread disconnected, reconnecting')
