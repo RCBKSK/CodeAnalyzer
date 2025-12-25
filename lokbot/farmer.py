@@ -3966,6 +3966,9 @@ Status: Available to join"""
             @sio.on('/field/objects/v4')
             def on_field_objects(data):
                 from lokbot import config
+                
+                # Log what we received
+                logger.debug(f'Received /field/objects/v4 event - data type: {type(data)}, keys: {data.keys() if isinstance(data, dict) else "N/A"}')
 
                 # Check crystal limit flag before processing
                 if getattr(self, 'crystal_limit_reached', False):
@@ -3978,7 +3981,7 @@ Status: Available to join"""
                 
                 # Try packed format first (compressed with gzip + XOR)
                 try:
-                    packs = data.get('packs')
+                    packs = data.get('packs') if isinstance(data, dict) else None
                     if packs:
                         gzip_decompress = gzip.decompress(bytearray(packs))
                         data_decoded = self.api.b64xor_dec(gzip_decompress)
@@ -3987,13 +3990,13 @@ Status: Available to join"""
                     logger.debug(f'Packed format processing failed: {pack_error}')
                 
                 # Fallback: check if data already has objects field (already decoded)
-                if data_decoded is None and data.get('objects'):
+                if data_decoded is None and isinstance(data, dict) and data.get('objects'):
                     data_decoded = data
                     logger.debug('Using already-decoded field objects data (direct JSON)')
                 
                 # If still no data, log error and return
                 if data_decoded is None:
-                    logger.warning('Could not process field objects data - no packs or objects field found')
+                    logger.warning(f'Could not process field objects data - no packs or objects field found. Data received: {str(data)[:200]}')
                     return
                 
                 objects = data_decoded.get('objects')
@@ -4736,13 +4739,28 @@ Status: {status}"""
                     'zones': json.dumps(zone_ids, separators=(',', ':'))
                 }
                 encoded_message = self.api.b64xor_enc(message)
+                
+                logger.info(f'Sending /zone/enter/list/v4 with zones: {zone_ids}, message type: {type(encoded_message)}, socket connected: {sio.connected}')
 
                 sio.emit('/zone/enter/list/v4', encoded_message)
                 self.field_object_processed = False
                 logger.debug(
                     f'entering zone: {zone_ids} and waiting for processing')
-                while not self.field_object_processed:
+                
+                # Wait for field objects with a timeout to prevent infinite wait
+                timeout_count = 0
+                while not self.field_object_processed and timeout_count < 30:  # 30 second timeout
+                    timeout_count += 1
                     time.sleep(1)
+                    if timeout_count == 10:
+                        logger.warning(f'Still waiting for field objects after 10 seconds, socket connected: {sio.connected}')
+                
+                if timeout_count >= 30:
+                    logger.error(f'Timeout waiting for field objects in zone {zone_ids}')
+                    if sio.connected:
+                        logger.error('Socket is still connected but not receiving /field/objects/v4 events')
+                    else:
+                        logger.error('Socket disconnected while waiting for field objects')
 
                 # Clear scanning zone context when leaving zones
                 self._set_current_scanning_zone(None)

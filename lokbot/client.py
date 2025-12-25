@@ -59,23 +59,39 @@ class LokBotApi:
             for index, each_plain in enumerate(plain)
         ])
 
-    def b64xor_enc(self, d: dict) -> typing.Union[str, dict]:
-        """Encrypt data if xor_password is available, otherwise return plain JSON"""
+    def b64xor_enc(self, d: dict) -> str:
+        """Encrypt data if xor_password is available, otherwise return base64-encoded plain JSON"""
+        json_str = json.dumps(d, separators=(',', ':'))
         if self.xor_password is None:
-            return d  # Return plain dict if no xor_password
-        return base64.b64encode(self.xor(json.dumps(d, separators=(',', ':')).encode())).decode()
+            # When no encryption, return base64-encoded plain JSON
+            return base64.b64encode(json_str.encode()).decode()
+        return base64.b64encode(self.xor(json_str.encode())).decode()
 
     def b64xor_dec(self, s: typing.Union[str, bytes, dict]) -> dict:
-        """Decrypt data if it's encrypted, otherwise parse as JSON"""
+        """Decrypt data if it's encrypted, otherwise decode and parse JSON"""
         if isinstance(s, dict):
             return s  # Already a dict, return as-is
-        if self.xor_password is None:
-            # Try to parse as plain JSON
-            if isinstance(s, bytes):
-                return json.loads(s.decode())
-            return json.loads(s)
-        # Decrypt if we have xor_password
-        return json.loads(self.xor(base64.b64decode(s)))
+        
+        # Try base64 decode first (works for both encrypted and plain JSON encoded)
+        try:
+            decoded_bytes = base64.b64decode(s)
+            
+            if self.xor_password is None:
+                # No encryption, just parse the decoded JSON
+                return json.loads(decoded_bytes.decode())
+            else:
+                # Decrypt the decoded bytes with xor_password
+                return json.loads(self.xor(decoded_bytes))
+        except Exception:
+            # Fallback: try to parse as plain JSON
+            try:
+                if isinstance(s, bytes):
+                    return json.loads(s.decode())
+                return json.loads(s)
+            except Exception:
+                # If all else fails, return empty dict
+                logger.warning(f'Failed to decode data: {str(s)[:100]}')
+                return {}
 
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(2),
