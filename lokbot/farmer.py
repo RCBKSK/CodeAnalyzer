@@ -383,18 +383,27 @@ class LokFarmer:
                 return False
 
             # Update API configuration like in __init__
-            self.api.protected_api_list = json.loads(
-                base64.b64decode(auth_res.get('lstProtect')).decode())
-            self.api.protected_api_list = [
-                str(api).split('/api/').pop()
-                for api in self.api.protected_api_list
-            ]
-            logger.debug(f'protected_api_list: {self.api.protected_api_list}')
+            lst_protect = auth_res.get('lstProtect')
+            if lst_protect:
+                self.api.protected_api_list = json.loads(
+                    base64.b64decode(lst_protect).decode())
+                self.api.protected_api_list = [
+                    str(api).split('/api/').pop()
+                    for api in self.api.protected_api_list
+                ]
+                logger.debug(f'protected_api_list: {self.api.protected_api_list}')
+            else:
+                logger.warning('lstProtect not found in re-auth response, using empty list')
+                self.api.protected_api_list = []
 
-            self.api.xor_password = json.loads(
-                base64.b64decode(
-                    auth_res.get('regionHash')).decode()).split('-')[1]
-            logger.debug(f'xor_password: {self.api.xor_password}')
+            region_hash = auth_res.get('regionHash')
+            if region_hash:
+                self.api.xor_password = json.loads(
+                    base64.b64decode(region_hash).decode()).split('-')[1]
+                logger.debug(f'xor_password: {self.api.xor_password}')
+            else:
+                logger.warning('regionHash not found in re-auth response, xor_password not set')
+                self.api.xor_password = None
 
             # Update token if we got a new one
             if auth_res.get('token'):
