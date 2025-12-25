@@ -402,8 +402,7 @@ class LokFarmer:
                     base64.b64decode(region_hash).decode()).split('-')[1]
                 logger.debug(f'xor_password: {self.api.xor_password}')
             else:
-                logger.warning('regionHash not found in re-auth response, xor_password not set')
-                self.api.xor_password = None
+                logger.warning('regionHash not found in re-auth response, keeping existing xor_password')
 
             # Update token if we got a new one
             if auth_res.get('token'):
