@@ -3967,9 +3967,25 @@ Status: Available to join"""
             def on_field_objects(data):
                 from lokbot import config
                 
-                # Log what we received
-                logger.debug(f'Received /field/objects/v4 event - data type: {type(data)}, keys: {data.keys() if isinstance(data, dict) else "N/A"}')
-
+                # RAW DATA LOGGING - capture everything received
+                timestamp = arrow.now().format('HH:mm:ss.SSS')
+                logger.info(f'[{timestamp}] ===== RAW SOCF DATA RECEIVED =====')
+                logger.info(f'[{timestamp}] Data type: {type(data).__name__}')
+                
+                if isinstance(data, dict):
+                    logger.info(f'[{timestamp}] Dict keys: {list(data.keys())}')
+                    logger.info(f'[{timestamp}] Dict size: {len(data)} keys')
+                    for key in list(data.keys())[:5]:  # Log first 5 keys and values
+                        val = data.get(key)
+                        if isinstance(val, (str, int, bool, float, type(None))):
+                            logger.info(f'[{timestamp}]   {key}: {val}')
+                        elif isinstance(val, (list, dict)):
+                            logger.info(f'[{timestamp}]   {key}: {type(val).__name__} with {len(val)} items')
+                        else:
+                            logger.info(f'[{timestamp}]   {key}: {type(val).__name__}')
+                else:
+                    logger.info(f'[{timestamp}] Raw data (first 500 chars): {str(data)[:500]}')
+                
                 # Check crystal limit flag before processing
                 if getattr(self, 'crystal_limit_reached', False):
                     logger.critical("Stopping SOCF processing - Crystal limit reached")
@@ -3978,50 +3994,67 @@ Status: Available to join"""
 
                 # Handle multiple data formats from SOCF
                 data_decoded = None
+                decode_method = "none"
                 
                 # Format 1: Data with Payload field (SOCF sends JSON string in Payload)
                 if isinstance(data, dict) and 'Payload' in data:
                     try:
                         payload_str = data.get('Payload')
+                        logger.info(f'[{timestamp}] Trying Payload format - type: {type(payload_str).__name__}')
                         if isinstance(payload_str, str):
                             data_decoded = json.loads(payload_str)
-                            logger.debug('Processed field objects from Payload string')
+                            decode_method = "Payload_string"
+                            logger.info(f'[{timestamp}] ✓ Successfully decoded from Payload string')
+                            logger.info(f'[{timestamp}] Decoded data keys: {list(data_decoded.keys()) if isinstance(data_decoded, dict) else "not a dict"}')
                         else:
                             data_decoded = payload_str
-                            logger.debug('Processed field objects from Payload dict')
+                            decode_method = "Payload_dict"
+                            logger.info(f'[{timestamp}] ✓ Using Payload dict directly')
                     except Exception as payload_error:
-                        logger.debug(f'Payload format processing failed: {payload_error}')
+                        logger.warning(f'[{timestamp}] ✗ Payload format processing failed: {payload_error}')
                 
                 # Format 2: Data with packs field (compressed with gzip + XOR)
                 if data_decoded is None:
                     try:
                         packs = data.get('packs') if isinstance(data, dict) else None
                         if packs:
+                            logger.info(f'[{timestamp}] Trying packs format - packs size: {len(packs) if hasattr(packs, "__len__") else "unknown"}')
                             gzip_decompress = gzip.decompress(bytearray(packs))
+                            logger.info(f'[{timestamp}] Gzip decompressed, size: {len(gzip_decompress)}')
                             data_decoded = self.api.b64xor_dec(gzip_decompress)
-                            logger.debug('Processed packed/compressed field objects data')
+                            decode_method = "packs_compressed"
+                            logger.info(f'[{timestamp}] ✓ Successfully decoded from packs')
+                            if isinstance(data_decoded, dict):
+                                logger.info(f'[{timestamp}] Decoded data keys: {list(data_decoded.keys())}')
                     except Exception as pack_error:
-                        logger.debug(f'Packed format processing failed: {pack_error}')
+                        logger.warning(f'[{timestamp}] ✗ Packed format processing failed: {pack_error}')
                 
                 # Format 3: Data already has objects field (already decoded)
                 if data_decoded is None and isinstance(data, dict) and data.get('objects'):
                     data_decoded = data
-                    logger.debug('Using already-decoded field objects data (direct JSON)')
+                    decode_method = "direct_objects"
+                    logger.info(f'[{timestamp}] ✓ Using already-decoded field objects data (direct JSON)')
                 
                 # If still no data, log error and return
                 if data_decoded is None:
-                    logger.warning(f'Could not process field objects data - no packs, Payload, or objects field found. Data received: {str(data)[:200]}')
+                    logger.error(f'[{timestamp}] ✗ Could not decode any format! Received data: {str(data)[:300]}')
                     self.field_object_processed = True
                     return
                 
+                logger.info(f'[{timestamp}] Decode method used: {decode_method}')
+                
                 objects = data_decoded.get('objects', [])
+                logger.info(f'[{timestamp}] Objects found in data: {len(objects)}')
+                
                 # Only include enabled targets
                 target_code_set = set([
                     target['code'] for target in targets
                     if target.get('enabled', True)
                 ])
+                
+                logger.info(f'[{timestamp}] Target codes to search for: {target_code_set}')
 
-                logger.debug(f'Processing {len(objects)} objects')
+                logger.info(f'[{timestamp}] Processing {len(objects)} total objects from field')
                 for each_obj in objects:
                     code = each_obj.get('code')
                     level = each_obj.get('level')
