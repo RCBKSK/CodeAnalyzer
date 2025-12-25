@@ -3976,30 +3976,45 @@ Status: Available to join"""
                     sio.disconnect()
                     return
 
-                # Handle both packed (compressed) and already-decoded formats
+                # Handle multiple data formats from SOCF
                 data_decoded = None
                 
-                # Try packed format first (compressed with gzip + XOR)
-                try:
-                    packs = data.get('packs') if isinstance(data, dict) else None
-                    if packs:
-                        gzip_decompress = gzip.decompress(bytearray(packs))
-                        data_decoded = self.api.b64xor_dec(gzip_decompress)
-                        logger.debug('Processed packed/compressed field objects data')
-                except Exception as pack_error:
-                    logger.debug(f'Packed format processing failed: {pack_error}')
+                # Format 1: Data with Payload field (SOCF sends JSON string in Payload)
+                if isinstance(data, dict) and 'Payload' in data:
+                    try:
+                        payload_str = data.get('Payload')
+                        if isinstance(payload_str, str):
+                            data_decoded = json.loads(payload_str)
+                            logger.debug('Processed field objects from Payload string')
+                        else:
+                            data_decoded = payload_str
+                            logger.debug('Processed field objects from Payload dict')
+                    except Exception as payload_error:
+                        logger.debug(f'Payload format processing failed: {payload_error}')
                 
-                # Fallback: check if data already has objects field (already decoded)
+                # Format 2: Data with packs field (compressed with gzip + XOR)
+                if data_decoded is None:
+                    try:
+                        packs = data.get('packs') if isinstance(data, dict) else None
+                        if packs:
+                            gzip_decompress = gzip.decompress(bytearray(packs))
+                            data_decoded = self.api.b64xor_dec(gzip_decompress)
+                            logger.debug('Processed packed/compressed field objects data')
+                    except Exception as pack_error:
+                        logger.debug(f'Packed format processing failed: {pack_error}')
+                
+                # Format 3: Data already has objects field (already decoded)
                 if data_decoded is None and isinstance(data, dict) and data.get('objects'):
                     data_decoded = data
                     logger.debug('Using already-decoded field objects data (direct JSON)')
                 
                 # If still no data, log error and return
                 if data_decoded is None:
-                    logger.warning(f'Could not process field objects data - no packs or objects field found. Data received: {str(data)[:200]}')
+                    logger.warning(f'Could not process field objects data - no packs, Payload, or objects field found. Data received: {str(data)[:200]}')
+                    self.field_object_processed = True
                     return
                 
-                objects = data_decoded.get('objects')
+                objects = data_decoded.get('objects', [])
                 # Only include enabled targets
                 target_code_set = set([
                     target['code'] for target in targets
