@@ -59,10 +59,22 @@ class LokBotApi:
             for index, each_plain in enumerate(plain)
         ])
 
-    def b64xor_enc(self, d: dict) -> str:
+    def b64xor_enc(self, d: dict) -> typing.Union[str, dict]:
+        """Encrypt data if xor_password is available, otherwise return plain JSON"""
+        if self.xor_password is None:
+            return d  # Return plain dict if no xor_password
         return base64.b64encode(self.xor(json.dumps(d, separators=(',', ':')).encode())).decode()
 
-    def b64xor_dec(self, s: typing.Union[str, bytes]) -> dict:
+    def b64xor_dec(self, s: typing.Union[str, bytes, dict]) -> dict:
+        """Decrypt data if it's encrypted, otherwise parse as JSON"""
+        if isinstance(s, dict):
+            return s  # Already a dict, return as-is
+        if self.xor_password is None:
+            # Try to parse as plain JSON
+            if isinstance(s, bytes):
+                return json.loads(s.decode())
+            return json.loads(s)
+        # Decrypt if we have xor_password
         return json.loads(self.xor(base64.b64decode(s)))
 
     @tenacity.retry(
