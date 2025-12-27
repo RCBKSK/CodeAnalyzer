@@ -4710,40 +4710,57 @@ Status: {status}"""
 
             @sio.on('/field/enter/v3')
             def on_field_enter(data):
-                data_decoded = self.api.b64xor_dec(data)
-                logger.debug(data_decoded)
-                self.socf_world_id = data_decoded.get('loc')[
-                    0]  # in case of cvc event world map
-
-                # knock - initialize zones with proper encoding
-                logger.info('[SOCF] Sending initial zone handshake messages')
+                logger.info('[SOCF] Received /field/enter/v3 response')
+                logger.debug(f'[SOCF] Response format - type: {type(data).__name__}, keys: {list(data.keys()) if isinstance(data, dict) else "N/A"}')
                 
-                # Send leave message (empty zones) - MUST be encoded
-                leave_msg_1 = self.api.b64xor_enc({
+                # NEW API FORMAT: data comes as {EventName: "/field/enter/v3", Payload: "..."}
+                try:
+                    if isinstance(data, dict) and 'Payload' in data:
+                        payload_str = data.get('Payload')
+                        if isinstance(payload_str, str):
+                            data_decoded = json.loads(payload_str)
+                            logger.info('[SOCF] ✓ Parsed Payload from JSON string')
+                        else:
+                            data_decoded = payload_str
+                            logger.info('[SOCF] ✓ Using Payload as dict')
+                    else:
+                        # Fallback: try the old decoding method
+                        logger.warning('[SOCF] No Payload field, trying legacy b64xor_dec')
+                        data_decoded = self.api.b64xor_dec(data)
+                    
+                    self.socf_world_id = data_decoded.get('loc')[0]
+                    logger.info(f'[SOCF] World ID set to: {self.socf_world_id}')
+                except Exception as e:
+                    logger.error(f'[SOCF] ✗ Failed to parse /field/enter/v3: {e}')
+                    raise
+
+                # Initialize zones with NEW plain JSON format (no encoding needed)
+                logger.info('[SOCF] Sending initial zone handshake messages (plain JSON format)')
+                
+                # Send leave message (empty zones)
+                sio.emit('/zone/leave/list/v2', {
                     'world': self.socf_world_id,
                     'zones': '[]'
                 })
-                sio.emit('/zone/leave/list/v2', leave_msg_1)
                 logger.debug('[SOCF] ✓ Sent /zone/leave/list/v2 (empty)')
                 
                 # Enter default zones
                 default_zones = '[0,64,1,65]'
-                enter_msg = self.api.b64xor_enc({
+                sio.emit('/zone/enter/list/v4', {
                     'world': self.socf_world_id,
                     'zones': default_zones
                 })
-                sio.emit('/zone/enter/list/v4', enter_msg)
                 logger.debug('[SOCF] ✓ Sent /zone/enter/list/v4 with default zones')
                 
-                # Leave default zones - MUST be encoded
-                leave_msg_2 = self.api.b64xor_enc({
+                # Leave default zones
+                sio.emit('/zone/leave/list/v2', {
                     'world': self.socf_world_id,
                     'zones': default_zones
                 })
-                sio.emit('/zone/leave/list/v2', leave_msg_2)
                 logger.debug('[SOCF] ✓ Sent /zone/leave/list/v2 (default zones)')
 
                 self.socf_entered = True
+                logger.info('[SOCF] Field enter handshake complete')
 
             logger.info(f'[SOCF] Attempting WebSocket connection to: {url}')
             logger.info(f'[SOCF] Connection params - token present: True, transports: websocket')
@@ -4758,9 +4775,9 @@ Status: {status}"""
                 raise
                 
             logger.debug(f'[SOCF] entering field with zones: {self.zones}')
-            sio.emit('/field/enter/v3',
-                     self.api.b64xor_enc({'token': self.token}))
-            logger.info(f'[SOCF] ✓ Emitted /field/enter/v3 event')
+            # NEW API: Send plain JSON, not encoded
+            sio.emit('/field/enter/v3', {'token': self.token})
+            logger.info(f'[SOCF] ✓ Emitted /field/enter/v3 event (plain JSON)')
 
             while not self.socf_entered:
                 time.sleep(1)
@@ -4820,11 +4837,11 @@ Status: {status}"""
                     'world': self.kingdom_enter.get('kingdom').get('worldId'),
                     'zones': json.dumps(zone_ids, separators=(',', ':'))
                 }
-                encoded_message = self.api.b64xor_enc(message)
                 
-                logger.info(f'[SOCF] Entering zones {zone_ids}: encoding={type(encoded_message).__name__}, socket={sio.connected}')
+                # NEW API: Send plain JSON, not encoded
+                logger.info(f'[SOCF] Entering zones {zone_ids}: plain JSON format, socket={sio.connected}')
 
-                sio.emit('/zone/enter/list/v4', encoded_message)
+                sio.emit('/zone/enter/list/v4', message)
                 logger.debug(f'[SOCF] ✓ Emitted /zone/enter/list/v4')
                 
                 self.field_object_processed = False
@@ -4849,10 +4866,9 @@ Status: {status}"""
                 # Clear scanning zone context when leaving zones
                 self._set_current_scanning_zone(None)
                 
-                # CRITICAL FIX: Emit the ENCODED message, not the raw dict!
-                encoded_leave_msg = self.api.b64xor_enc(message)
-                sio.emit('/zone/leave/list/v2', encoded_leave_msg)
-                logger.debug(f'[SOCF] ✓ Emitted /zone/leave/list/v2 (encoded)')
+                # NEW API: Emit plain JSON message
+                sio.emit('/zone/leave/list/v2', message)
+                logger.debug(f'[SOCF] ✓ Emitted /zone/leave/list/v2 (plain JSON)')
 
             logger.info('Object scanning loop finished')
             try:
