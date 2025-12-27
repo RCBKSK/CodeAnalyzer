@@ -4715,22 +4715,33 @@ Status: {status}"""
                 self.socf_world_id = data_decoded.get('loc')[
                     0]  # in case of cvc event world map
 
-                # knock
-                sio.emit('/zone/leave/list/v2', {
+                # knock - initialize zones with proper encoding
+                logger.info('[SOCF] Sending initial zone handshake messages')
+                
+                # Send leave message (empty zones) - MUST be encoded
+                leave_msg_1 = self.api.b64xor_enc({
                     'world': self.socf_world_id,
                     'zones': '[]'
                 })
+                sio.emit('/zone/leave/list/v2', leave_msg_1)
+                logger.debug('[SOCF] ✓ Sent /zone/leave/list/v2 (empty)')
+                
+                # Enter default zones
                 default_zones = '[0,64,1,65]'
-                sio.emit(
-                    '/zone/enter/list/v4',
-                    self.api.b64xor_enc({
-                        'world': self.socf_world_id,
-                        'zones': default_zones
-                    }))
-                sio.emit('/zone/leave/list/v2', {
+                enter_msg = self.api.b64xor_enc({
                     'world': self.socf_world_id,
                     'zones': default_zones
                 })
+                sio.emit('/zone/enter/list/v4', enter_msg)
+                logger.debug('[SOCF] ✓ Sent /zone/enter/list/v4 with default zones')
+                
+                # Leave default zones - MUST be encoded
+                leave_msg_2 = self.api.b64xor_enc({
+                    'world': self.socf_world_id,
+                    'zones': default_zones
+                })
+                sio.emit('/zone/leave/list/v2', leave_msg_2)
+                logger.debug('[SOCF] ✓ Sent /zone/leave/list/v2 (default zones)')
 
                 self.socf_entered = True
 
@@ -4811,12 +4822,12 @@ Status: {status}"""
                 }
                 encoded_message = self.api.b64xor_enc(message)
                 
-                logger.info(f'Sending /zone/enter/list/v4 with zones: {zone_ids}, message type: {type(encoded_message)}, socket connected: {sio.connected}')
+                logger.info(f'[SOCF] Entering zones {zone_ids}: encoding={type(encoded_message).__name__}, socket={sio.connected}')
 
                 sio.emit('/zone/enter/list/v4', encoded_message)
+                logger.debug(f'[SOCF] ✓ Emitted /zone/enter/list/v4')
+                
                 self.field_object_processed = False
-                logger.debug(
-                    f'entering zone: {zone_ids} and waiting for processing')
                 
                 # Wait for field objects with a timeout to prevent infinite wait
                 timeout_count = 0
@@ -4824,18 +4835,24 @@ Status: {status}"""
                     timeout_count += 1
                     time.sleep(1)
                     if timeout_count == 10:
-                        logger.warning(f'Still waiting for field objects after 10 seconds, socket connected: {sio.connected}')
+                        logger.warning(f'[SOCF] ⏳ Waiting 10s for /field/objects/v4 response (socket: {sio.connected})')
                 
                 if timeout_count >= 30:
-                    logger.error(f'Timeout waiting for field objects in zone {zone_ids}')
+                    logger.error(f'[SOCF] ✗ Timeout (30s) - no /field/objects/v4 received for zones {zone_ids}')
                     if sio.connected:
-                        logger.error('Socket is still connected but not receiving /field/objects/v4 events')
+                        logger.error('[SOCF] Socket connected but server not sending object data')
                     else:
-                        logger.error('Socket disconnected while waiting for field objects')
+                        logger.error('[SOCF] Socket disconnected during zone scanning')
+                else:
+                    logger.debug(f'[SOCF] ✓ Received object data after {timeout_count}s')
 
                 # Clear scanning zone context when leaving zones
                 self._set_current_scanning_zone(None)
-                sio.emit('/zone/leave/list/v2', message)
+                
+                # CRITICAL FIX: Emit the ENCODED message, not the raw dict!
+                encoded_leave_msg = self.api.b64xor_enc(message)
+                sio.emit('/zone/leave/list/v2', encoded_leave_msg)
+                logger.debug(f'[SOCF] ✓ Emitted /zone/leave/list/v2 (encoded)')
 
             logger.info('Object scanning loop finished')
             try:
