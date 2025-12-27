@@ -3614,6 +3614,21 @@ Status: Available to join"""
             except Exception as e:
                 logger.error(f"Error sending rally alert notification to web app: {str(e)}")
 
+        @sio.on('/kingdom/enter')
+        def on_kingdom_enter(data):
+            logger.info('[SOCK] Received /kingdom/enter response')
+            logger.debug(f'[SOCK] Response format - type: {type(data).__name__}, keys: {list(data.keys()) if isinstance(data, dict) else "N/A"}')
+            # NEW API FORMAT: handle Payload if present
+            if isinstance(data, dict) and 'Payload' in data:
+                try:
+                    payload_str = data.get('Payload')
+                    if isinstance(payload_str, str):
+                        parsed_data = json.loads(payload_str)
+                        logger.info('[SOCK] ✓ Parsed Payload from JSON string')
+                        logger.debug(f'[SOCK] Parsed data keys: {list(parsed_data.keys())}')
+                except Exception as e:
+                    logger.warning(f'[SOCK] Failed to parse Payload: {e}')
+
         @sio.on('/task/update')
         def on_task_update(data):
             logger.debug(data)
@@ -3628,9 +3643,11 @@ Status: Available to join"""
                 if data.get('code') == TASK_CODE_CAMP:
                     self.train_queue_available.set()
 
+        logger.info('[SOCK] Attempting WebSocket connection to kingdom socket')
         sio.connect(f'{url}?token={self.token}',
                     transports=["websocket"],
                     headers=ws_headers)
+        logger.info('[SOCK] ✓ WebSocket connected, emitting /kingdom/enter')
         sio.emit('/kingdom/enter', {"token": self.token})
 
         sio.wait()
@@ -4776,7 +4793,9 @@ Status: {status}"""
                 
             logger.debug(f'[SOCF] entering field with zones: {self.zones}')
             # NEW API: Send plain JSON, not encoded
-            sio.emit('/field/enter/v3', {'token': self.token})
+            emit_payload = {'token': self.token}
+            logger.info(f'[SOCF] Emitting /field/enter/v3 with payload: {emit_payload}')
+            sio.emit('/field/enter/v3', emit_payload)
             logger.info(f'[SOCF] ✓ Emitted /field/enter/v3 event (plain JSON)')
 
             while not self.socf_entered:
@@ -4840,6 +4859,7 @@ Status: {status}"""
                 
                 # NEW API: Send plain JSON, not encoded
                 logger.info(f'[SOCF] Entering zones {zone_ids}: plain JSON format, socket={sio.connected}')
+                logger.debug(f'[SOCF] Emitting /zone/enter/list/v4 with payload: {message}')
 
                 sio.emit('/zone/enter/list/v4', message)
                 logger.debug(f'[SOCF] ✓ Emitted /zone/enter/list/v4')
@@ -4867,6 +4887,7 @@ Status: {status}"""
                 self._set_current_scanning_zone(None)
                 
                 # NEW API: Emit plain JSON message
+                logger.debug(f'[SOCF] Emitting /zone/leave/list/v2 with payload: {message}')
                 sio.emit('/zone/leave/list/v2', message)
                 logger.debug(f'[SOCF] ✓ Emitted /zone/leave/list/v2 (plain JSON)')
 
@@ -4927,6 +4948,21 @@ Status: {status}"""
         sio = socketio.Client(reconnection=False,
                               logger=False,
                               engineio_logger=False)
+
+        @sio.on('/chat/enter')
+        def on_chat_enter(data):
+            logger.info('[SOCC] Received /chat/enter response')
+            logger.debug(f'[SOCC] Response format - type: {type(data).__name__}, keys: {list(data.keys()) if isinstance(data, dict) else "N/A"}')
+            # NEW API FORMAT: handle Payload if present
+            if isinstance(data, dict) and 'Payload' in data:
+                try:
+                    payload_str = data.get('Payload')
+                    if isinstance(payload_str, str):
+                        parsed_data = json.loads(payload_str)
+                        logger.info('[SOCC] ✓ Parsed Payload from JSON string')
+                        logger.debug(f'[SOCC] Parsed data keys: {list(parsed_data.keys())}')
+                except Exception as e:
+                    logger.warning(f'[SOCC] Failed to parse Payload: {e}')
 
         @sio.on('/chat/message')
         def on_chat_message(data):
@@ -5004,8 +5040,11 @@ Status: {status}"""
         status_thread.start()
 
         # Connect to chat
+        logger.info('[SOCC] Attempting WebSocket connection to chat socket')
         sio.connect(url, transports=["websocket"], headers=ws_headers)
+        logger.info('[SOCC] ✓ WebSocket connected, emitting /chat/enter')
         sio.emit('/chat/enter', {'token': self.token})
+        logger.info('[SOCC] ✓ Emitted /chat/enter event')
 
         sio.wait()
         logger.warning('socc_thread disconnected, reconnecting')
