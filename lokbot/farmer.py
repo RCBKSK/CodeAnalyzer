@@ -3862,6 +3862,49 @@ Status: Available to join"""
             sio = socketio.Client(reconnection=False,
                                   logger=False,
                                   engineio_logger=False)
+            
+            # Track data reception metrics for SOCF thread
+            socf_data_stats = {
+                'field_objects_received': 0,
+                'march_objects_received': 0,
+                'field_enter_received': False,
+                'last_field_objects_time': 0,
+                'last_march_objects_time': 0,
+                'connection_established_time': 0,
+                'total_data_bytes': 0
+            }
+            
+            @sio.on('connect')
+            def on_connect():
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                socf_data_stats['connection_established_time'] = time.time()
+                logger.info(f'[{current_time}] ========== SOCF SOCKET CONNECTED ==========')
+                logger.info(f'[{current_time}] Socket connected: True')
+                logger.info(f'[{current_time}] Socket ID: {sio.sid if hasattr(sio, "sid") else "unknown"}')
+                logger.info(f'[{current_time}] Connection time: {current_time}')
+                self.last_socf_activity = time.time()
+            
+            @sio.on('disconnect')
+            def on_disconnect():
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.warning(f'[{current_time}] ========== SOCF SOCKET DISCONNECTED ==========')
+                logger.warning(f'[{current_time}] Socket connected: False')
+                logger.warning(f'[{current_time}] Disconnect time: {current_time}')
+                logger.warning(f'[{current_time}] Field objects received before disconnect: {socf_data_stats["field_objects_received"]}')
+                logger.warning(f'[{current_time}] March objects received before disconnect: {socf_data_stats["march_objects_received"]}')
+            
+            @sio.on('connect_error')
+            def on_connect_error(error):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.error(f'[{current_time}] ========== SOCF CONNECTION ERROR ==========')
+                logger.error(f'[{current_time}] Error: {error}')
+                logger.error(f'[{current_time}] Error type: {type(error).__name__}')
+            
+            @sio.on('error')
+            def on_error(error):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.error(f'[{current_time}] ========== SOCF SOCKET ERROR ==========')
+                logger.error(f'[{current_time}] Error: {error}')
 
             @sio.on('/march/objects')
             def on_march_objects(data):
@@ -3869,6 +3912,16 @@ Status: Available to join"""
                 Robust march objects data handler with comprehensive validation and error recovery
                 """
                 current_time = arrow.now().format('HH:mm:ss.SSS')
+                
+                # Track reception stats
+                socf_data_stats['march_objects_received'] += 1
+                socf_data_stats['last_march_objects_time'] = time.time()
+                self.last_socf_activity = time.time()
+                
+                logger.info(f'[{current_time}] ===== MARCH OBJECTS EVENT RECEIVED (#{socf_data_stats["march_objects_received"]}) =====')
+                logger.info(f'[{current_time}] Data type: {type(data).__name__}')
+                if isinstance(data, dict):
+                    logger.info(f'[{current_time}] Keys: {list(data.keys())}')
 
                 # Input validation
                 if not data:
@@ -3984,10 +4037,18 @@ Status: Available to join"""
             def on_field_objects(data):
                 from lokbot import config
                 
+                # Track reception stats
+                socf_data_stats['field_objects_received'] += 1
+                socf_data_stats['last_field_objects_time'] = time.time()
+                self.last_socf_activity = time.time()
+                
                 # RAW DATA LOGGING - capture everything received
                 timestamp = arrow.now().format('HH:mm:ss.SSS')
-                logger.info(f'[{timestamp}] ===== RAW SOCF DATA RECEIVED =====')
+                logger.info(f'[{timestamp}] ===== FIELD OBJECTS v4 EVENT RECEIVED (#{socf_data_stats["field_objects_received"]}) =====')
                 logger.info(f'[{timestamp}] Data type: {type(data).__name__}')
+                logger.info(f'[{timestamp}] Socket connected: {sio.connected}')
+                logger.info(f'[{timestamp}] Total field objects events: {socf_data_stats["field_objects_received"]}')
+                logger.info(f'[{timestamp}] Total march objects events: {socf_data_stats["march_objects_received"]}')
                 
                 if isinstance(data, dict):
                     logger.info(f'[{timestamp}] Dict keys: {list(data.keys())}')
@@ -4779,6 +4840,35 @@ Status: {status}"""
                 self.socf_entered = True
                 logger.info('[SOCF] Field enter handshake complete')
 
+            # Start periodic status logging thread
+            def status_logger():
+                last_log_time = 0
+                while self.socf_thread_active:
+                    current_time = time.time()
+                    if current_time - last_log_time > 30:  # Log every 30 seconds
+                        timestamp = arrow.now().format('HH:mm:ss.SSS')
+                        logger.info(f'[{timestamp}] ===== SOCF STATUS REPORT =====')
+                        logger.info(f'[{timestamp}] Socket connected: {sio.connected}')
+                        logger.info(f'[{timestamp}] Field objects received: {socf_data_stats["field_objects_received"]}')
+                        logger.info(f'[{timestamp}] March objects received: {socf_data_stats["march_objects_received"]}')
+                        
+                        if socf_data_stats['last_field_objects_time'] > 0:
+                            time_since_last = current_time - socf_data_stats['last_field_objects_time']
+                            logger.info(f'[{timestamp}] Time since last field objects: {time_since_last:.1f}s')
+                        else:
+                            logger.warning(f'[{timestamp}] No field objects received yet!')
+                        
+                        if socf_data_stats['last_march_objects_time'] > 0:
+                            time_since_last = current_time - socf_data_stats['last_march_objects_time']
+                            logger.info(f'[{timestamp}] Time since last march objects: {time_since_last:.1f}s')
+                        
+                        last_log_time = current_time
+                    time.sleep(1)
+            
+            status_thread = threading.Thread(target=status_logger, daemon=True)
+            status_thread.start()
+            logger.info('SOCF status logging thread started')
+            
             logger.info(f'[SOCF] Attempting WebSocket connection to: {url}')
             logger.info(f'[SOCF] Connection params - token present: True, transports: websocket')
             try:
