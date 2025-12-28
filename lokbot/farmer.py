@@ -3793,6 +3793,20 @@ Status: Available to join"""
         sio.emit('/kingdom/enter', {"token": self.token})
         self.last_sock_activity = time.time()
 
+        # Wait for /kingdom/enter handshake response with timeout
+        logger.info('[SOCK] Waiting for /kingdom/enter handshake response...')
+        handshake_timeout = 10
+        handshake_wait = 0
+        while not kingdom_enter_event.is_set() and handshake_wait < handshake_timeout and sio.connected:
+            time.sleep(0.5)
+            handshake_wait += 0.5
+        
+        if not kingdom_enter_event.is_set():
+            logger.error(f'[SOCK] ✗ /kingdom/enter handshake timeout ({handshake_timeout}s), socket.connected={sio.connected}')
+            raise tenacity.TryAgain()
+        
+        logger.info(f'[SOCK] ✓ /kingdom/enter handshake complete, proceeding to keep-alive')
+
         # Keep socket alive with active monitoring instead of sio.wait()
         logger.info('[SOCK] Entering keep-alive loop to maintain connection')
         connection_timeout = 300  # 5 minutes of inactivity before timeout
