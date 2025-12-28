@@ -3433,19 +3433,121 @@ Rally ID: {rally_id}"""
         sio = socketio.Client(reconnection=False,
                               logger=False,
                               engineio_logger=False)
+        
+        # Track SOCK thread data reception metrics
+        sock_data_stats = {
+            'building_updates_received': 0,
+            'resource_updates_received': 0,
+            'buff_list_received': 0,
+            'rally_notifications_received': 0,
+            'task_updates_received': 0,
+            'kingdom_enter_received': False,
+            'last_data_time': 0,
+            'connection_established_time': 0,
+            'total_events_received': 0
+        }
+        
+        @sio.on('connect')
+        def on_connect():
+            current_time = arrow.now().format('HH:mm:ss.SSS')
+            sock_data_stats['connection_established_time'] = time.time()
+            logger.info(f'[{current_time}] ========== SOCK SOCKET CONNECTED ==========')
+            logger.info(f'[{current_time}] Socket ID: {sio.sid if hasattr(sio, "sid") else "unknown"}')
+            logger.info(f'[{current_time}] Connection time: {current_time}')
+            self.last_sock_activity = time.time()
+        
+        @sio.on('disconnect')
+        def on_disconnect():
+            current_time = arrow.now().format('HH:mm:ss.SSS')
+            logger.warning(f'[{current_time}] ========== SOCK SOCKET DISCONNECTED ==========')
+            logger.warning(f'[{current_time}] Total events received: {sock_data_stats["total_events_received"]}')
+            logger.warning(f'[{current_time}] Building updates: {sock_data_stats["building_updates_received"]}')
+            logger.warning(f'[{current_time}] Resource updates: {sock_data_stats["resource_updates_received"]}')
+            logger.warning(f'[{current_time}] Buff list updates: {sock_data_stats["buff_list_received"]}')
+            logger.warning(f'[{current_time}] Rally notifications: {sock_data_stats["rally_notifications_received"]}')
+            logger.warning(f'[{current_time}] Task updates: {sock_data_stats["task_updates_received"]}')
+        
+        @sio.on('connect_error')
+        def on_connect_error(error):
+            current_time = arrow.now().format('HH:mm:ss.SSS')
+            logger.error(f'[{current_time}] ========== SOCK CONNECTION ERROR ==========')
+            logger.error(f'[{current_time}] Error: {error}')
+            logger.error(f'[{current_time}] Error type: {type(error).__name__}')
+        
+        @sio.on('error')
+        def on_socket_error(error):
+            current_time = arrow.now().format('HH:mm:ss.SSS')
+            logger.error(f'[{current_time}] ========== SOCK SOCKET ERROR ==========')
+            logger.error(f'[{current_time}] Error: {error}')
+        
+        @sio.on('ping')
+        def on_ping(data):
+            current_time = arrow.now().format('HH:mm:ss.SSS')
+            logger.debug(f'[{current_time}] >>> SOCK PING RECEIVED from server')
+            self.last_sock_activity = time.time()
+        
+        @sio.on('pong')
+        def on_pong(data):
+            current_time = arrow.now().format('HH:mm:ss.SSS')
+            logger.debug(f'[{current_time}] <<< SOCK PONG RESPONSE received')
+            self.last_sock_activity = time.time()
+        
+        # Start periodic status logging thread
+        def sock_status_logger():
+            last_log_time = 0
+            while sio.connected:
+                current_time = time.time()
+                if current_time - last_log_time > 30:  # Log every 30 seconds
+                    timestamp = arrow.now().format('HH:mm:ss.SSS')
+                    logger.info(f'[{timestamp}] ===== SOCK STATUS REPORT =====')
+                    logger.info(f'[{timestamp}] Socket connected: {sio.connected}')
+                    logger.info(f'[{timestamp}] Total events received: {sock_data_stats["total_events_received"]}')
+                    logger.info(f'[{timestamp}] Building updates: {sock_data_stats["building_updates_received"]}')
+                    logger.info(f'[{timestamp}] Resource updates: {sock_data_stats["resource_updates_received"]}')
+                    logger.info(f'[{timestamp}] Buff list received: {sock_data_stats["buff_list_received"]}')
+                    logger.info(f'[{timestamp}] Rally notifications: {sock_data_stats["rally_notifications_received"]}')
+                    logger.info(f'[{timestamp}] Task updates: {sock_data_stats["task_updates_received"]}')
+                    
+                    if sock_data_stats['last_data_time'] > 0:
+                        time_since_last = current_time - sock_data_stats['last_data_time']
+                        logger.info(f'[{timestamp}] Time since last data: {time_since_last:.1f}s')
+                    else:
+                        logger.warning(f'[{timestamp}] No data received yet!')
+                    
+                    last_log_time = current_time
+                time.sleep(1)
+        
+        status_thread = threading.Thread(target=sock_status_logger, daemon=True)
+        status_thread.start()
+        logger.info('[SOCK] Status logging thread started')
 
         @sio.on('/building/update')
         def on_building_update(data):
+            sock_data_stats['building_updates_received'] += 1
+            sock_data_stats['total_events_received'] += 1
+            sock_data_stats['last_data_time'] = time.time()
+            self.last_sock_activity = time.time()
+            logger.debug(f'[SOCK] /building/update received (#{sock_data_stats["building_updates_received"]})')
             logger.debug(data)
             self._update_kingdom_enter_building(data)
 
         @sio.on('/resource/upgrade')
         def on_resource_update(data):
+            sock_data_stats['resource_updates_received'] += 1
+            sock_data_stats['total_events_received'] += 1
+            sock_data_stats['last_data_time'] = time.time()
+            self.last_sock_activity = time.time()
+            logger.debug(f'[SOCK] /resource/upgrade received (#{sock_data_stats["resource_updates_received"]})')
             logger.debug(data)
             self.resources[data.get('resourceIdx')] = data.get('value')
 
         @sio.on('/buff/list')
         def on_buff_list(data):
+            sock_data_stats['buff_list_received'] += 1
+            sock_data_stats['total_events_received'] += 1
+            sock_data_stats['last_data_time'] = time.time()
+            self.last_sock_activity = time.time()
+            logger.info(f'[SOCK] /buff/list received (#{sock_data_stats["buff_list_received"]})')
             try:
                 logger.info("=== RAW BUFF DATA FROM SOCC_THREAD ===")
                 logger.info(f"Raw buff data type: {type(data)}")
@@ -3557,6 +3659,11 @@ Rally ID: {rally_id}"""
 
         @sio.on('/alliance/rally/new')
         def on_alliance_rally_new(data):
+            sock_data_stats['rally_notifications_received'] += 1
+            sock_data_stats['total_events_received'] += 1
+            sock_data_stats['last_data_time'] = time.time()
+            self.last_sock_activity = time.time()
+            logger.info(f'[SOCK] /alliance/rally/new received (#{sock_data_stats["rally_notifications_received"]})')
             logger.debug(data)
             code = data.get('code')
             rally_mo_id = data.get('_id')
@@ -3616,7 +3723,12 @@ Status: Available to join"""
 
         @sio.on('/kingdom/enter')
         def on_kingdom_enter(data):
-            logger.info('[SOCK] Received /kingdom/enter response')
+            sock_data_stats['kingdom_enter_received'] = True
+            sock_data_stats['total_events_received'] += 1
+            sock_data_stats['last_data_time'] = time.time()
+            self.last_sock_activity = time.time()
+            logger.info('[SOCK] ========== /KINGDOM/ENTER RESPONSE RECEIVED ==========')
+            logger.info('[SOCK] Connection handshake complete')
             logger.debug(f'[SOCK] Response format - type: {type(data).__name__}, keys: {list(data.keys()) if isinstance(data, dict) else "N/A"}')
             # NEW API FORMAT: handle Payload if present
             if isinstance(data, dict) and 'Payload' in data:
@@ -3631,6 +3743,11 @@ Status: Available to join"""
 
         @sio.on('/task/update')
         def on_task_update(data):
+            sock_data_stats['task_updates_received'] += 1
+            sock_data_stats['total_events_received'] += 1
+            sock_data_stats['last_data_time'] = time.time()
+            self.last_sock_activity = time.time()
+            logger.debug(f'[SOCK] /task/update received (#{sock_data_stats["task_updates_received"]})')
             logger.debug(data)
             if data.get('status') == STATUS_FINISHED:
                 if data.get('code') in (TASK_CODE_SILVER_HAMMER,
