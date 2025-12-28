@@ -3790,7 +3790,8 @@ Status: Available to join"""
                     transports=["websocket"],
                     headers=ws_headers)
         logger.info('[SOCK] ✓ WebSocket connected, emitting /kingdom/enter')
-        sio.emit('/kingdom/enter', {"token": self.token})
+        # Token is already authenticated via URL, just send empty /kingdom/enter event
+        sio.emit('/kingdom/enter', {})
         self.last_sock_activity = time.time()
 
         # Wait for /kingdom/enter handshake response with timeout
