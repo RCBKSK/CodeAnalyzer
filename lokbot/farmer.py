@@ -3431,8 +3431,8 @@ Rally ID: {rally_id}"""
         url = self.kingdom_enter.get('networks').get('kingdoms')[0]
 
         sio = socketio.Client(reconnection=False,
-                              logger=False,
-                              engineio_logger=False)
+                              logger=True,  # Enable socket.io logging
+                              engineio_logger=True)  # Enable engine.io logging
         
         # Track SOCK thread data reception metrics
         sock_data_stats = {
@@ -3453,8 +3453,10 @@ Rally ID: {rally_id}"""
             sock_data_stats['connection_established_time'] = time.time()
             logger.info(f'[{current_time}] ========== SOCK SOCKET CONNECTED ==========')
             logger.info(f'[{current_time}] Socket ID: {sio.sid if hasattr(sio, "sid") else "unknown"}')
+            logger.info(f'[{current_time}] Socket connected status: {sio.connected}')
             logger.info(f'[{current_time}] Connection time: {current_time}')
             self.last_sock_activity = time.time()
+            logger.info(f'[{current_time}] Waiting for server /kingdom/enter response...')
         
         @sio.on('disconnect')
         def on_disconnect():
@@ -3479,6 +3481,7 @@ Rally ID: {rally_id}"""
             current_time = arrow.now().format('HH:mm:ss.SSS')
             logger.error(f'[{current_time}] ========== SOCK SOCKET ERROR ==========')
             logger.error(f'[{current_time}] Error: {error}')
+            logger.error(f'[{current_time}] Error details - type: {type(error).__name__}, full: {str(error)}')
         
         @sio.on('ping')
         def on_ping(data):
