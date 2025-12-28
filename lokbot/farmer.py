@@ -3724,6 +3724,9 @@ Status: Available to join"""
             except Exception as e:
                 logger.error(f"Error sending rally alert notification to web app: {str(e)}")
 
+        # Flag to track if /kingdom/enter handshake is complete
+        kingdom_enter_event = threading.Event()
+        
         @sio.on('/kingdom/enter')
         def on_kingdom_enter(data):
             sock_data_stats['kingdom_enter_received'] = True
@@ -3731,7 +3734,7 @@ Status: Available to join"""
             sock_data_stats['last_data_time'] = time.time()
             self.last_sock_activity = time.time()
             logger.info('[SOCK] ========== /KINGDOM/ENTER RESPONSE RECEIVED ==========')
-            logger.info('[SOCK] Connection handshake complete')
+            logger.info('[SOCK] ✓ Connection handshake complete - can now proceed to keep-alive loop')
             logger.debug(f'[SOCK] Response format - type: {type(data).__name__}, keys: {list(data.keys()) if isinstance(data, dict) else "N/A"}')
             # NEW API FORMAT: handle Payload if present
             if isinstance(data, dict) and 'Payload' in data:
@@ -3743,6 +3746,8 @@ Status: Available to join"""
                         logger.debug(f'[SOCK] Parsed data keys: {list(parsed_data.keys())}')
                 except Exception as e:
                     logger.warning(f'[SOCK] Failed to parse Payload: {e}')
+            # Signal that handshake is complete
+            kingdom_enter_event.set()
 
         @sio.on('/task/update')
         def on_task_update(data):
