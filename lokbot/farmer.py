@@ -3768,32 +3768,60 @@ Status: Available to join"""
                 if data.get('code') == TASK_CODE_CAMP:
                     self.train_queue_available.set()
 
+        # Add socket lifecycle debug handlers
+        @sio.on('connect')
+        def on_sock_connect():
+            logger.info('[SOCK-DEBUG] ✓ SOCKET CONNECTED - socket.connected=True')
+            self.last_sock_activity = time.time()
+        
+        @sio.on('disconnect')
+        def on_sock_disconnect():
+            logger.info('[SOCK-DEBUG] ✗ SOCKET DISCONNECTED - socket.connected=False')
+        
+        @sio.on('*')
+        def catch_all_sock_events(event, *args):
+            """Catch unhandled events to debug server communication"""
+            self.last_sock_activity = time.time()
+            if event not in ['/kingdom/enter', '/building/update', '/resource/upgrade', '/buff/list', '/alliance/rally/new', '/task/update']:
+                logger.info(f'[SOCK-DEBUG] Unhandled event: {event} with {len(args)} args')
+
         logger.info('[SOCK] Attempting WebSocket connection to kingdom socket')
         sio.connect(f'{url}?token={self.token}',
                     transports=["websocket"],
                     headers=ws_headers)
         logger.info('[SOCK] ✓ WebSocket connected, emitting /kingdom/enter')
         sio.emit('/kingdom/enter', {"token": self.token})
+        self.last_sock_activity = time.time()
 
         # Keep socket alive with active monitoring instead of sio.wait()
-        # sio.wait() was causing immediate disconnection
         logger.info('[SOCK] Entering keep-alive loop to maintain connection')
         connection_timeout = 300  # 5 minutes of inactivity before timeout
+        keep_alive_counter = 0
         try:
             while sio.connected:
                 time.sleep(1)
-                # Monitor connection health
-                if hasattr(self, 'last_sock_activity'):
+                keep_alive_counter += 1
+                
+                # Log every 60 seconds
+                if keep_alive_counter % 60 == 0:
                     time_since_activity = time.time() - self.last_sock_activity
-                    if time_since_activity > connection_timeout:
-                        logger.warning(f'[SOCK] No activity for {connection_timeout}s, disconnecting for reconnect')
-                        break
+                    logger.info(f'[SOCK] Keep-alive: connected={sio.connected}, activity={time_since_activity:.0f}s ago, events={sock_data_stats["total_events_received"]}')
+                
+                # Monitor connection health
+                time_since_activity = time.time() - self.last_sock_activity
+                if time_since_activity > connection_timeout:
+                    logger.warning(f'[SOCK] No activity for {time_since_activity:.0f}s (timeout={connection_timeout}s), disconnecting for reconnect')
+                    break
         except Exception as e:
             logger.error(f'[SOCK] Error in keep-alive loop: {e}')
+            import traceback
+            logger.debug(f'[SOCK] Error traceback: {traceback.format_exc()}')
         finally:
             logger.warning('[SOCK] Socket connection ended, attempting to disconnect gracefully')
             try:
-                sio.disconnect()
+                if sio.connected:
+                    sio.disconnect()
+                logger.info('[SOCK] Disconnect completed')
             except Exception as e:
                 logger.debug(f'[SOCK] Error during disconnect: {e}')
         
@@ -5154,8 +5182,8 @@ Status: {status}"""
 
             logger.info('Object scanning loop finished')
             try:
-                sio.disconnect()
-                sio.wait()
+                if sio.connected:
+                    sio.disconnect()
             except Exception as e:
                 logger.error(f"Error disconnecting SOCF socket: {e}")
                 raise tenacity.TryAgain()
@@ -5300,6 +5328,21 @@ Status: {status}"""
         status_thread.daemon = True
         status_thread.start()
 
+        # Add socket lifecycle debug handlers
+        @sio.on('connect')
+        def on_socc_connect():
+            logger.info('[SOCC-DEBUG] ✓ SOCKET CONNECTED - socket.connected=True')
+        
+        @sio.on('disconnect')
+        def on_socc_disconnect():
+            logger.info('[SOCC-DEBUG] ✗ SOCKET DISCONNECTED - socket.connected=False')
+        
+        @sio.on('*')
+        def catch_all_socc_events(event, *args):
+            """Catch unhandled events to debug server communication"""
+            if event not in ['/chat/enter', '/chat/message']:
+                logger.info(f'[SOCC-DEBUG] Unhandled event: {event} with {len(args)} args')
+
         # Connect to chat
         logger.info('[SOCC] Attempting WebSocket connection to chat socket')
         sio.connect(url, transports=["websocket"], headers=ws_headers)
@@ -5307,7 +5350,26 @@ Status: {status}"""
         sio.emit('/chat/enter', {'token': self.token})
         logger.info('[SOCC] ✓ Emitted /chat/enter event')
 
-        sio.wait()
+        # Keep socket alive with active monitoring instead of sio.wait()
+        logger.info('[SOCC] Entering keep-alive loop to maintain connection')
+        connection_timeout = 300  # 5 minutes of inactivity
+        keep_alive_counter = 0
+        try:
+            while sio.connected:
+                time.sleep(1)
+                keep_alive_counter += 1
+                if keep_alive_counter % 60 == 0:
+                    logger.info(f'[SOCC] Keep-alive: connected={sio.connected}')
+        except Exception as e:
+            logger.error(f'[SOCC] Error in keep-alive loop: {e}')
+        finally:
+            logger.warning('[SOCC] Socket connection ended')
+            try:
+                if sio.connected:
+                    sio.disconnect()
+            except Exception as e:
+                logger.debug(f'[SOCC] Error during disconnect: {e}')
+        
         logger.warning('socc_thread disconnected, reconnecting')
         raise tenacity.TryAgain()
 
