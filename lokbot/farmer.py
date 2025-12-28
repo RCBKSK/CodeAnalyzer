@@ -3767,7 +3767,28 @@ Status: Available to join"""
         logger.info('[SOCK] ✓ WebSocket connected, emitting /kingdom/enter')
         sio.emit('/kingdom/enter', {"token": self.token})
 
-        sio.wait()
+        # Keep socket alive with active monitoring instead of sio.wait()
+        # sio.wait() was causing immediate disconnection
+        logger.info('[SOCK] Entering keep-alive loop to maintain connection')
+        connection_timeout = 300  # 5 minutes of inactivity before timeout
+        try:
+            while sio.connected:
+                time.sleep(1)
+                # Monitor connection health
+                if hasattr(self, 'last_sock_activity'):
+                    time_since_activity = time.time() - self.last_sock_activity
+                    if time_since_activity > connection_timeout:
+                        logger.warning(f'[SOCK] No activity for {connection_timeout}s, disconnecting for reconnect')
+                        break
+        except Exception as e:
+            logger.error(f'[SOCK] Error in keep-alive loop: {e}')
+        finally:
+            logger.warning('[SOCK] Socket connection ended, attempting to disconnect gracefully')
+            try:
+                sio.disconnect()
+            except Exception as e:
+                logger.debug(f'[SOCK] Error during disconnect: {e}')
+        
         logger.warning('sock_thread disconnected, reconnecting')
         raise tenacity.TryAgain()
 
