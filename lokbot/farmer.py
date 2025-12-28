@@ -3905,6 +3905,31 @@ Status: Available to join"""
                 current_time = arrow.now().format('HH:mm:ss.SSS')
                 logger.error(f'[{current_time}] ========== SOCF SOCKET ERROR ==========')
                 logger.error(f'[{current_time}] Error: {error}')
+            
+            # Add ping/pong event handlers for keepalive monitoring
+            @sio.on('ping')
+            def on_ping(data):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.info(f'[{current_time}] >>> PING RECEIVED from server')
+                logger.info(f'[{current_time}] >>> Sending PONG response')
+                self.last_socf_activity = time.time()
+                # Automatically respond with pong (socket.io handles this)
+            
+            @sio.on('pong')
+            def on_pong(data):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.info(f'[{current_time}] <<< PONG RESPONSE received')
+                self.last_socf_activity = time.time()
+            
+            # Track all events emitted
+            def log_emit(event, data=None):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                if isinstance(data, dict):
+                    logger.debug(f'[{current_time}] [EMIT] {event} with keys: {list(data.keys())}')
+                elif isinstance(data, str):
+                    logger.debug(f'[{current_time}] [EMIT] {event} with data: {data[:100]}...' if len(data) > 100 else f'[{current_time}] [EMIT] {event} with data: {data}')
+                else:
+                    logger.debug(f'[{current_time}] [EMIT] {event}')
 
             @sio.on('/march/objects')
             def on_march_objects(data):
