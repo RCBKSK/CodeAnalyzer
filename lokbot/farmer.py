@@ -3429,6 +3429,11 @@ Rally ID: {rally_id}"""
         :return:
         """
         url = self.kingdom_enter.get('networks').get('kingdoms')[0]
+        # CRITICAL FIX: Convert WSS to HTTPS for polling transport compatibility
+        # Socket.io server expects HTTPS polling, not WebSocket Secure
+        if url.startswith('wss://'):
+            url = url.replace('wss://', 'https://', 1)
+            logger.info('[SOCK] ✓ Converted WSS URL to HTTPS for polling transport')
 
         sio = socketio.Client(
             reconnection=True,
@@ -4071,6 +4076,10 @@ Status: Available to join"""
             self.socf_world_id = self.kingdom_enter.get('kingdom').get(
                 'worldId')
             url = self.kingdom_enter.get('networks').get('fields')[0]
+            # CRITICAL FIX: Convert WSS to HTTPS for polling transport compatibility  
+            if url.startswith('wss://'):
+                url = url.replace('wss://', 'https://', 1)
+                logger.info('[SOCF] ✓ Converted WSS URL to HTTPS for polling transport')
             from_loc = self.kingdom_enter.get('kingdom').get('loc')
 
             if not self.zones:
