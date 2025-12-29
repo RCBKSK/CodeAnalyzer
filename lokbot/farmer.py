@@ -3796,11 +3796,13 @@ Status: Available to join"""
         logger.info(f'[SOCK] Headers: {ws_headers}')
         
         try:
-            # Try connection with websocket transport first
+            # For HTTPS socket.io endpoints, use polling transport which works reliably with HTTPS
+            # WebSocket over HTTPS requires WSS which may not be properly configured on the server
+            logger.info('[SOCK] Connecting with polling transport (HTTPS-compatible)...')
             sio.connect(f'{url}?token={self.token}',
-                        transports=["websocket"],
+                        transports=["polling"],  # Use polling for HTTPS reliability
                         headers=ws_headers)
-            logger.info('[SOCK] ✓ WebSocket connected, emitting /kingdom/enter')
+            logger.info('[SOCK] ✓ Connected, emitting /kingdom/enter')
             
             # Emit /kingdom/enter event
             sio.emit('/kingdom/enter', {"token": self.token})
@@ -3809,28 +3811,29 @@ Status: Available to join"""
             # CRITICAL: Wait for /kingdom/enter handshake response before proceeding
             # Server WILL close connection if bot doesn't wait for handshake completion
             if not kingdom_enter_event.wait(timeout=10):
-                logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter handshake response not received (10s timeout)')
+                logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter response not received (10s timeout)')
                 logger.error('[SOCK] Server may have rejected the token or closed connection')
                 raise Exception('Handshake timeout: /kingdom/enter response not received')
             
             logger.info('[SOCK] ✓ Handshake complete, server acknowledged connection')
             
         except Exception as e:
-            logger.error(f'[SOCK] WebSocket failed: {e}')
-            logger.info('[SOCK] Attempting fallback with polling...')
+            logger.error(f'[SOCK] Connection failed: {e}')
+            logger.error(f'[SOCK] Attempting with fallback transport selection...')
             try:
+                # Try with both transports for auto-negotiation
                 sio.connect(f'{url}?token={self.token}',
-                            transports=["polling"],
+                            transports=["websocket", "polling"],
                             headers=ws_headers)
-                logger.info('[SOCK] ✓ Polling connection established as fallback')
+                logger.info('[SOCK] ✓ Connected with auto-negotiated transport')
                 sio.emit('/kingdom/enter', {"token": self.token})
-                logger.info('[SOCK] /kingdom/enter emitted via polling, waiting for server response...')
+                logger.info('[SOCK] /kingdom/enter emitted, waiting for server response...')
                 if not kingdom_enter_event.wait(timeout=10):
-                    logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter handshake response not received (10s timeout)')
+                    logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter response not received (10s timeout)')
                     raise Exception('Handshake timeout: /kingdom/enter response not received')
-                logger.info('[SOCK] ✓ Polling handshake complete')
+                logger.info('[SOCK] ✓ Fallback handshake complete')
             except Exception as e2:
-                logger.error(f'[SOCK] Polling also failed: {e2}')
+                logger.error(f'[SOCK] All connection attempts failed: {e2}')
                 raise
         
         self.last_sock_activity = time.time()
@@ -5110,17 +5113,26 @@ Status: {status}"""
             status_thread.start()
             logger.info('SOCF status logging thread started')
             
-            logger.info(f'[SOCF] Attempting WebSocket connection to: {url}')
-            logger.info(f'[SOCF] Connection params - token present: True, transports: websocket')
+            logger.info(f'[SOCF] Attempting HTTPS polling connection to: {url}')
+            logger.info(f'[SOCF] Connection params - token present: True, transports: polling')
             try:
+                # Use polling transport for HTTPS reliability
                 sio.connect(f'{url}?token={self.token}',
-                            transports=["websocket"],
+                            transports=["polling"],
                             headers=ws_headers)
-                logger.info(f'[SOCF] ✓ WebSocket connected successfully, socket.connected: {sio.connected}')
+                logger.info(f'[SOCF] ✓ Connected successfully via polling, socket.connected: {sio.connected}')
             except Exception as e:
-                logger.error(f'[SOCF] ✗ WebSocket connection failed: {e}')
+                logger.error(f'[SOCF] ✗ Polling connection failed: {e}')
                 logger.error(f'[SOCF] URL: {url}')
-                raise
+                logger.error(f'[SOCF] Attempting fallback with auto-negotiated transports...')
+                try:
+                    sio.connect(f'{url}?token={self.token}',
+                                transports=["websocket", "polling"],
+                                headers=ws_headers)
+                    logger.info(f'[SOCF] ✓ Connected with auto-negotiated transport')
+                except Exception as e2:
+                    logger.error(f'[SOCF] All connection attempts failed: {e2}')
+                    raise
                 
             logger.debug(f'[SOCF] entering field with zones: {self.zones}')
             # NEW API: Send plain JSON, not encoded
