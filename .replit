@@ -3,7 +3,7 @@ run = "python main.py"
 
 [nix]
 channel = "stable-25_05"
-packages = ["cacert", "geckodriver", "glibcLocales", "libev", "openssl", "postgresql"]
+packages = ["cacert", "coreutils", "geckodriver", "glibcLocales", "libev", "openssl", "postgresql"]
 
 [deployment]
 run = ["python", "main.py"]

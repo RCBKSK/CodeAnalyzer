@@ -3799,8 +3799,7 @@ Status: Available to join"""
             # Try connection with websocket transport first
             sio.connect(f'{url}?token={self.token}',
                         transports=["websocket"],
-                        headers=ws_headers,
-                        wait_timeout=10)
+                        headers=ws_headers)
             logger.info('[SOCK] ✓ WebSocket connected, listening for kingdom events')
         except Exception as e:
             logger.error(f'[SOCK] WebSocket failed: {e}')
@@ -3808,8 +3807,7 @@ Status: Available to join"""
             try:
                 sio.connect(f'{url}?token={self.token}',
                             transports=["polling"],
-                            headers=ws_headers,
-                            wait_timeout=10)
+                            headers=ws_headers)
                 logger.info('[SOCK] ✓ Polling connection established as fallback')
             except Exception as e2:
                 logger.error(f'[SOCK] Polling also failed: {e2}')
