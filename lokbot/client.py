@@ -216,7 +216,7 @@ class LokBotApi:
             json_data = {"deviceInfo": {"build": "global"}}
 
         try:
-            res = self.post('https://lok-api-live.leagueofkingdoms.com/api/auth/connect', json_data)
+            res = self.post('https://api-lok-live.leagueofkingdoms.com/api/auth/connect', json_data)
             if not res.get('result'):
                 raise NoAuthException()
 
@@ -249,7 +249,7 @@ class LokBotApi:
             "deviceInfo": device_info
         }
 
-        res = self.post('https://lok-api-live.leagueofkingdoms.com/api/auth/login', data)
+        res = self.post('https://api-lok-live.leagueofkingdoms.com/api/auth/login', data)
         if res.get('result'):
             self.token = res.get('token')
             self.opener.headers['X-Access-Token'] = self.token
@@ -439,7 +439,7 @@ class LokBotApi:
         获取基础信息
         :return:
         """
-        res = self.post('https://lok-api-live.leagueofkingdoms.com/api/kingdom/enter')
+        res = self.post('https://api-lok-live.leagueofkingdoms.com/api/kingdom/enter')
 
         captcha = res.get('captcha')
         if captcha and captcha.get('next'):

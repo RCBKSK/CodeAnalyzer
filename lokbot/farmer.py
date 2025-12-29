@@ -3800,7 +3800,21 @@ Status: Available to join"""
             sio.connect(f'{url}?token={self.token}',
                         transports=["websocket"],
                         headers=ws_headers)
-            logger.info('[SOCK] ✓ WebSocket connected, listening for kingdom events')
+            logger.info('[SOCK] ✓ WebSocket connected, emitting /kingdom/enter')
+            
+            # Emit /kingdom/enter event
+            sio.emit('/kingdom/enter', {"token": self.token})
+            logger.info('[SOCK] /kingdom/enter emitted, waiting for server response...')
+            
+            # CRITICAL: Wait for /kingdom/enter handshake response before proceeding
+            # Server WILL close connection if bot doesn't wait for handshake completion
+            if not kingdom_enter_event.wait(timeout=10):
+                logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter handshake response not received (10s timeout)')
+                logger.error('[SOCK] Server may have rejected the token or closed connection')
+                raise Exception('Handshake timeout: /kingdom/enter response not received')
+            
+            logger.info('[SOCK] ✓ Handshake complete, server acknowledged connection')
+            
         except Exception as e:
             logger.error(f'[SOCK] WebSocket failed: {e}')
             logger.info('[SOCK] Attempting fallback with polling...')
@@ -3809,6 +3823,12 @@ Status: Available to join"""
                             transports=["polling"],
                             headers=ws_headers)
                 logger.info('[SOCK] ✓ Polling connection established as fallback')
+                sio.emit('/kingdom/enter', {"token": self.token})
+                logger.info('[SOCK] /kingdom/enter emitted via polling, waiting for server response...')
+                if not kingdom_enter_event.wait(timeout=10):
+                    logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter handshake response not received (10s timeout)')
+                    raise Exception('Handshake timeout: /kingdom/enter response not received')
+                logger.info('[SOCK] ✓ Polling handshake complete')
             except Exception as e2:
                 logger.error(f'[SOCK] Polling also failed: {e2}')
                 raise
@@ -3816,7 +3836,7 @@ Status: Available to join"""
         self.last_sock_activity = time.time()
 
         # Keep socket alive with active monitoring instead of sio.wait()
-        logger.info('[SOCK] Entering keep-alive loop to maintain connection')
+        logger.info('[SOCK] ✓ Entering keep-alive loop to maintain connection')
         connection_timeout = 300  # 5 minutes of inactivity before timeout
         keep_alive_counter = 0
         try:
