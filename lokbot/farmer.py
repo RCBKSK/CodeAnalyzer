@@ -3789,24 +3789,9 @@ Status: Available to join"""
         sio.connect(f'{url}?token={self.token}',
                     transports=["websocket"],
                     headers=ws_headers)
-        logger.info('[SOCK] ✓ WebSocket connected, emitting /kingdom/enter')
-        # Token is already authenticated via URL, just send empty /kingdom/enter event
-        sio.emit('/kingdom/enter', {})
+        logger.info('[SOCK] ✓ WebSocket connected, listening for kingdom events')
+        # Server automatically sends events after connection - no handshake needed
         self.last_sock_activity = time.time()
-
-        # Wait for /kingdom/enter handshake response with timeout
-        logger.info('[SOCK] Waiting for /kingdom/enter handshake response...')
-        handshake_timeout = 10
-        handshake_wait = 0
-        while not kingdom_enter_event.is_set() and handshake_wait < handshake_timeout and sio.connected:
-            time.sleep(0.5)
-            handshake_wait += 0.5
-        
-        if not kingdom_enter_event.is_set():
-            logger.error(f'[SOCK] ✗ /kingdom/enter handshake timeout ({handshake_timeout}s), socket.connected={sio.connected}')
-            raise tenacity.TryAgain()
-        
-        logger.info(f'[SOCK] ✓ /kingdom/enter handshake complete, proceeding to keep-alive')
 
         # Keep socket alive with active monitoring instead of sio.wait()
         logger.info('[SOCK] Entering keep-alive loop to maintain connection')
