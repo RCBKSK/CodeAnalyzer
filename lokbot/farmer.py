@@ -3430,9 +3430,15 @@ Rally ID: {rally_id}"""
         """
         url = self.kingdom_enter.get('networks').get('kingdoms')[0]
 
-        sio = socketio.Client(reconnection=False,
-                              logger=True,  # Enable socket.io logging
-                              engineio_logger=True)  # Enable engine.io logging
+        sio = socketio.Client(
+            reconnection=True,
+            reconnection_attempts=10,
+            reconnection_delay=1,
+            reconnection_delay_max=5,
+            logger=True,
+            engineio_logger=True,
+            ssl_verify=False
+        )
         
         # Track SOCK thread data reception metrics
         sock_data_stats = {
@@ -3786,11 +3792,29 @@ Status: Available to join"""
                 logger.info(f'[SOCK-DEBUG] Unhandled event: {event} with {len(args)} args')
 
         logger.info('[SOCK] Attempting WebSocket connection to kingdom socket')
-        sio.connect(f'{url}?token={self.token}',
-                    transports=["websocket"],
-                    headers=ws_headers)
-        logger.info('[SOCK] ✓ WebSocket connected, listening for kingdom events')
-        # Server automatically sends events after connection - no handshake needed
+        logger.info(f'[SOCK] URL: {url}?token=***')
+        logger.info(f'[SOCK] Headers: {ws_headers}')
+        
+        try:
+            # Try connection with websocket transport first
+            sio.connect(f'{url}?token={self.token}',
+                        transports=["websocket"],
+                        headers=ws_headers,
+                        wait_timeout=10)
+            logger.info('[SOCK] ✓ WebSocket connected, listening for kingdom events')
+        except Exception as e:
+            logger.error(f'[SOCK] WebSocket failed: {e}')
+            logger.info('[SOCK] Attempting fallback with polling...')
+            try:
+                sio.connect(f'{url}?token={self.token}',
+                            transports=["polling"],
+                            headers=ws_headers,
+                            wait_timeout=10)
+                logger.info('[SOCK] ✓ Polling connection established as fallback')
+            except Exception as e2:
+                logger.error(f'[SOCK] Polling also failed: {e2}')
+                raise
+        
         self.last_sock_activity = time.time()
 
         # Keep socket alive with active monitoring instead of sio.wait()
