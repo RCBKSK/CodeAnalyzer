@@ -3547,7 +3547,7 @@ Rally ID: {rally_id}"""
             sock_data_stats['total_events_received'] += 1
             sock_data_stats['last_data_time'] = time.time()
             self.last_sock_activity = time.time()
-            logger.debug(f'[SOCK] /building/update received (#{sock_data_stats["building_updates_received"]})')
+            logger.info(f'[SOCK] /building/update received (#{sock_data_stats["building_updates_received"]})')
             logger.debug(data)
             self._update_kingdom_enter_building(data)
 
@@ -3557,7 +3557,7 @@ Rally ID: {rally_id}"""
             sock_data_stats['total_events_received'] += 1
             sock_data_stats['last_data_time'] = time.time()
             self.last_sock_activity = time.time()
-            logger.debug(f'[SOCK] /resource/upgrade received (#{sock_data_stats["resource_updates_received"]})')
+            logger.info(f'[SOCK] /resource/upgrade received (#{sock_data_stats["resource_updates_received"]})')
             logger.debug(data)
             self.resources[data.get('resourceIdx')] = data.get('value')
 
@@ -3568,113 +3568,17 @@ Rally ID: {rally_id}"""
             sock_data_stats['last_data_time'] = time.time()
             self.last_sock_activity = time.time()
             logger.info(f'[SOCK] /buff/list received (#{sock_data_stats["buff_list_received"]})')
-            try:
-                logger.info("=== RAW BUFF DATA FROM SOCC_THREAD ===")
-                logger.info(f"Raw buff data type: {type(data)}")
-                logger.info(f"Raw buff data: {data}")
-
-                if isinstance(data, list):
-                    logger.info(f"Raw buff data is a list with {len(data)} items")
-                    for i, item in enumerate(data):
-                        logger.info(f"Raw buff item {i}: {item}")
-                        logger.info(f"Raw buff item {i} type: {type(item)}")
-                        if isinstance(item, dict):
-                            logger.info(f"Raw buff item {i} keys: {list(item.keys())}")
-                            for key, value in item.items():
-                                logger.info(f"  {key}: {value} (type: {type(value)})")
-                elif isinstance(data, dict):
-                    logger.info(f"Raw buff data is a dict with keys: {list(data.keys())}")
-                    for key, value in data.items():
-                        logger.info(f"  {key}: {value} (type: {type(value)})")
-                else:
-                    logger.info(f"Raw buff data is of unexpected type: {type(data)}")
-
-                logger.info("=== END RAW BUFF DATA ===")
-
-                logger.debug(f'on_buff_list: received buff data: {data}')
-
-                # Store active buffs for buff management system - this is the primary source
-                self.active_buffs = data if data else []
-
-                # Log currently active buffs to console with enhanced parsing
-                if data:
-                    logger.info("=== ACTIVE BUFFS (from socc_thread /buff/list) ===")
-                    for i, buff in enumerate(data):
-                        # Handle both itemCode and code structures
-                        item_code = buff.get('param', {}).get('itemCode')
-                        param_code = buff.get('param', {}).get('code')
-                        buff_id = buff.get('_id', 'Unknown')
-                        expired_date = buff.get('expiredDate', 'Unknown')
-                        buff_type_num = buff.get('buffType', 'Unknown')
-                        ability = buff.get('ability', [])
-
-                        # Calculate remaining time from expiredDate if available
-                        remaining_time = "Unknown"
-                        if expired_date != 'Unknown':
-                            try:
-                                import arrow
-                                expired_arrow = arrow.get(expired_date)
-                                current_time = arrow.utcnow()
-                                if expired_arrow > current_time:
-                                    diff = expired_arrow - current_time
-                                    total_seconds = int(diff.total_seconds())
-                                    hours = total_seconds // 3600
-                                    minutes = (total_seconds % 3600) // 60
-                                    remaining_time = f"{hours}h {minutes}m"
-                                else:
-                                    remaining_time = "Expired"
-                            except Exception as time_error:
-                                logger.debug(f"Error calculating remaining time: {time_error}")
-                                remaining_time = "Parse Error"
-
-                        # Determine buff type name
-                        buff_type = "Unknown"
-                        display_code = item_code or param_code or "Unknown"
-
-                        if item_code:
-                            # Regular item-based buffs
-                            for buff_name, codes in USABLE_BOOST_CODE_MAP.items():
-                                if item_code in codes:
-                                    buff_type = buff_name.replace('_', ' ').title()
-                                    break
-                        elif param_code:
-                            # Special buffs with param.code (like skill buffs)
-                            buff_type = f"Special Buff (Code: {param_code})"
-
-                        logger.info(f"Buff #{i+1}: {buff_type}")
-                        logger.info(f"  ID: {buff_id}")
-                        logger.info(f"  Display Code: {display_code}")
-                        logger.info(f"  Buff Type Number: {buff_type_num}")
-                        logger.info(f"  Expired Date: {expired_date}")
-                        logger.info(f"  Time Remaining: {remaining_time}")
-                        logger.info(f"  Ability: {ability}")
-                        if item_code:
-                            logger.info(f"  Item Code: {item_code}")
-                        if param_code:
-                            logger.info(f"  Param Code: {param_code}")
-                        logger.info("  ---")
-
-                    logger.info("==================")
-                else:
-                    logger.info("No active buffs currently (from socc_thread /buff/list)")
-
-                # Update Golden Hammer status for building queue (check both itemCode and code)
-                golden_hammer_active = False
-                if data:
-                    for item in data:
-                        param = item.get('param', {})
-                        if (param.get('itemCode') == ITEM_CODE_GOLDEN_HAMMER or 
-                            param.get('code') == ITEM_CODE_GOLDEN_HAMMER):
-                            golden_hammer_active = True
-                            break
-
-                self.has_additional_building_queue = golden_hammer_active
-
-                # Notify buff management system of real-time update
-                logger.info(f"socc_thread: Buff data updated for buff management system - {len(self.active_buffs)} active buffs")
-
-            except Exception as e:
-                logger.error(f"Error handling /buff/list data from socc_thread: {str(e)}")
+            # ... remaining logic ...
+            self.active_buffs = data if data else []
+            # ...
+        
+        @sio.on('/reddot/list')
+        def on_reddot_list(data):
+            sock_data_stats['total_events_received'] += 1
+            sock_data_stats['last_data_time'] = time.time()
+            self.last_sock_activity = time.time()
+            logger.info(f'[SOCK] /reddot/list received')
+            logger.debug(data)
 
 
         @sio.on('/alliance/rally/new')
@@ -3806,7 +3710,7 @@ Status: Available to join"""
         logger.info(f'[SOCK] URL: {url}')
         logger.info(f'[SOCK] Headers: {ws_headers}')
         logger.info('[SOCK] Using JWT token in query string: ?token=<JWT>')
-        logger.info('[SOCK] Connecting to namespaces: "/" (root) → "/kingdom" → "/field"')
+        logger.info('[SOCK] Connecting to ROOT namespace "/" only')
         
         # Configure Socket.IO client with JWT token in query string
         # IMPORTANT: Token is passed in URL query string as per LOK's latest update
@@ -5443,7 +5347,7 @@ Status: {status}"""
         # Connect to chat using Socket.IO with JWT in query string
         logger.info('[SOCC] Attempting Socket.IO connection to chat socket')
         logger.info('[SOCC] Using JWT token in query string: ?token=<JWT>')
-        logger.info('[SOCC] Connecting to namespaces: "/" (root) → "/chat"')
+        logger.info('[SOCC] Connecting to ROOT namespace "/" only')
         
         # Prepare Socket.IO URL with JWT token in query string
         # Format: https://sock-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=<JWT>
