@@ -3801,21 +3801,20 @@ Status: Available to join"""
         logger.info('[SOCK] Attempting Socket.IO connection to kingdom socket')
         logger.info(f'[SOCK] URL: {url}')
         logger.info(f'[SOCK] Headers: {ws_headers}')
-        logger.info(f'[SOCK] Using Bearer token authentication via auth parameter')
+        logger.info('[SOCK] Using JWT token in query string: ?token=<JWT>')
         logger.info('[SOCK] Connecting to explicit namespaces: ["/", "/kingdom", "/field"]')
         
-        # Configure Socket.IO client with proper authentication
-        # IMPORTANT: Token is passed via auth parameter with Bearer scheme
-        # Server requires per-namespace authentication
-        auth = {"authorization": f"Bearer {self.token}"}
+        # Configure Socket.IO client with JWT token in query string
+        # IMPORTANT: Token is passed in URL query string as per LOK's latest update
+        # Format: https://sock-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=<JWT>
+        socket_url = f"{url}?token={self.token}"
+        logger.info(f'[SOCK] Query string URL: {socket_url[:50]}...token=<JWT>')
         
         try:
             logger.info('[SOCK] Attempting connection with WebSocket transport (polling fallback enabled)...')
-            # Connect using proper Socket.IO auth pattern with Engine.IO v4
-            # Explicitly declare all namespaces that will be used
-            # Auth is automatically applied to all namespaces
-            sio.connect(url,
-                        auth=auth,                              # JWT token via auth parameter
+            # Connect using Socket.IO with JWT in query string (Engine.IO v4 format)
+            # No auth parameter - token is in the URL
+            sio.connect(socket_url,
                         transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
                         namespaces=["/", "/kingdom", "/field"], # Explicitly connect to all required namespaces
                         headers=ws_headers)
@@ -3837,8 +3836,7 @@ Status: Available to join"""
             try:
                 # Fallback: force polling transport for maximum compatibility
                 logger.info('[SOCK] Attempting connection with polling transport only...')
-                sio.connect(url,
-                            auth=auth,
+                sio.connect(socket_url,
                             transports=["polling"],  # Polling only for maximum HTTPS compatibility
                             namespaces=["/", "/kingdom", "/field"],  # Same explicit namespaces
                             headers=ws_headers)
@@ -5137,17 +5135,18 @@ Status: {status}"""
             logger.info('SOCF status logging thread started')
             
             logger.info(f'[SOCF] Attempting Socket.IO connection to: {url}')
-            logger.info(f'[SOCF] Using Bearer token authentication via auth parameter')
+            logger.info('[SOCF] Using JWT token in query string: ?token=<JWT>')
             logger.info('[SOCF] Connecting to explicit namespaces: ["/", "/field", "/zone"]')
             
-            # Prepare auth with Bearer token scheme (Engine.IO v4 standard)
-            auth = {"authorization": f"Bearer {self.token}"}
+            # Prepare Socket.IO URL with JWT token in query string
+            # Format: https://sock-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=<JWT>
+            socket_url = f"{url}?token={self.token}"
+            logger.info(f'[SOCF] Query string URL: {socket_url[:50]}...token=<JWT>')
             
             try:
-                # Connect using proper Socket.IO auth with Engine.IO v4
-                # Explicitly declare all namespaces for field scanning
-                sio.connect(url,
-                            auth=auth,
+                # Connect using Socket.IO with JWT in query string (Engine.IO v4 format)
+                # No auth parameter - token is in the URL
+                sio.connect(socket_url,
                             transports=["websocket", "polling"],
                             namespaces=["/", "/field", "/zone"],  # Explicitly connect to field-related namespaces
                             headers=ws_headers)
@@ -5157,8 +5156,7 @@ Status: {status}"""
                 logger.error(f'[SOCF] URL: {url}')
                 logger.error(f'[SOCF] Attempting fallback with polling-only transport...')
                 try:
-                    sio.connect(url,
-                                auth=auth,
+                    sio.connect(socket_url,
                                 transports=["polling"],
                                 namespaces=["/", "/field", "/zone"],  # Same explicit namespaces
                                 headers=ws_headers)
@@ -5430,16 +5428,17 @@ Status: {status}"""
             if event not in ['/chat/enter', '/chat/message']:
                 logger.info(f'[SOCC-DEBUG] Unhandled event: {event} with {len(args)} args')
 
-        # Connect to chat using proper Socket.IO auth
+        # Connect to chat using Socket.IO with JWT in query string
         logger.info('[SOCC] Attempting Socket.IO connection to chat socket')
-        logger.info('[SOCC] Using Bearer token authentication via auth parameter')
+        logger.info('[SOCC] Using JWT token in query string: ?token=<JWT>')
         logger.info('[SOCC] Connecting to explicit namespaces: ["/", "/chat"]')
         
-        # Prepare auth with Bearer token scheme (Engine.IO v4 standard)
-        auth = {"authorization": f"Bearer {self.token}"}
+        # Prepare Socket.IO URL with JWT token in query string
+        # Format: https://sock-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=<JWT>
+        socket_url = f"{url}?token={self.token}"
+        logger.info(f'[SOCC] Query string URL: {socket_url[:50]}...token=<JWT>')
         
-        sio.connect(url, 
-                    auth=auth,                              # JWT token via auth parameter
+        sio.connect(socket_url, 
                     transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
                     namespaces=["/", "/chat"],              # Explicitly connect to chat-related namespaces
                     headers=ws_headers)
