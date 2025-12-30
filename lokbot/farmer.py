@@ -3429,11 +3429,13 @@ Rally ID: {rally_id}"""
         :return:
         """
         url = self.kingdom_enter.get('networks').get('kingdoms')[0]
+        original_url = url
         # CRITICAL FIX: Convert WSS to HTTPS for polling transport compatibility
         # Socket.io server expects HTTPS polling, not WebSocket Secure
         if url.startswith('wss://'):
             url = url.replace('wss://', 'https://', 1)
-            logger.info('[SOCK] ✓ Converted WSS URL to HTTPS for polling transport')
+        logger.info(f'[SOCK] URL conversion: {original_url[:30]}... → {url[:30]}...')
+        logger.info(f'[SOCK] URL is HTTPS: {url.startswith("https://")}')
 
         sio = socketio.Client(
             reconnection=True,
@@ -3796,17 +3798,19 @@ Status: Available to join"""
             if event not in ['/kingdom/enter', '/building/update', '/resource/upgrade', '/buff/list', '/alliance/rally/new', '/task/update']:
                 logger.info(f'[SOCK-DEBUG] Unhandled event: {event} with {len(args)} args')
 
-        logger.info('[SOCK] Attempting WebSocket connection to kingdom socket')
-        logger.info(f'[SOCK] URL: {url}?token=***')
+        logger.info('[SOCK] Attempting connection to kingdom socket')
+        logger.info(f'[SOCK] URL (after conversion): {url}?token=***')
         logger.info(f'[SOCK] Headers: {ws_headers}')
+        logger.info(f'[SOCK] URL uses HTTPS: {url.startswith("https://")}')
         
         try:
             # For HTTPS socket.io endpoints, use polling transport which works reliably with HTTPS
             # WebSocket over HTTPS requires WSS which may not be properly configured on the server
-            logger.info('[SOCK] Connecting with polling transport (HTTPS-compatible)...')
-            sio.connect(f'{url}?token={self.token}',
-                        transports=["polling"],  # Use polling for HTTPS reliability
-                        headers=ws_headers)
+            logger.info('[SOCK] Connecting with HTTPS polling transport (HTTPS-compatible)...')
+            sio.connect(url + f'?token={self.token}',
+                        transports=["polling"],  # CRITICAL: Force polling only, no websocket
+                        headers=ws_headers,
+                        skip_sid=False)
             logger.info('[SOCK] ✓ Connected, emitting /kingdom/enter')
             
             # Emit /kingdom/enter event
@@ -3827,9 +3831,10 @@ Status: Available to join"""
             logger.error(f'[SOCK] Attempting with fallback transport selection...')
             try:
                 # Try with both transports for auto-negotiation
-                sio.connect(f'{url}?token={self.token}',
-                            transports=["websocket", "polling"],
-                            headers=ws_headers)
+                sio.connect(url + f'?token={self.token}',
+                            transports=["polling", "websocket"],  # Try polling FIRST
+                            headers=ws_headers,
+                            skip_sid=False)
                 logger.info('[SOCK] ✓ Connected with auto-negotiated transport')
                 sio.emit('/kingdom/enter', {"token": self.token})
                 logger.info('[SOCK] /kingdom/enter emitted, waiting for server response...')
@@ -4076,10 +4081,12 @@ Status: Available to join"""
             self.socf_world_id = self.kingdom_enter.get('kingdom').get(
                 'worldId')
             url = self.kingdom_enter.get('networks').get('fields')[0]
+            original_url = url
             # CRITICAL FIX: Convert WSS to HTTPS for polling transport compatibility  
             if url.startswith('wss://'):
                 url = url.replace('wss://', 'https://', 1)
-                logger.info('[SOCF] ✓ Converted WSS URL to HTTPS for polling transport')
+            logger.info(f'[SOCF] URL conversion: {original_url[:30]}... → {url[:30]}...')
+            logger.info(f'[SOCF] URL is HTTPS: {url.startswith("https://")}')
             from_loc = self.kingdom_enter.get('kingdom').get('loc')
 
             if not self.zones:
@@ -5123,21 +5130,23 @@ Status: {status}"""
             logger.info('SOCF status logging thread started')
             
             logger.info(f'[SOCF] Attempting HTTPS polling connection to: {url}')
-            logger.info(f'[SOCF] Connection params - token present: True, transports: polling')
+            logger.info(f'[SOCF] Connection params - token present: True, transports: polling, URL uses HTTPS: {url.startswith("https://")}')
             try:
                 # Use polling transport for HTTPS reliability
-                sio.connect(f'{url}?token={self.token}',
+                sio.connect(url + f'?token={self.token}',
                             transports=["polling"],
-                            headers=ws_headers)
+                            headers=ws_headers,
+                            skip_sid=False)
                 logger.info(f'[SOCF] ✓ Connected successfully via polling, socket.connected: {sio.connected}')
             except Exception as e:
                 logger.error(f'[SOCF] ✗ Polling connection failed: {e}')
                 logger.error(f'[SOCF] URL: {url}')
                 logger.error(f'[SOCF] Attempting fallback with auto-negotiated transports...')
                 try:
-                    sio.connect(f'{url}?token={self.token}',
-                                transports=["websocket", "polling"],
-                                headers=ws_headers)
+                    sio.connect(url + f'?token={self.token}',
+                                transports=["polling", "websocket"],
+                                headers=ws_headers,
+                                skip_sid=False)
                     logger.info(f'[SOCF] ✓ Connected with auto-negotiated transport')
                 except Exception as e2:
                     logger.error(f'[SOCF] All connection attempts failed: {e2}')
