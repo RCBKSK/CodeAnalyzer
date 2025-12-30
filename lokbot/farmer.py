@@ -3809,8 +3809,7 @@ Status: Available to join"""
             logger.info('[SOCK] Connecting with HTTPS polling transport (HTTPS-compatible)...')
             sio.connect(url + f'?token={self.token}',
                         transports=["polling"],  # CRITICAL: Force polling only, no websocket
-                        headers=ws_headers,
-                        skip_sid=False)
+                        headers=ws_headers)
             logger.info('[SOCK] ✓ Connected, emitting /kingdom/enter')
             
             # Emit /kingdom/enter event
@@ -3833,8 +3832,7 @@ Status: Available to join"""
                 # Try with both transports for auto-negotiation
                 sio.connect(url + f'?token={self.token}',
                             transports=["polling", "websocket"],  # Try polling FIRST
-                            headers=ws_headers,
-                            skip_sid=False)
+                            headers=ws_headers)
                 logger.info('[SOCK] ✓ Connected with auto-negotiated transport')
                 sio.emit('/kingdom/enter', {"token": self.token})
                 logger.info('[SOCK] /kingdom/enter emitted, waiting for server response...')
@@ -5135,8 +5133,7 @@ Status: {status}"""
                 # Use polling transport for HTTPS reliability
                 sio.connect(url + f'?token={self.token}',
                             transports=["polling"],
-                            headers=ws_headers,
-                            skip_sid=False)
+                            headers=ws_headers)
                 logger.info(f'[SOCF] ✓ Connected successfully via polling, socket.connected: {sio.connected}')
             except Exception as e:
                 logger.error(f'[SOCF] ✗ Polling connection failed: {e}')
@@ -5145,8 +5142,7 @@ Status: {status}"""
                 try:
                     sio.connect(url + f'?token={self.token}',
                                 transports=["polling", "websocket"],
-                                headers=ws_headers,
-                                skip_sid=False)
+                                headers=ws_headers)
                     logger.info(f'[SOCF] ✓ Connected with auto-negotiated transport')
                 except Exception as e2:
                     logger.error(f'[SOCF] All connection attempts failed: {e2}')
