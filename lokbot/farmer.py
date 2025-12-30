@@ -3801,12 +3801,12 @@ Status: Available to join"""
         logger.info('[SOCK] Attempting Socket.IO connection to kingdom socket')
         logger.info(f'[SOCK] URL: {url}')
         logger.info(f'[SOCK] Headers: {ws_headers}')
-        logger.info(f'[SOCK] Using JWT token authentication via auth parameter (NOT query string)')
+        logger.info(f'[SOCK] Using Bearer token authentication via auth parameter')
         
         # Configure Socket.IO client with proper authentication
-        # IMPORTANT: Token is passed via auth parameter, NOT query string
-        # This follows Engine.IO v4 protocol requirements
-        auth = {"token": self.token}
+        # IMPORTANT: Token is passed via auth parameter with Bearer scheme
+        # Server requires: auth = {"authorization": f"Bearer {TOKEN}"}
+        auth = {"authorization": f"Bearer {self.token}"}
         
         try:
             logger.info('[SOCK] Attempting connection with WebSocket transport (polling fallback enabled)...')
@@ -5133,10 +5133,10 @@ Status: {status}"""
             logger.info('SOCF status logging thread started')
             
             logger.info(f'[SOCF] Attempting Socket.IO connection to: {url}')
-            logger.info(f'[SOCF] Using JWT token authentication via auth parameter (NOT query string)')
+            logger.info(f'[SOCF] Using Bearer token authentication via auth parameter')
             
-            # Prepare auth with JWT token
-            auth = {"token": self.token}
+            # Prepare auth with Bearer token scheme (Engine.IO v4 standard)
+            auth = {"authorization": f"Bearer {self.token}"}
             
             try:
                 # Connect using proper Socket.IO auth with Engine.IO v4
@@ -5425,10 +5425,10 @@ Status: {status}"""
 
         # Connect to chat using proper Socket.IO auth
         logger.info('[SOCC] Attempting Socket.IO connection to chat socket')
-        logger.info('[SOCC] Using JWT token authentication via auth parameter (NOT query string)')
+        logger.info('[SOCC] Using Bearer token authentication via auth parameter')
         
-        # Prepare auth with JWT token
-        auth = {"token": self.token}
+        # Prepare auth with Bearer token scheme (Engine.IO v4 standard)
+        auth = {"authorization": f"Bearer {self.token}"}
         
         sio.connect(url, 
                     auth=auth,                              # JWT token via auth parameter
