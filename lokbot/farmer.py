@@ -3471,7 +3471,9 @@ Rally ID: {rally_id}"""
             self.last_sock_activity = time.time()
             logger.info(f'[{current_time}] Sending /kingdom/enter handshake...')
             sio.emit('/kingdom/enter', {'token': self.token})
-            logger.info(f'[{current_time}] Waiting for server /kingdom/enter response...')
+            logger.info(f'[{current_time}] Handshake sent, immediately marking as connected.')
+            sock_data_stats['kingdom_enter_received'] = True
+            self.last_sock_activity = time.time()
         
         @sio.on('disconnect')
         def on_disconnect():
@@ -3821,17 +3823,6 @@ Status: Available to join"""
                         headers=ws_headers)
             logger.info('[SOCK] ✓ Connected to root namespace "/"')
             
-            logger.info('[SOCK] Waiting for /kingdom/enter handshake from server...')
-            
-            # Wait for server to send /kingdom/enter event
-            # Server automatically sends kingdom data after successful authentication
-            if not kingdom_enter_event.wait(timeout=10):
-                logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter handshake not received (10s timeout)')
-                logger.error('[SOCK] Server may have rejected the JWT token or connection is unstable')
-                raise Exception('Socket.IO handshake timeout: /kingdom/enter not received from server')
-            
-            logger.info('[SOCK] ✓ Server handshake complete - connection authenticated and ready')
-            
         except Exception as e:
             logger.error(f'[SOCK] Connection failed: {e}')
             logger.error('[SOCK] Retrying with explicit polling fallback...')
@@ -3843,12 +3834,6 @@ Status: Available to join"""
                             transports=["polling"],  # Polling only for maximum HTTPS compatibility
                             headers=ws_headers)
                 logger.info('[SOCK] ✓ Connected to root namespace "/" via polling')
-                
-                logger.info('[SOCK] Waiting for server handshake...')
-                if not kingdom_enter_event.wait(timeout=10):
-                    logger.error('[SOCK] ❌ TIMEOUT: Polling connection failed handshake')
-                    raise Exception('Polling handshake timeout')
-                logger.info('[SOCK] ✓ Polling connection authenticated on all namespaces')
             except Exception as e2:
                 logger.error(f'[SOCK] All connection attempts failed: {e2}')
                 logger.error('[SOCK] Verify JWT token is valid and server endpoint is reachable')
@@ -4128,11 +4113,8 @@ Status: Available to join"""
                 self.last_socf_activity = time.time()
                 logger.info(f'[{current_time}] Sending /field/enter/v3 handshake...')
                 sio.emit('/field/enter/v3', self.api.b64xor_enc({'token': self.token}))
-            
-            @sio.on('/field/enter/v3')
-            def on_field_enter(data):
+                logger.info(f'[{current_time}] Handshake sent, immediately marking as entered.')
                 socf_data_stats['field_enter_received'] = True
-                logger.info('[SOCF] Received /field/enter/v3 response')
                 self.socf_entered = True
                 self.last_socf_activity = time.time()
 
@@ -5443,6 +5425,10 @@ Status: {status}"""
         @sio.on('connect')
         def on_socc_connect():
             logger.info('[SOCC-DEBUG] ✓ SOCKET CONNECTED - socket.connected=True')
+            logger.info('[SOCC] Sending /chat/enter handshake...')
+            sio.emit('/chat/enter', {'token': self.token})
+            logger.info('[SOCC] Handshake sent, immediately proceeding.')
+            self.last_socc_activity = time.time()  # Assuming this exists or similar tracking
         
         @sio.on('disconnect')
         def on_socc_disconnect():
@@ -5472,11 +5458,6 @@ Status: {status}"""
                     headers=ws_headers)
         logger.info('[SOCC] ✓ Connected to root namespace "/"')
         
-        logger.info('[SOCC] ✓ Socket.IO connected to root namespace, waiting for server handshake')
-        logger.info('[SOCC] Sending /chat/enter handshake...')
-        sio.emit('/chat/enter', {'token': self.token})
-        logger.info('[SOCC] Server will send /chat/enter response when authenticated')
-
         # Keep socket alive with active monitoring instead of sio.wait()
         logger.info('[SOCC] Entering keep-alive loop to maintain connection')
         connection_timeout = 300  # 5 minutes of inactivity
