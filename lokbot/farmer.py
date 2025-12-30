@@ -3802,7 +3802,7 @@ Status: Available to join"""
         logger.info(f'[SOCK] URL: {url}')
         logger.info(f'[SOCK] Headers: {ws_headers}')
         logger.info('[SOCK] Using JWT token in query string: ?token=<JWT>')
-        logger.info('[SOCK] Connecting to explicit namespaces: ["/", "/kingdom", "/field"]')
+        logger.info('[SOCK] Connecting to namespaces: "/" (root) → "/kingdom" → "/field"')
         
         # Configure Socket.IO client with JWT token in query string
         # IMPORTANT: Token is passed in URL query string as per LOK's latest update
@@ -3812,13 +3812,20 @@ Status: Available to join"""
         
         try:
             logger.info('[SOCK] Attempting connection with WebSocket transport (polling fallback enabled)...')
-            # Connect using Socket.IO with JWT in query string (Engine.IO v4 format)
-            # No auth parameter - token is in the URL
+            # Connect to root namespace first
+            logger.info('[SOCK] Connecting to root namespace "/"...')
             sio.connect(socket_url,
                         transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
-                        namespaces=["/", "/kingdom", "/field"], # Explicitly connect to all required namespaces
                         headers=ws_headers)
-            logger.info('[SOCK] ✓ Socket.IO connection established to all namespaces')
+            logger.info('[SOCK] ✓ Connected to root namespace "/"')
+            
+            # Connect to additional namespaces (same connection, different namespaces)
+            logger.info('[SOCK] Connecting to additional namespaces "/kingdom" and "/field"...')
+            sio.connect(socket_url,
+                        transports=["websocket", "polling"],
+                        namespaces=["/kingdom", "/field"],
+                        headers=ws_headers)
+            logger.info('[SOCK] ✓ Connected to all namespaces')
             logger.info('[SOCK] Waiting for /kingdom/enter handshake from server...')
             
             # Wait for server to send /kingdom/enter event
@@ -3836,11 +3843,18 @@ Status: Available to join"""
             try:
                 # Fallback: force polling transport for maximum compatibility
                 logger.info('[SOCK] Attempting connection with polling transport only...')
+                logger.info('[SOCK] Connecting to root namespace "/" with polling...')
                 sio.connect(socket_url,
                             transports=["polling"],  # Polling only for maximum HTTPS compatibility
-                            namespaces=["/", "/kingdom", "/field"],  # Same explicit namespaces
                             headers=ws_headers)
-                logger.info('[SOCK] ✓ Connected via polling transport to all namespaces')
+                logger.info('[SOCK] ✓ Connected to root namespace "/" via polling')
+                
+                logger.info('[SOCK] Connecting to additional namespaces "/kingdom" and "/field" with polling...')
+                sio.connect(socket_url,
+                            transports=["polling"],
+                            namespaces=["/kingdom", "/field"],
+                            headers=ws_headers)
+                logger.info('[SOCK] ✓ Connected to all namespaces via polling')
                 logger.info('[SOCK] Waiting for server handshake...')
                 if not kingdom_enter_event.wait(timeout=10):
                     logger.error('[SOCK] ❌ TIMEOUT: Polling connection failed handshake')
@@ -5136,7 +5150,7 @@ Status: {status}"""
             
             logger.info(f'[SOCF] Attempting Socket.IO connection to: {url}')
             logger.info('[SOCF] Using JWT token in query string: ?token=<JWT>')
-            logger.info('[SOCF] Connecting to explicit namespaces: ["/", "/field", "/zone"]')
+            logger.info('[SOCF] Connecting to namespaces: "/" (root) → "/field" → "/zone"')
             
             # Prepare Socket.IO URL with JWT token in query string
             # Format: https://sock-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=<JWT>
@@ -5144,21 +5158,35 @@ Status: {status}"""
             logger.info(f'[SOCF] Query string URL: {socket_url[:50]}...token=<JWT>')
             
             try:
-                # Connect using Socket.IO with JWT in query string (Engine.IO v4 format)
-                # No auth parameter - token is in the URL
+                # Connect to root namespace first
+                logger.info('[SOCF] Connecting to root namespace "/"...')
                 sio.connect(socket_url,
                             transports=["websocket", "polling"],
-                            namespaces=["/", "/field", "/zone"],  # Explicitly connect to field-related namespaces
                             headers=ws_headers)
-                logger.info(f'[SOCF] ✓ Connected successfully via Socket.IO, socket.connected: {sio.connected}')
+                logger.info('[SOCF] ✓ Connected to root namespace "/"')
+                
+                # Connect to additional namespaces
+                logger.info('[SOCF] Connecting to additional namespaces "/field" and "/zone"...')
+                sio.connect(socket_url,
+                            transports=["websocket", "polling"],
+                            namespaces=["/field", "/zone"],
+                            headers=ws_headers)
+                logger.info(f'[SOCF] ✓ Connected successfully to all namespaces, socket.connected: {sio.connected}')
             except Exception as e:
                 logger.error(f'[SOCF] ✗ Connection failed: {e}')
                 logger.error(f'[SOCF] URL: {url}')
                 logger.error(f'[SOCF] Attempting fallback with polling-only transport...')
                 try:
+                    logger.info('[SOCF] Connecting to root namespace "/" with polling...')
                     sio.connect(socket_url,
                                 transports=["polling"],
-                                namespaces=["/", "/field", "/zone"],  # Same explicit namespaces
+                                headers=ws_headers)
+                    logger.info('[SOCF] ✓ Connected to root namespace "/" via polling')
+                    
+                    logger.info('[SOCF] Connecting to additional namespaces "/field" and "/zone" with polling...')
+                    sio.connect(socket_url,
+                                transports=["polling"],
+                                namespaces=["/field", "/zone"],
                                 headers=ws_headers)
                     logger.info(f'[SOCF] ✓ Connected with polling transport to all namespaces')
                 except Exception as e2:
@@ -5431,16 +5459,25 @@ Status: {status}"""
         # Connect to chat using Socket.IO with JWT in query string
         logger.info('[SOCC] Attempting Socket.IO connection to chat socket')
         logger.info('[SOCC] Using JWT token in query string: ?token=<JWT>')
-        logger.info('[SOCC] Connecting to explicit namespaces: ["/", "/chat"]')
+        logger.info('[SOCC] Connecting to namespaces: "/" (root) → "/chat"')
         
         # Prepare Socket.IO URL with JWT token in query string
         # Format: https://sock-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=<JWT>
         socket_url = f"{url}?token={self.token}"
         logger.info(f'[SOCC] Query string URL: {socket_url[:50]}...token=<JWT>')
         
+        # Connect to root namespace first
+        logger.info('[SOCC] Connecting to root namespace "/"...')
         sio.connect(socket_url, 
                     transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
-                    namespaces=["/", "/chat"],              # Explicitly connect to chat-related namespaces
+                    headers=ws_headers)
+        logger.info('[SOCC] ✓ Connected to root namespace "/"')
+        
+        # Connect to chat namespace
+        logger.info('[SOCC] Connecting to namespace "/chat"...')
+        sio.connect(socket_url,
+                    transports=["websocket", "polling"],
+                    namespaces=["/chat"],
                     headers=ws_headers)
         logger.info('[SOCC] ✓ Socket.IO connected to all namespaces, waiting for server handshake')
         logger.info('[SOCC] Server will send /chat/enter response when authenticated')
