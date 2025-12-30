@@ -3469,6 +3469,8 @@ Rally ID: {rally_id}"""
             logger.info(f'[{current_time}] Socket connected status: {sio.connected}')
             logger.info(f'[{current_time}] Connection time: {current_time}')
             self.last_sock_activity = time.time()
+            logger.info(f'[{current_time}] Sending /kingdom/enter handshake...')
+            sio.emit('/kingdom/enter', {'token': self.token})
             logger.info(f'[{current_time}] Waiting for server /kingdom/enter response...')
         
         @sio.on('disconnect')
@@ -3812,20 +3814,13 @@ Status: Available to join"""
         
         try:
             logger.info('[SOCK] Attempting connection with WebSocket transport (polling fallback enabled)...')
-            # Connect to root namespace first
+            # Connect to root namespace only
             logger.info('[SOCK] Connecting to root namespace "/"...')
             sio.connect(socket_url,
                         transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
                         headers=ws_headers)
             logger.info('[SOCK] ✓ Connected to root namespace "/"')
             
-            # Connect to additional namespaces (same connection, different namespaces)
-            logger.info('[SOCK] Connecting to additional namespaces "/kingdom" and "/field"...')
-            sio.connect(socket_url,
-                        transports=["websocket", "polling"],
-                        namespaces=["/kingdom", "/field"],
-                        headers=ws_headers)
-            logger.info('[SOCK] ✓ Connected to all namespaces')
             logger.info('[SOCK] Waiting for /kingdom/enter handshake from server...')
             
             # Wait for server to send /kingdom/enter event
@@ -3849,12 +3844,6 @@ Status: Available to join"""
                             headers=ws_headers)
                 logger.info('[SOCK] ✓ Connected to root namespace "/" via polling')
                 
-                logger.info('[SOCK] Connecting to additional namespaces "/kingdom" and "/field" with polling...')
-                sio.connect(socket_url,
-                            transports=["polling"],
-                            namespaces=["/kingdom", "/field"],
-                            headers=ws_headers)
-                logger.info('[SOCK] ✓ Connected to all namespaces via polling')
                 logger.info('[SOCK] Waiting for server handshake...')
                 if not kingdom_enter_event.wait(timeout=10):
                     logger.error('[SOCK] ❌ TIMEOUT: Polling connection failed handshake')
@@ -4137,7 +4126,16 @@ Status: Available to join"""
                 logger.info(f'[{current_time}] Socket ID: {sio.sid if hasattr(sio, "sid") else "unknown"}')
                 logger.info(f'[{current_time}] Connection time: {current_time}')
                 self.last_socf_activity = time.time()
+                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake...')
+                sio.emit('/field/enter/v3', self.api.b64xor_enc({'token': self.token}))
             
+            @sio.on('/field/enter/v3')
+            def on_field_enter(data):
+                socf_data_stats['field_enter_received'] = True
+                logger.info('[SOCF] Received /field/enter/v3 response')
+                self.socf_entered = True
+                self.last_socf_activity = time.time()
+
             @sio.on('disconnect')
             def on_disconnect():
                 current_time = arrow.now().format('HH:mm:ss.SSS')
@@ -5466,20 +5464,17 @@ Status: {status}"""
         socket_url = f"{url}?token={self.token}"
         logger.info(f'[SOCC] Query string URL: {socket_url[:50]}...token=<JWT>')
         
-        # Connect to root namespace first
+        # Connect to root namespace only
         logger.info('[SOCC] Connecting to root namespace "/"...')
+        socket_url = f"{url}?token={self.token}"
         sio.connect(socket_url, 
                     transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
                     headers=ws_headers)
         logger.info('[SOCC] ✓ Connected to root namespace "/"')
         
-        # Connect to chat namespace
-        logger.info('[SOCC] Connecting to namespace "/chat"...')
-        sio.connect(socket_url,
-                    transports=["websocket", "polling"],
-                    namespaces=["/chat"],
-                    headers=ws_headers)
-        logger.info('[SOCC] ✓ Socket.IO connected to all namespaces, waiting for server handshake')
+        logger.info('[SOCC] ✓ Socket.IO connected to root namespace, waiting for server handshake')
+        logger.info('[SOCC] Sending /chat/enter handshake...')
+        sio.emit('/chat/enter', {'token': self.token})
         logger.info('[SOCC] Server will send /chat/enter response when authenticated')
 
         # Keep socket alive with active monitoring instead of sio.wait()
