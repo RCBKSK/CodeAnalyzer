@@ -3798,50 +3798,55 @@ Status: Available to join"""
             if event not in ['/kingdom/enter', '/building/update', '/resource/upgrade', '/buff/list', '/alliance/rally/new', '/task/update']:
                 logger.info(f'[SOCK-DEBUG] Unhandled event: {event} with {len(args)} args')
 
-        logger.info('[SOCK] Attempting connection to kingdom socket')
-        logger.info(f'[SOCK] URL (after conversion): {url}?token=***')
+        logger.info('[SOCK] Attempting Socket.IO connection to kingdom socket')
+        logger.info(f'[SOCK] URL: {url}')
         logger.info(f'[SOCK] Headers: {ws_headers}')
-        logger.info(f'[SOCK] URL uses HTTPS: {url.startswith("https://")}')
+        logger.info(f'[SOCK] Using JWT token authentication via auth parameter (NOT query string)')
+        
+        # Configure Socket.IO client with proper authentication
+        # IMPORTANT: Token is passed via auth parameter, NOT query string
+        # This follows Engine.IO v4 protocol requirements
+        auth = {"token": self.token}
         
         try:
-            # For HTTPS socket.io endpoints, use polling transport which works reliably with HTTPS
-            # WebSocket over HTTPS requires WSS which may not be properly configured on the server
-            logger.info('[SOCK] Connecting with HTTPS polling transport (HTTPS-compatible)...')
-            sio.connect(url + f'?token={self.token}',
-                        transports=["polling"],  # CRITICAL: Force polling only, no websocket
+            logger.info('[SOCK] Attempting connection with WebSocket transport (polling fallback enabled)...')
+            # Connect using proper Socket.IO auth pattern with Engine.IO v4
+            # transports order: try WebSocket first, fall back to polling
+            sio.connect(url,
+                        auth=auth,                              # JWT token via auth parameter
+                        transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
                         headers=ws_headers)
-            logger.info('[SOCK] ✓ Connected, emitting /kingdom/enter')
+            logger.info('[SOCK] ✓ Socket.IO connection established successfully')
+            logger.info('[SOCK] Waiting for /kingdom/enter handshake from server...')
             
-            # Emit /kingdom/enter event
-            sio.emit('/kingdom/enter', {"token": self.token})
-            logger.info('[SOCK] /kingdom/enter emitted, waiting for server response...')
-            
-            # CRITICAL: Wait for /kingdom/enter handshake response before proceeding
-            # Server WILL close connection if bot doesn't wait for handshake completion
+            # Wait for server to send /kingdom/enter event
+            # Server automatically sends kingdom data after successful authentication
             if not kingdom_enter_event.wait(timeout=10):
-                logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter response not received (10s timeout)')
-                logger.error('[SOCK] Server may have rejected the token or closed connection')
-                raise Exception('Handshake timeout: /kingdom/enter response not received')
+                logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter handshake not received (10s timeout)')
+                logger.error('[SOCK] Server may have rejected the JWT token or connection is unstable')
+                raise Exception('Socket.IO handshake timeout: /kingdom/enter not received from server')
             
-            logger.info('[SOCK] ✓ Handshake complete, server acknowledged connection')
+            logger.info('[SOCK] ✓ Server handshake complete - connection authenticated and ready')
             
         except Exception as e:
             logger.error(f'[SOCK] Connection failed: {e}')
-            logger.error(f'[SOCK] Attempting with fallback transport selection...')
+            logger.error('[SOCK] Retrying with explicit polling fallback...')
             try:
-                # Try with both transports for auto-negotiation
-                sio.connect(url + f'?token={self.token}',
-                            transports=["polling", "websocket"],  # Try polling FIRST
+                # Fallback: force polling transport for maximum compatibility
+                logger.info('[SOCK] Attempting connection with polling transport only...')
+                sio.connect(url,
+                            auth=auth,
+                            transports=["polling"],  # Polling only for maximum HTTPS compatibility
                             headers=ws_headers)
-                logger.info('[SOCK] ✓ Connected with auto-negotiated transport')
-                sio.emit('/kingdom/enter', {"token": self.token})
-                logger.info('[SOCK] /kingdom/enter emitted, waiting for server response...')
+                logger.info('[SOCK] ✓ Connected via polling transport')
+                logger.info('[SOCK] Waiting for server handshake...')
                 if not kingdom_enter_event.wait(timeout=10):
-                    logger.error('[SOCK] ❌ TIMEOUT: /kingdom/enter response not received (10s timeout)')
-                    raise Exception('Handshake timeout: /kingdom/enter response not received')
-                logger.info('[SOCK] ✓ Fallback handshake complete')
+                    logger.error('[SOCK] ❌ TIMEOUT: Polling connection failed handshake')
+                    raise Exception('Polling handshake timeout')
+                logger.info('[SOCK] ✓ Polling connection authenticated')
             except Exception as e2:
                 logger.error(f'[SOCK] All connection attempts failed: {e2}')
+                logger.error('[SOCK] Verify JWT token is valid and server endpoint is reachable')
                 raise
         
         self.last_sock_activity = time.time()
@@ -5127,23 +5132,30 @@ Status: {status}"""
             status_thread.start()
             logger.info('SOCF status logging thread started')
             
-            logger.info(f'[SOCF] Attempting HTTPS polling connection to: {url}')
-            logger.info(f'[SOCF] Connection params - token present: True, transports: polling, URL uses HTTPS: {url.startswith("https://")}')
+            logger.info(f'[SOCF] Attempting Socket.IO connection to: {url}')
+            logger.info(f'[SOCF] Using JWT token authentication via auth parameter (NOT query string)')
+            
+            # Prepare auth with JWT token
+            auth = {"token": self.token}
+            
             try:
-                # Use polling transport for HTTPS reliability
-                sio.connect(url + f'?token={self.token}',
-                            transports=["polling"],
+                # Connect using proper Socket.IO auth with Engine.IO v4
+                # Use polling for HTTPS reliability
+                sio.connect(url,
+                            auth=auth,
+                            transports=["websocket", "polling"],
                             headers=ws_headers)
-                logger.info(f'[SOCF] ✓ Connected successfully via polling, socket.connected: {sio.connected}')
+                logger.info(f'[SOCF] ✓ Connected successfully via Socket.IO, socket.connected: {sio.connected}')
             except Exception as e:
-                logger.error(f'[SOCF] ✗ Polling connection failed: {e}')
+                logger.error(f'[SOCF] ✗ Connection failed: {e}')
                 logger.error(f'[SOCF] URL: {url}')
-                logger.error(f'[SOCF] Attempting fallback with auto-negotiated transports...')
+                logger.error(f'[SOCF] Attempting fallback with polling-only transport...')
                 try:
-                    sio.connect(url + f'?token={self.token}',
-                                transports=["polling", "websocket"],
+                    sio.connect(url,
+                                auth=auth,
+                                transports=["polling"],
                                 headers=ws_headers)
-                    logger.info(f'[SOCF] ✓ Connected with auto-negotiated transport')
+                    logger.info(f'[SOCF] ✓ Connected with polling transport')
                 except Exception as e2:
                     logger.error(f'[SOCF] All connection attempts failed: {e2}')
                     raise
@@ -5411,12 +5423,19 @@ Status: {status}"""
             if event not in ['/chat/enter', '/chat/message']:
                 logger.info(f'[SOCC-DEBUG] Unhandled event: {event} with {len(args)} args')
 
-        # Connect to chat
-        logger.info('[SOCC] Attempting WebSocket connection to chat socket')
-        sio.connect(url, transports=["websocket"], headers=ws_headers)
-        logger.info('[SOCC] ✓ WebSocket connected, emitting /chat/enter')
-        sio.emit('/chat/enter', {'token': self.token})
-        logger.info('[SOCC] ✓ Emitted /chat/enter event')
+        # Connect to chat using proper Socket.IO auth
+        logger.info('[SOCC] Attempting Socket.IO connection to chat socket')
+        logger.info('[SOCC] Using JWT token authentication via auth parameter (NOT query string)')
+        
+        # Prepare auth with JWT token
+        auth = {"token": self.token}
+        
+        sio.connect(url, 
+                    auth=auth,                              # JWT token via auth parameter
+                    transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
+                    headers=ws_headers)
+        logger.info('[SOCC] ✓ Socket.IO connected, waiting for server handshake')
+        logger.info('[SOCC] Server will send /chat/enter response when authenticated')
 
         # Keep socket alive with active monitoring instead of sio.wait()
         logger.info('[SOCC] Entering keep-alive loop to maintain connection')
