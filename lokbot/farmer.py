@@ -3802,21 +3802,24 @@ Status: Available to join"""
         logger.info(f'[SOCK] URL: {url}')
         logger.info(f'[SOCK] Headers: {ws_headers}')
         logger.info(f'[SOCK] Using Bearer token authentication via auth parameter')
+        logger.info('[SOCK] Connecting to explicit namespaces: ["/", "/kingdom", "/field"]')
         
         # Configure Socket.IO client with proper authentication
         # IMPORTANT: Token is passed via auth parameter with Bearer scheme
-        # Server requires: auth = {"authorization": f"Bearer {TOKEN}"}
+        # Server requires per-namespace authentication
         auth = {"authorization": f"Bearer {self.token}"}
         
         try:
             logger.info('[SOCK] Attempting connection with WebSocket transport (polling fallback enabled)...')
             # Connect using proper Socket.IO auth pattern with Engine.IO v4
-            # transports order: try WebSocket first, fall back to polling
+            # Explicitly declare all namespaces that will be used
+            # Auth is automatically applied to all namespaces
             sio.connect(url,
                         auth=auth,                              # JWT token via auth parameter
                         transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
+                        namespaces=["/", "/kingdom", "/field"], # Explicitly connect to all required namespaces
                         headers=ws_headers)
-            logger.info('[SOCK] ✓ Socket.IO connection established successfully')
+            logger.info('[SOCK] ✓ Socket.IO connection established to all namespaces')
             logger.info('[SOCK] Waiting for /kingdom/enter handshake from server...')
             
             # Wait for server to send /kingdom/enter event
@@ -3837,13 +3840,14 @@ Status: Available to join"""
                 sio.connect(url,
                             auth=auth,
                             transports=["polling"],  # Polling only for maximum HTTPS compatibility
+                            namespaces=["/", "/kingdom", "/field"],  # Same explicit namespaces
                             headers=ws_headers)
-                logger.info('[SOCK] ✓ Connected via polling transport')
+                logger.info('[SOCK] ✓ Connected via polling transport to all namespaces')
                 logger.info('[SOCK] Waiting for server handshake...')
                 if not kingdom_enter_event.wait(timeout=10):
                     logger.error('[SOCK] ❌ TIMEOUT: Polling connection failed handshake')
                     raise Exception('Polling handshake timeout')
-                logger.info('[SOCK] ✓ Polling connection authenticated')
+                logger.info('[SOCK] ✓ Polling connection authenticated on all namespaces')
             except Exception as e2:
                 logger.error(f'[SOCK] All connection attempts failed: {e2}')
                 logger.error('[SOCK] Verify JWT token is valid and server endpoint is reachable')
@@ -5134,16 +5138,18 @@ Status: {status}"""
             
             logger.info(f'[SOCF] Attempting Socket.IO connection to: {url}')
             logger.info(f'[SOCF] Using Bearer token authentication via auth parameter')
+            logger.info('[SOCF] Connecting to explicit namespaces: ["/", "/field", "/zone"]')
             
             # Prepare auth with Bearer token scheme (Engine.IO v4 standard)
             auth = {"authorization": f"Bearer {self.token}"}
             
             try:
                 # Connect using proper Socket.IO auth with Engine.IO v4
-                # Use polling for HTTPS reliability
+                # Explicitly declare all namespaces for field scanning
                 sio.connect(url,
                             auth=auth,
                             transports=["websocket", "polling"],
+                            namespaces=["/", "/field", "/zone"],  # Explicitly connect to field-related namespaces
                             headers=ws_headers)
                 logger.info(f'[SOCF] ✓ Connected successfully via Socket.IO, socket.connected: {sio.connected}')
             except Exception as e:
@@ -5154,8 +5160,9 @@ Status: {status}"""
                     sio.connect(url,
                                 auth=auth,
                                 transports=["polling"],
+                                namespaces=["/", "/field", "/zone"],  # Same explicit namespaces
                                 headers=ws_headers)
-                    logger.info(f'[SOCF] ✓ Connected with polling transport')
+                    logger.info(f'[SOCF] ✓ Connected with polling transport to all namespaces')
                 except Exception as e2:
                     logger.error(f'[SOCF] All connection attempts failed: {e2}')
                     raise
@@ -5426,6 +5433,7 @@ Status: {status}"""
         # Connect to chat using proper Socket.IO auth
         logger.info('[SOCC] Attempting Socket.IO connection to chat socket')
         logger.info('[SOCC] Using Bearer token authentication via auth parameter')
+        logger.info('[SOCC] Connecting to explicit namespaces: ["/", "/chat"]')
         
         # Prepare auth with Bearer token scheme (Engine.IO v4 standard)
         auth = {"authorization": f"Bearer {self.token}"}
@@ -5433,8 +5441,9 @@ Status: {status}"""
         sio.connect(url, 
                     auth=auth,                              # JWT token via auth parameter
                     transports=["websocket", "polling"],    # Try WebSocket first, fallback to polling
+                    namespaces=["/", "/chat"],              # Explicitly connect to chat-related namespaces
                     headers=ws_headers)
-        logger.info('[SOCC] ✓ Socket.IO connected, waiting for server handshake')
+        logger.info('[SOCC] ✓ Socket.IO connected to all namespaces, waiting for server handshake')
         logger.info('[SOCC] Server will send /chat/enter response when authenticated')
 
         # Keep socket alive with active monitoring instead of sio.wait()
