@@ -4011,6 +4011,7 @@ Status: Available to join"""
                 'march_objects_received': 0,
                 'field_enter_received': False,
                 'field_ready': False,  # Strict handshake order flag: must receive /field/objects/v4 first
+                'zone_queue': [],  # Queue for zone requests until field is ready
                 'last_field_objects_time': 0,
                 'last_march_objects_time': 0,
                 'connection_established_time': 0,
@@ -4094,6 +4095,17 @@ Status: Available to join"""
                 current_time = arrow.now().format('HH:mm:ss.SSS')
                 logger.info(f'[{current_time}] <<< PONG RESPONSE received')
                 self.last_socf_activity = time.time()
+            
+            # Function to send zone message or queue if field not ready
+            # Handles both /zone/enter/list/v4 and /zone/leave/list/v2 events
+            def send_zone_message(event_name, payload):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                if not socf_data_stats['field_ready']:
+                    logger.info(f'[{current_time}] [QUEUE] {event_name} queued until field is ready')
+                    socf_data_stats['zone_queue'].append((event_name, payload))
+                    return
+                logger.info(f'[{current_time}] [EMIT] Sending {event_name}')
+                sio.emit(event_name, payload)
             
             # Track all events emitted
             def log_emit(event, data=None):
@@ -4244,7 +4256,17 @@ Status: Available to join"""
                 # STRICT HANDSHAKE ORDER: Only allow zone requests AFTER receiving field objects
                 if not socf_data_stats['field_ready']:
                     socf_data_stats['field_ready'] = True
-                    logger.info(f'[{arrow.now().format("HH:mm:ss.SSS")}] /field/objects/v4 RECEIVED - Handshake SUCCESS - Field is READY')
+                    current_time = arrow.now().format("HH:mm:ss.SSS")
+                    logger.info(f'[{current_time}] /field/objects/v4 RECEIVED - Handshake SUCCESS - Field is READY')
+                    
+                    # Process all queued zone requests now that field is ready
+                    if socf_data_stats['zone_queue']:
+                        logger.info(f'[{current_time}] Processing {len(socf_data_stats["zone_queue"])} queued zone requests')
+                        for event_name, payload in socf_data_stats['zone_queue']:
+                            logger.info(f'[{current_time}] Sending queued {event_name}')
+                            sio.emit(event_name, payload)
+                        socf_data_stats['zone_queue'].clear()
+                        logger.info(f'[{current_time}] All queued zone requests sent')
                     
                 # RAW DATA LOGGING - capture everything received
                 timestamp = arrow.now().format('HH:mm:ss.SSS')
@@ -5016,33 +5038,34 @@ Status: {status}"""
                     logger.error(f'[SOCF] ✗ Failed to parse /field/enter/v3: {e}')
                     raise
 
-                # Initialize zones with NEW plain JSON format (no encoding needed)
-                logger.info('[SOCF] Sending initial zone handshake messages (plain JSON format)')
+                # IMPORTANT: Queue zone handshake messages until field is ready
+                # Server requires /field/objects/v4 to be received BEFORE /zone/enter/list/v4
+                logger.info('[SOCF] Queueing zone handshake messages until field is ready (PROPER ORDER)')
                 
-                # Send leave message (empty zones)
-                sio.emit('/zone/leave/list/v2', {
+                # Queue leave message (empty zones)
+                send_zone_message('/zone/leave/list/v2', {
                     'world': self.socf_world_id,
                     'zones': '[]'
                 })
-                logger.debug('[SOCF] ✓ Sent /zone/leave/list/v2 (empty)')
+                logger.debug('[SOCF] ✓ Queued /zone/leave/list/v2 (empty)')
                 
-                # Enter default zones
+                # Queue default zones entry
                 default_zones = '[0,64,1,65]'
-                sio.emit('/zone/enter/list/v4', {
+                send_zone_message('/zone/enter/list/v4', {
                     'world': self.socf_world_id,
                     'zones': default_zones
                 })
-                logger.debug('[SOCF] ✓ Sent /zone/enter/list/v4 with default zones')
+                logger.debug('[SOCF] ✓ Queued /zone/enter/list/v4 with default zones')
                 
-                # Leave default zones
-                sio.emit('/zone/leave/list/v2', {
+                # Queue default zones exit
+                send_zone_message('/zone/leave/list/v2', {
                     'world': self.socf_world_id,
                     'zones': default_zones
                 })
-                logger.debug('[SOCF] ✓ Sent /zone/leave/list/v2 (default zones)')
+                logger.debug('[SOCF] ✓ Queued /zone/leave/list/v2 (default zones)')
 
                 self.socf_entered = True
-                logger.info('[SOCF] Field enter handshake complete')
+                logger.info('[SOCF] Field enter handshake queued - waiting for /field/objects/v4 before sending')
 
             # Start periodic status logging thread
             def status_logger():
