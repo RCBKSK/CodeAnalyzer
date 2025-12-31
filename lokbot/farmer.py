@@ -4028,8 +4028,10 @@ Status: Available to join"""
                 # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
                 time.sleep(0.1)
                 
-                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake...')
-                sio.emit('/field/enter/v3', self.api.b64xor_enc({'token': self.token}))
+                # NEW API: Send plain JSON, not encoded
+                emit_payload = {'token': self.token}
+                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake with payload: {emit_payload}')
+                sio.emit('/field/enter/v3', emit_payload)
                 logger.info(f'[{current_time}] Handshake sent, immediately marking as entered.')
                 socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
@@ -5061,42 +5063,29 @@ Status: {status}"""
                             transports=["websocket", "polling"],
                             headers=ws_headers)
                 logger.info('[SOCF] ✓ Connected to root namespace "/"')
-                
-                # Connect to additional namespaces
-                logger.info('[SOCF] Connecting to additional namespaces "/field" and "/zone"...')
-                sio.connect(socket_url,
-                            transports=["websocket", "polling"],
-                            namespaces=["/field", "/zone"],
-                            headers=ws_headers)
-                logger.info(f'[SOCF] ✓ Connected successfully to all namespaces, socket.connected: {sio.connected}')
             except Exception as e:
-                logger.error(f'[SOCF] ✗ Connection failed: {e}')
-                logger.error(f'[SOCF] URL: {url}')
-                logger.error(f'[SOCF] Attempting fallback with polling-only transport...')
-                try:
-                    logger.info('[SOCF] Connecting to root namespace "/" with polling...')
-                    sio.connect(socket_url,
-                                transports=["polling"],
-                                headers=ws_headers)
-                    logger.info('[SOCF] ✓ Connected to root namespace "/" via polling')
-                    
-                    logger.info('[SOCF] Connecting to additional namespaces "/field" and "/zone" with polling...')
-                    sio.connect(socket_url,
-                                transports=["polling"],
-                                namespaces=["/field", "/zone"],
-                                headers=ws_headers)
-                    logger.info(f'[SOCF] ✓ Connected with polling transport to all namespaces')
-                except Exception as e2:
-                    logger.error(f'[SOCF] All connection attempts failed: {e2}')
-                    raise
+                if "Already connected" in str(e):
+                    logger.info('[SOCF] Socket already connected to root, proceeding...')
+                else:
+                    logger.error(f'[SOCF] ✗ Connection failed: {e}')
+                    logger.error(f'[SOCF] URL: {url}')
+                    logger.error(f'[SOCF] Attempting fallback with polling-only transport...')
+                    try:
+                        logger.info('[SOCF] Connecting to root namespace "/" with polling...')
+                        sio.connect(socket_url,
+                                    transports=["polling"],
+                                    headers=ws_headers)
+                        logger.info('[SOCF] ✓ Connected to root namespace "/" via polling')
+                    except Exception as e2:
+                        if "Already connected" in str(e2):
+                            logger.info('[SOCF] Socket already connected via polling, proceeding...')
+                        else:
+                            logger.error(f'[SOCF] All connection attempts failed: {e2}')
+                            raise
                 
             logger.debug(f'[SOCF] entering field with zones: {self.zones}')
-            # NEW API: Send plain JSON, not encoded
-            emit_payload = {'token': self.token}
-            logger.info(f'[SOCF] Emitting /field/enter/v3 with payload: {emit_payload}')
-            sio.emit('/field/enter/v3', emit_payload)
-            logger.info(f'[SOCF] ✓ Emitted /field/enter/v3 event (plain JSON)')
-
+            # NO EMIT HERE - Moved to on_connect callback to match browser behavior and fix timing
+            
             while not self.socf_entered:
                 time.sleep(1)
 

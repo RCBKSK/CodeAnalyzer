@@ -136,7 +136,7 @@
         "name": "harvester"
       },
       {
-        "enabled": false,
+        "enabled": true,
         "interval": {
           "end": 1,
           "start": 1
@@ -149,7 +149,32 @@
               0
             ]
           },
-          "targets": []
+          "targets": [
+            {
+              "code": 20100105,
+              "name": "Crystal Mine",
+              "level": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "enabled": true
+            },
+            {
+              "code": 20100106,
+              "name": "Dragon Soul Cavern",
+              "level": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "enabled": true
+            }
+          ]
         },
         "name": "socf_thread"
       }
@@ -221,7 +246,7 @@
       },
       "enable_gathering": false,
       "enable_monster_attack": false,
-      "enabled": false,
+      "enabled": true,
       "max_marches": 10,
       "monster_attack": {
         "enabled": false
@@ -455,7 +480,7 @@
       "enable_gathering": false,
       "enable_monster_attack": false,
       "notify_discord": false,
-      "object_scanning": false,
+      "object_scanning": true,
       "rally_join": false,
       "rally_start": false
     },
@@ -466,7 +491,7 @@
       "harvester": false,
       "hospital_recover": false,
       "mail_claim": false,
-      "socf_thread": false,
+      "socf_thread": true,
       "use_resource_in_item_list": false,
       "vip_chest_claim": false,
       "wall_repair": false
