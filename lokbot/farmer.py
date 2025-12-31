@@ -3467,8 +3467,10 @@ Rally ID: {rally_id}"""
             logger.info(f'[{current_time}] ========== SOCK SOCKET CONNECTED ==========')
             logger.info(f'[{current_time}] Socket ID: {sio.sid if hasattr(sio, "sid") else "unknown"}')
             logger.info(f'[{current_time}] Socket connected status: {sio.connected}')
-            logger.info(f'[{current_time}] Connection time: {current_time}')
-            self.last_sock_activity = time.time()
+            
+            # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
+            time.sleep(0.1)
+            
             logger.info(f'[{current_time}] Sending /kingdom/enter handshake...')
             sio.emit('/kingdom/enter', {'token': self.token})
             logger.info(f'[{current_time}] Handshake sent, immediately marking as connected.')
@@ -3693,6 +3695,14 @@ Status: Available to join"""
         @sio.on('connect')
         def on_sock_connect():
             logger.info('[SOCK-DEBUG] ✓ SOCKET CONNECTED - socket.connected=True')
+            
+            # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
+            time.sleep(0.1)
+            
+            logger.info('[SOCK] Sending /kingdom/enter handshake...')
+            sio.emit('/kingdom/enter', {'token': self.token})
+            logger.info('[SOCK] Handshake sent, immediately marking as connected.')
+            sock_data_stats['kingdom_enter_received'] = True
             self.last_sock_activity = time.time()
         
         @sio.on('disconnect')
@@ -4014,7 +4024,10 @@ Status: Available to join"""
                 logger.info(f'[{current_time}] Socket connected: True')
                 logger.info(f'[{current_time}] Socket ID: {sio.sid if hasattr(sio, "sid") else "unknown"}')
                 logger.info(f'[{current_time}] Connection time: {current_time}')
-                self.last_socf_activity = time.time()
+                
+                # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
+                time.sleep(0.1)
+                
                 logger.info(f'[{current_time}] Sending /field/enter/v3 handshake...')
                 sio.emit('/field/enter/v3', self.api.b64xor_enc({'token': self.token}))
                 logger.info(f'[{current_time}] Handshake sent, immediately marking as entered.')
@@ -5329,6 +5342,10 @@ Status: {status}"""
         @sio.on('connect')
         def on_socc_connect():
             logger.info('[SOCC-DEBUG] ✓ SOCKET CONNECTED - socket.connected=True')
+            
+            # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
+            time.sleep(0.1)
+            
             logger.info('[SOCC] Sending /chat/enter handshake...')
             sio.emit('/chat/enter', {'token': self.token})
             logger.info('[SOCC] Handshake sent, immediately proceeding.')
