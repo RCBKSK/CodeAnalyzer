@@ -5084,7 +5084,7 @@ Status: {status}"""
                             raise
                 
             logger.debug(f'[SOCF] entering field with zones: {self.zones}')
-            # NO EMIT HERE - Moved to on_connect callback to match browser behavior and fix timing
+            # NO EMIT HERE - Handshake moved to on_connect for timing/readiness
             
             while not self.socf_entered:
                 time.sleep(1)
