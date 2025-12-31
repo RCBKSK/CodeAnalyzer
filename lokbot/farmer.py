@@ -4024,24 +4024,35 @@ Status: Available to join"""
                 socf_data_stats['connection_established_time'] = time.time()
                 logger.info(f'[{current_time}] ========== SOCF SOCKET CONNECTED ==========')
                 
-                # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
+                # Match browser behavior: First emit 40 (connect to namespace)
+                # socketio.Client does this automatically for root, but we need to ensure the order
+                
+                # Wait 100ms
                 time.sleep(0.1)
                 
-                # Use current kingdom location, world ID, and server time
+                # Handshake 42["/field/enter/v3", "JWT_TOKEN"]
+                # The browser sends it as a single string argument first
+                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (Token only)')
+                sio.emit('/field/enter/v3', self.token)
+                
+                # Then it sends the object version
+                time.sleep(0.1)
                 kingdom_data = self.kingdom_enter.get('kingdom', {})
                 loc = kingdom_data.get('loc', [0, 0, 0])
                 world_id = kingdom_data.get('worldId')
-                db_time = self.kingdom_enter.get('dbTime', int(time.time() * 1000))
+                db_time = self.kingdom_enter.get('dbTime', datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
                 
                 emit_payload = {
-                    'token': self.token,
-                    'loc': {'x': loc[1], 'y': loc[2]},
-                    'kingdom': world_id,
-                    'dbTime': db_time,
-                    'map': 1
+                    "EventName": "/field/enter/v3",
+                    "Payload": json.dumps({
+                        "loc": loc,
+                        "kingdom": kingdom_data,
+                        "dbTime": db_time,
+                        "map": {"width": 3072, "height": 3072}
+                    })
                 }
                 
-                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (ROOT ONLY)')
+                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (Object payload)')
                 sio.emit('/field/enter/v3', emit_payload)
                 socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
