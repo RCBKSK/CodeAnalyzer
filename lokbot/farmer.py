@@ -4158,6 +4158,22 @@ Status: Available to join"""
                         data_source = "unknown"
 
                         # Multi-path data processing with fallbacks
+                        # Path 0: Handle Payload field (NEW API FORMAT)
+                        if isinstance(data, dict) and 'Payload' in data:
+                            try:
+                                payload_str = data.get('Payload')
+                                if isinstance(payload_str, str):
+                                    decoded_data = json.loads(payload_str)
+                                    data_source = "payload_json_string"
+                                    logger.debug(f'[{current_time}] MARCH OBJECTS - Successfully decoded from Payload JSON string')
+                                else:
+                                    decoded_data = payload_str
+                                    data_source = "payload_dict"
+                                    logger.debug(f'[{current_time}] MARCH OBJECTS - Using Payload dict directly')
+                            except Exception as payload_error:
+                                logger.debug(f'[{current_time}] MARCH OBJECTS - Payload parsing failed: {payload_error}')
+                                decoded_data = None
+
                         try:
                             # Path 1: Packed and encoded data
                             packs = data.get('packs')
