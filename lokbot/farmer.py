@@ -4241,6 +4241,16 @@ Status: Available to join"""
                 socf_data_stats['last_field_objects_time'] = time.time()
                 self.last_socf_activity = time.time()
                 
+                # MATCH BROWSER: Only AFTER receiving /field/objects/v4, emit /zone/enter/list/v4
+                if not getattr(self, 'socf_zones_requested', False):
+                    self.socf_zones_requested = True
+                    # Calculate zones to request
+                    zone_message = {
+                        'zones': [z[2] for z in self.zones]
+                    }
+                    logger.info(f'[{arrow.now().format("HH:mm:ss.SSS")}] Received first field objects, now requesting zones: {zone_message}')
+                    sio.emit('/zone/enter/list/v4', zone_message)
+                
                 # RAW DATA LOGGING - capture everything received
                 timestamp = arrow.now().format('HH:mm:ss.SSS')
                 logger.info(f'[{timestamp}] ===== FIELD OBJECTS v4 EVENT RECEIVED (#{socf_data_stats["field_objects_received"]}) =====')
@@ -5105,12 +5115,12 @@ Status: {status}"""
                 
             logger.debug(f'[SOCF] Entering field monitor loop for zones: {self.zones}')
             # Handshake happens in on_connect callback
+            self.socf_zones_requested = False
             
             while not self.socf_entered:
                 time.sleep(1)
 
             # Dynamically adjust step size based on available zones
-            # Default is 9 zones per batch, but support smaller zone counts
             available_zones_count = len(self.zones)
             step = min(9, max(1, available_zones_count))  # Use available zones or 1 minimum
             grace = 7  # 9 times enter-leave action will cause ban
@@ -5118,62 +5128,16 @@ Status: {status}"""
             
             logger.info(f'SOCF scanning starting with {available_zones_count} total zones, batch size: {step}')
             
+            # Initial zone request is handled in on_field_objects callback to match browser flow
             while self.zones:
                 if index >= grace:
                     logger.info('socf_thread grace exceeded, break')
                     break
 
-                index += 1
-                zone_ids = []
-                for _ in range(step):
-                    if not self.zones:
-                        break
-
-                    zone_ids.append(self.zones.pop(0))
-
-                # Only require full batches if we have enough zones; otherwise process what we have
-                if len(zone_ids) == 0:
-                    logger.info('No more zones to process')
-                    break
-                    
-                if len(zone_ids) < step and self.zones:
-                    # Still have zones left but batch is small - this shouldn't happen
-                    logger.warning(f'Batch size {len(zone_ids)} < {step} but zones remain - continuing anyway')
-                elif len(zone_ids) < step:
-                    # This is the final batch - process it even if smaller
-                    logger.info(f'Final batch: processing {len(zone_ids)} remaining zones')
-
                 if not sio.connected:
                     logger.warning('socf_thread disconnected, reconnecting')
                     raise tenacity.TryAgain()
 
-                # Set current scanning zones for march data optimization
-                if zone_ids:
-                    # Convert zone IDs to coordinates for march data caching
-                    zone_coords_list = []
-                    for zone_id in zone_ids:
-                        zone_y = zone_id // 64
-                        zone_x = zone_id % 64
-                        zone_coords_list.append([zone_x, zone_y])
-
-                    # Set the first zone as current scanning zone for march data context
-                    self._set_current_scanning_zone(zone_coords_list[0])
-                    logger.debug(f'Set scanning context for zones: {zone_coords_list}')
-
-                message = {
-                    'world': self.kingdom_enter.get('kingdom').get('worldId'),
-                    'zones': json.dumps(zone_ids, separators=(',', ':'))
-                }
-                
-                # NEW API: Send plain JSON, not encoded
-                logger.info(f'[SOCF] Entering zones {zone_ids}: plain JSON format, socket={sio.connected}')
-                logger.debug(f'[SOCF] Emitting /zone/enter/list/v4 with payload: {message}')
-
-                sio.emit('/zone/enter/list/v4', message)
-                logger.debug(f'[SOCF] ✓ Emitted /zone/enter/list/v4')
-                
-                self.field_object_processed = False
-                
                 # Wait for field objects with a timeout to prevent infinite wait
                 timeout_count = 0
                 while not self.field_object_processed and timeout_count < 30:  # 30 second timeout
@@ -5183,21 +5147,35 @@ Status: {status}"""
                         logger.warning(f'[SOCF] ⏳ Waiting 10s for /field/objects/v4 response (socket: {sio.connected})')
                 
                 if timeout_count >= 30:
-                    logger.error(f'[SOCF] ✗ Timeout (30s) - no /field/objects/v4 received for zones {zone_ids}')
-                    if sio.connected:
-                        logger.error('[SOCF] Socket connected but server not sending object data')
-                    else:
-                        logger.error('[SOCF] Socket disconnected during zone scanning')
-                else:
-                    logger.debug(f'[SOCF] ✓ Received object data after {timeout_count}s')
+                    logger.error(f'[SOCF] ✗ Timeout (30s) - no /field/objects/v4 received')
+                    break
 
-                # Clear scanning zone context when leaving zones
-                self._set_current_scanning_zone(None)
+                index += 1
+                zone_ids = []
+                for _ in range(step):
+                    if not self.zones:
+                        break
+                    zone_ids.append(self.zones.pop(0))
+
+                if not zone_ids:
+                    break
+                    
+                message = {
+                    'world': self.kingdom_enter.get('kingdom').get('worldId'),
+                    'zones': json.dumps(zone_ids, separators=(',', ':'))
+                }
                 
-                # NEW API: Emit plain JSON message
-                logger.debug(f'[SOCF] Emitting /zone/leave/list/v2 with payload: {message}')
+                # Emit zone enter only after previous objects were processed
+                logger.info(f'[SOCF] Entering zones {zone_ids}')
+                self.field_object_processed = False
+                sio.emit('/zone/enter/list/v4', message)
+                
+                # Small delay to mimic browser behavior between batches
+                time.sleep(random.uniform(0.5, 1.0))
+                
+                # Emit leave after scanning if needed, or rely on next enter to clear
                 sio.emit('/zone/leave/list/v2', message)
-                logger.debug(f'[SOCF] ✓ Emitted /zone/leave/list/v2 (plain JSON)')
+
 
             logger.info('Object scanning loop finished')
             try:
