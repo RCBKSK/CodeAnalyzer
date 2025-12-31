@@ -4010,6 +4010,7 @@ Status: Available to join"""
                 'field_objects_received': 0,
                 'march_objects_received': 0,
                 'field_enter_received': False,
+                'field_ready': False,  # Strict handshake order flag: must receive /field/objects/v4 first
                 'last_field_objects_time': 0,
                 'last_march_objects_time': 0,
                 'connection_established_time': 0,
@@ -4039,9 +4040,8 @@ Status: Available to join"""
                     'map': 1
                 }
                 
-                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake with payload: {emit_payload}')
+                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (ROOT ONLY)')
                 sio.emit('/field/enter/v3', emit_payload)
-                logger.info(f'[{current_time}] Handshake sent (ROOT namespace only)')
                 socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
                 self.last_socf_activity = time.time()
@@ -4241,16 +4241,11 @@ Status: Available to join"""
                 socf_data_stats['last_field_objects_time'] = time.time()
                 self.last_socf_activity = time.time()
                 
-                # MATCH BROWSER: Only AFTER receiving /field/objects/v4, emit /zone/enter/list/v4
-                if not getattr(self, 'socf_zones_requested', False):
-                    self.socf_zones_requested = True
-                    # Calculate zones to request
-                    zone_message = {
-                        'zones': [z[2] for z in self.zones]
-                    }
-                    logger.info(f'[{arrow.now().format("HH:mm:ss.SSS")}] Received first field objects, now requesting zones: {zone_message}')
-                    sio.emit('/zone/enter/list/v4', zone_message)
-                
+                # STRICT HANDSHAKE ORDER: Only allow zone requests AFTER receiving field objects
+                if not socf_data_stats['field_ready']:
+                    socf_data_stats['field_ready'] = True
+                    logger.info(f'[{arrow.now().format("HH:mm:ss.SSS")}] /field/objects/v4 RECEIVED - Handshake SUCCESS - Field is READY')
+                    
                 # RAW DATA LOGGING - capture everything received
                 timestamp = arrow.now().format('HH:mm:ss.SSS')
                 logger.info(f'[{timestamp}] ===== FIELD OBJECTS v4 EVENT RECEIVED (#{socf_data_stats["field_objects_received"]}) =====')
@@ -5165,7 +5160,11 @@ Status: {status}"""
                     'zones': json.dumps(zone_ids, separators=(',', ':'))
                 }
                 
-                # Emit zone enter only after previous objects were processed
+                # Emit zone enter only after field is ready (received objects)
+                if not socf_data_stats['field_ready']:
+                    logger.info('[SOCF] Field not ready yet, skipping zone enter list v4...')
+                    continue
+                    
                 logger.info(f'[SOCF] Entering zones {zone_ids}')
                 self.field_object_processed = False
                 sio.emit('/zone/enter/list/v4', message)
