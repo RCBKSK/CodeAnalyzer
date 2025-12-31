@@ -4031,10 +4031,11 @@ Status: Available to join"""
                 # Wait 100ms
                 time.sleep(0.1)
                 
-                # Handshake 42["/field/enter/v3", "JWT_TOKEN"]
-                # The browser sends it as a single string argument first
-                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (Token only)')
-                sio.emit('/field/enter/v3', self.token)
+                # Handshake 42["/field/enter/v3", BASE64_ENCODED_TOKEN]
+                # The browser sends it as BASE64 encoded token first
+                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (Base64 token)')
+                token_b64 = base64.b64encode(self.token.encode()).decode()
+                sio.emit('/field/enter/v3', token_b64)
                 
                 # Then it sends the object version
                 time.sleep(0.1)
