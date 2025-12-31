@@ -4058,6 +4058,22 @@ Status: Available to join"""
                 socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
                 self.last_socf_activity = time.time()
+                
+                # After field/enter handshake, emit zone messages to match browser sequence
+                time.sleep(0.05)
+                
+                # First, send zone leave with empty zones
+                logger.info(f'[{current_time}] Sending /zone/leave/list/v2 with empty zones')
+                sio.emit('/zone/leave/list/v2', {"world": self.socf_world_id, "zones": "[]"})
+                
+                # Then send zone enter with initial zones (base64 encoded)
+                time.sleep(0.05)
+                if self.zones:
+                    zones_json = json.dumps({"world": self.socf_world_id, "zones": str(self.zones)})
+                    zones_b64 = base64.b64encode(zones_json.encode()).decode()
+                    logger.info(f'[{current_time}] Sending /zone/enter/list/v4 with {len(self.zones)} zones (base64 encoded)')
+                    logger.debug(f'[{current_time}] Zone list: {self.zones}')
+                    sio.emit('/zone/enter/list/v4', zones_b64)
 
             @sio.on('/zone/enter/list/v4')
             def on_zone_enter_list(data):
