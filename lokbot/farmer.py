@@ -4021,20 +4021,41 @@ Status: Available to join"""
                 current_time = arrow.now().format('HH:mm:ss.SSS')
                 socf_data_stats['connection_established_time'] = time.time()
                 logger.info(f'[{current_time}] ========== SOCF SOCKET CONNECTED ==========')
-                logger.info(f'[{current_time}] Socket connected: True')
-                logger.info(f'[{current_time}] Socket ID: {sio.sid if hasattr(sio, "sid") else "unknown"}')
-                logger.info(f'[{current_time}] Connection time: {current_time}')
                 
                 # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
                 time.sleep(0.1)
                 
-                # NEW API: Send plain JSON, not encoded
-                emit_payload = {'token': self.token}
+                # Use current kingdom location, world ID, and server time
+                kingdom_data = self.kingdom_enter.get('kingdom', {})
+                loc = kingdom_data.get('loc', [0, 0, 0])
+                world_id = kingdom_data.get('worldId')
+                db_time = self.kingdom_enter.get('dbTime', int(time.time() * 1000))
+                
+                emit_payload = {
+                    'token': self.token,
+                    'loc': {'x': loc[1], 'y': loc[2]},
+                    'kingdom': world_id,
+                    'dbTime': db_time,
+                    'map': 1
+                }
+                
                 logger.info(f'[{current_time}] Sending /field/enter/v3 handshake with payload: {emit_payload}')
                 sio.emit('/field/enter/v3', emit_payload)
-                logger.info(f'[{current_time}] Handshake sent, immediately marking as entered.')
+                logger.info(f'[{current_time}] Handshake sent (ROOT namespace only)')
                 socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
+                self.last_socf_activity = time.time()
+
+            @sio.on('/zone/enter/list/v4')
+            def on_zone_enter_list(data):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.info(f'[{current_time}] /zone/enter/list/v4 received: {len(data) if isinstance(data, list) else "dict"} items')
+                self.last_socf_activity = time.time()
+
+            @sio.on('/zone/leave/list/v2')
+            def on_zone_leave_list(data):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.info(f'[{current_time}] /zone/leave/list/v2 received')
                 self.last_socf_activity = time.time()
 
             @sio.on('disconnect')
@@ -5057,34 +5078,33 @@ Status: {status}"""
             logger.info(f'[SOCF] Query string URL: {socket_url[:50]}...token=<JWT>')
             
             try:
-                # Connect to root namespace first
-                logger.info('[SOCF] Connecting to root namespace "/"...')
+                # SOCF handles FIELD + ZONE updates only via ROOT namespace
+                # URL is specifically for field/zone updates
+                logger.info(f'[SOCF] Connecting to root namespace "/" on {socket_url[:50]}...')
                 sio.connect(socket_url,
                             transports=["websocket", "polling"],
+                            namespaces=["/"],
                             headers=ws_headers)
                 logger.info('[SOCF] ✓ Connected to root namespace "/"')
             except Exception as e:
                 if "Already connected" in str(e):
-                    logger.info('[SOCF] Socket already connected to root, proceeding...')
+                    logger.info('[SOCF] Socket already connected, proceeding...')
                 else:
                     logger.error(f'[SOCF] ✗ Connection failed: {e}')
-                    logger.error(f'[SOCF] URL: {url}')
-                    logger.error(f'[SOCF] Attempting fallback with polling-only transport...')
+                    # Fallback to polling only if websocket fails
                     try:
-                        logger.info('[SOCF] Connecting to root namespace "/" with polling...')
+                        logger.info('[SOCF] Attempting polling-only fallback...')
                         sio.connect(socket_url,
                                     transports=["polling"],
+                                    namespaces=["/"],
                                     headers=ws_headers)
-                        logger.info('[SOCF] ✓ Connected to root namespace "/" via polling')
+                        logger.info('[SOCF] ✓ Connected via polling')
                     except Exception as e2:
-                        if "Already connected" in str(e2):
-                            logger.info('[SOCF] Socket already connected via polling, proceeding...')
-                        else:
-                            logger.error(f'[SOCF] All connection attempts failed: {e2}')
-                            raise
+                        logger.error(f'[SOCF] All connection attempts failed: {e2}')
+                        raise
                 
-            logger.debug(f'[SOCF] entering field with zones: {self.zones}')
-            # NO EMIT HERE - Handshake moved to on_connect for timing/readiness
+            logger.debug(f'[SOCF] Entering field monitor loop for zones: {self.zones}')
+            # Handshake happens in on_connect callback
             
             while not self.socf_entered:
                 time.sleep(1)
