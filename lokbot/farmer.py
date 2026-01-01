@@ -4060,9 +4060,9 @@ Status: Available to join"""
                 
                 # Sequence from logs:
                 # 1. leave empty zones
-                # 2. enter initial zones [0,96,1,97]
-                # 3. leave those initial zones
-                # 4. enter actual target zones
+                # 2. enter initial zones [0,96,1,97] (base64 encoded)
+                # 3. leave those initial zones [0,96,1,97] (plain json)
+                # 4. enter actual target zones (base64 encoded)
                 
                 time.sleep(0.05)
                 logger.info(f'[{current_time}] Step 1: /zone/leave/list/v2 (empty)')
@@ -4070,17 +4070,21 @@ Status: Available to join"""
                 
                 time.sleep(0.05)
                 initial_zones = [0, 96, 1, 97]
-                logger.info(f'[{current_time}] Step 2: /zone/enter/list/v4 (initial zones: [0,96,1,97])')
-                sio.emit('/zone/enter/list/v4', {"world": self.socf_world_id, "zones": str(initial_zones)})
+                initial_zones_json = json.dumps({"world": self.socf_world_id, "zones": str(initial_zones)})
+                initial_zones_b64 = base64.b64encode(initial_zones_json.encode()).decode()
+                logger.info(f'[{current_time}] Step 2: /zone/enter/list/v4 (initial zones: [0,96,1,97] - B64)')
+                sio.emit('/zone/enter/list/v4', initial_zones_b64)
                 
                 time.sleep(0.05)
-                logger.info(f'[{current_time}] Step 3: /zone/leave/list/v2 (initial zones: [0,96,1,97])')
+                logger.info(f'[{current_time}] Step 3: /zone/leave/list/v2 (initial zones: [0,96,1,97] - JSON)')
                 sio.emit('/zone/leave/list/v2', {"world": self.socf_world_id, "zones": str(initial_zones)})
                 
                 time.sleep(0.05)
                 if self.zones:
-                    logger.info(f'[{current_time}] Step 4: /zone/enter/list/v4 (target zones: {len(self.zones)})')
-                    sio.emit('/zone/enter/list/v4', {"world": self.socf_world_id, "zones": str(self.zones)})
+                    zones_json = json.dumps({"world": self.socf_world_id, "zones": str(self.zones)})
+                    zones_b64 = base64.b64encode(zones_json.encode()).decode()
+                    logger.info(f'[{current_time}] Step 4: /zone/enter/list/v4 (target zones: {len(self.zones)} - B64)')
+                    sio.emit('/zone/enter/list/v4', zones_b64)
 
             @sio.on('/zone/enter/list/v4')
             def on_zone_enter_list(data):
