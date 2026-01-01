@@ -4031,17 +4031,15 @@ Status: Available to join"""
                 # Wait 100ms
                 time.sleep(0.1)
                 
-                # Handshake 42["/field/enter/v3", BASE64_ENCODED_TOKEN]
-                # The browser sends it as BASE64 encoded token first
-                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (Base64 token)')
-                token_b64 = base64.b64encode(self.token.encode()).decode()
-                sio.emit('/field/enter/v3', token_b64)
+                # Handshake 42["/field/enter/v3", "JWT_TOKEN"]
+                # The browser sends it as a plain JWT string first
+                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (JWT token)')
+                sio.emit('/field/enter/v3', self.token)
                 
                 # Then it sends the object version
                 time.sleep(0.1)
                 kingdom_data = self.kingdom_enter.get('kingdom', {})
                 loc = kingdom_data.get('loc', [0, 0, 0])
-                world_id = kingdom_data.get('worldId')
                 db_time = self.kingdom_enter.get('dbTime', datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
                 
                 emit_payload = {
@@ -4060,20 +4058,32 @@ Status: Available to join"""
                 self.socf_entered = True
                 self.last_socf_activity = time.time()
                 
-                # After field/enter handshake, emit zone messages to match browser sequence
-                time.sleep(0.05)
+                # Sequence from logs:
+                # 1. leave empty zones
+                # 2. enter initial zones [0,96,1,97] (base64 encoded)
+                # 3. leave those initial zones
+                # 4. enter actual target zones (base64 encoded)
                 
-                # First, send zone leave with empty zones
-                logger.info(f'[{current_time}] Sending /zone/leave/list/v2 with empty zones')
+                time.sleep(0.05)
+                logger.info(f'[{current_time}] Step 1: /zone/leave/list/v2 (empty)')
                 sio.emit('/zone/leave/list/v2', {"world": self.socf_world_id, "zones": "[]"})
                 
-                # Then send zone enter with initial zones (base64 encoded)
+                time.sleep(0.05)
+                initial_zones = [0, 96, 1, 97]
+                initial_zones_json = json.dumps({"world": self.socf_world_id, "zones": str(initial_zones)})
+                initial_zones_b64 = base64.b64encode(initial_zones_json.encode()).decode()
+                logger.info(f'[{current_time}] Step 2: /zone/enter/list/v4 (initial zones: [0,96,1,97])')
+                sio.emit('/zone/enter/list/v4', initial_zones_b64)
+                
+                time.sleep(0.05)
+                logger.info(f'[{current_time}] Step 3: /zone/leave/list/v2 (initial zones)')
+                sio.emit('/zone/leave/list/v2', {"world": self.socf_world_id, "zones": str(initial_zones)})
+                
                 time.sleep(0.05)
                 if self.zones:
                     zones_json = json.dumps({"world": self.socf_world_id, "zones": str(self.zones)})
                     zones_b64 = base64.b64encode(zones_json.encode()).decode()
-                    logger.info(f'[{current_time}] Sending /zone/enter/list/v4 with {len(self.zones)} zones (base64 encoded)')
-                    logger.debug(f'[{current_time}] Zone list: {self.zones}')
+                    logger.info(f'[{current_time}] Step 4: /zone/enter/list/v4 (target zones: {len(self.zones)})')
                     sio.emit('/zone/enter/list/v4', zones_b64)
 
             @sio.on('/zone/enter/list/v4')
