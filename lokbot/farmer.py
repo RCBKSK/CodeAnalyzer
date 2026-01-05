@@ -3896,128 +3896,84 @@ Status: Available to join"""
         except Exception as e:
             logger.debug(f'Error logging march data structure: {e}')
 
+    @tenacity.retry(
+        stop=tenacity.stop_after_attempt(8),
+        wait=tenacity.wait_exponential(multiplier=2, min=4, max=120),
+        retry=tenacity.retry_if_not_exception_type(FatalApiException),
+        before_sleep=lambda retry_state: logger.warning(
+            f"SOCF thread failed, attempt {retry_state.attempt_number}. Retrying in {retry_state.next_action.sleep} seconds..."
+        ),
+        after=lambda retry_state: logger.info(
+            "SOCF thread recovered successfully" if retry_state.outcome.exception() is None 
+            else "SOCF thread failed all retries"
+        )
+    )
     def _socf_thread_internal(self, radius, targets, share_to=None):
         """
-        websocket connection of the field
-        Only scans for objects and logs them without starting marches
-        :return:
+        CORRECTED VERSION: Proper timing between handshake steps
         """
-        # Set a flag to track thread status
         self.socf_thread_active = True
 
-        # Watchdog timer thread
-        def watchdog():
-            while self.socf_thread_active:
-                if not hasattr(self, 'last_socf_activity'):
-                    self.last_socf_activity = time.time()
-
-                if time.time(
-                ) - self.last_socf_activity > 300:  # 5 minutes timeout
-                    logger.error(
-                        "SOCF thread appears stuck - forcing reconnection")
-                    try:
-                        self.socf_thread_active = False
-                        raise tenacity.TryAgain()
-                    except:
-                        pass
-                time.sleep(60)
-
-        # Start watchdog
-        watchdog_thread = threading.Thread(target=watchdog, daemon=True)
-        watchdog_thread.start()
-
         try:
-            logger.info("Starting SOCF thread")
+            logger.info("Starting CORRECTED SOCF thread")
             self.last_socf_activity = time.time()
 
-            # Check for crystal limit before starting
             if getattr(self, 'crystal_limit_reached', False):
                 logger.critical("SOCF thread stopped - Crystal limit reached")
                 return
 
             # Check if object scanning is enabled
-            object_scanning_enabled = config.get('main', {}).get(
-                'object_scanning', {}).get('enabled', True)
-
-            # Also check if the socf_thread job itself is enabled in config
+            object_scanning_enabled = config.get('main', {}).get('object_scanning', {}).get('enabled', True)
             socf_enabled = False
             jobs = config.get('main', {}).get('jobs', [])
             for job in jobs:
-                if job.get('name') == 'socf_thread' and job.get(
-                        'enabled', False):
+                if job.get('name') == 'socf_thread' and job.get('enabled', False):
                     socf_enabled = True
                     break
 
-            if not object_scanning_enabled:
-                logger.info(
-                    'Object scanning is disabled in config. Skipping object scanning.'
-                )
+            if not object_scanning_enabled or not socf_enabled:
+                logger.info('Object scanning disabled in config')
                 return
-
-            if not socf_enabled:
-                logger.info(
-                    'socf_thread job is disabled in config. Skipping object scanning.'
-                )
-                return
-
-            # Check if rally start is enabled for logging purposes
-            rally_start_enabled = config.get('rally',
-                                             {}).get('start',
-                                                     {}).get('enabled', False)
-            rally_join_enabled = config.get('rally',
-                                            {}).get('join',
-                                                    {}).get('enabled', False)
-
-            # Informational log message only
-            if not rally_start_enabled and rally_join_enabled:
-                logger.info(
-                    'Rally Start is disabled but Rally Join is enabled. Will scan for objects but not start rallies.'
-                )
 
             while self.api.last_requested_at + 16 > time.time():
-                # if last request is less than 16 seconds ago, wait
-                # when we are in the field, we should not be doing anything else
-                logger.info(
-                    f'last requested at {arrow.get(self.api.last_requested_at).humanize()}, waiting...'
-                )
+                logger.info(f'last requested at {arrow.get(self.api.last_requested_at).humanize()}, waiting...')
                 time.sleep(4)
 
-            # File logging disabled - using web app and Discord notifications only
-            logger.info("Starting object scanning session - notifications via web app and Discord only")
+            logger.info("Starting object scanning session")
 
             self.socf_entered = False
-            self.socf_world_id = self.kingdom_enter.get('kingdom').get(
-                'worldId')
+            self.socf_world_id = self.kingdom_enter.get('kingdom').get('worldId')
+            
+            # CRITICAL: Keep original URL protocol
             url = self.kingdom_enter.get('networks').get('fields')[0]
-            original_url = url
-            # CRITICAL FIX: Convert WSS to HTTPS for polling transport compatibility  
-            if url.startswith('wss://'):
-                url = url.replace('wss://', 'https://', 1)
-            logger.info(f'[SOCF] URL conversion: {original_url[:30]}... → {url[:30]}...')
-            logger.info(f'[SOCF] URL is HTTPS: {url.startswith("https://")}')
+            logger.info(f'[SOCF] Original URL: {url[:50]}...')
+            
             from_loc = self.kingdom_enter.get('kingdom').get('loc')
 
             if not self.zones:
                 logger.info('getting nearest zone')
-                self.zones = self._get_nearest_zone_ng(from_loc[1],
-                                                       from_loc[2], radius)
+                self.zones = self._get_nearest_zone_ng(from_loc[1], from_loc[2], radius)
 
-            sio = socketio.Client(reconnection=False,
-                                  logger=False,
-                                  engineio_logger=False)
+            sio = socketio.Client(
+                reconnection=False,
+                logger=False,
+                engineio_logger=False
+            )
             
-            # Track data reception metrics for SOCF thread
+            # Track data reception
             socf_data_stats = {
                 'field_objects_received': 0,
                 'march_objects_received': 0,
                 'field_enter_received': False,
-                'field_ready': False,  # Strict handshake order flag: must receive /field/objects/v4 first
-                'zone_queue': [],  # Queue for zone requests until field is ready
+                'field_ready': False,
                 'last_field_objects_time': 0,
                 'last_march_objects_time': 0,
-                'connection_established_time': 0,
-                'total_data_bytes': 0
+                'connection_established_time': 0
             }
+            
+            # CRITICAL FIX: Use threading events to enforce proper timing
+            field_enter_response_received = threading.Event()
+            field_objects_received = threading.Event()
             
             @sio.on('connect')
             def on_connect():
@@ -4025,18 +3981,18 @@ Status: Available to join"""
                 socf_data_stats['connection_established_time'] = time.time()
                 logger.info(f'[{current_time}] ========== SOCF SOCKET CONNECTED ==========')
                 
-                # Match browser behavior: First emit 40 (connect to namespace)
-                # socketio.Client does this automatically for root, but we need to ensure the order
-                
-                # Wait 100ms
+                # Wait 100ms like browser
                 time.sleep(0.1)
                 
-                # Handshake 1: 42["/field/enter/v3","JWT_TOKEN"]
-                logger.info(f'[{current_time}] Sending /field/enter/v3 JWT')
+                # Step 1: Send JWT token as plain string
+                logger.info(f'[{current_time}] Step 1: Sending JWT token')
                 sio.emit('/field/enter/v3', self.token)
                 
-                # Handshake 2: 42["/field/enter/v3",{"EventName":"/field/enter/v3","Payload":"{...}"}]
-                time.sleep(0.1)
+                # Wait 50ms
+                time.sleep(0.05)
+                
+                # Step 2: Send kingdom data
+                logger.info(f'[{current_time}] Step 2: Sending kingdom data')
                 kingdom_data = self.kingdom_enter.get('kingdom', {})
                 loc = kingdom_data.get('loc', [0, 0, 0])
                 db_time = self.kingdom_enter.get('dbTime', datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
@@ -4053,190 +4009,388 @@ Status: Available to join"""
                     "Payload": json.dumps(payload_data)
                 }
                 
-                logger.info(f'[{current_time}] Sending /field/enter/v3 Object')
                 sio.emit('/field/enter/v3', emit_payload)
-                socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
                 self.last_socf_activity = time.time()
                 
-                # Zone Sequence precisely from browser logs:
-                # 42["/zone/leave/list/v2",{"world":107,"zones":"[]"}]
-                # 42["/zone/enter/list/v4","eyJ3b3JsZCI6MTA3LCJ6b25lcyI6IlswLDk2LDEsOTddIn0="]
-                # 42["/zone/leave/list/v2",{"world":107,"zones":"[0,96,1,97]"}]
-                # 42["/zone/enter/list/v4","eyJ3b3JsZCI6MTA3LCJ6b25lcyI6IlszOTg4LDQwODQsNDE4MCwzOTg5LDQwODUsNDE4MSwzOTkwLDQwODYsNDE4Ml0ifQ=="]
-                
-                time.sleep(0.05)
-                logger.info(f'[{current_time}] Zone Step 1: /zone/leave/list/v2 (empty)')
-                sio.emit('/zone/leave/list/v2', {"world": self.socf_world_id, "zones": "[]"})
-                
-                # Zone Step 2: /zone/enter/list/v4 (initial zones: [0,96,1,97])
-                time.sleep(0.05)
-                initial_zones = [0, 96, 1, 97]
-                logger.info(f'[{current_time}] Zone Step 2: /zone/enter/list/v4 (initial zones: {initial_zones})')
-                sio.emit('/zone/enter/list/v4', {"world": self.socf_world_id, "zones": json.dumps(initial_zones).replace(" ", "")})
-                
-                # Zone Step 3: /zone/leave/list/v2 (initial zones: [0,96,1,97])
-                time.sleep(0.05)
-                logger.info(f'[{current_time}] Zone Step 3: /zone/leave/list/v2 (initial zones: {initial_zones})')
-                sio.emit('/zone/leave/list/v2', {"world": self.socf_world_id, "zones": json.dumps(initial_zones).replace(" ", "")})
-                
-                # Zone Step 4: /zone/enter/list/v4 (target zones: [7497, 7496, ...])
-                time.sleep(0.05)
-                if self.zones:
-                    logger.info(f'[{current_time}] Zone Step 4: /zone/enter/list/v4 (target zones: {len(self.zones)})')
-                    sio.emit('/zone/enter/list/v4', {"world": self.socf_world_id, "zones": json.dumps(self.zones).replace(" ", "")})
+                # DON'T send zone messages here - wait for /field/enter/v3 response!
 
-            @sio.on('/zone/enter/list/v4')
-            def on_zone_enter_list(data):
+            @sio.on('/field/enter/v3')
+            def on_field_enter(data):
                 current_time = arrow.now().format('HH:mm:ss.SSS')
-                logger.info(f'[{current_time}] /zone/enter/list/v4 received: {len(data) if isinstance(data, list) else "dict"} items')
-                self.last_socf_activity = time.time()
-
-            @sio.on('/zone/leave/list/v2')
-            def on_zone_leave_list(data):
-                current_time = arrow.now().format('HH:mm:ss.SSS')
-                logger.info(f'[{current_time}] /zone/leave/list/v2 received')
-                self.last_socf_activity = time.time()
+                logger.info(f'[{current_time}] ========== /FIELD/ENTER/V3 RESPONSE RECEIVED ==========')
+                
+                try:
+                    # Parse response
+                    if isinstance(data, dict) and 'Payload' in data:
+                        payload_str = data.get('Payload')
+                        if isinstance(payload_str, str):
+                            data_decoded = json.loads(payload_str)
+                        else:
+                            data_decoded = payload_str
+                    else:
+                        data_decoded = data
+                    
+                    self.socf_world_id = data_decoded.get('loc', [self.socf_world_id])[0]
+                    logger.info(f'[{current_time}] World ID: {self.socf_world_id}')
+                    
+                    socf_data_stats['field_enter_received'] = True
+                    
+                    # CRITICAL: Signal that we can now send zone messages
+                    field_enter_response_received.set()
+                    
+                    # NOW send zone handshake (after receiving response)
+                    time.sleep(0.05)
+                    
+                    # Step 3a: Leave empty zones
+                    logger.info(f'[{current_time}] Step 3a: Leave empty zones')
+                    sio.emit('/zone/leave/list/v2', {
+                        'world': self.socf_world_id,
+                        'zones': '[]'
+                    })
+                    time.sleep(0.05)
+                    
+                    # Step 3b: Enter initial zones [0,96,1,97] - BASE64
+                    initial_zones = [0, 96, 1, 97]
+                    zones_payload = {
+                        "world": self.socf_world_id,
+                        "zones": json.dumps(initial_zones)
+                    }
+                    zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+                    
+                    logger.info(f'[{current_time}] Step 3b: Enter initial zones {initial_zones} (BASE64)')
+                    sio.emit('/zone/enter/list/v4', zones_base64)
+                    time.sleep(0.05)
+                    
+                    # Step 3c: Leave initial zones
+                    logger.info(f'[{current_time}] Step 3c: Leave initial zones')
+                    sio.emit('/zone/leave/list/v2', {
+                        'world': self.socf_world_id,
+                        'zones': json.dumps(initial_zones)
+                    })
+                    time.sleep(0.05)
+                    
+                    # Step 3d: Enter target zones - BASE64
+                    if self.zones:
+                        target_zones = self.zones[:9]
+                        zones_payload = {
+                            "world": self.socf_world_id,
+                            "zones": json.dumps(target_zones)
+                        }
+                        zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+                        
+                        logger.info(f'[{current_time}] Step 3d: Enter target zones (count: {len(target_zones)}) (BASE64)')
+                        sio.emit('/zone/enter/list/v4', zones_base64)
+                
+                except Exception as e:
+                    logger.error(f'[{current_time}] Error in /field/enter/v3 handler: {e}')
+                    import traceback
+                    logger.error(traceback.format_exc())
+                    raise
 
             @sio.on('disconnect')
             def on_disconnect():
                 current_time = arrow.now().format('HH:mm:ss.SSS')
                 logger.warning(f'[{current_time}] ========== SOCF SOCKET DISCONNECTED ==========')
-                logger.warning(f'[{current_time}] Socket connected: False')
-                logger.warning(f'[{current_time}] Disconnect time: {current_time}')
-                logger.warning(f'[{current_time}] Field objects received before disconnect: {socf_data_stats["field_objects_received"]}')
-                logger.warning(f'[{current_time}] March objects received before disconnect: {socf_data_stats["march_objects_received"]}')
+                logger.warning(f'[{current_time}] Field objects: {socf_data_stats["field_objects_received"]}')
+                logger.warning(f'[{current_time}] March objects: {socf_data_stats["march_objects_received"]}')
             
             @sio.on('connect_error')
             def on_connect_error(error):
                 current_time = arrow.now().format('HH:mm:ss.SSS')
-                logger.error(f'[{current_time}] ========== SOCF CONNECTION ERROR ==========')
-                logger.error(f'[{current_time}] Error: {error}')
-                logger.error(f'[{current_time}] Error type: {type(error).__name__}')
+                logger.error(f'[{current_time}] CONNECTION ERROR: {error}')
             
             @sio.on('error')
-            def on_error(error):
+            def on_socket_error(error):
                 current_time = arrow.now().format('HH:mm:ss.SSS')
-                logger.error(f'[{current_time}] ========== SOCF SOCKET ERROR ==========')
-                logger.error(f'[{current_time}] Error: {error}')
-            
-            # Add ping/pong event handlers for keepalive monitoring
-            @sio.on('ping')
-            def on_ping(data):
-                current_time = arrow.now().format('HH:mm:ss.SSS')
-                logger.info(f'[{current_time}] >>> PING RECEIVED from server')
-                logger.info(f'[{current_time}] >>> Sending PONG response')
-                self.last_socf_activity = time.time()
-                # Automatically respond with pong (socket.io handles this)
-            
-            @sio.on('pong')
-            def on_pong(data):
-                current_time = arrow.now().format('HH:mm:ss.SSS')
-                logger.info(f'[{current_time}] <<< PONG RESPONSE received')
-                self.last_socf_activity = time.time()
-            
-            # Function to send zone message or queue if field not ready
-            # Handles both /zone/enter/list/v4 and /zone/leave/list/v2 events
-            def send_zone_message(event_name, payload):
-                current_time = arrow.now().format('HH:mm:ss.SSS')
-                if not socf_data_stats['field_ready']:
-                    logger.info(f'[{current_time}] [QUEUE] {event_name} queued until field is ready')
-                    socf_data_stats['zone_queue'].append((event_name, payload))
-                    return
-                logger.info(f'[{current_time}] [EMIT] Sending {event_name}')
-                sio.emit(event_name, payload)
-            
-            # Track all events emitted
-            def log_emit(event, data=None):
-                current_time = arrow.now().format('HH:mm:ss.SSS')
-                if isinstance(data, dict):
-                    logger.debug(f'[{current_time}] [EMIT] {event} with keys: {list(data.keys())}')
-                elif isinstance(data, str):
-                    logger.debug(f'[{current_time}] [EMIT] {event} with data: {data[:100]}...' if len(data) > 100 else f'[{current_time}] [EMIT] {event} with data: {data}')
-                else:
-                    logger.debug(f'[{current_time}] [EMIT] {event}')
+                logger.error(f'[{current_time}] SOCKET ERROR: {error}')
 
             @sio.on('/march/objects')
             def on_march_objects(data):
-                """
-                Robust march objects data handler with comprehensive validation and error recovery
-                """
                 current_time = arrow.now().format('HH:mm:ss.SSS')
                 
-                # Track reception stats
                 socf_data_stats['march_objects_received'] += 1
                 socf_data_stats['last_march_objects_time'] = time.time()
                 self.last_socf_activity = time.time()
                 
-                logger.info(f'[{current_time}] ===== MARCH OBJECTS EVENT RECEIVED (#{socf_data_stats["march_objects_received"]}) =====')
-                logger.info(f'[{current_time}] Data type: {type(data).__name__}')
-                if isinstance(data, dict):
-                    logger.info(f'[{current_time}] Keys: {list(data.keys())}')
-
-                # Input validation
+                logger.info(f'[{current_time}] MARCH OBJECTS RECEIVED (#{socf_data_stats["march_objects_received"]})')
+                
                 if not data:
-                    logger.debug(f'[{current_time}] MARCH OBJECTS - Empty data received')
                     return
 
                 try:
                     with self.march_objects_lock:
-                        logger.info(f'[{current_time}] MARCH OBJECTS - Processing incoming data')
-
                         decoded_data = None
-                        data_source = "unknown"
-
-                        # Multi-path data processing with fallbacks
-                        # Path 0: Handle Payload field (NEW API FORMAT)
-                        if isinstance(data, dict) and 'Payload' in data:
-                            try:
-                                payload_str = data.get('Payload')
-                                if isinstance(payload_str, str):
-                                    decoded_data = json.loads(payload_str)
-                                    data_source = "payload_json_string"
-                                    logger.debug(f'[{current_time}] MARCH OBJECTS - Successfully decoded from Payload JSON string')
-                                else:
-                                    decoded_data = payload_str
-                                    data_source = "payload_dict"
-                                    logger.debug(f'[{current_time}] MARCH OBJECTS - Using Payload dict directly')
-                            except Exception as payload_error:
-                                logger.debug(f'[{current_time}] MARCH OBJECTS - Payload parsing failed: {payload_error}')
-                                decoded_data = None
-
-                        try:
-                            # Path 1: Packed and encoded data
-                            packs = data.get('packs')
-                            if packs and isinstance(packs, (list, bytes, bytearray)):
-                                logger.debug(f'[{current_time}] MARCH OBJECTS - Processing packed data (length: {len(packs)})')
-
-                                # Handle different pack formats
-                                if isinstance(packs, list):
-                                    packs = bytearray(packs)
-                                elif isinstance(packs, bytes):
-                                    packs = bytearray(packs)
-
-                                # Decompress and decode
-                                gzip_decompress = gzip.decompress(packs)
-                                decoded_data = self.api.b64xor_dec(gzip_decompress)
-                                data_source = "packed_encoded"
-
-                        except Exception as pack_error:
-                            logger.debug(f'[{current_time}] MARCH OBJECTS - Pack processing failed: {pack_error}')
-                            decoded_data = None
-
-                        # Path 2: Direct data (fallback)
-                        if decoded_data is None:
-                            if isinstance(data, dict) and len(data) > 0:
-                                decoded_data = data
-                                data_source = "direct"
-                                logger.debug(f'[{current_time}] MARCH OBJECTS - Using direct data')
+                        
+                        # Handle EventName/Payload format
+                        if isinstance(data, dict) and 'EventName' in data and 'Payload' in data:
+                            payload_str = data.get('Payload')
+                            if isinstance(payload_str, str):
+                                decoded_data = json.loads(payload_str)
                             else:
-                                logger.warning(f'[{current_time}] MARCH OBJECTS - No valid data found in any format')
-                                return
+                                decoded_data = payload_str
+                        
+                        # Fallback: packed data
+                        elif isinstance(data, dict) and 'packs' in data:
+                            packs = data.get('packs')
+                            if isinstance(packs, list):
+                                packs = bytearray(packs)
+                            gzip_decompress = gzip.decompress(packs)
+                            decoded_data = self.api.b64xor_dec(gzip_decompress)
+                        
+                        # Fallback: direct data
+                        else:
+                            decoded_data = data
 
-                        # Validate decoded data structure
-                        if not self._validate_march_data_structure(decoded_data):
-                            logger.warning(f'[{current_time}] MARCH OBJECTS - Invalid data structure, skipping update')
-                            return
+                        if decoded_data:
+                            self.march_objects_data = decoded_data
+                            self.march_objects_last_update = time.time()
+                            self.march_data_update_count += 1
+                            
+                            march_count = len(decoded_data.get('objects', [])) if isinstance(decoded_data, dict) else 0
+                            logger.info(f'[{current_time}] March objects updated: {march_count}')
+
+                except Exception as e:
+                    logger.error(f'[{current_time}] Error processing march objects: {e}')
+
+            @sio.on('/field/objects/v4')
+            def on_field_objects(data):
+                from lokbot import config
+                
+                socf_data_stats['field_objects_received'] += 1
+                socf_data_stats['last_field_objects_time'] = time.time()
+                self.last_socf_activity = time.time()
+                
+                if not socf_data_stats['field_ready']:
+                    socf_data_stats['field_ready'] = True
+                    field_objects_received.set()
+                    current_time = arrow.now().format("HH:mm:ss.SSS")
+                    logger.info(f'[{current_time}] /FIELD/OBJECTS/V4 RECEIVED - Field is READY')
+                
+                timestamp = arrow.now().format('HH:mm:ss.SSS')
+                logger.info(f'[{timestamp}] FIELD OBJECTS RECEIVED (#{socf_data_stats["field_objects_received"]})')
+                
+                if getattr(self, 'crystal_limit_reached', False):
+                    logger.critical("Crystal limit reached - stopping")
+                    sio.disconnect()
+                    return
+
+                # Parse data
+                data_decoded = None
+                
+                if isinstance(data, dict) and 'EventName' in data and 'Payload' in data:
+                    payload_str = data.get('Payload')
+                    if isinstance(payload_str, str):
+                        data_decoded = json.loads(payload_str)
+                        logger.info(f'[{timestamp}] Decoded from Payload string')
+                    else:
+                        data_decoded = payload_str
+                        logger.info(f'[{timestamp}] Using Payload dict')
+                
+                elif isinstance(data, dict) and 'packs' in data:
+                    packs = data.get('packs')
+                    gzip_decompress = gzip.decompress(bytearray(packs))
+                    data_decoded = self.api.b64xor_dec(gzip_decompress)
+                    logger.info(f'[{timestamp}] Decoded from packs')
+                
+                elif isinstance(data, dict) and data.get('objects'):
+                    data_decoded = data
+                    logger.info(f'[{timestamp}] Using direct objects')
+                
+                if data_decoded is None:
+                    logger.error(f'[{timestamp}] Could not decode data')
+                    self.field_object_processed = True
+                    return
+                
+                objects = data_decoded.get('objects', [])
+                logger.info(f'[{timestamp}] Processing {len(objects)} objects')
+                
+                # Filter enabled targets
+                target_code_set = set([
+                    target['code'] for target in targets
+                    if target.get('enabled', True)
+                ])
+                
+                # Process objects
+                for each_obj in objects:
+                    code = each_obj.get('code')
+                    level = each_obj.get('level')
+                    loc = each_obj.get('loc')
+                    state = each_obj.get('state', 1)
+
+                    if state != 1:
+                        continue
+
+                    if code not in target_code_set:
+                        continue
+
+                    level_lists = [
+                        target['level'] for target in targets
+                        if target['code'] == code
+                    ]
+
+                    allowed_levels = [
+                        level for sublist in level_lists for level in sublist
+                    ]
+
+                    if not allowed_levels or level in allowed_levels:
+                        # Logic for processing individual object types
+                        if code in [20100101, 20100102, 20100103, 20100104, 20100105, 20100106]:
+                            self._on_field_objects_gather(each_obj)
+                        else:
+                            self._on_field_objects_monster(each_obj)
+
+                self.field_object_processed = True
+
+            # Status logger
+            def status_logger():
+                last_log_time = 0
+                while self.socf_thread_active:
+                    current_time = time.time()
+                    if current_time - last_log_time > 30:
+                        timestamp = arrow.now().format('HH:mm:ss.SSS')
+                        logger.info(f'[{timestamp}] ===== SOCF STATUS =====')
+                        logger.info(f'[{timestamp}] Connected: {sio.connected}')
+                        logger.info(f'[{timestamp}] Field objects: {socf_data_stats["field_objects_received"]}')
+                        logger.info(f'[{timestamp}] March objects: {socf_data_stats["march_objects_received"]}')
+                        
+                        if socf_data_stats['last_field_objects_time'] > 0:
+                            time_since = current_time - socf_data_stats['last_field_objects_time']
+                            logger.info(f'[{timestamp}] Last field objects: {time_since:.1f}s ago')
+                        else:
+                            logger.warning(f'[{timestamp}] No field objects received yet!')
+                        
+                        last_log_time = current_time
+                    time.sleep(1)
+            
+            status_thread = threading.Thread(target=status_logger, daemon=True)
+            status_thread.start()
+            
+            # Connect with proper settings
+            ws_headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+            }
+            logger.info('[SOCF] Connecting...')
+            
+            try:
+                sio.connect(
+                    url,  # Original URL unchanged
+                    transports=['polling', 'websocket'],  # Correct order
+                    headers=ws_headers,
+                    namespaces=['/']
+                )
+                logger.info('[SOCF] ✓ Connected')
+            except Exception as e:
+                logger.error(f'[SOCF] Connection failed: {e}')
+                raise
+            
+            # Wait for /field/enter/v3 response
+            logger.info('[SOCF] Waiting for /field/enter/v3 response...')
+            if not field_enter_response_received.wait(timeout=30):
+                raise TimeoutError("Field enter response timeout - server did not respond")
+            logger.info('[SOCF] ✓ Field enter response received')
+            
+            # Wait for /field/objects/v4
+            logger.info('[SOCF] Waiting for /field/objects/v4...')
+            if not field_objects_received.wait(timeout=30):
+                raise TimeoutError("Field objects timeout - no objects received")
+            logger.info('[SOCF] ✓ Field objects received, field is ready')
+            
+            # Scanning loop
+            available_zones_count = len(self.zones)
+            step = min(9, max(1, available_zones_count))
+            grace = 7
+            index = 0
+            
+            logger.info(f'SOCF scanning with {available_zones_count} zones, batch size: {step}')
+            
+            while self.zones and self.socf_thread_active:
+                if index >= grace:
+                    logger.info('Grace limit reached')
+                    break
+
+                if not sio.connected:
+                    logger.warning('Socket disconnected')
+                    raise tenacity.TryAgain()
+
+                # Wait for previous batch to be processed
+                timeout_count = 0
+                while not getattr(self, 'field_object_processed', True) and timeout_count < 30:
+                    timeout_count += 1
+                    time.sleep(1)
+                
+                if timeout_count >= 30:
+                    logger.error(f'Timeout waiting for field objects')
+                    break
+
+                index += 1
+                zone_ids = []
+                for _ in range(step):
+                    if not self.zones:
+                        break
+                    zone_ids.append(self.zones.pop(0))
+
+                if not zone_ids:
+                    break
+                
+                # Send zone enter with BASE64
+                zones_payload = {
+                    'world': self.socf_world_id,
+                    'zones': json.dumps(zone_ids)
+                }
+                zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+                
+                logger.info(f'[SOCF] Entering zones batch {index}: {zone_ids[:3]}... ({len(zone_ids)} zones)')
+                self.field_object_processed = False
+                sio.emit('/zone/enter/list/v4', zones_base64)
+                
+                time.sleep(random.uniform(0.5, 1.0))
+                
+                # Leave zones (plain JSON)
+                leave_message = {
+                    'world': self.socf_world_id,
+                    'zones': json.dumps(zone_ids)
+                }
+                sio.emit('/zone/leave/list/v2', leave_message)
+
+            logger.info('Scanning complete')
+            try:
+                if sio.connected:
+                    sio.disconnect()
+            except Exception as e:
+                logger.error(f"Disconnect error: {e}")
+            finally:
+                self.socf_thread_active = False
+                self.last_socf_activity = time.time()
+                
+                time.sleep(random.uniform(2, 5))
+                
+                if not self.zones and self.kingdom_enter:
+                    from_loc = self.kingdom_enter.get('kingdom').get('loc')
+                    self.zones = self._get_nearest_zone_ng(from_loc[1], from_loc[2], radius)
+                        
+        except tenacity.TryAgain:
+            logger.info("Restarting SOCF thread")
+            self.zones = []
+            self.socf_entered = False
+            self.socf_world_id = None
+            self.field_object_processed = False
+            raise
+        except Exception as e:
+            logger.error(f"SOCF thread error: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+            self.zones = []
+            self.socf_entered = False
+            self.socf_world_id = None
+            self.field_object_processed = False
+            raise
+        finally:
+            self.socf_thread_active = False
+            try:
+                sio.disconnect()
+            except:
+                pass
 
                         # Thread-safe data update with backup
                         previous_data = self.march_objects_data.copy() if self.march_objects_data else {}
