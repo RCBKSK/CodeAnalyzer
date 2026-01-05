@@ -1,0 +1,486 @@
+# SOCF Thread Implementation Patch
+# This patch fixes critical issues found by comparing browser behavior with the current implementation
+
+# ============================================================================
+# CRITICAL FINDINGS FROM BROWSER LOGS
+# ============================================================================
+# 1. Browser uses POLLING transport first (0{"sid":...}), then websocket (40, 42[...])
+# 2. Handshake sequence is STRICT:
+#    - 0 (CONNECT with session ID)
+#    - 40 (namespace connect to root)
+#    - 40{"sid":"..."} (namespace connect confirmation)
+#    - 42["/field/enter/v3", JWT_TOKEN] (send JWT token)
+#    - 42["/field/enter/v3", {EventName, Payload}] (send kingdom data)
+#    - 42["/zone/leave/list/v2", {"world":107,"zones":"[]"}] (leave empty zones)
+#    - 42["/zone/enter/list/v4", BASE64_ENCODED] (enter initial zones [0,96,1,97])
+#    - 42["/zone/leave/list/v2", {"world":107,"zones":"[0,96,1,97]"}] (leave initial zones)
+#    - 42["/zone/enter/list/v4", BASE64_ENCODED] (enter target zones)
+#    - 42["/field/objects/v4", {EventName, Payload}] (RECEIVE field objects)
+#    - 42["/march/objects", {EventName, Payload}] (RECEIVE march objects)
+# 3. Zone data is BASE64 ENCODED, not plain JSON
+# 4. Token is sent as PLAIN STRING first, then as EventName/Payload object
+# 5. NO token in URL query string - it's sent in the handshake message
+
+# ============================================================================
+# PATCH 1: Fix Socket.IO Connection and Transport
+# ============================================================================
+
+def socf_thread_with_recovery_PATCHED(self, radius, targets, share_to=None):
+    """
+    PATCHED: Fixed Socket.IO connection to match browser behavior exactly
+    """
+    # ... existing code until Socket.IO client creation ...
+    
+    # CRITICAL: Keep original URL protocol - DO NOT convert wss:// to https://
+    url = self.kingdom_enter.get('networks').get('fields')[0]
+    # REMOVED: url = url.replace('wss://', 'https://', 1)  # THIS WAS WRONG
+    
+    logger.info(f'[SOCF] Connecting to: {url}')
+    logger.info(f'[SOCF] Protocol: {url.split(":")[0]}')
+    
+    # Create Socket.IO client with proper configuration
+    sio = socketio.Client(
+        reconnection=True,
+        reconnection_attempts=10,
+        reconnection_delay=1,
+        reconnection_delay_max=5,
+        logger=False,  # Disable socket.io internal logging
+        engineio_logger=False
+    )
+    
+    # ... rest of handler definitions ...
+
+
+# ============================================================================
+# PATCH 2: Fix Handshake Sequence to Match Browser
+# ============================================================================
+
+def socf_thread_handshake_PATCHED(self, sio, url):
+    """
+    PATCHED: Implement exact browser handshake sequence
+    """
+    import base64
+    
+    # Threading events for proper sequencing
+    field_enter_received = threading.Event()
+    field_objects_received = threading.Event()
+    
+    @sio.on('connect')
+    def on_connect():
+        timestamp = arrow.now().format('HH:mm:ss.SSS')
+        logger.info(f'[{timestamp}] SOCF socket connected')
+        
+        # Wait 100ms like browser does
+        time.sleep(0.1)
+        
+        # STEP 1: Send JWT token as plain string (matches browser 42["/field/enter/v3","JWT"])
+        logger.info(f'[{timestamp}] Step 1: Sending JWT token')
+        sio.emit('/field/enter/v3', self.token)
+        
+        # Wait a moment
+        time.sleep(0.05)
+        
+        # STEP 2: Send kingdom data as EventName/Payload object
+        kingdom_data = self.kingdom_enter.get('kingdom', {})
+        loc = kingdom_data.get('loc', [0, 0, 0])
+        db_time = self.kingdom_enter.get('dbTime', datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
+        
+        payload_obj = {
+            "loc": loc,
+            "kingdom": kingdom_data,
+            "dbTime": db_time,
+            "map": {"width": 3072, "height": 3072}
+        }
+        
+        emit_data = {
+            "EventName": "/field/enter/v3",
+            "Payload": json.dumps(payload_obj)  # JSON string, not object
+        }
+        
+        logger.info(f'[{timestamp}] Step 2: Sending kingdom data')
+        sio.emit('/field/enter/v3', emit_data)
+        
+        # Mark that we've entered field
+        self.socf_entered = True
+        
+    @sio.on('/field/enter/v3')
+    def on_field_enter(data):
+        timestamp = arrow.now().format('HH:mm:ss.SSS')
+        logger.info(f'[{timestamp}] Received /field/enter/v3 response')
+        
+        # Parse response to get world ID
+        try:
+            if isinstance(data, dict) and 'Payload' in data:
+                payload_str = data.get('Payload')
+                if isinstance(payload_str, str):
+                    data_decoded = json.loads(payload_str)
+                else:
+                    data_decoded = payload_str
+            else:
+                data_decoded = data
+            
+            self.socf_world_id = data_decoded.get('loc', [0])[0]
+            logger.info(f'[{timestamp}] World ID: {self.socf_world_id}')
+        except Exception as e:
+            logger.error(f'[{timestamp}] Failed to parse /field/enter/v3: {e}')
+            raise
+        
+        # Signal that field enter is complete
+        field_enter_received.set()
+        
+    @sio.on('/field/objects/v4')
+    def on_field_objects(data):
+        timestamp = arrow.now().format('HH:mm:ss.SSS')
+        logger.info(f'[{timestamp}] Received /field/objects/v4')
+        
+        # NOW it's safe to say field is ready
+        field_objects_received.set()
+        
+        # ... process field objects as before ...
+    
+    # Connect with proper settings - NO token in URL
+    logger.info('[SOCF] Connecting to Socket.IO server...')
+    sio.connect(
+        url,  # Original URL, no modifications
+        transports=['polling', 'websocket'],  # Browser tries polling first
+        headers=ws_headers,
+        namespaces=['/']  # Only root namespace
+    )
+    
+    # Wait for field enter response (with timeout)
+    if not field_enter_received.wait(timeout=30):
+        raise TimeoutError("Field enter handshake timeout")
+    
+    logger.info('[SOCF] Field enter handshake complete')
+    
+    # STEP 3: Send zone handshake sequence (AFTER field enter confirmed)
+    timestamp = arrow.now().format('HH:mm:ss.SSS')
+    
+    # 3a. Leave empty zones
+    logger.info(f'[{timestamp}] Step 3a: Leave empty zones')
+    sio.emit('/zone/leave/list/v2', {
+        'world': self.socf_world_id,
+        'zones': '[]'  # Empty string, not empty list
+    })
+    time.sleep(0.05)
+    
+    # 3b. Enter initial zones [0,96,1,97] - BASE64 ENCODED
+    initial_zones = [0, 96, 1, 97]
+    zones_json = json.dumps(initial_zones)
+    zones_payload = {
+        "world": self.socf_world_id,
+        "zones": zones_json
+    }
+    zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+    
+    logger.info(f'[{timestamp}] Step 3b: Enter initial zones {initial_zones}')
+    sio.emit('/zone/enter/list/v4', zones_base64)
+    time.sleep(0.05)
+    
+    # 3c. Leave initial zones
+    logger.info(f'[{timestamp}] Step 3c: Leave initial zones')
+    sio.emit('/zone/leave/list/v2', {
+        'world': self.socf_world_id,
+        'zones': json.dumps(initial_zones)
+    })
+    time.sleep(0.05)
+    
+    # 3d. Enter target zones - BASE64 ENCODED
+    if self.zones:
+        target_zones = self.zones[:9]  # First batch like browser
+        zones_json = json.dumps(target_zones)
+        zones_payload = {
+            "world": self.socf_world_id,
+            "zones": zones_json
+        }
+        zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+        
+        logger.info(f'[{timestamp}] Step 3d: Enter target zones (count: {len(target_zones)})')
+        sio.emit('/zone/enter/list/v4', zones_base64)
+    
+    # Wait for field objects (with timeout)
+    if not field_objects_received.wait(timeout=30):
+        raise TimeoutError("Field objects timeout")
+    
+    logger.info('[SOCF] Zone handshake complete, field is ready')
+    
+    return sio
+
+
+# ============================================================================
+# PATCH 3: Fix Zone Request Format (BASE64 Encoding)
+# ============================================================================
+
+def emit_zone_enter_PATCHED(self, sio, zone_ids):
+    """
+    PATCHED: Zone requests must be BASE64 encoded like browser
+    """
+    import base64
+    
+    # Browser format: base64({"world":107,"zones":"[3988,4084,4180,...]"})
+    zones_json_str = json.dumps(zone_ids)
+    payload = {
+        "world": self.socf_world_id,
+        "zones": zones_json_str
+    }
+    
+    # Encode the entire payload as base64
+    payload_json = json.dumps(payload)
+    payload_base64 = base64.b64encode(payload_json.encode()).decode()
+    
+    logger.info(f'[SOCF] Entering zones: {zone_ids[:3]}... (total: {len(zone_ids)})')
+    logger.debug(f'[SOCF] Base64 payload: {payload_base64[:50]}...')
+    
+    # Send as base64 string (NOT as object)
+    sio.emit('/zone/enter/list/v4', payload_base64)
+
+
+def emit_zone_leave_PATCHED(self, sio, zone_ids):
+    """
+    PATCHED: Zone leave uses plain JSON (not base64)
+    """
+    zones_json_str = json.dumps(zone_ids)
+    
+    payload = {
+        'world': self.socf_world_id,
+        'zones': zones_json_str  # JSON string, not array
+    }
+    
+    logger.info(f'[SOCF] Leaving zones: {zone_ids[:3]}... (total: {len(zone_ids)})')
+    
+    # Send as plain object (NOT base64)
+    sio.emit('/zone/leave/list/v2', payload)
+
+
+# ============================================================================
+# PATCH 4: Fix Data Parsing (Handle New Payload Format)
+# ============================================================================
+
+def parse_field_objects_PATCHED(self, data):
+    """
+    PATCHED: Handle both old and new EventName/Payload format
+    """
+    timestamp = arrow.now().format('HH:mm:ss.SSS')
+    
+    data_decoded = None
+    
+    # NEW FORMAT: {"EventName":"/field/objects/v4","Payload":"JSON_STRING"}
+    if isinstance(data, dict) and 'EventName' in data and 'Payload' in data:
+        logger.info(f'[{timestamp}] Using NEW EventName/Payload format')
+        payload_str = data.get('Payload')
+        
+        if isinstance(payload_str, str):
+            try:
+                data_decoded = json.loads(payload_str)
+                logger.info(f'[{timestamp}] Parsed Payload JSON string')
+            except json.JSONDecodeError as e:
+                logger.error(f'[{timestamp}] Failed to parse Payload: {e}')
+                return None
+        else:
+            data_decoded = payload_str
+            logger.info(f'[{timestamp}] Payload is already dict')
+    
+    # OLD FORMAT: Try packed/compressed data
+    elif isinstance(data, dict) and 'packs' in data:
+        logger.info(f'[{timestamp}] Using OLD packed format')
+        try:
+            packs = data.get('packs')
+            if isinstance(packs, list):
+                packs = bytearray(packs)
+            elif isinstance(packs, bytes):
+                packs = bytearray(packs)
+            
+            gzip_decompress = gzip.decompress(packs)
+            data_decoded = self.api.b64xor_dec(gzip_decompress)
+            logger.info(f'[{timestamp}] Unpacked data successfully')
+        except Exception as e:
+            logger.error(f'[{timestamp}] Failed to unpack: {e}')
+            return None
+    
+    # FALLBACK: Direct objects field
+    elif isinstance(data, dict) and 'objects' in data:
+        logger.info(f'[{timestamp}] Using direct objects format')
+        data_decoded = data
+    
+    else:
+        logger.error(f'[{timestamp}] Unknown data format: {type(data).__name__}')
+        return None
+    
+    return data_decoded
+
+
+# ============================================================================
+# PATCH 5: Complete Integration Example
+# ============================================================================
+
+def _socf_thread_internal_PATCHED(self, radius, targets, share_to=None):
+    """
+    COMPLETE PATCHED VERSION: Integrates all fixes
+    """
+    import base64
+    
+    logger.info("Starting PATCHED SOCF thread")
+    
+    # Get field URL (keep original protocol)
+    url = self.kingdom_enter.get('networks').get('fields')[0]
+    logger.info(f'[SOCF] Field URL: {url[:50]}...')
+    
+    # Initialize zones if needed
+    if not self.zones:
+        from_loc = self.kingdom_enter.get('kingdom').get('loc')
+        self.zones = self._get_nearest_zone_ng(from_loc[1], from_loc[2], radius)
+    
+    # Create Socket.IO client
+    sio = socketio.Client(
+        reconnection=False,
+        logger=False,
+        engineio_logger=False
+    )
+    
+    # Threading events
+    field_enter_done = threading.Event()
+    field_objects_done = threading.Event()
+    
+    @sio.on('connect')
+    def on_connect():
+        time.sleep(0.1)
+        
+        # Send JWT token as plain string
+        sio.emit('/field/enter/v3', self.token)
+        time.sleep(0.05)
+        
+        # Send kingdom data
+        kingdom_data = self.kingdom_enter.get('kingdom', {})
+        payload = {
+            "EventName": "/field/enter/v3",
+            "Payload": json.dumps({
+                "loc": kingdom_data.get('loc', [0, 0, 0]),
+                "kingdom": kingdom_data,
+                "dbTime": self.kingdom_enter.get('dbTime', datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')),
+                "map": {"width": 3072, "height": 3072}
+            })
+        }
+        sio.emit('/field/enter/v3', payload)
+        self.socf_entered = True
+    
+    @sio.on('/field/enter/v3')
+    def on_field_enter(data):
+        try:
+            if isinstance(data, dict) and 'Payload' in data:
+                payload_str = data['Payload']
+                data_decoded = json.loads(payload_str) if isinstance(payload_str, str) else payload_str
+            else:
+                data_decoded = data
+            
+            self.socf_world_id = data_decoded.get('loc', [0])[0]
+            field_enter_done.set()
+            
+            # Send zone handshake
+            time.sleep(0.05)
+            
+            # Leave empty zones
+            sio.emit('/zone/leave/list/v2', {
+                'world': self.socf_world_id,
+                'zones': '[]'
+            })
+            time.sleep(0.05)
+            
+            # Enter initial zones (BASE64)
+            initial_zones = [0, 96, 1, 97]
+            payload_b64 = base64.b64encode(
+                json.dumps({
+                    "world": self.socf_world_id,
+                    "zones": json.dumps(initial_zones)
+                }).encode()
+            ).decode()
+            sio.emit('/zone/enter/list/v4', payload_b64)
+            time.sleep(0.05)
+            
+            # Leave initial zones
+            sio.emit('/zone/leave/list/v2', {
+                'world': self.socf_world_id,
+                'zones': json.dumps(initial_zones)
+            })
+            time.sleep(0.05)
+            
+            # Enter target zones (BASE64)
+            if self.zones:
+                target_zones = self.zones[:9]
+                payload_b64 = base64.b64encode(
+                    json.dumps({
+                        "world": self.socf_world_id,
+                        "zones": json.dumps(target_zones)
+                    }).encode()
+                ).decode()
+                sio.emit('/zone/enter/list/v4', payload_b64)
+        
+        except Exception as e:
+            logger.error(f'Error in field enter handler: {e}')
+    
+    @sio.on('/field/objects/v4')
+    def on_field_objects(data):
+        field_objects_done.set()
+        
+        # Parse data
+        data_decoded = parse_field_objects_PATCHED(self, data)
+        if not data_decoded:
+            return
+        
+        objects = data_decoded.get('objects', [])
+        logger.info(f'Received {len(objects)} field objects')
+        
+        # Process objects...
+        # (existing object processing code)
+    
+    @sio.on('/march/objects')
+    def on_march_objects(data):
+        # Parse march data
+        if isinstance(data, dict) and 'EventName' in data and 'Payload' in data:
+            payload_str = data.get('Payload')
+            try:
+                march_data = json.loads(payload_str) if isinstance(payload_str, str) else payload_str
+                march_objects = march_data.get('objects', [])
+                logger.info(f'Received {len(march_objects)} march objects')
+                
+                # Update march tracking
+                with self.march_objects_lock:
+                    self.march_objects_data = march_data
+                    self.march_objects_last_update = time.time()
+            except Exception as e:
+                logger.error(f'Error parsing march objects: {e}')
+    
+    # Connect
+    sio.connect(url, transports=['polling', 'websocket'], namespaces=['/'])
+    
+    # Wait for handshake
+    if not field_enter_done.wait(timeout=30):
+        raise TimeoutError("Field enter timeout")
+    if not field_objects_done.wait(timeout=30):
+        raise TimeoutError("Field objects timeout")
+    
+    logger.info('[SOCF] Handshake complete, entering scan loop')
+    
+    # Scan loop
+    # (existing scanning code with BASE64 zone requests)
+    
+    try:
+        sio.disconnect()
+    except:
+        pass
+
+
+# ============================================================================
+# SUMMARY OF CRITICAL CHANGES
+# ============================================================================
+"""
+1. REMOVED: url.replace('wss://', 'https://') - keep original protocol
+2. ADDED: Proper handshake sequence with delays matching browser
+3. FIXED: Token sent as plain string first, then EventName/Payload object
+4. FIXED: Zone requests use BASE64 encoding for /zone/enter/list/v4
+5. FIXED: Zone leave uses plain JSON (not BASE64)
+6. ADDED: Proper EventName/Payload format parsing
+7. FIXED: Transport order: ['polling', 'websocket'] (browser tries polling first)
+8. REMOVED: Token from URL query string
+9. ADDED: Threading events for proper sequencing
+10. FIXED: World ID extraction from /field/enter/v3 response
+"""
