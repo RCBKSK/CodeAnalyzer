@@ -3901,6 +3901,10 @@ Status: Available to join"""
         Only scans for objects and logs them without starting marches
         :return:
         """
+        # Threading events for proper sequencing
+        field_enter_response_received = threading.Event()
+        field_objects_received = threading.Event()
+
         # Set a flag to track thread status
         self.socf_thread_active = True
 
@@ -4040,16 +4044,68 @@ Status: Available to join"""
                     'map': 1
                 }
                 
-                logger.info(f'[{current_time}] Sending /field/enter/v3 handshake (ROOT ONLY)')
+                logger.info(f'[{current_time}] Step 1: Sending JWT token (ROOT ONLY)')
+                logger.info(f'[{current_time}] Step 2: Sending kingdom data')
                 sio.emit('/field/enter/v3', emit_payload)
                 socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
                 self.last_socf_activity = time.time()
 
+            @sio.on('/field/enter/v3')
+            def on_field_enter(data):
+                current_time = arrow.now().format('HH:mm:ss.SSS')
+                logger.info(f'[{current_time}] ========== /FIELD/ENTER/V3 RESPONSE RECEIVED ==========')
+                
+                # Signal that response was received
+                field_enter_response_received.set()
+                
+                # NOW send zone handshake sequence HERE
+                time.sleep(0.05)
+                
+                # Step 3a: Leave empty zones
+                logger.info(f'[{current_time}] Step 3a: Leave empty zones')
+                sio.emit('/zone/leave/list/v2', {
+                    'world': self.socf_world_id,
+                    'zones': '[]'
+                })
+                time.sleep(0.05)
+                
+                # Step 3b: Enter initial zones [0,96,1,97] - BASE64
+                initial_zones = [0, 96, 1, 97]
+                zones_payload = {
+                    "world": self.socf_world_id,
+                    "zones": json.dumps(initial_zones)
+                }
+                zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+                
+                logger.info(f'[{current_time}] Step 3b: Enter initial zones {initial_zones} (BASE64)')
+                sio.emit('/zone/enter/list/v4', zones_base64)
+                time.sleep(0.05)
+                
+                # Step 3c: Leave initial zones
+                logger.info(f'[{current_time}] Step 3c: Leave initial zones')
+                sio.emit('/zone/leave/list/v2', {
+                    'world': self.socf_world_id,
+                    'zones': json.dumps(initial_zones)
+                })
+                time.sleep(0.05)
+                
+                # Step 3d: Enter target zones - BASE64
+                if self.zones:
+                    target_zones = [z[2] for z in self.zones[:9]]
+                    zones_payload = {
+                        "world": self.socf_world_id,
+                        "zones": json.dumps(target_zones)
+                    }
+                    zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+                    
+                    logger.info(f'[{current_time}] Step 3d: Enter target zones (count: {len(target_zones)}) (BASE64)')
+                    sio.emit('/zone/enter/list/v4', zones_base64)
+
             @sio.on('/zone/enter/list/v4')
             def on_zone_enter_list(data):
                 current_time = arrow.now().format('HH:mm:ss.SSS')
-                logger.info(f'[{current_time}] /zone/enter/list/v4 received: {len(data) if isinstance(data, list) else "dict"} items')
+                logger.info(f'[{current_time}] /zone/enter/list/v4 received')
                 self.last_socf_activity = time.time()
 
             @sio.on('/zone/leave/list/v2')
@@ -4244,7 +4300,9 @@ Status: Available to join"""
                 # STRICT HANDSHAKE ORDER: Only allow zone requests AFTER receiving field objects
                 if not socf_data_stats['field_ready']:
                     socf_data_stats['field_ready'] = True
-                    logger.info(f'[{arrow.now().format("HH:mm:ss.SSS")}] /field/objects/v4 RECEIVED - Handshake SUCCESS - Field is READY')
+                    # Signal that field objects were received
+                    field_objects_received.set()
+                    logger.info(f'[{arrow.now().format("HH:mm:ss.SSS")}] /FIELD/OBJECTS/V4 RECEIVED - Field is READY')
                     
                 # RAW DATA LOGGING - capture everything received
                 timestamp = arrow.now().format('HH:mm:ss.SSS')

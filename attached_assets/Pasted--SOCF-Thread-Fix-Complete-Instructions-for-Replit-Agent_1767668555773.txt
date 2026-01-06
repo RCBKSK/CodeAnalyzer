@@ -1,0 +1,232 @@
+# SOCF Thread Fix - Complete Instructions for Replit Agent
+
+## Problem Statement
+
+The SOCF (Socket connection of the field) thread in `farmer.py` is not receiving field objects from the server. Analysis of browser WebSocket traffic and current implementation reveals critical timing and protocol issues.
+
+## Root Cause Analysis
+
+### Browser Behavior (Correct):
+```
+1. Connect → Send JWT token
+2. Send kingdom data
+3. WAIT for /field/enter/v3 RESPONSE
+4. After response → Send zone handshake sequence
+5. WAIT for /field/objects/v4 RESPONSE
+6. After response → Start scanning loop
+```
+
+### Current Code Behavior (Wrong):
+```
+1. Connect → Send JWT token
+2. Send kingdom data
+3. Send zone handshake immediately (NO WAIT)
+4. Timeout after 30s - no field objects received
+```
+
+**The code sends all messages at once without waiting for server responses between steps.**
+
+## Evidence from Logs
+
+Current implementation logs show all messages sent at the same timestamp:
+```
+08:03:22.185 - SOCF SOCKET CONNECTED
+08:03:22.185 - Sending /field/enter/v3 JWT
+08:03:22.185 - Sending /field/enter/v3 Object
+08:03:22.185 - Zone Step 1: /zone/leave/list/v2    ← ALL AT SAME TIME
+08:03:22.185 - Zone Step 2: /zone/enter/list/v4    ← NO WAIT
+08:03:22.185 - Zone Step 3: /zone/leave/list/v2    ← NO WAIT
+08:03:22.185 - Zone Step 4: /zone/enter/list/v4    ← NO WAIT
+...
+08:03:52.596 - Timeout (30s) - no /field/objects/v4 received ← FAILURE
+```
+
+Browser logs show proper timing with responses between steps:
+```
+17:53:23.732 - Connect
+17:53:24.039 - Send JWT + kingdom data
+17:53:24.373 - WAIT then send zone leave        ← DELAYED
+17:53:24.433 - Send zone enter                  ← DELAYED
+17:53:24.440 - Receive /field/objects/v4        ← SUCCESS
+```
+
+## Required Changes
+
+### File to Modify
+- `farmer.py` - Method: `_socf_thread_internal(self, radius, targets, share_to=None)`
+
+### Critical Fixes Needed
+
+#### Fix 1: Move Zone Handshake Out of `on_connect()`
+
+**Current Code Location** (around line 4069):
+```python
+@sio.on('connect')
+def on_connect():
+    # ... send JWT and kingdom data ...
+    
+    # WRONG: Zone messages sent here immediately
+    sio.emit('/zone/leave/list/v2', ...)
+    sio.emit('/zone/enter/list/v4', ...)
+    sio.emit('/zone/leave/list/v2', ...)
+    sio.emit('/zone/enter/list/v4', ...)
+```
+
+**Must Change To**:
+```python
+@sio.on('connect')
+def on_connect():
+    # ... send JWT and kingdom data ...
+    
+    # REMOVE all zone emit calls from here
+    # Zone messages will be sent in the /field/enter/v3 handler instead
+```
+
+#### Fix 2: Add Threading Event for Synchronization
+
+**Add at method start** (around line 3990):
+```python
+# Threading events for proper sequencing
+field_enter_response_received = threading.Event()
+field_objects_received = threading.Event()
+```
+
+#### Fix 3: Create/Modify `/field/enter/v3` Response Handler
+
+**Current Code Location** (around line 4091):
+```python
+@sio.on('/field/enter/v3')
+def on_field_enter(data):
+    # ... parse data ...
+    
+    # ADD: Signal that response was received
+    field_enter_response_received.set()
+    
+    # ADD: NOW send zone handshake sequence HERE
+    time.sleep(0.05)
+    
+    # Step 3a: Leave empty zones
+    logger.info(f'[{current_time}] Step 3a: Leave empty zones')
+    sio.emit('/zone/leave/list/v2', {
+        'world': self.socf_world_id,
+        'zones': '[]'
+    })
+    time.sleep(0.05)
+    
+    # Step 3b: Enter initial zones [0,96,1,97] - BASE64
+    initial_zones = [0, 96, 1, 97]
+    zones_payload = {
+        "world": self.socf_world_id,
+        "zones": json.dumps(initial_zones)
+    }
+    zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+    
+    logger.info(f'[{current_time}] Step 3b: Enter initial zones {initial_zones} (BASE64)')
+    sio.emit('/zone/enter/list/v4', zones_base64)
+    time.sleep(0.05)
+    
+    # Step 3c: Leave initial zones
+    logger.info(f'[{current_time}] Step 3c: Leave initial zones')
+    sio.emit('/zone/leave/list/v2', {
+        'world': self.socf_world_id,
+        'zones': json.dumps(initial_zones)
+    })
+    time.sleep(0.05)
+    
+    # Step 3d: Enter target zones - BASE64
+    if self.zones:
+        target_zones = self.zones[:9]
+        zones_payload = {
+            "world": self.socf_world_id,
+            "zones": json.dumps(target_zones)
+        }
+        zones_base64 = base64.b64encode(json.dumps(zones_payload).encode()).decode()
+        
+        logger.info(f'[{current_time}] Step 3d: Enter target zones (count: {len(target_zones)}) (BASE64)')
+        sio.emit('/zone/enter/list/v4', zones_base64)
+```
+
+#### Fix 4: Update `/field/objects/v4` Handler
+
+**Current Code Location** (around line 4257):
+```python
+@sio.on('/field/objects/v4')
+def on_field_objects(data):
+    # ... existing code ...
+    
+    if not socf_data_stats['field_ready']:
+        socf_data_stats['field_ready'] = True
+        # ADD: Signal that field objects were received
+        field_objects_received.set()
+        logger.info(f'[{current_time}] /FIELD/OBJECTS/V4 RECEIVED - Field is READY')
+    
+    # ... rest of existing code ...
+```
+
+#### Fix 5: Add Wait Points Before Scanning Loop
+
+**Current Code Location** (around line 5171):
+```python
+# REMOVE: Immediate connection to scanning
+# ADD: Wait for responses
+
+# Wait for /field/enter/v3 response
+logger.info('[SOCF] Waiting for /field/enter/v3 response...')
+if not field_enter_response_received.wait(timeout=30):
+    raise TimeoutError("Field enter response timeout - server did not respond")
+logger.info('[SOCF] ✓ Field enter response received')
+
+# Wait for /field/objects/v4
+logger.info('[SOCF] Waiting for /field/objects/v4...')
+if not field_objects_received.wait(timeout=30):
+    raise TimeoutError("Field objects timeout - no objects received")
+logger.info('[SOCF] ✓ Field objects received, field is ready')
+
+# NOW proceed to scanning loop
+```
+
+## Expected Log Output After Fix
+
+```
+08:XX:XX.XXX - ========== SOCF SOCKET CONNECTED ==========
+08:XX:XX.XXX - Step 1: Sending JWT token
+08:XX:XX.XXX - Step 2: Sending kingdom data
+08:XX:XX.XXX - Waiting for /field/enter/v3 response...
+08:XX:YY.YYY - ========== /FIELD/ENTER/V3 RESPONSE RECEIVED ==========
+08:XX:YY.YYY - World ID: 107
+08:XX:YY.YYY - Step 3a: Leave empty zones
+08:XX:YY.YYY - Step 3b: Enter initial zones [0, 96, 1, 97] (BASE64)
+08:XX:YY.YYY - Step 3c: Leave initial zones
+08:XX:YY.YYY - Step 3d: Enter target zones (count: 9) (BASE64)
+08:XX:YY.YYY - ✓ Field enter response received
+08:XX:YY.YYY - Waiting for /field/objects/v4...
+08:XX:ZZ.ZZZ - /FIELD/OBJECTS/V4 RECEIVED - Field is READY
+08:XX:ZZ.ZZZ - Processing 150 objects
+08:XX:ZZ.ZZZ - ✓ Field objects received, field is ready
+08:XX:ZZ.ZZZ - SOCF scanning with 494 zones, batch size: 9
+```
+
+Notice the different timestamps (YYY, ZZZ) showing proper delays between steps.
+
+## Testing
+
+After applying fixes:
+1. Run the bot
+2. Check logs for the expected sequence above
+3. Verify "Field objects received" appears (not timeout)
+4. Verify objects are being processed
+5. Confirm no "Timeout (30s)" errors
+
+## Additional Notes
+
+- The `base64` import must be at the top of the file
+- The zone enter messages MUST be BASE64 encoded
+- The zone leave messages MUST be plain JSON (NOT base64)
+- Threading events ensure proper synchronization
+- All zone messages moved from `on_connect()` to `on_field_enter()`
+
+## Summary
+
+**Core Issue**: Zone handshake sent too early without waiting for server response  
+**Solution**: Use threading events to wait for `/field/enter/v3` response before sending zone messages  
+**Impact**: Enables proper server communication and field object reception
