@@ -4030,24 +4030,34 @@ Status: Available to join"""
                 # Match browser behavior: Wait 100ms AFTER connect event before emitting handshake
                 time.sleep(0.1)
                 
-                # Use current kingdom location, world ID, and server time
+                # Step 1: Send JWT token as JSON string with "token" key
+                logger.info(f'[{current_time}] Step 1: Sending JWT token as JSON')
+                token_payload = json.dumps({"token": self.token})
+                sio.emit('/field/enter/v3', token_payload)
+                
+                # Wait 50ms
+                time.sleep(0.05)
+                
+                # Step 2: Send kingdom data
+                logger.info(f'[{current_time}] Step 2: Sending kingdom data')
                 kingdom_data = self.kingdom_enter.get('kingdom', {})
                 loc = kingdom_data.get('loc', [0, 0, 0])
-                world_id = kingdom_data.get('worldId')
-                db_time = self.kingdom_enter.get('dbTime', int(time.time() * 1000))
+                db_time = self.kingdom_enter.get('dbTime', 
+                                                 datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
                 
-                emit_payload = {
-                    'token': self.token,
-                    'loc': {'x': loc[1], 'y': loc[2]},
-                    'kingdom': world_id,
-                    'dbTime': db_time,
-                    'map': 1
+                payload_data = {
+                    "loc": loc,
+                    "kingdom": kingdom_data,
+                    "dbTime": db_time,
+                    "map": {"width": 3072, "height": 3072}
                 }
                 
-                logger.info(f'[{current_time}] Step 1: Sending JWT token (ROOT ONLY)')
-                logger.info(f'[{current_time}] Step 2: Sending kingdom data')
+                emit_payload = {
+                    "EventName": "/field/enter/v3",
+                    "Payload": json.dumps(payload_data)
+                }
+                
                 sio.emit('/field/enter/v3', emit_payload)
-                socf_data_stats['field_enter_received'] = True
                 self.socf_entered = True
                 self.last_socf_activity = time.time()
 

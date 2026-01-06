@@ -1,0 +1,164 @@
+# CRITICAL FIX: Server Rejecting Connection
+
+## Problem Identified
+
+The logs show the server **immediately disconnects** after receiving the handshake:
+
+```
+03:24:15.022 - SOCF SOCKET CONNECTED
+03:24:15.123 - Sending JWT + kingdom data
+03:24:15.198 - DISCONNECTED (only 76ms later!)
+```
+
+This means the server is **rejecting the handshake format**.
+
+## Root Cause
+
+Looking at the browser logs vs current implementation:
+
+### Browser Handshake Format:
+```
+42["/field/enter/v3","eyJ0b2tlbiI6ImV5SmhiR2NpT2..."]
+```
+The JWT is sent as a **JSON-encoded object with a "token" key**, not as a plain string!
+
+### Current Code (Wrong):
+```python
+sio.emit('/field/enter/v3', self.token)  # ❌ Plain string
+```
+
+### Should Be:
+```python
+sio.emit('/field/enter/v3', json.dumps({"token": self.token}))  # ✅ JSON string
+```
+
+## The Fix
+
+### Location: `_socf_thread_internal` method, inside `on_connect()` handler
+
+**Find this code** (around line 4047):
+```python
+@sio.on('connect')
+def on_connect():
+    current_time = arrow.now().format('HH:mm:ss.SSS')
+    logger.info(f'[{current_time}] ========== SOCF SOCKET CONNECTED ==========')
+    
+    time.sleep(0.1)
+    
+    # WRONG: Sending token as plain string
+    logger.info(f'[{current_time}] Step 1: Sending JWT token (ROOT ONLY)')
+    sio.emit('/field/enter/v3', self.token)  # ❌ THIS IS WRONG
+```
+
+**Replace with**:
+```python
+@sio.on('connect')
+def on_connect():
+    current_time = arrow.now().format('HH:mm:ss.SSS')
+    logger.info(f'[{current_time}] ========== SOCF SOCKET CONNECTED ==========')
+    
+    time.sleep(0.1)
+    
+    # CORRECT: Send token as JSON string
+    logger.info(f'[{current_time}] Step 1: Sending JWT token as JSON')
+    token_payload = json.dumps({"token": self.token})
+    sio.emit('/field/enter/v3', token_payload)  # ✅ JSON string
+```
+
+## Browser Evidence
+
+From the actual browser logs in your document:
+
+```
+42["/field/enter/v3","eyJ0b2tlbiI6ImV5SmhiR2NpT2lKSVV6STFOaUlzSW5SNWNDSTZJa3BYVkNKOS..."]
+```
+
+Decoding this base64 shows it's:
+```json
+{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
+```
+
+The token is **wrapped in a JSON object with a "token" key**, not sent as a raw JWT string!
+
+## Complete Fixed Code Section
+
+```python
+@sio.on('connect')
+def on_connect():
+    current_time = arrow.now().format('HH:mm:ss.SSS')
+    socf_data_stats['connection_established_time'] = time.time()
+    logger.info(f'[{current_time}] ========== SOCF SOCKET CONNECTED ==========')
+    
+    # Wait 100ms like browser
+    time.sleep(0.1)
+    
+    # Step 1: Send JWT token as JSON string with "token" key
+    logger.info(f'[{current_time}] Step 1: Sending JWT token as JSON')
+    token_payload = json.dumps({"token": self.token})
+    sio.emit('/field/enter/v3', token_payload)
+    
+    # Wait 50ms
+    time.sleep(0.05)
+    
+    # Step 2: Send kingdom data (this part is correct)
+    logger.info(f'[{current_time}] Step 2: Sending kingdom data')
+    kingdom_data = self.kingdom_enter.get('kingdom', {})
+    loc = kingdom_data.get('loc', [0, 0, 0])
+    db_time = self.kingdom_enter.get('dbTime', 
+                                     datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
+    
+    payload_data = {
+        "loc": loc,
+        "kingdom": kingdom_data,
+        "dbTime": db_time,
+        "map": {"width": 3072, "height": 3072}
+    }
+    
+    emit_payload = {
+        "EventName": "/field/enter/v3",
+        "Payload": json.dumps(payload_data)
+    }
+    
+    sio.emit('/field/enter/v3', emit_payload)
+    self.socf_entered = True
+    self.last_socf_activity = time.time()
+```
+
+## Expected Result After Fix
+
+The server should **accept the connection** and you'll see:
+
+```
+03:XX:XX - SOCF SOCKET CONNECTED
+03:XX:XX - Step 1: Sending JWT token as JSON
+03:XX:XX - Step 2: Sending kingdom data
+03:XX:YY - /FIELD/ENTER/V3 RESPONSE RECEIVED  ← Should appear!
+03:XX:YY - World ID: 107
+03:XX:YY - Step 3a: Leave empty zones
+...
+03:XX:ZZ - /FIELD/OBJECTS/V4 RECEIVED  ← Success!
+```
+
+No more immediate disconnection!
+
+## Why This Matters
+
+The server expects:
+```json
+{"token": "eyJhbGciOiJIUzI1NiIs..."}
+```
+
+But was receiving:
+```
+"eyJhbGciOiJIUzI1NiIs..."
+```
+
+The server saw an invalid format and immediately closed the connection.
+
+## Summary
+
+**Change**: Wrap JWT token in JSON object with "token" key  
+**File**: `farmer.py`  
+**Method**: `_socf_thread_internal`  
+**Line**: Around 4047 in `on_connect()` handler  
+**Impact**: Server will accept the connection instead of rejecting it
