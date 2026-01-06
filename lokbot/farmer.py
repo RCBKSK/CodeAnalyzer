@@ -4042,8 +4042,10 @@ Status: Available to join"""
                 logger.info(f'[{current_time}] Step 2: Sending kingdom data')
                 kingdom_data = self.kingdom_enter.get('kingdom', {})
                 loc = kingdom_data.get('loc', [0, 0, 0])
+                
+                # Import datetime if not available, though better to use arrow as already imported
                 db_time = self.kingdom_enter.get('dbTime', 
-                                                 datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
+                                                 arrow.utcnow().format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z')
                 
                 payload_data = {
                     "loc": loc,
